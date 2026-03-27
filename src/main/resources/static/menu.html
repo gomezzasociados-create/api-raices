@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Raíces - Eco-Futurismo Premium</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        :root {
+            --verde-matrix: #00ff88;
+            --verde-profundo: #05160e;
+            --verde-medio: #0a2e1f;
+            --neon-amarillo: #ffe600;
+            --blanco-holografico: rgba(255, 255, 255, 0.9);
+            --cristal-extremo: rgba(255, 255, 255, 0.03);
+            --brillo-verde: 0 0 15px rgba(0, 255, 136, 0.4);
+            --brillo-amarillo: 0 0 25px rgba(255, 230, 0, 0.7), inset 0 0 15px rgba(255, 230, 0, 0.3);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, var(--verde-profundo) 0%, var(--verde-medio) 50%, var(--verde-profundo) 100%);
+            background-size: 200% 200%;
+            animation: respiracionFondo 15s ease infinite;
+            color: var(--blanco-holografico);
+            min-height: 100vh;
+            padding-bottom: 90px;
+            overflow-x: hidden;
+        }
+        @keyframes respiracionFondo { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        .hero-raices {
+            position: relative; padding: 80px 20px; text-align: center; border-radius: 0 0 40px 40px;
+            background-image: linear-gradient(180deg, rgba(5, 22, 14, 0.2) 0%, var(--verde-profundo) 100%), url('https://res.cloudinary.com/doi0o3hlr/image/upload/v1774498342/Gemini_Generated_Image_vokg6mvokg6mvokg_ymhlax.png');
+            background-size: cover; background-position: center; border-bottom: 1px solid rgba(0, 255, 136, 0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.8); overflow: hidden;
+        }
+
+        .hero-raices::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(rgba(0,255,136,0) 0%, rgba(0,255,136,0.03) 50%, rgba(0,255,136,0) 100%);
+            animation: scanline 10s linear infinite; pointer-events: none; z-index: 1;
+        }
+        @keyframes scanline { 0% { transform: translateY(-50%); } 100% { transform: translateY(50%); } }
+
+        .titulo-neon { font-family: 'Orbitron', sans-serif; font-weight: 900; color: #ffffff; text-shadow: var(--brillo-verde), 0 0 30px rgba(255,255,255,0.5); letter-spacing: 8px; position: relative; z-index: 2; text-transform: uppercase; }
+
+        .selector-sucursal {
+            background: rgba(10, 46, 31, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(0, 255, 136, 0.4); color: var(--verde-matrix); font-family: 'Orbitron', sans-serif; padding: 12px 25px; border-radius: 30px; transition: all 0.3s ease; appearance: none; padding-right: 45px; position: relative; z-index: 2; font-size: 0.9rem; letter-spacing: 1px; cursor: pointer;
+        }
+        .selector-sucursal:focus { outline: none; box-shadow: var(--brillo-verde); border-color: var(--verde-matrix); }
+        .selector-sucursal option { background: var(--verde-profundo); color: white; }
+
+        .contenedor-categorias { display: flex; gap: 15px; justify-content: center; padding: 15px 5px; flex-wrap: wrap; }
+        .categoria-badge {
+            background: rgba(0,0,0,0.6); color: rgba(255,255,255,0.6); padding: 12px 30px; border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.2); transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            backdrop-filter: blur(5px); font-weight: 700; letter-spacing: 2px; font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem; text-transform: uppercase;
+        }
+        .categoria-badge:hover { color: white; border-color: rgba(0, 255, 136, 0.5); transform: translateY(-3px); }
+        .categoria-badge.active {
+            background: rgba(0, 255, 136, 0.15); color: var(--neon-amarillo); border-color: var(--verde-matrix);
+            box-shadow: 0 0 20px rgba(0,255,136,0.3), inset 0 0 10px rgba(0,255,136,0.2); transform: scale(1.05);
+        }
+
+        @keyframes materializar {
+            0% { opacity: 0; transform: translateY(50px) scale(0.8); filter: blur(20px); box-shadow: 0 0 50px var(--verde-matrix); }
+            60% { opacity: 0.8; transform: translateY(-10px) scale(1.03); filter: blur(3px); box-shadow: 0 0 30px var(--neon-amarillo); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); box-shadow: none; }
+        }
+
+        .card-menu {
+            position: relative; background: var(--cristal-extremo); backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px; overflow: hidden; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            height: 100%; display: flex; flex-direction: column;
+        }
+        .card-menu:hover { transform: translateY(-5px); border-color: var(--neon-amarillo); box-shadow: var(--brillo-amarillo); background: rgba(255, 230, 0, 0.02); }
+
+        .img-container { position: relative; padding: 0; display: flex; justify-content: center; align-items: center; height: 180px; cursor: pointer; overflow: hidden; }
+        .img-container::before { content: ''; position: absolute; width: 120px; height: 120px; background: radial-gradient(circle, rgba(0,255,136,0.3) 0%, transparent 70%); transition: all 0.6s ease; filter: blur(10px); }
+        .card-menu:hover .img-container::before { background: radial-gradient(circle, rgba(255,230,0,0.5) 0%, transparent 70%); transform: scale(1.5); }
+        .img-batido { width: 95%; height: 90%; object-fit: contain; position: relative; z-index: 1; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.7)); opacity: 0.8; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .card-menu:hover .img-batido { opacity: 1; transform: scale(1.08) rotate(3deg); filter: drop-shadow(0 20px 35px rgba(255,230,0,0.3)); }
+
+        .card-body { padding: 20px; background: rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.05); flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; }
+        .card-title-holo { font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 8px; letter-spacing: 0.5px; transition: all 0.3s ease; }
+        .precio-holografico { font-family: 'Orbitron', sans-serif; color: var(--verde-matrix); font-weight: 700; font-size: 1.1rem; transition: color 0.4s; }
+        .card-menu:hover .precio-holografico { color: var(--neon-amarillo); text-shadow: 0 0 10px rgba(255,230,0,0.5); }
+
+        .descripcion-completa { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.8s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.8s ease, margin-top 0.4s ease; }
+        .descripcion-completa p { font-size: 0.9rem; color: rgba(255,255,255,0.85); line-height: 1.6; margin-bottom: 15px; text-align: left; }
+        .card-menu.mostrar-info { border-color: var(--neon-amarillo); box-shadow: var(--brillo-amarillo); background: rgba(255, 230, 0, 0.05); }
+        .card-menu.mostrar-info .descripcion-completa { max-height: 1500px; opacity: 1; margin-top: 15px; }
+
+        .btn-add { background: transparent; color: var(--verde-matrix); border: 1px solid var(--verde-matrix); border-radius: 14px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: all 0.4s ease; position: relative; z-index: 2; font-size: 1.1rem; margin-top: auto; }
+        .btn-add:hover { background: var(--verde-matrix); color: #000; box-shadow: var(--brillo-verde); transform: scale(1.1) rotate(90deg); }
+
+        .carrito-bar { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 420px; background: rgba(5, 22, 14, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0, 255, 136, 0.4); padding: 15px 25px; border-radius: 25px; display: none; justify-content: space-between; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 20px rgba(0,255,136,0.1); z-index: 1000; animation: slideUpCarrito 0.5s cubic-bezier(0.23, 1, 0.32, 1); cursor: pointer; }
+        @keyframes slideUpCarrito { from { bottom: -100px; opacity: 0; } to { bottom: 25px; opacity: 1; } }
+        .btn-pedir { background: var(--verde-matrix); color: #000; font-family: 'Orbitron', sans-serif; font-weight: 900; border: none; padding: 12px 25px; border-radius: 18px; transition: all 0.3s ease; letter-spacing: 1px; text-transform: uppercase; font-size: 0.9rem; }
+        .btn-pedir:hover { box-shadow: var(--brillo-verde); transform: translateY(-3px) scale(1.03); background: var(--neon-amarillo); }
+
+        @media (max-width: 768px) {
+            .hero-raices { padding: 60px 15px; border-radius: 0 0 30px 30px; }
+            .titulo-neon { font-size: 2rem; letter-spacing: 5px; }
+            .img-container { height: 150px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero-raices">
+    <h1 class="titulo-neon">RAÍCES</h1>
+    <p class="mb-4" style="color: var(--verde-matrix); letter-spacing: 3px; font-weight: 600; position: relative; z-index: 2;">NUTRICIÓN <span style="color: white; font-weight: 700;">FUTURO</span></p>
+
+    <select id="sucursal-activa" class="selector-sucursal" onchange="renderizar(true)">
+        <option value="1">SISTEMA: TULUÁ (COP)</option>
+        <option value="2">SISTEMA: ANTOFAGASTA (CLP)</option>
+        <option value="3">SISTEMA: MALLORCA (EUR)</option>
+    </select>
+</div>
+
+<div class="container mt-4">
+    <div class="contenedor-categorias mb-3">
+        <button class="categoria-badge active" onclick="filtrar('500 mls', this)">VASOS 500 MLS</button>
+        <button class="categoria-badge" onclick="filtrar('Packs', this)">PACKS 16 UNIDADES</button>
+    </div>
+
+    <div id="grid-container" class="p-3 rounded-4">
+        <div id="grid-menu" class="row g-3 g-md-4 mb-5 align-items-start"></div>
+    </div>
+</div>
+
+<div id="carrito-bar" class="carrito-bar" onclick="abrirModalCarrito()">
+    <div class="d-flex flex-column">
+        <span class="fw-bold" style="font-size: 0.95rem; color: rgba(255,255,255,0.7);"><i class="bi bi-box-seam me-2"></i><span id="items-count">0</span> PROD.</span>
+        <span id="total-precio" class="precio-holografico" style="font-size: 1.3rem;">$0</span>
+    </div>
+    <button class="btn-pedir">VER ORDEN <i class="bi bi-chevron-right ms-1"></i></button>
+</div>
+
+<div class="modal fade" id="modalCarritoCliente" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content" style="background: rgba(5, 22, 14, 0.98); backdrop-filter: blur(25px); border: 1px solid var(--neon-amarillo); border-radius: 20px; color: white; box-shadow: 0 0 40px rgba(0,255,136,0.2);">
+            <div class="modal-header border-0 pb-0 pt-4">
+                <h5 class="modal-title" style="font-family: 'Orbitron', sans-serif; color: var(--neon-amarillo); font-weight: 900;"><i class="bi bi-cart4 me-2"></i> TU RESERVA DE ENERGÍA</h5>
+                <button type="button" class="btn-close" style="filter: invert(1);" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="lista-carrito-modal" class="mb-3"></div>
+
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-3" style="border-top: 1px solid rgba(0,255,136,0.2);">
+                    <span style="color: rgba(255,255,255,0.6); font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">TOTAL A TRANSFERIR:</span>
+                    <span id="total-modal-caja" class="precio-holografico fs-3" style="color: var(--neon-amarillo);">$0</span>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0 pb-4 justify-content-center">
+                <button type="button" class="btn-pedir w-100" style="padding: 15px; font-size: 1.1rem;" onclick="confirmarPedido()">
+                    INICIAR PAGO SEGURO <i class="bi bi-shield-lock-fill ms-2"></i>
+                </button>
+                <small class="text-center mt-2 d-block w-100" style="color: rgba(255,255,255,0.4); font-size: 0.75rem;">Procesado vía Mercado Pago</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let productosRaw = [];
+    let carrito = [];
+    let filtroActual = '500 mls';
+    let simboloActual = '$';
+
+    // Instancia del modal de Bootstrap
+    let modalCarritoCliente;
+    window.addEventListener('DOMContentLoaded', () => {
+        modalCarritoCliente = new bootstrap.Modal(document.getElementById('modalCarritoCliente'));
+    });
+
+    async function cargarMenu() {
+        try {
+            const res = await fetch('/api/productos');
+            if(res.ok) { productosRaw = await res.json(); }
+            else { cargarDatosDePrueba(); }
+            renderizar(true);
+        } catch (error) { cargarDatosDePrueba(); renderizar(true); }
+    }
+
+    function cargarDatosDePrueba() {
+        productosRaw = [
+            { id: 1, nombre: "Detox Verde Max", categoria: "500 mls", precio: 18000, imagen: "https://www.pngmart.com/files/10/Green-Smoothie-PNG-Transparent.png", descripcion: "🥬 Batido Green Détox 🌱✨\nIdeal para depurar.\n\nContiene:\n• Espinaca\n• Apio\n• Piña" }
+        ];
+    }
+
+    function renderizar(conEfecto = false) {
+        const grid = document.getElementById('grid-menu');
+        grid.innerHTML = '';
+        const paisID = document.getElementById('sucursal-activa').value;
+        let lista = productosRaw.filter(p => p.categoria && p.categoria.toLowerCase() === filtroActual.toLowerCase());
+
+        lista.forEach((p, index) => {
+            let precioMostrar = 0; simboloActual = '$';
+            if (paisID === "1") { precioMostrar = p.precioColombia || p.precio || 0; simboloActual = '$'; }
+            else if (paisID === "2") { precioMostrar = p.precioChile || p.precio || 0; simboloActual = '$'; }
+            else if (paisID === "3") { precioMostrar = p.precioMallorca || p.precio || 0; simboloActual = '€'; }
+
+            const imgSrc = p.imagen || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+            let descHtml = (p.descripcion || "Nutrición.").replace(/\n/g, '<br>').replace(/•/g, '<strong style="color: var(--neon-amarillo);">•</strong>');
+
+            grid.innerHTML += `
+                <div class="col-6 col-md-4 col-lg-3" style="animation: materializar 0.8s cubic-bezier(0.23, 1, 0.32, 1) ${index * 0.08}s forwards; opacity: 0;">
+                    <div class="card-menu" id="card-${p.id}">
+                        <div class="img-container" onclick="toggleInfo(event, '${p.id}')"><img src="${imgSrc}" class="img-batido"></div>
+                        <div class="card-body">
+                            <h6 class="card-title-holo text-truncate">${p.nombre}</h6>
+                            <div class="descripcion-completa"><p>${descHtml}</p></div>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <span class="precio-holografico">${simboloActual}${precioMostrar.toLocaleString('es-ES')}</span>
+                                <button class="btn-add" onclick="agregar(event, '${p.id}', '${p.nombre}', ${precioMostrar}, '${simboloActual}')"><i class="bi bi-plus-lg"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        actualizarCarrito();
+    }
+
+    function toggleInfo(event, id) {
+        event.stopPropagation();
+        document.querySelectorAll('.card-menu').forEach(c => { if(c.id !== `card-${id}`) c.classList.remove('mostrar-info'); });
+        document.getElementById(`card-${id}`).classList.toggle('mostrar-info');
+        if (navigator.vibrate) navigator.vibrate(10);
+    }
+
+    function agregar(event, id, nombre, precio, simbolo) {
+        event.stopPropagation();
+        carrito.push({ id: id, nombre: nombre, precio: Number(precio) });
+        actualizarCarrito();
+        if (navigator.vibrate) navigator.vibrate([30, 30]);
+    }
+
+    function actualizarCarrito() {
+        const bar = document.getElementById('carrito-bar');
+        if (carrito.length > 0) {
+            bar.style.display = 'flex';
+            document.getElementById('items-count').innerText = carrito.length;
+            const total = carrito.reduce((sum, p) => sum + p.precio, 0);
+            document.getElementById('total-precio').innerText = `${simboloActual}${total.toLocaleString('es-ES')}`;
+        } else {
+            bar.style.display = 'none';
+            if (modalCarritoCliente) modalCarritoCliente.hide();
+        }
+    }
+
+    // --- NUEVAS FUNCIONES DE CARRITO CLIENTE ---
+    function abrirModalCarrito() {
+        if(carrito.length === 0) return;
+        renderizarListaModal();
+        modalCarritoCliente.show();
+    }
+
+    function renderizarListaModal() {
+        const contenedor = document.getElementById('lista-carrito-modal');
+        contenedor.innerHTML = '';
+        let total = 0;
+
+        carrito.forEach((item, index) => {
+            total += item.precio;
+            contenedor.innerHTML += `
+                <div class="d-flex justify-content-between align-items-center mb-3 p-3" style="background: rgba(0,255,136,0.05); border-radius: 12px; border: 1px solid rgba(0,255,136,0.2);">
+                    <span style="color: white; font-weight: 600;">${item.nombre}</span>
+                    <div class="d-flex align-items-center">
+                        <span class="text-white me-3 fw-bold" style="font-family: 'Orbitron';">${simboloActual}${item.precio.toLocaleString('es-ES')}</span>
+                        <button class="btn btn-sm" style="background: rgba(255, 68, 68, 0.2); color: #ff4444; border: 1px solid #ff4444; border-radius: 8px;" onclick="eliminarDelCarrito(${index}, event)">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('total-modal-caja').innerText = `${simboloActual}${total.toLocaleString('es-ES')}`;
+    }
+
+    function eliminarDelCarrito(index, event) {
+        event.stopPropagation(); // Evita que cierre el modal por accidente
+        carrito.splice(index, 1);
+        actualizarCarrito(); // Refresca barra flotante
+        if(carrito.length > 0) { renderizarListaModal(); } // Refresca lista adentro del modal
+    }
+
+    // --- NUEVO FLUJO MERCADO PAGO + DESCUENTO INVENTARIO ---
+    async function confirmarPedido() {
+        // Cambiar botón a estado de carga
+        const btn = document.querySelector('#modalCarritoCliente .btn-pedir');
+        const contenidoOriginal = btn.innerHTML;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> CONECTANDO MATRIZ...`;
+        btn.disabled = true;
+
+        const selectPais = document.getElementById('sucursal-activa');
+        const paisNombre = selectPais.options[selectPais.selectedIndex].text;
+
+        try {
+            // 1. Generar Link Mercado Pago
+            const resMp = await fetch('/api/pagos/mercadopago', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items: carrito })
+            });
+
+            if (resMp.ok) {
+                const linkMercadoPago = await resMp.text();
+
+                // 2. Guardar Venta
+                await fetch(`/api/ventas?origen=Compra Web&pais=${encodeURIComponent(paisNombre)}&metodo=MercadoPago`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(carrito)
+                });
+
+                // 3. Descontar Inventario Automáticamente
+                const promesasDescuento = carrito.map(item =>
+                    fetch(`/api/inventario/vender?idProducto=${item.id}&cantidad=1`, { method: 'POST' })
+                );
+                await Promise.all(promesasDescuento);
+
+                // 4. Limpiar y Redirigir
+                carrito = [];
+                actualizarCarrito();
+                modalCarritoCliente.hide();
+
+                alert("✅ ¡Matriz Sincronizada! Redirigiendo a pago seguro...");
+                window.location.href = linkMercadoPago; // TE LLEVA A MERCADO PAGO
+            } else {
+                alert("❌ Error: No se pudo generar el link de pago.");
+                btn.innerHTML = contenidoOriginal;
+                btn.disabled = false;
+            }
+        } catch (error) {
+            alert("❌ Error de red con el sistema central.");
+            btn.innerHTML = contenidoOriginal;
+            btn.disabled = false;
+        }
+    }
+
+    function filtrar(cat, btn) {
+        filtroActual = cat;
+        renderizar(true);
+        document.querySelectorAll('.categoria-badge').forEach(b => b.classList.remove('active'));
+        if(btn) btn.classList.add('active');
+        if (navigator.vibrate) navigator.vibrate(15);
+    }
+
+    cargarMenu();
+</script>
+</body>
+</html>

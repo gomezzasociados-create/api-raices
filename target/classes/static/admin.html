@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gómez Systems - COMANDO CENTRAL (MULTI-NODO)</title>
+
+    <meta name="theme-color" content="#05160e">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --verde-matrix: #00ff88;
+            --verde-profundo: #05160e;
+            --verde-medio: #0a2e1f;
+            --neon-amarillo: #ffe600;
+            --naranja-alerta: #ff9f43;
+            --blanco-holografico: rgba(255, 255, 255, 0.9);
+            --cristal-oscuro: rgba(5, 22, 14, 0.85);
+            --cristal-claro: rgba(255, 255, 255, 0.05);
+            --brillo-verde: 0 0 15px rgba(0, 255, 136, 0.4);
+        }
+
+        body { font-family: 'Rajdhani', sans-serif; background: linear-gradient(135deg, var(--verde-profundo) 0%, var(--verde-medio) 50%, var(--verde-profundo) 100%); color: var(--blanco-holografico); min-height: 100vh; padding-bottom: 90px; }
+
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--verde-profundo); z-index: 10000; display: flex; justify-content: center; align-items: center; }
+        .login-box { background: var(--cristal-oscuro); border: 1px solid var(--verde-matrix); padding: 40px; border-radius: 30px; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 0 30px rgba(0,255,136,0.2); }
+        .pin-input { background: rgba(0,0,0,0.5); color: var(--verde-matrix); font-size: 2.5rem; text-align: center; letter-spacing: 20px; font-family: 'Orbitron', sans-serif; border: 2px solid var(--verde-matrix); border-radius: 15px; width: 100%; margin-bottom: 25px; box-shadow: inset 0 0 15px rgba(0,255,136,0.2); }
+
+        .navbar-gomez { border-bottom: 1px solid rgba(0, 255, 136, 0.3); padding: 1.5rem; text-align: center; }
+        .navbar-gomez h1 { font-family: 'Orbitron', sans-serif; text-shadow: var(--brillo-verde); letter-spacing: 4px; margin: 0; }
+
+        .nav-pills .nav-link { color: rgba(255,255,255,0.6); font-family: 'Orbitron', sans-serif; border-radius: 50px !important; margin: 0 5px; transition: 0.3s; }
+        .nav-pills .nav-link:hover { color: var(--verde-matrix); }
+        .nav-pills .nav-link.active { background: rgba(0,255,136,0.15); color: var(--verde-matrix); border: 1px solid var(--verde-matrix); box-shadow: inset 0 0 10px rgba(0,255,136,0.2); }
+
+        .table-container { background: var(--cristal-claro); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 25px; margin-bottom: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        .table { color: white; vertical-align: middle; }
+        .table-dark { background-color: rgba(0,0,0,0.6) !important; color: var(--verde-matrix); font-family: 'Orbitron', sans-serif; font-size: 0.85rem;}
+        .img-preview { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid var(--verde-matrix); }
+
+        .form-control, .form-select, textarea { background: rgba(0,0,0,0.6); border: 1px solid rgba(0,255,136,0.3); color: white; border-radius: 12px; }
+        .form-control:focus, .form-select:focus { background: rgba(0,0,0,0.8); border-color: var(--verde-matrix); color: white; box-shadow: var(--brillo-verde); }
+        .form-control::placeholder { color: rgba(255, 255, 255, 0.4) !important; }
+        .form-label-neon { color: var(--verde-matrix); font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: bold; }
+
+        .btn-neon { background: transparent; color: var(--verde-matrix); border: 1px solid var(--verde-matrix); border-radius: 12px; font-family: 'Orbitron', sans-serif; transition: 0.3s; font-weight: bold;}
+        .btn-neon:hover { background: var(--verde-matrix); color: #000; box-shadow: var(--brillo-verde); }
+        .btn-neon-azul { background: transparent; color: #00d2d3; border: 1px solid #00d2d3; border-radius: 12px; }
+        .btn-neon-amarillo { background: transparent; color: var(--neon-amarillo); border: 1px solid var(--neon-amarillo); border-radius: 12px; font-weight: bold;}
+
+        .estado-pagado { color: var(--verde-matrix); border: 1px solid var(--verde-matrix); padding: 3px 10px; border-radius: 12px; font-weight: bold; font-size: 0.8rem; background: rgba(0,255,136,0.1);}
+        .estado-pendiente { color: var(--naranja-alerta); border: 1px solid var(--naranja-alerta); padding: 3px 10px; border-radius: 12px; font-weight: bold; font-size: 0.8rem; background: rgba(255,159,67,0.1);}
+        .badge-origen { background: rgba(0,255,136,0.1); color: var(--verde-matrix); border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; border: 1px solid var(--verde-matrix);}
+        .badge-pago { background: rgba(255,230,0,0.1); color: var(--neon-amarillo); border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; border: 1px solid var(--neon-amarillo);}
+        .badge-sucursal { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; letter-spacing: 1px;}
+
+        @media screen { #zona-impresion { display: none; } }
+        @media print { body * { visibility: hidden; } #zona-impresion, #zona-impresion * { visibility: visible; } #zona-impresion { position: absolute; left: 0; top: 0; width: 100%; max-width: 300px; padding: 10px; font-family: 'Courier New', monospace; color: black; background: white; } }
+
+        #app-dashboard { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="login-screen">
+    <div class="login-box">
+        <h1 class="mb-2 text-white" style="font-family: 'Orbitron';">RAÍCES</h1>
+        <p class="mb-4" style="color: var(--verde-matrix); letter-spacing: 2px;">GÓMEZ SYSTEMS - MATRIZ</p>
+        <input type="password" id="input-pin" class="pin-input" maxlength="4" placeholder="••••" onkeypress="if(event.key === 'Enter') validarAcceso()">
+        <button class="btn btn-neon w-100 py-3 rounded-pill fs-5" onclick="validarAcceso()">INICIAR ENLACE SECRETO</button>
+    </div>
+</div>
+
+<div id="zona-impresion"></div>
+
+<div id="app-dashboard">
+    <div class="navbar-gomez text-center">
+        <h1>GÓMEZ SYSTEMS</h1>
+        <p class="mb-0 mt-2 fw-bold" style="color: var(--neon-amarillo);">NÚCLEO ADMINISTRATIVO SUPREMO <span id="label-rol"></span></p>
+    </div>
+
+    <div class="container pb-5">
+        <ul class="nav nav-pills nav-fill flex-wrap mb-4" id="pills-tab">
+            <li class="nav-item m-1"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-ventas" onclick="cargarVentas()"><i class="bi bi-cash-stack"></i> CAJA</button></li>
+            <li class="nav-item m-1"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-produccion" onclick="cargarProduccion()"><i class="bi bi-box-seam"></i> PRODUCCIÓN</button></li>
+            <li class="nav-item m-1"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-inventario" onclick="cargarInsumos()"><i class="bi bi-basket"></i> BODEGA</button></li>
+            <li class="nav-item m-1" id="nav-recetas"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-recetas" onclick="prepararRecetas()"><i class="bi bi-magic"></i> FÓRMULAS</button></li>
+            <li class="nav-item m-1" id="nav-precios"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-precios" onclick="cargarCatalogo()"><i class="bi bi-tags"></i> CATÁLOGO</button></li>
+            <li class="nav-item m-1"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-stats" onclick="generarReportes()"><i class="bi bi-graph-up-arrow"></i> STATS</button></li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="tab-ventas">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="table-container p-3 mb-3 border-start border-warning border-4"><h6 class="fw-bold">🇨🇴 COLOMBIA</h6><div class="d-flex justify-content-between"><small>Ingresos:</small><span class="fw-bold text-success">$<span id="caja-col">0</span></span></div></div>
+                        <div class="table-container p-3 mb-3 border-start border-danger border-4"><h6 class="fw-bold">🇨🇱 CHILE</h6><div class="d-flex justify-content-between"><small>Ingresos:</small><span class="fw-bold text-success">$<span id="caja-chi">0</span></span></div></div>
+                        <div class="table-container p-3 border-start border-primary border-4"><h6 class="fw-bold">🇪🇸 ESPAÑA</h6><div class="d-flex justify-content-between"><small>Ingresos:</small><span class="fw-bold text-success">€<span id="caja-esp">0</span></span></div></div>
+                        <button class="btn btn-neon w-100 mt-2" onclick="exportarCSV()"><i class="bi bi-download"></i> EXPORTAR CSV</button>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="table-container">
+                            <h5 class="fw-bold mb-4" style="color: var(--verde-matrix);"><i class="bi bi-broadcast"></i> TRANSMISIONES DE VENTAS GLOBALES</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle text-center">
+                                    <thead class="table-dark">
+                                    <tr><th>ID</th><th>NODO (PAÍS)</th><th>ORIGEN</th><th>PAGO</th><th>ESTADO</th><th class="text-end">TOTAL</th><th>ACCIONES</th></tr>
+                                    </thead>
+                                    <tbody id="tabla-ventas"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-produccion">
+                <div class="table-container mb-4" style="border-color: var(--naranja-alerta);">
+                    <h5 class="fw-bold" style="color: var(--naranja-alerta); font-family: 'Orbitron', sans-serif;">⚙️ FABRICACIÓN DE LOTES (NEVERA)</h5>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-6">
+                            <label class="form-label-neon" style="color: var(--naranja-alerta);">SELECCIONA PRODUCTO Y NODO</label>
+                            <select id="prod-producto" class="form-select"></select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon" style="color: var(--naranja-alerta);">CANTIDAD</label>
+                            <input type="number" id="prod-cantidad" class="form-control" placeholder="Ej: 10">
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn w-100 py-2 fw-bold" style="background: var(--naranja-alerta); color: black;" onclick="registrarProduccion()"><i class="bi bi-hammer"></i> FABRICAR Y DESCONTAR INSUMOS</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="table table-hover text-center align-middle">
+                        <thead class="table-dark"><tr><th class="text-start">PRODUCTO FÍSICO</th><th>SUCURSAL</th><th>STOCK LISTO PARA VENTA</th></tr></thead>
+                        <tbody id="tabla-produccion"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-inventario">
+                <div class="table-container mb-4">
+                    <h5 style="color: var(--verde-matrix);">INGRESAR MATERIA PRIMA (POR SUCURSAL)</h5>
+                    <input type="hidden" id="ins-id">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label-neon">Nombre Insumo/Pulpa</label>
+                            <input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Zanahoria">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon">Unidad</label>
+                            <select id="ins-unidad" class="form-select"><option value="gr">Gramos</option><option value="und">Unidades</option><option value="ml">Mililitros</option></select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon">Stock Físico</label>
+                            <input type="number" id="ins-stock" class="form-control" placeholder="Ej: 1000">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label-neon" style="color: var(--neon-amarillo);">🌍 SUCURSAL</label>
+                            <select id="ins-sucursal" class="form-select border-warning text-warning" style="background: black;">
+                                <option value="Colombia">🇨🇴 Colombia</option>
+                                <option value="Chile">🇨🇱 Chile</option>
+                                <option value="España">🇪🇸 España</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-neon w-100 py-2" onclick="guardarInsumo()"><i class="bi bi-save"></i> GUARDAR</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table class="table table-hover text-center align-middle">
+                        <thead class="table-dark"><tr><th class="text-start">INSUMO</th><th>SUCURSAL</th><th>STOCK FÍSICO</th><th>ACCIÓN</th></tr></thead>
+                        <tbody id="tabla-insumos"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-recetas">
+                <div class="table-container mb-4">
+                    <h5 style="color: var(--verde-matrix);">VINCULAR INGREDIENTE A FÓRMULA</h5>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label-neon">PRODUCTO (Verifica el País)</label>
+                            <select id="rec-producto" class="form-select" onchange="cargarTablaReceta()"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label-neon">INGREDIENTE A DESCONTAR</label>
+                            <select id="rec-insumo" class="form-select"></select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon">GASTO</label>
+                            <input type="number" id="rec-cantidad" class="form-control" placeholder="Ej: 50">
+                        </div>
+                        <div class="col-md-1">
+                            <button class="btn btn-neon w-100" onclick="guardarReceta()"><i class="bi bi-link"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <h5 style="color: var(--verde-matrix);">FÓRMULA ACTUAL</h5>
+                    <table class="table table-hover text-center align-middle">
+                        <thead class="table-dark"><tr><th>INGREDIENTE</th><th>CANTIDAD QUE DESCUENTA</th><th>ACCIÓN</th></tr></thead>
+                        <tbody id="tabla-vista-formula"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-precios">
+                <div class="table-container mb-4">
+                    <h5 style="color: var(--neon-amarillo); font-family: 'Orbitron';"><i class="bi bi-plus-circle-dotted"></i> CREAR PRODUCTO PARA UNA SUCURSAL</h5>
+                    <div class="row g-3 align-items-end mb-3">
+                        <div class="col-md-4"><label class="form-label-neon">Nombre</label><input type="text" id="nuevo-nombre" class="form-control" placeholder="Ej: Super Detox"></div>
+                        <div class="col-md-3"><label class="form-label-neon">Categoría</label><select id="nuevo-categoria" class="form-select"><option value="500 mls">Vaso 500 mls</option><option value="Packs">Pack Pulpa</option></select></div>
+                        <div class="col-md-5"><label class="form-label-neon">URL Foto</label><input type="text" id="nuevo-imagen" class="form-control" placeholder="https://..."></div>
+                    </div>
+                    <textarea id="nuevo-descripcion" class="form-control mb-3" placeholder="Descripción de beneficios..." rows="2"></textarea>
+
+                    <div class="row g-3 align-items-end p-3 rounded" style="background: rgba(255,230,0,0.05); border: 1px solid rgba(255,230,0,0.3);">
+                        <div class="col-md-4">
+                            <label class="form-label-neon" style="color: var(--neon-amarillo);">🌍 ASIGNAR A SUCURSAL:</label>
+                            <select id="nuevo-sucursal" class="form-select border-warning text-warning" style="background: black;">
+                                <option value="Colombia">🇨🇴 Colombia</option>
+                                <option value="Chile">🇨🇱 Chile</option>
+                                <option value="España">🇪🇸 España</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label-neon" style="color: var(--neon-amarillo);">💰 PRECIO EN MONEDA LOCAL:</label>
+                            <input type="number" id="nuevo-precio" class="form-control border-warning text-warning" style="background: black;" placeholder="Precio (COP/CLP/EUR)">
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn w-100 py-2" style="background: var(--neon-amarillo); font-family: 'Orbitron'; font-weight: bold; color: black;" onclick="crearProductoCatalogo()">
+                                <i class="bi bi-cloud-arrow-up"></i> REGISTRAR AL MENÚ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle text-center">
+                            <thead class="table-dark">
+                            <tr><th>FOTO</th><th class="text-start">BATIDO / PACK</th><th>SUCURSAL</th><th>PRECIO LOCAL</th><th>GUARDAR</th><th>EDITAR INFO</th></tr>
+                            </thead>
+                            <tbody id="tabla-catalogo"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-stats">
+                <div class="row g-4">
+                    <div class="col-md-6"><div class="table-container text-center"><h5 class="mb-4 text-success font-monospace">TOP VENTAS GLOBALES</h5><canvas id="chartProductos" style="max-height: 300px;"></canvas></div></div>
+                    <div class="col-md-6"><div class="table-container text-center"><h5 class="mb-4 text-warning font-monospace">INGRESOS POR PAÍS</h5><canvas id="chartPaises" style="max-height: 300px;"></canvas></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalQR" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content text-center" style="background: rgba(5,22,14,0.98); border: 2px solid var(--neon-amarillo); border-radius: 20px;">
+            <div class="modal-header border-0 pb-0 justify-content-center">
+                <h5 class="modal-title" style="color: var(--neon-amarillo); font-family: 'Orbitron', sans-serif;">MOSTRAR QR AL CLIENTE</h5>
+            </div>
+            <div class="modal-body">
+                <div style="background: white; padding: 15px; border-radius: 15px; display: inline-block;">
+                    <img id="img-codigo-qr" src="" alt="Código QR" style="width: 200px; height: 200px;">
+                </div>
+                <p class="mt-3 mb-0" style="color: var(--verde-matrix); font-weight: bold;">MONTO: <span id="monto-qr"></span></p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">CERRAR</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalEditarProducto" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="background: rgba(5,22,14,0.98); border: 1px solid var(--verde-matrix); border-radius: 20px; color: white;">
+            <div class="modal-header border-0"><h5 class="modal-title" style="color: var(--verde-matrix); font-family: 'Orbitron';">✏️ MODIFICAR TEXTOS</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-id">
+                <div class="row g-3 mb-3"><div class="col-md-6"><label class="form-label-neon">Nombre</label><input type="text" id="edit-nombre" class="form-control"></div><div class="col-md-6"><label class="form-label-neon">Categoría</label><select id="edit-categoria" class="form-select"><option value="500 mls">Vaso 500 mls</option><option value="Packs">Pack</option></select></div></div>
+                <div class="mb-3"><label class="form-label-neon">URL Imagen</label><input type="text" id="edit-imagen" class="form-control"></div>
+                <div class="mb-3"><label class="form-label-neon">Descripción Completa</label><textarea id="edit-descripcion" class="form-control" rows="8"></textarea></div>
+            </div>
+            <div class="modal-footer border-0"><button class="btn btn-neon px-4 w-100" onclick="guardarEdicionInfo()">[ GUARDAR CAMBIOS ]</button></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    let rolUsuario = null;
+    let ventasEnMemoria = [], catalogoAdmin = [], insMem = [];
+    let chart1 = null, chart2 = null;
+
+    // --- SEGURIDAD ---
+    function validarAcceso() {
+        const pin = document.getElementById('input-pin').value;
+        if(pin === '7777') {
+            rolUsuario = 'SUPREMO';
+            document.getElementById('label-rol').innerText = "";
+            document.getElementById('login-screen').style.display='none';
+            document.getElementById('app-dashboard').style.display='block';
+            cargarVentas();
+        } else { alert("ACCESO DENEGADO. PIN INCORRECTO."); }
+    }
+
+    // --- 1. VENTAS ---
+    async function cargarVentas() {
+        const res = await fetch('/api/ventas'); const data = await res.json();
+        ventasEnMemoria = data;
+        const tb = document.getElementById('tabla-ventas'); tb.innerHTML='';
+        let cCol=0, cChi=0, cEsp=0;
+
+        ventasEnMemoria.sort((a,b)=>b.id-a.id).forEach(v => {
+            const est = v.estado || 'Pagado';
+            const pais = v.pais || 'Desconocido';
+            const origen = v.origen || 'POS';
+            const medio = v.medioPago || 'Efectivo';
+            const simbolo = pais.includes('España') ? '€' : '$';
+
+            if(est === 'Pagado') {
+                if(pais.includes('Colombia')) cCol += v.total;
+                else if(pais.includes('Chile')) cChi += v.total;
+                else if(pais.includes('España')) cEsp += v.total;
+            }
+
+            const btnOK = est === 'Pendiente' ? `<button class="btn btn-sm btn-neon py-0 px-2 me-1" onclick="confirmarPago(${v.id})" title="Confirmar Pago y Entregar">✔ CONFIRMAR</button>` : '';
+            const btnQR = est === 'Pendiente' ? `<button class="btn btn-sm btn-neon-amarillo py-0 px-2 me-1" onclick="mostrarQR(${v.id}, '${simbolo}', ${v.total})" title="Ver código QR">📱 QR</button>` : '';
+
+            tb.innerHTML += `<tr class="${est==='Pendiente'?'opacity-75':''}">
+                <td class="text-muted fw-bold">#${v.id}</td>
+                <td><span class="badge-sucursal">${pais.toUpperCase()}</span></td>
+                <td><span class="badge-origen">${origen}</span></td>
+                <td><span class="badge-pago">${medio}</span></td>
+                <td><span class="${est==='Pagado'?'estado-pagado':'estado-pendiente'}">${est}</span></td>
+                <td class="text-end fw-bold" style="color:var(--verde-matrix)">${simbolo}${v.total.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2})}</td>
+                <td class="text-center">${btnOK} ${btnQR} <button class="btn btn-sm btn-neon-azul py-0 px-2" onclick="imprimirTicket(${v.id})">🖨️</button></td>
+            </tr>`;
+        });
+        document.getElementById('caja-col').innerText=cCol.toLocaleString('es-ES'); document.getElementById('caja-chi').innerText=cChi.toLocaleString('es-ES'); document.getElementById('caja-esp').innerText=cEsp.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2});
+    }
+
+    function mostrarQR(idVenta, simbolo, total) {
+        const link = `https://pagos.gomezsystems.com/checkout?venta=${idVenta}&monto=${total}`;
+        document.getElementById('img-codigo-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(link)}`;
+        document.getElementById('monto-qr').innerText = `${simbolo}${total.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2})}`;
+        new bootstrap.Modal(document.getElementById('modalQR')).show();
+    }
+
+    function confirmarPago(id) {
+        if(confirm("¿Recibiste la transferencia? Se descontará el inventario en el país de origen de la venta.")) {
+            fetch(`/api/ventas/${id}/pagar`,{method:'PUT'}).then(()=> { cargarVentas(); cargarProduccion(); });
+        }
+    }
+
+    function imprimirTicket(id) {
+        const v = ventasEnMemoria.find(x => x.id === id); if(!v) return;
+        let pds = ''; let lista = {}; v.productos.forEach(p => lista[p.nombre] = (lista[p.nombre]||0)+1);
+        for(let n in lista) pds += `<tr><td style="text-align:left;">${lista[n]}x</td><td style="text-align:left;">${n}</td></tr>`;
+        document.getElementById('zona-impresion').innerHTML = `<div style="text-align:center; font-family: monospace;"><h2>🌿 RAÍCES</h2><p>TICKET #${v.id}</p><p>Sede: ${v.pais}</p><hr><table style="width:100%; font-size:12px;">${pds}</table><hr><h4>TOTAL: ${v.total.toLocaleString()}</h4></div>`;
+        window.print();
+    }
+
+    // --- 2. PRODUCCIÓN ---
+    async function cargarProduccion() {
+        const res = await fetch('/api/productos'); const data = await res.json();
+        document.getElementById('prod-producto').innerHTML = data.sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).map(p=>`<option value="${p.id}">${p.nombre} (${p.sucursal})</option>`).join('');
+        const tb = document.getElementById('tabla-produccion'); tb.innerHTML='';
+        data.forEach(p => {
+            const stockActual = p.stock || 0;
+            tb.innerHTML += `<tr><td class="text-start fw-bold">${p.nombre}</td><td><span class="badge-sucursal">${p.sucursal}</span></td><td class="fs-5 fw-bold ${stockActual > 0 ? "text-success" : "text-danger"}">${stockActual} Unds</td></tr>`;
+        });
+    }
+
+    async function registrarProduccion() {
+        const idProd = document.getElementById('prod-producto').value; const cant = document.getElementById('prod-cantidad').value;
+        if(!cant || cant <= 0) return;
+        if(confirm(`¿Producir ${cant} unidades? Se descontará materia prima en la sucursal asignada.`)) {
+            await fetch('/api/produccion/fabricar', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({idProducto: idProd, cantidad: cant}) });
+            document.getElementById('prod-cantidad').value = ''; cargarProduccion(); cargarInsumos();
+        }
+    }
+
+    // --- 3. BODEGA INSUMOS (¡AHORA CON SELECTOR DE SUCURSAL!) ---
+    function cargarInsumos() {
+        fetch('/api/insumos/todos').then(res=>res.json()).then(data => {
+            insMem = data;
+            document.getElementById('tabla-insumos').innerHTML = data.sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).map(i => `<tr><td class="text-start fw-bold">${i.nombre}</td><td><span class="badge-sucursal">${i.sucursal || 'Desconocida'}</span></td><td class="fw-bold" style="color: var(--neon-amarillo);">${i.unidadActual} ${i.medida}</td><td><button class="btn btn-sm btn-neon p-1" onclick="editarInsumo(${i.idInsumo})">✏️</button></td></tr>`).join('');
+        });
+    }
+
+    function guardarInsumo() {
+        const d = {
+            idInsumo: document.getElementById('ins-id').value || null,
+            nombre: document.getElementById('ins-nombre').value,
+            medida: document.getElementById('ins-unidad').value,
+            unidadActual: parseFloat(document.getElementById('ins-stock').value),
+            sucursal: document.getElementById('ins-sucursal').value // EL CAMPO MÁGICO
+        };
+        fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(()=>{
+            document.getElementById('ins-nombre').value='';
+            document.getElementById('ins-stock').value='';
+            document.getElementById('ins-id').value='';
+            cargarInsumos();
+        });
+    }
+
+    function editarInsumo(id) {
+        const i = insMem.find(x=>x.idInsumo===id);
+        document.getElementById('ins-id').value=i.idInsumo;
+        document.getElementById('ins-nombre').value=i.nombre;
+        document.getElementById('ins-unidad').value=i.medida;
+        document.getElementById('ins-stock').value=i.unidadActual;
+        if(i.sucursal) document.getElementById('ins-sucursal').value = i.sucursal;
+    }
+
+    // --- 4. FÓRMULAS ---
+    async function prepararRecetas() {
+        const [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]);
+        document.getElementById('rec-producto').innerHTML = '<option value="">Seleccione Batido...</option>' + (await rP.json()).sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).map(p=>`<option value="${p.id}">${p.nombre} (${p.sucursal})</option>`).join('');
+        document.getElementById('rec-insumo').innerHTML = (await rI.json()).sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).map(i=>`<option value="${i.nombre}">${i.nombre} (${i.sucursal})</option>`).join('');
+        cargarTablaReceta();
+    }
+    async function guardarReceta() { const idProd = document.getElementById('rec-producto').value; const nomInsumo = document.getElementById('rec-insumo').value; const cant = document.getElementById('rec-cantidad').value; await fetch(`/api/insumos/${idProd}/vincular-ingrediente`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ ingrediente: nomInsumo, gasto: cant }) }); document.getElementById('rec-cantidad').value=''; cargarTablaReceta(); }
+    async function cargarTablaReceta() { const idProd = document.getElementById('rec-producto').value; const tbody = document.getElementById('tabla-vista-formula'); if(!idProd) { tbody.innerHTML = ''; return; } const res = await fetch(`/api/insumos/${idProd}/receta`); const texto = await res.text(); tbody.innerHTML = ''; texto.split('\n').forEach(linea => { if(!linea.trim()) return; const [nom, cant] = linea.split(':'); tbody.innerHTML += `<tr><td class="fw-bold">${nom.toUpperCase()}</td><td style="color: var(--verde-matrix);">${cant || 1}</td><td><button class="btn btn-sm btn-neon-rojo py-0 px-2" onclick="borrarDeFormula(${idProd}, '${nom.trim()}')"><i class="bi bi-trash"></i></button></td></tr>`; }); }
+    async function borrarDeFormula(idProd, nombreIngr) { await fetch(`/api/insumos/${idProd}/desvincular/${nombreIngr}`, { method: 'DELETE' }); cargarTablaReceta(); }
+
+    // --- 5. CATÁLOGO MULTI-NODO ---
+    async function cargarCatalogo() {
+        const res = await fetch('/api/productos');
+        catalogoAdmin = await res.json();
+        const tb = document.getElementById('tabla-catalogo'); tb.innerHTML='';
+
+        catalogoAdmin.sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).forEach(p => {
+            const imgHtml = p.imagen ? `<img src="${p.imagen}" class="img-preview">` : `<i class="bi bi-image text-muted fs-3"></i>`;
+            const simbolo = p.sucursal === 'España' ? '€' : '$';
+
+            tb.innerHTML += `
+                <tr>
+                    <td>${imgHtml}</td>
+                    <td class="text-start fw-bold">${p.nombre}</td>
+                    <td><span class="badge-sucursal">${p.sucursal}</span></td>
+                    <td>
+                        <div class="input-group input-group-sm" style="width: 120px; margin: auto;">
+                            <span class="input-group-text bg-dark text-white border-secondary">${simbolo}</span>
+                            <input type="number" id="precio-${p.id}" class="form-control text-center" value="${p.precio || 0}" step="0.1">
+                        </div>
+                    </td>
+                    <td><button class="btn btn-sm btn-neon py-1 px-3" onclick="guardarPrecioUnico(${p.id})"><i class="bi bi-save"></i></button></td>
+                    <td><button class="btn btn-sm btn-neon-azul py-1 px-2" onclick="abrirModalEdicion(${p.id})"><i class="bi bi-pencil-square"></i> TEXTOS</button></td>
+                </tr>`;
+        });
+    }
+
+    async function guardarPrecioUnico(id) {
+        const p = catalogoAdmin.find(x => x.id === id);
+        p.precio = parseFloat(document.getElementById(`precio-${id}`).value) || 0;
+        await fetch('/api/productos', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(p) });
+        alert(`✅ Precio de ${p.nombre} en ${p.sucursal} actualizado a ${p.precio}`);
+    }
+
+    async function crearProductoCatalogo() {
+        const p = {
+            nombre: document.getElementById('nuevo-nombre').value,
+            categoria: document.getElementById('nuevo-categoria').value,
+            imagen: document.getElementById('nuevo-imagen').value,
+            descripcion: document.getElementById('nuevo-descripcion').value,
+            sucursal: document.getElementById('nuevo-sucursal').value,
+            precio: parseFloat(document.getElementById('nuevo-precio').value) || 0,
+            stock: 0
+        };
+        await fetch('/api/productos', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(p) });
+        document.getElementById('nuevo-nombre').value = '';
+        document.getElementById('nuevo-precio').value = '';
+        cargarCatalogo();
+    }
+
+    function abrirModalEdicion(id) {
+        const p = catalogoAdmin.find(x=>x.id===id);
+        document.getElementById('edit-id').value=p.id;
+        document.getElementById('edit-nombre').value=p.nombre;
+        document.getElementById('edit-categoria').value=p.categoria;
+        document.getElementById('edit-imagen').value=p.imagen || '';
+        document.getElementById('edit-descripcion').value=p.descripcion || '';
+        new bootstrap.Modal(document.getElementById('modalEditarProducto')).show();
+    }
+
+    async function guardarEdicionInfo() {
+        const id = parseInt(document.getElementById('edit-id').value);
+        const p = catalogoAdmin.find(x=>x.id===id);
+        p.nombre = document.getElementById('edit-nombre').value;
+        p.categoria = document.getElementById('edit-categoria').value;
+        p.imagen = document.getElementById('edit-imagen').value;
+        p.descripcion = document.getElementById('edit-descripcion').value;
+        await fetch('/api/productos', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(p) });
+        location.reload();
+    }
+
+    // --- 6. STATS GLOBALES ---
+    function generarReportes() {
+        const stats = {}; const statsPais = { 'Colombia': 0, 'Chile': 0, 'España': 0 };
+        ventasEnMemoria.forEach(v => {
+            v.productos.forEach(p => stats[p.nombre] = (stats[p.nombre]||0)+1);
+            if (v.pais.includes('Colombia')) statsPais['Colombia'] += v.total;
+            else if (v.pais.includes('Chile')) statsPais['Chile'] += v.total;
+            else if (v.pais.includes('España')) statsPais['España'] += v.total;
+        });
+        if(chart1) chart1.destroy(); if(chart2) chart2.destroy();
+        chart1 = new Chart(document.getElementById('chartProductos'), { type: 'bar', data: { labels: Object.keys(stats), datasets: [{ label: 'Ventas (Unds)', data: Object.values(stats), backgroundColor: '#00ff88' }] }, options:{responsive:true, maintainAspectRatio:false} });
+        chart2 = new Chart(document.getElementById('chartPaises'), { type: 'doughnut', data: { labels: Object.keys(statsPais), datasets: [{ data: Object.values(statsPais), backgroundColor: ['#f1c40f', '#e74c3c', '#3498db'] }] }, options:{responsive:true, maintainAspectRatio:false} });
+    }
+
+    function exportarCSV() {
+        let csv = "ID;Fecha;Sucursal;Origen;MedioPago;Estado;Total\n";
+        ventasEnMemoria.forEach(v => csv += `${v.id};${new Date(v.fecha).toLocaleString()};${v.pais};${v.origen||'POS'};${v.medioPago||'Efectivo'};${v.estado};${v.total}\n`);
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.setAttribute("download", "VentasGlobales_GomezSystems.csv"); link.click();
+    }
+</script>
+</body>
+</html>
