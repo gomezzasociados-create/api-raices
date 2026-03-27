@@ -215,12 +215,12 @@
 
                 <div style="margin: 20px 0; padding: 20px; border: 2px dashed #4CAF50; border-radius: 10px; background: rgba(0,255,136,0.05);">
                     <h3 style="color: #4CAF50; font-family: 'Orbitron';">📤 Carga Masiva de Productos (CSV)</h3>
-                    <p style="color: white;">Sube tus archivos (PULPAS.csv o BATIDOS VASO.csv). El sistema importará las imágenes y descripciones automáticamente.</p>
+                    <p style="color: white;">Sube tus archivos (PULPAS.csv o BATIDOS VASO.csv). El sistema importará las imágenes y descripciones automáticamente a la sucursal seleccionada.</p>
 
                     <div style="margin-bottom: 15px;">
                         <label class="form-label-neon"><strong>1. ¿Para qué sucursal es este archivo?</strong></label><br>
                         <select id="sucursalCsv" class="form-select" style="max-width: 300px; margin-top: 5px;">
-                            <option value="Colombia">🇨🇴 Matriz Colombia</option>
+                            <option value="Colombia">🇨🇴 Colombia</option>
                             <option value="Chile">🇨🇱 Chile</option>
                             <option value="España">🇪🇸 España</option>
                         </select>
@@ -354,7 +354,7 @@
             if(data.includes("¡Éxito!")) {
                 mensaje.innerText = "✅ " + data;
                 mensaje.style.color = "var(--verde-matrix)";
-                setTimeout(() => location.reload(), 2000);
+                setTimeout(() => cargarCatalogo(), 2000); // Recarga la tabla en vez de toda la página
             } else {
                 mensaje.innerText = "❌ " + data;
                 mensaje.style.color = "red";

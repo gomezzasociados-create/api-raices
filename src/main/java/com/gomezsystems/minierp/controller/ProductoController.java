@@ -22,71 +22,109 @@ public class ProductoController {
     @Autowired
     private ProductoRepository productoRepository;
 
-    // 1. OBTENER TODOS (Para el Admin Supremo que ve todo el imperio)
     @GetMapping
     public List<Producto> listarTodos() {
         return productoRepository.findAll();
     }
 
-    // 2. NUEVO FILTRO INTELIGENTE: Obtener solo los de una sucursal (Para el POS)
     @GetMapping("/sucursal/{nombreSucursal}")
     public List<Producto> listarPorSucursal(@PathVariable String nombreSucursal) {
         return productoRepository.findBySucursal(nombreSucursal);
     }
 
-    // 3. CREAR O ACTUALIZAR PRODUCTO (Ahora guardará la etiqueta de la sucursal)
     @PostMapping
     public Producto guardar(@RequestBody Producto producto) {
         return productoRepository.save(producto);
     }
 
-    // 4. ELIMINAR PRODUCTO
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
         productoRepository.deleteById(id);
     }
 
-    // 5. NUEVO: CARGA MASIVA DESDE CSV (Gomez Systems Import Tool)
+    // 5. CARGA MASIVA CON JAVA PURO (Cero dependencias externas)
     @PostMapping("/cargar-csv")
-    public ResponseEntity<String> cargarDesdeCSV(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> cargarDesdeCSV(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("sucursal") String sucursal) {
+
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("El archivo está vacío");
         }
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
-            String linea;
-            boolean esPrimeraLinea = true;
+
             List<Producto> nuevosProductos = new ArrayList<>();
+            String linea;
+            boolean primeraLinea = true;
+            String separador = ","; // Por defecto usa coma, pero detectará punto y coma si es de Excel
+
+            int idxProducto = -1, idxImagen = -1, idxDesc = -1, idxCat = -1, idxPrecio = -1;
 
             while ((linea = br.readLine()) != null) {
-                // Saltamos la primera línea si son los títulos de las columnas
-                if (esPrimeraLinea) {
-                    esPrimeraLinea = false;
+                // Ignorar líneas vacías
+                if (linea.trim().isEmpty()) continue;
+
+                if (primeraLinea) {
+                    // Detectar si el CSV usa punto y coma
+                    if (linea.contains(";")) {
+                        separador = ";";
+                    }
+
+                    // Leer los títulos de las columnas
+                    String[] cabeceras = linea.split(separador);
+                    for (int i = 0; i < cabeceras.length; i++) {
+                        String cabecera = cabeceras[i].trim().toUpperCase().replace("\"", "");
+                        if (cabecera.equals("PRODUCTO")) idxProducto = i;
+                        else if (cabecera.equals("IMAGEN")) idxImagen = i;
+                        else if (cabecera.equals("DESCRIPCION")) idxDesc = i;
+                        else if (cabecera.equals("CATEGORIA")) idxCat = i;
+                        else if (cabecera.equals("PRECIO")) idxPrecio = i;
+                    }
+                    primeraLinea = false;
                     continue;
                 }
 
-                // Separamos por comas (o punto y coma, dependiendo de tu Excel)
-                // Si tu Excel guarda con punto y coma, cambia "," por ";"
-                String[] datos = linea.split(",");
+                // Expresión regular para separar columnas ignorando las que están dentro de comillas
+                String[] valores = linea.split(separador + "(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 
-                // Verificamos que la línea tenga al menos 4 columnas básicas para no dar error
-                if (datos.length >= 4) {
+                try {
                     Producto p = new Producto();
-                    p.setNombre(datos[0].trim());       // Columna A: Nombre
-                    p.setCategoria(datos[1].trim());    // Columna B: Categoría (o "pack")
-                    p.setPrecio(Double.parseDouble(datos[2].trim())); // Columna C: Precio
-                    p.setSucursal(datos[3].trim());     // Columna D: Sucursal (COL, CHI, ESP)
 
-                    // Si tienes más campos (como stock o descripción), puedes agregarlos aquí:
-                    // p.setStock(Integer.parseInt(datos[4].trim()));
-                    // p.setImagen(datos[5].trim());
+                    if (idxProducto != -1 && valores.length > idxProducto)
+                        p.setNombre(valores[idxProducto].trim().replace("\"", ""));
 
-                    nuevosProductos.add(p);
+                    if (idxImagen != -1 && valores.length > idxImagen)
+                        p.setImagen(valores[idxImagen].trim().replace("\"", ""));
+
+                    if (idxDesc != -1 && valores.length > idxDesc)
+                        p.setDescripcion(valores[idxDesc].trim().replace("\"", ""));
+
+                    if (idxCat != -1 && valores.length > idxCat)
+                        p.setCategoria(valores[idxCat].trim().replace("\"", ""));
+
+                    if (idxPrecio != -1 && valores.length > idxPrecio) {
+                        String precioTexto = valores[idxPrecio].replaceAll("[^0-9.]", "");
+                        if (!precioTexto.isEmpty()) {
+                            p.setPrecio(Double.parseDouble(precioTexto));
+                        }
+                    }
+
+                    p.setSucursal(sucursal);
+                    p.setStock(0); // Valor inicial por defecto
+
+                    // Solo guardamos si realmente tiene un nombre
+                    if (p.getNombre() != null && !p.getNombre().isEmpty()) {
+                        nuevosProductos.add(p);
+                    }
+                } catch (Exception e) {
+                    // Si una fila tiene error, la saltamos y continuamos con la siguiente
+                    continue;
                 }
             }
 
             productoRepository.saveAll(nuevosProductos);
-            return ResponseEntity.ok("¡Éxito! " + nuevosProductos.size() + " productos cargados a la base de datos.");
+            return ResponseEntity.ok("¡Éxito! " + nuevosProductos.size() + " productos cargados a la sucursal " + sucursal);
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al procesar el CSV: " + e.getMessage());
