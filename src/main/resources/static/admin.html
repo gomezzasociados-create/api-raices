@@ -212,8 +212,30 @@
             </div>
 
             <div class="tab-pane fade" id="tab-precios">
-                <div class="table-container mb-4">
-                    <h5 style="color: var(--neon-amarillo); font-family: 'Orbitron';"><i class="bi bi-plus-circle-dotted"></i> CREAR PRODUCTO PARA UNA SUCURSAL</h5>
+
+                <div style="margin: 20px 0; padding: 20px; border: 2px dashed #4CAF50; border-radius: 10px; background: rgba(0,255,136,0.05);">
+                    <h3 style="color: #4CAF50; font-family: 'Orbitron';">📤 Carga Masiva de Productos (CSV)</h3>
+                    <p style="color: white;">Sube tus archivos (PULPAS.csv o BATIDOS VASO.csv). El sistema importará las imágenes y descripciones automáticamente.</p>
+
+                    <div style="margin-bottom: 15px;">
+                        <label class="form-label-neon"><strong>1. ¿Para qué sucursal es este archivo?</strong></label><br>
+                        <select id="sucursalCsv" class="form-select" style="max-width: 300px; margin-top: 5px;">
+                            <option value="Colombia">🇨🇴 Matriz Colombia</option>
+                            <option value="Chile">🇨🇱 Chile</option>
+                            <option value="España">🇪🇸 España</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <label class="form-label-neon"><strong>2. Selecciona el archivo (.csv)</strong></label><br>
+                        <input type="file" id="archivoCsv" accept=".csv" class="form-control" style="max-width: 300px; margin-top: 5px;" />
+                    </div>
+
+                    <button onclick="subirCSV()" style="background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">🚀 Subir a la Nube</button>
+                    <p id="mensajeCsv" style="margin-top: 15px; font-weight: bold;"></p>
+                </div>
+                <div class="table-container mb-4 mt-4">
+                    <h5 style="color: var(--neon-amarillo); font-family: 'Orbitron';"><i class="bi bi-plus-circle-dotted"></i> CREAR PRODUCTO MANUAL PARA UNA SUCURSAL</h5>
                     <div class="row g-3 align-items-end mb-3">
                         <div class="col-md-4"><label class="form-label-neon">Nombre</label><input type="text" id="nuevo-nombre" class="form-control" placeholder="Ej: Super Detox"></div>
                         <div class="col-md-3"><label class="form-label-neon">Categoría</label><select id="nuevo-categoria" class="form-select"><option value="500 mls">Vaso 500 mls</option><option value="Packs">Pack Pulpa</option></select></div>
@@ -304,6 +326,47 @@
     let ventasEnMemoria = [], catalogoAdmin = [], insMem = [];
     let chart1 = null, chart2 = null;
 
+    // --- FUNCION PARA SUBIR EL CSV A LA NUBE ---
+    function subirCSV() {
+        const fileInput = document.getElementById('archivoCsv');
+        const sucursal = document.getElementById('sucursalCsv').value;
+        const mensaje = document.getElementById('mensajeCsv');
+
+        if (fileInput.files.length === 0) {
+            mensaje.innerText = "⚠️ Por favor selecciona un archivo primero.";
+            mensaje.style.color = "var(--naranja-alerta)";
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        formData.append("sucursal", sucursal);
+
+        mensaje.innerText = "⏳ Analizando archivo y subiendo...";
+        mensaje.style.color = "#00d2d3";
+
+        fetch('/api/productos/cargar-csv', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+            if(data.includes("¡Éxito!")) {
+                mensaje.innerText = "✅ " + data;
+                mensaje.style.color = "var(--verde-matrix)";
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                mensaje.innerText = "❌ " + data;
+                mensaje.style.color = "red";
+            }
+        })
+        .catch(error => {
+            mensaje.innerText = "❌ Error de conexión al subir el archivo.";
+            mensaje.style.color = "red";
+            console.error(error);
+        });
+    }
+
     // --- SEGURIDAD ---
     function validarAcceso() {
         const pin = document.getElementById('input-pin').value;
@@ -393,7 +456,7 @@
         }
     }
 
-    // --- 3. BODEGA INSUMOS (¡AHORA CON SELECTOR DE SUCURSAL!) ---
+    // --- 3. BODEGA INSUMOS ---
     function cargarInsumos() {
         fetch('/api/insumos/todos').then(res=>res.json()).then(data => {
             insMem = data;
@@ -407,7 +470,7 @@
             nombre: document.getElementById('ins-nombre').value,
             medida: document.getElementById('ins-unidad').value,
             unidadActual: parseFloat(document.getElementById('ins-stock').value),
-            sucursal: document.getElementById('ins-sucursal').value // EL CAMPO MÁGICO
+            sucursal: document.getElementById('ins-sucursal').value
         };
         fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(()=>{
             document.getElementById('ins-nombre').value='';
