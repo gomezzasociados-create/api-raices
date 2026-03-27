@@ -62,6 +62,8 @@
         @media print { body * { visibility: hidden; } #zona-impresion, #zona-impresion * { visibility: visible; } #zona-impresion { position: absolute; left: 0; top: 0; width: 100%; max-width: 300px; padding: 10px; font-family: 'Courier New', monospace; color: black; background: white; } }
 
         #app-dashboard { display: none; }
+
+        .hint-text { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -72,6 +74,7 @@
         <p class="mb-4" style="color: var(--verde-matrix); letter-spacing: 2px;">GÓMEZ SYSTEMS - MATRIZ</p>
         <input type="password" id="input-pin" class="pin-input" maxlength="4" placeholder="••••" onkeypress="if(event.key === 'Enter') validarAcceso()">
         <button class="btn btn-neon w-100 py-3 rounded-pill fs-5" onclick="validarAcceso()">INICIAR ENLACE SECRETO</button>
+        <p class="hint-text">PIN: Supremo (7777) | COL (1010) | CHI (2020) | ESP (3030)</p>
     </div>
 </div>
 
@@ -80,7 +83,7 @@
 <div id="app-dashboard">
     <div class="navbar-gomez text-center">
         <h1>GÓMEZ SYSTEMS</h1>
-        <p class="mb-0 mt-2 fw-bold" style="color: var(--neon-amarillo);">NÚCLEO ADMINISTRATIVO SUPREMO <span id="label-rol"></span></p>
+        <p class="mb-0 mt-2 fw-bold" style="color: var(--neon-amarillo);">NÚCLEO ADMINISTRATIVO <span id="label-rol"></span></p>
     </div>
 
     <div class="container pb-5">
@@ -97,9 +100,9 @@
             <div class="tab-pane fade show active" id="tab-ventas">
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="table-container p-3 mb-3 border-start border-warning border-4"><h6 class="fw-bold">🇨🇴 COLOMBIA</h6><div class="d-flex justify-content-between"><small>Ingresos:</small><span class="fw-bold text-success">$<span id="caja-col">0</span></span></div></div>
-                        <div class="table-container p-3 mb-3 border-start border-danger border-4"><h6 class="fw-bold">🇨🇱 CHILE</h6><div class="d-flex justify-content-between"><small>Ingresos:</small><span class="fw-bold text-success">$<span id="caja-chi">0</span></span></div></div>
-                        <div class="table-container p-3 border-start border-primary border-4"><h6 class="fw-bold">🇪🇸 ESPAÑA</h6><div class="d-flex justify-content-between"><small>Ingresos:</small><span class="fw-bold text-success">€<span id="caja-esp">0</span></span></div></div>
+                        <div id="caja-col-container" class="table-container p-3 mb-3 border-start border-warning border-4"><h6 class="fw-bold">🇨🇴 COLOMBIA</h6><div class="d-flex justify-content-between"><small>Ingresos:</small><span class="fw-bold text-success">$<span id="caja-col">0</span></span></div></div>
+                        <div id="caja-chi-container" class="table-container p-3 mb-3 border-start border-danger border-4"><h6 class="fw-bold">🇨🇱 CHILE</h6><div class="d-flex justify-content-between"><small>Ingresos:</small><span class="fw-bold text-success">$<span id="caja-chi">0</span></span></div></div>
+                        <div id="caja-esp-container" class="table-container p-3 border-start border-primary border-4"><h6 class="fw-bold">🇪🇸 ESPAÑA</h6><div class="d-flex justify-content-between"><small>Ingresos:</small><span class="fw-bold text-success">€<span id="caja-esp">0</span></span></div></div>
                         <button class="btn btn-neon w-100 mt-2" onclick="exportarCSV()"><i class="bi bi-download"></i> EXPORTAR CSV</button>
                     </div>
                     <div class="col-md-9">
@@ -215,7 +218,7 @@
 
                 <div style="margin: 20px 0; padding: 20px; border: 2px dashed #4CAF50; border-radius: 10px; background: rgba(0,255,136,0.05);">
                     <h3 style="color: #4CAF50; font-family: 'Orbitron';">📤 Carga Masiva de Productos (CSV)</h3>
-                    <p style="color: white;">Sube tus archivos (PULPAS.csv o BATIDOS VASO.csv). El sistema importará las imágenes y descripciones automáticamente a la sucursal seleccionada.</p>
+                    <p style="color: white;">Sube tus archivos (PULPAS.csv o BATIDOS VASO.csv). El sistema importará las imágenes y descripciones automáticamente.</p>
 
                     <div style="margin-bottom: 15px;">
                         <label class="form-label-neon"><strong>1. ¿Para qué sucursal es este archivo?</strong></label><br>
@@ -323,13 +326,58 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     let rolUsuario = null;
+    let sucursalFiltro = 'TODAS'; // Variable global para saber qué país filtrar
     let ventasEnMemoria = [], catalogoAdmin = [], insMem = [];
     let chart1 = null, chart2 = null;
+
+    // --- SEGURIDAD Y ROLES ---
+    function validarAcceso() {
+        const pin = document.getElementById('input-pin').value;
+        if(pin === '7777') {
+            rolUsuario = 'SUPREMO';
+            sucursalFiltro = 'TODAS';
+        } else if(pin === '1010') {
+            rolUsuario = 'ADMIN COLOMBIA';
+            sucursalFiltro = 'Colombia';
+        } else if(pin === '2020') {
+            rolUsuario = 'ADMIN CHILE';
+            sucursalFiltro = 'Chile';
+        } else if(pin === '3030') {
+            rolUsuario = 'ADMIN ESPAÑA';
+            sucursalFiltro = 'España';
+        } else {
+            alert("ACCESO DENEGADO. PIN INCORRECTO.");
+            return;
+        }
+
+        document.getElementById('label-rol').innerText = "- " + rolUsuario;
+        document.getElementById('login-screen').style.display='none';
+        document.getElementById('app-dashboard').style.display='block';
+
+        aplicarRestriccionesDeSucursal();
+        cargarVentas();
+    }
+
+    function aplicarRestriccionesDeSucursal() {
+        if(sucursalFiltro !== 'TODAS') {
+            // Fijar los selectores al país del Admin y deshabilitarlos
+            ['ins-sucursal', 'sucursalCsv', 'nuevo-sucursal'].forEach(id => {
+                let el = document.getElementById(id);
+                if(el) { el.value = sucursalFiltro; el.setAttribute('disabled', 'true'); }
+            });
+
+            // Ocultar las cajas fuertes de otros países
+            if(sucursalFiltro !== 'Colombia') document.getElementById('caja-col-container').style.display = 'none';
+            if(sucursalFiltro !== 'Chile') document.getElementById('caja-chi-container').style.display = 'none';
+            if(sucursalFiltro !== 'España') document.getElementById('caja-esp-container').style.display = 'none';
+        }
+    }
 
     // --- FUNCION PARA SUBIR EL CSV A LA NUBE ---
     function subirCSV() {
         const fileInput = document.getElementById('archivoCsv');
-        const sucursal = document.getElementById('sucursalCsv').value;
+        // Asegurarnos de tomar la sucursal del filtro si no es Supremo
+        const sucursal = sucursalFiltro !== 'TODAS' ? sucursalFiltro : document.getElementById('sucursalCsv').value;
         const mensaje = document.getElementById('mensajeCsv');
 
         if (fileInput.files.length === 0) {
@@ -354,7 +402,7 @@
             if(data.includes("¡Éxito!")) {
                 mensaje.innerText = "✅ " + data;
                 mensaje.style.color = "var(--verde-matrix)";
-                setTimeout(() => cargarCatalogo(), 2000); // Recarga la tabla en vez de toda la página
+                setTimeout(() => cargarCatalogo(), 2000);
             } else {
                 mensaje.innerText = "❌ " + data;
                 mensaje.style.color = "red";
@@ -363,26 +411,20 @@
         .catch(error => {
             mensaje.innerText = "❌ Error de conexión al subir el archivo.";
             mensaje.style.color = "red";
-            console.error(error);
         });
-    }
-
-    // --- SEGURIDAD ---
-    function validarAcceso() {
-        const pin = document.getElementById('input-pin').value;
-        if(pin === '7777') {
-            rolUsuario = 'SUPREMO';
-            document.getElementById('label-rol').innerText = "";
-            document.getElementById('login-screen').style.display='none';
-            document.getElementById('app-dashboard').style.display='block';
-            cargarVentas();
-        } else { alert("ACCESO DENEGADO. PIN INCORRECTO."); }
     }
 
     // --- 1. VENTAS ---
     async function cargarVentas() {
         const res = await fetch('/api/ventas'); const data = await res.json();
-        ventasEnMemoria = data;
+
+        // Filtro por sucursal
+        if(sucursalFiltro !== 'TODAS') {
+            ventasEnMemoria = data.filter(v => v.pais && v.pais.includes(sucursalFiltro));
+        } else {
+            ventasEnMemoria = data;
+        }
+
         const tb = document.getElementById('tabla-ventas'); tb.innerHTML='';
         let cCol=0, cChi=0, cEsp=0;
 
@@ -438,12 +480,16 @@
 
     // --- 2. PRODUCCIÓN ---
     async function cargarProduccion() {
-        const res = await fetch('/api/productos'); const data = await res.json();
-        document.getElementById('prod-producto').innerHTML = data.sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).map(p=>`<option value="${p.id}">${p.nombre} (${p.sucursal})</option>`).join('');
+        const res = await fetch('/api/productos');
+        let data = await res.json();
+
+        if(sucursalFiltro !== 'TODAS') data = data.filter(p => p.sucursal === sucursalFiltro);
+
+        document.getElementById('prod-producto').innerHTML = data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(p=>`<option value="${p.id}">${p.nombre} (${p.sucursal||'N/A'})</option>`).join('');
         const tb = document.getElementById('tabla-produccion'); tb.innerHTML='';
         data.forEach(p => {
             const stockActual = p.stock || 0;
-            tb.innerHTML += `<tr><td class="text-start fw-bold">${p.nombre}</td><td><span class="badge-sucursal">${p.sucursal}</span></td><td class="fs-5 fw-bold ${stockActual > 0 ? "text-success" : "text-danger"}">${stockActual} Unds</td></tr>`;
+            tb.innerHTML += `<tr><td class="text-start fw-bold">${p.nombre}</td><td><span class="badge-sucursal">${p.sucursal||'N/A'}</span></td><td class="fs-5 fw-bold ${stockActual > 0 ? "text-success" : "text-danger"}">${stockActual} Unds</td></tr>`;
         });
     }
 
@@ -459,8 +505,10 @@
     // --- 3. BODEGA INSUMOS ---
     function cargarInsumos() {
         fetch('/api/insumos/todos').then(res=>res.json()).then(data => {
+            if(sucursalFiltro !== 'TODAS') data = data.filter(i => i.sucursal === sucursalFiltro);
             insMem = data;
-            document.getElementById('tabla-insumos').innerHTML = data.sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).map(i => `<tr><td class="text-start fw-bold">${i.nombre}</td><td><span class="badge-sucursal">${i.sucursal || 'Desconocida'}</span></td><td class="fw-bold" style="color: var(--neon-amarillo);">${i.unidadActual} ${i.medida}</td><td><button class="btn btn-sm btn-neon p-1" onclick="editarInsumo(${i.idInsumo})">✏️</button></td></tr>`).join('');
+
+            document.getElementById('tabla-insumos').innerHTML = data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(i => `<tr><td class="text-start fw-bold">${i.nombre}</td><td><span class="badge-sucursal">${i.sucursal || 'Desconocida'}</span></td><td class="fw-bold" style="color: var(--neon-amarillo);">${i.unidadActual} ${i.medida}</td><td><button class="btn btn-sm btn-neon p-1" onclick="editarInsumo(${i.idInsumo})">✏️</button></td></tr>`).join('');
         });
     }
 
@@ -470,7 +518,7 @@
             nombre: document.getElementById('ins-nombre').value,
             medida: document.getElementById('ins-unidad').value,
             unidadActual: parseFloat(document.getElementById('ins-stock').value),
-            sucursal: document.getElementById('ins-sucursal').value
+            sucursal: sucursalFiltro !== 'TODAS' ? sucursalFiltro : document.getElementById('ins-sucursal').value
         };
         fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(()=>{
             document.getElementById('ins-nombre').value='';
@@ -486,14 +534,22 @@
         document.getElementById('ins-nombre').value=i.nombre;
         document.getElementById('ins-unidad').value=i.medida;
         document.getElementById('ins-stock').value=i.unidadActual;
-        if(i.sucursal) document.getElementById('ins-sucursal').value = i.sucursal;
+        if(i.sucursal && sucursalFiltro === 'TODAS') document.getElementById('ins-sucursal').value = i.sucursal;
     }
 
     // --- 4. FÓRMULAS ---
     async function prepararRecetas() {
-        const [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]);
-        document.getElementById('rec-producto').innerHTML = '<option value="">Seleccione Batido...</option>' + (await rP.json()).sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).map(p=>`<option value="${p.id}">${p.nombre} (${p.sucursal})</option>`).join('');
-        document.getElementById('rec-insumo').innerHTML = (await rI.json()).sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).map(i=>`<option value="${i.nombre}">${i.nombre} (${i.sucursal})</option>`).join('');
+        let [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]);
+        let prod = await rP.json();
+        let ins = await rI.json();
+
+        if(sucursalFiltro !== 'TODAS') {
+            prod = prod.filter(p => p.sucursal === sucursalFiltro);
+            ins = ins.filter(i => i.sucursal === sucursalFiltro);
+        }
+
+        document.getElementById('rec-producto').innerHTML = '<option value="">Seleccione Batido...</option>' + prod.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(p=>`<option value="${p.id}">${p.nombre} (${p.sucursal||'N/A'})</option>`).join('');
+        document.getElementById('rec-insumo').innerHTML = ins.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(i=>`<option value="${i.nombre}">${i.nombre} (${i.sucursal||'N/A'})</option>`).join('');
         cargarTablaReceta();
     }
     async function guardarReceta() { const idProd = document.getElementById('rec-producto').value; const nomInsumo = document.getElementById('rec-insumo').value; const cant = document.getElementById('rec-cantidad').value; await fetch(`/api/insumos/${idProd}/vincular-ingrediente`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ ingrediente: nomInsumo, gasto: cant }) }); document.getElementById('rec-cantidad').value=''; cargarTablaReceta(); }
@@ -503,18 +559,27 @@
     // --- 5. CATÁLOGO MULTI-NODO ---
     async function cargarCatalogo() {
         const res = await fetch('/api/productos');
-        catalogoAdmin = await res.json();
+        let data = await res.json();
+
+        if(sucursalFiltro !== 'TODAS') {
+            catalogoAdmin = data.filter(p => p.sucursal === sucursalFiltro);
+        } else {
+            catalogoAdmin = data;
+        }
+
         const tb = document.getElementById('tabla-catalogo'); tb.innerHTML='';
 
-        catalogoAdmin.sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).forEach(p => {
+        // FIX localeCompare
+        catalogoAdmin.sort((a,b) => (a.sucursal || '').localeCompare(b.sucursal || '')).forEach(p => {
             const imgHtml = p.imagen ? `<img src="${p.imagen}" class="img-preview">` : `<i class="bi bi-image text-muted fs-3"></i>`;
-            const simbolo = p.sucursal === 'España' ? '€' : '$';
+            const sucursalTexto = p.sucursal || 'Sin Asignar';
+            const simbolo = sucursalTexto === 'España' ? '€' : '$';
 
             tb.innerHTML += `
                 <tr>
                     <td>${imgHtml}</td>
                     <td class="text-start fw-bold">${p.nombre}</td>
-                    <td><span class="badge-sucursal">${p.sucursal}</span></td>
+                    <td><span class="badge-sucursal">${sucursalTexto}</span></td>
                     <td>
                         <div class="input-group input-group-sm" style="width: 120px; margin: auto;">
                             <span class="input-group-text bg-dark text-white border-secondary">${simbolo}</span>
@@ -531,7 +596,7 @@
         const p = catalogoAdmin.find(x => x.id === id);
         p.precio = parseFloat(document.getElementById(`precio-${id}`).value) || 0;
         await fetch('/api/productos', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(p) });
-        alert(`✅ Precio de ${p.nombre} en ${p.sucursal} actualizado a ${p.precio}`);
+        alert(`✅ Precio de ${p.nombre} en ${p.sucursal||'la sucursal'} actualizado a ${p.precio}`);
     }
 
     async function crearProductoCatalogo() {
@@ -540,7 +605,7 @@
             categoria: document.getElementById('nuevo-categoria').value,
             imagen: document.getElementById('nuevo-imagen').value,
             descripcion: document.getElementById('nuevo-descripcion').value,
-            sucursal: document.getElementById('nuevo-sucursal').value,
+            sucursal: sucursalFiltro !== 'TODAS' ? sucursalFiltro : document.getElementById('nuevo-sucursal').value,
             precio: parseFloat(document.getElementById('nuevo-precio').value) || 0,
             stock: 0
         };
@@ -568,7 +633,11 @@
         p.imagen = document.getElementById('edit-imagen').value;
         p.descripcion = document.getElementById('edit-descripcion').value;
         await fetch('/api/productos', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(p) });
-        location.reload();
+
+        const modalEl = document.getElementById('modalEditarProducto');
+        const modalIns = bootstrap.Modal.getInstance(modalEl);
+        if(modalIns) modalIns.hide();
+        cargarCatalogo();
     }
 
     // --- 6. STATS GLOBALES ---
