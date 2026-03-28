@@ -215,10 +215,9 @@
             </div>
 
             <div class="tab-pane fade" id="tab-precios">
-
                 <div style="margin: 20px 0; padding: 20px; border: 2px dashed #4CAF50; border-radius: 10px; background: rgba(0,255,136,0.05);">
                     <h3 style="color: #4CAF50; font-family: 'Orbitron';">📤 Carga Masiva de Productos (CSV)</h3>
-                    <p style="color: white;">Sube tus archivos (PULPAS.csv o BATIDOS VASO.csv). El sistema importará las imágenes y descripciones automáticamente.</p>
+                    <p style="color: white;">Sube tus archivos (PULPAS.csv o BATIDOS VASO.csv). El sistema importará los datos automáticamente.</p>
 
                     <div style="margin-bottom: 15px;">
                         <label class="form-label-neon"><strong>1. ¿Para qué sucursal es este archivo?</strong></label><br>
@@ -234,11 +233,18 @@
                         <input type="file" id="archivoCsv" accept=".csv" class="form-control" style="max-width: 300px; margin-top: 5px;" />
                     </div>
 
-                    <button onclick="subirCSV()" style="background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">🚀 Subir a la Nube</button>
+                    <div class="d-flex align-items-center mt-3">
+                        <button onclick="subirCSV()" style="background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">🚀 Subir a la Nube</button>
+
+                        <button id="btn-masivo" onclick="borradoMasivo()" style="background: transparent; color: #ff4444; border: 1px solid #ff4444; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-left: 15px;">
+                            <i class="bi bi-trash3-fill"></i> Borrar Todo el Catálogo
+                        </button>
+                    </div>
                     <p id="mensajeCsv" style="margin-top: 15px; font-weight: bold;"></p>
                 </div>
+
                 <div class="table-container mb-4 mt-4">
-                    <h5 style="color: var(--neon-amarillo); font-family: 'Orbitron';"><i class="bi bi-plus-circle-dotted"></i> CREAR PRODUCTO MANUAL PARA UNA SUCURSAL</h5>
+                    <h5 style="color: var(--neon-amarillo); font-family: 'Orbitron';"><i class="bi bi-plus-circle-dotted"></i> CREAR PRODUCTO MANUAL</h5>
                     <div class="row g-3 align-items-end mb-3">
                         <div class="col-md-4"><label class="form-label-neon">Nombre</label><input type="text" id="nuevo-nombre" class="form-control" placeholder="Ej: Super Detox"></div>
                         <div class="col-md-3"><label class="form-label-neon">Categoría</label><select id="nuevo-categoria" class="form-select"><option value="500 mls">Vaso 500 mls</option><option value="Packs">Pack Pulpa</option></select></div>
@@ -256,13 +262,11 @@
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label-neon" style="color: var(--neon-amarillo);">💰 PRECIO EN MONEDA LOCAL:</label>
-                            <input type="number" id="nuevo-precio" class="form-control border-warning text-warning" style="background: black;" placeholder="Precio (COP/CLP/EUR)">
+                            <label class="form-label-neon" style="color: var(--neon-amarillo);">💰 PRECIO LOCAL:</label>
+                            <input type="number" id="nuevo-precio" class="form-control border-warning text-warning" style="background: black;" placeholder="Precio">
                         </div>
                         <div class="col-md-4">
-                            <button class="btn w-100 py-2" style="background: var(--neon-amarillo); font-family: 'Orbitron'; font-weight: bold; color: black;" onclick="crearProductoCatalogo()">
-                                <i class="bi bi-cloud-arrow-up"></i> REGISTRAR AL MENÚ
-                            </button>
+                            <button class="btn w-100 py-2" style="background: var(--neon-amarillo); font-family: 'Orbitron'; font-weight: bold; color: black;" onclick="crearProductoCatalogo()"><i class="bi bi-cloud-arrow-up"></i> REGISTRAR</button>
                         </div>
                     </div>
                 </div>
@@ -271,7 +275,7 @@
                     <div class="table-responsive">
                         <table class="table table-hover align-middle text-center">
                             <thead class="table-dark">
-                            <tr><th>FOTO</th><th class="text-start">BATIDO / PACK</th><th>SUCURSAL</th><th>PRECIO LOCAL</th><th>GUARDAR</th><th>EDITAR INFO</th></tr>
+                            <tr><th>FOTO</th><th class="text-start">BATIDO / PACK</th><th>SUCURSAL</th><th>PRECIO LOCAL</th><th>ACCIONES</th></tr>
                             </thead>
                             <tbody id="tabla-catalogo"></tbody>
                         </table>
@@ -326,13 +330,14 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     let rolUsuario = null;
-    let sucursalFiltro = 'TODAS'; // Variable global para saber qué país filtrar
+    let sucursalFiltro = 'TODAS';
     let ventasEnMemoria = [], catalogoAdmin = [], insMem = [];
     let chart1 = null, chart2 = null;
 
-    // --- SEGURIDAD Y ROLES ---
+    // --- SEGURIDAD Y ROLES A PRUEBA DE BALAS ---
     function validarAcceso() {
-        const pin = document.getElementById('input-pin').value;
+        const pin = document.getElementById('input-pin').value.trim();
+
         if(pin === '7777') {
             rolUsuario = 'SUPREMO';
             sucursalFiltro = 'TODAS';
@@ -360,13 +365,10 @@
 
     function aplicarRestriccionesDeSucursal() {
         if(sucursalFiltro !== 'TODAS') {
-            // Fijar los selectores al país del Admin y deshabilitarlos
             ['ins-sucursal', 'sucursalCsv', 'nuevo-sucursal'].forEach(id => {
                 let el = document.getElementById(id);
                 if(el) { el.value = sucursalFiltro; el.setAttribute('disabled', 'true'); }
             });
-
-            // Ocultar las cajas fuertes de otros países
             if(sucursalFiltro !== 'Colombia') document.getElementById('caja-col-container').style.display = 'none';
             if(sucursalFiltro !== 'Chile') document.getElementById('caja-chi-container').style.display = 'none';
             if(sucursalFiltro !== 'España') document.getElementById('caja-esp-container').style.display = 'none';
@@ -376,7 +378,6 @@
     // --- FUNCION PARA SUBIR EL CSV A LA NUBE ---
     function subirCSV() {
         const fileInput = document.getElementById('archivoCsv');
-        // Asegurarnos de tomar la sucursal del filtro si no es Supremo
         const sucursal = sucursalFiltro !== 'TODAS' ? sucursalFiltro : document.getElementById('sucursalCsv').value;
         const mensaje = document.getElementById('mensajeCsv');
 
@@ -393,10 +394,7 @@
         mensaje.innerText = "⏳ Analizando archivo y subiendo...";
         mensaje.style.color = "#00d2d3";
 
-        fetch('/api/productos/cargar-csv', {
-            method: 'POST',
-            body: formData
-        })
+        fetch('/api/productos/cargar-csv', { method: 'POST', body: formData })
         .then(response => response.text())
         .then(data => {
             if(data.includes("¡Éxito!")) {
@@ -407,54 +405,100 @@
                 mensaje.innerText = "❌ " + data;
                 mensaje.style.color = "red";
             }
-        })
-        .catch(error => {
+        }).catch(error => {
             mensaje.innerText = "❌ Error de conexión al subir el archivo.";
             mensaje.style.color = "red";
         });
     }
 
-    // --- 1. VENTAS ---
-    async function cargarVentas() {
-        const res = await fetch('/api/ventas'); const data = await res.json();
+    // --- LÓGICA DE BORRADO (INDIVIDUAL Y MASIVO) ---
+    async function eliminarProducto(id) {
+        if(confirm("¿Eliminar este producto definitivamente del catálogo?")) {
+            try {
+                const res = await fetch(`/api/productos/${id}`, { method: 'DELETE' });
+                if(res.ok) {
+                    cargarCatalogo(); // Refresca la tabla visualmente
+                } else {
+                    alert("❌ No se puede borrar. Este producto está amarrado a una venta antigua o una fórmula.");
+                }
+            } catch(e) {
+                alert("❌ Error de conexión al intentar borrar.");
+            }
+        }
+    }
 
-        // Filtro por sucursal
-        if(sucursalFiltro !== 'TODAS') {
-            ventasEnMemoria = data.filter(v => v.pais && v.pais.includes(sucursalFiltro));
-        } else {
-            ventasEnMemoria = data;
+    async function borradoMasivo() {
+        if(!confirm("⚠️ ATENCIÓN: ¿Estás seguro de borrar todos los productos mostrados en esta tabla? Los que tengan ventas asociadas se saltarán automáticamente para proteger la contabilidad.")) return;
+
+        const btn = document.getElementById('btn-masivo');
+        const txtOriginal = btn.innerHTML;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> BORRANDO...`;
+        btn.disabled = true;
+
+        let borrados = 0;
+        let fallidos = 0;
+
+        for (const p of catalogoAdmin) {
+            try {
+                const res = await fetch(`/api/productos/${p.id}`, { method: 'DELETE' });
+                if (res.ok) borrados++;
+                else fallidos++;
+            } catch(e) { fallidos++; }
         }
 
-        const tb = document.getElementById('tabla-ventas'); tb.innerHTML='';
-        let cCol=0, cChi=0, cEsp=0;
+        alert(`✅ Proceso finalizado:\n- ${borrados} productos eliminados.\n- ${fallidos} productos conservados (porque tienen ventas o historial).`);
 
-        ventasEnMemoria.sort((a,b)=>b.id-a.id).forEach(v => {
-            const est = v.estado || 'Pagado';
-            const pais = v.pais || 'Desconocido';
-            const origen = v.origen || 'POS';
-            const medio = v.medioPago || 'Efectivo';
-            const simbolo = pais.includes('España') ? '€' : '$';
+        btn.innerHTML = txtOriginal;
+        btn.disabled = false;
+        cargarCatalogo();
+    }
 
-            if(est === 'Pagado') {
-                if(pais.includes('Colombia')) cCol += v.total;
-                else if(pais.includes('Chile')) cChi += v.total;
-                else if(pais.includes('España')) cEsp += v.total;
+    // --- 1. VENTAS ---
+    async function cargarVentas() {
+        try {
+            const res = await fetch('/api/ventas');
+            if(!res.ok) throw new Error("Fallo al conectar con servidor");
+            const data = await res.json();
+
+            if(sucursalFiltro !== 'TODAS') {
+                ventasEnMemoria = data.filter(v => v.pais && v.pais.toLowerCase().includes(sucursalFiltro.toLowerCase()));
+            } else {
+                ventasEnMemoria = data;
             }
 
-            const btnOK = est === 'Pendiente' ? `<button class="btn btn-sm btn-neon py-0 px-2 me-1" onclick="confirmarPago(${v.id})" title="Confirmar Pago y Entregar">✔ CONFIRMAR</button>` : '';
-            const btnQR = est === 'Pendiente' ? `<button class="btn btn-sm btn-neon-amarillo py-0 px-2 me-1" onclick="mostrarQR(${v.id}, '${simbolo}', ${v.total})" title="Ver código QR">📱 QR</button>` : '';
+            const tb = document.getElementById('tabla-ventas'); tb.innerHTML='';
+            let cCol=0, cChi=0, cEsp=0;
 
-            tb.innerHTML += `<tr class="${est==='Pendiente'?'opacity-75':''}">
-                <td class="text-muted fw-bold">#${v.id}</td>
-                <td><span class="badge-sucursal">${pais.toUpperCase()}</span></td>
-                <td><span class="badge-origen">${origen}</span></td>
-                <td><span class="badge-pago">${medio}</span></td>
-                <td><span class="${est==='Pagado'?'estado-pagado':'estado-pendiente'}">${est}</span></td>
-                <td class="text-end fw-bold" style="color:var(--verde-matrix)">${simbolo}${v.total.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2})}</td>
-                <td class="text-center">${btnOK} ${btnQR} <button class="btn btn-sm btn-neon-azul py-0 px-2" onclick="imprimirTicket(${v.id})">🖨️</button></td>
-            </tr>`;
-        });
-        document.getElementById('caja-col').innerText=cCol.toLocaleString('es-ES'); document.getElementById('caja-chi').innerText=cChi.toLocaleString('es-ES'); document.getElementById('caja-esp').innerText=cEsp.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2});
+            ventasEnMemoria.sort((a,b)=>b.id-a.id).forEach(v => {
+                const est = v.estado || 'Pagado';
+                const pais = v.pais || 'Desconocido';
+                const origen = v.origen || 'POS';
+                const medio = v.medioPago || 'Efectivo';
+                const simbolo = pais.includes('España') ? '€' : '$';
+
+                if(est === 'Pagado') {
+                    if(pais.includes('Colombia')) cCol += v.total;
+                    else if(pais.includes('Chile')) cChi += v.total;
+                    else if(pais.includes('España')) cEsp += v.total;
+                }
+
+                const btnOK = est === 'Pendiente' ? `<button class="btn btn-sm btn-neon py-0 px-2 me-1" onclick="confirmarPago(${v.id})" title="Confirmar Pago y Entregar">✔ CONFIRMAR</button>` : '';
+                const btnQR = est === 'Pendiente' ? `<button class="btn btn-sm btn-neon-amarillo py-0 px-2 me-1" onclick="mostrarQR(${v.id}, '${simbolo}', ${v.total})" title="Ver código QR">📱 QR</button>` : '';
+
+                tb.innerHTML += `<tr class="${est==='Pendiente'?'opacity-75':''}">
+                    <td class="text-muted fw-bold">#${v.id}</td>
+                    <td><span class="badge-sucursal">${pais.toUpperCase()}</span></td>
+                    <td><span class="badge-origen">${origen}</span></td>
+                    <td><span class="badge-pago">${medio}</span></td>
+                    <td><span class="${est==='Pagado'?'estado-pagado':'estado-pendiente'}">${est}</span></td>
+                    <td class="text-end fw-bold" style="color:var(--verde-matrix)">${simbolo}${v.total.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2})}</td>
+                    <td class="text-center">${btnOK} ${btnQR} <button class="btn btn-sm btn-neon-azul py-0 px-2" onclick="imprimirTicket(${v.id})">🖨️</button></td>
+                </tr>`;
+            });
+            document.getElementById('caja-col').innerText=cCol.toLocaleString('es-ES'); document.getElementById('caja-chi').innerText=cChi.toLocaleString('es-ES'); document.getElementById('caja-esp').innerText=cEsp.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2});
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     function mostrarQR(idVenta, simbolo, total) {
@@ -480,17 +524,18 @@
 
     // --- 2. PRODUCCIÓN ---
     async function cargarProduccion() {
-        const res = await fetch('/api/productos');
-        let data = await res.json();
+        try {
+            const res = await fetch('/api/productos');
+            let data = await res.json();
+            if(sucursalFiltro !== 'TODAS') data = data.filter(p => p.sucursal && p.sucursal.toLowerCase() === sucursalFiltro.toLowerCase());
 
-        if(sucursalFiltro !== 'TODAS') data = data.filter(p => p.sucursal === sucursalFiltro);
-
-        document.getElementById('prod-producto').innerHTML = data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(p=>`<option value="${p.id}">${p.nombre} (${p.sucursal||'N/A'})</option>`).join('');
-        const tb = document.getElementById('tabla-produccion'); tb.innerHTML='';
-        data.forEach(p => {
-            const stockActual = p.stock || 0;
-            tb.innerHTML += `<tr><td class="text-start fw-bold">${p.nombre}</td><td><span class="badge-sucursal">${p.sucursal||'N/A'}</span></td><td class="fs-5 fw-bold ${stockActual > 0 ? "text-success" : "text-danger"}">${stockActual} Unds</td></tr>`;
-        });
+            document.getElementById('prod-producto').innerHTML = data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(p=>`<option value="${p.id}">${p.nombre} (${p.sucursal||'N/A'})</option>`).join('');
+            const tb = document.getElementById('tabla-produccion'); tb.innerHTML='';
+            data.forEach(p => {
+                const stockActual = p.stock || 0;
+                tb.innerHTML += `<tr><td class="text-start fw-bold">${p.nombre}</td><td><span class="badge-sucursal">${p.sucursal||'N/A'}</span></td><td class="fs-5 fw-bold ${stockActual > 0 ? "text-success" : "text-danger"}">${stockActual} Unds</td></tr>`;
+            });
+        } catch (e) { console.error(e); }
     }
 
     async function registrarProduccion() {
@@ -505,11 +550,11 @@
     // --- 3. BODEGA INSUMOS ---
     function cargarInsumos() {
         fetch('/api/insumos/todos').then(res=>res.json()).then(data => {
-            if(sucursalFiltro !== 'TODAS') data = data.filter(i => i.sucursal === sucursalFiltro);
+            if(sucursalFiltro !== 'TODAS') data = data.filter(i => i.sucursal && i.sucursal.toLowerCase() === sucursalFiltro.toLowerCase());
             insMem = data;
 
             document.getElementById('tabla-insumos').innerHTML = data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(i => `<tr><td class="text-start fw-bold">${i.nombre}</td><td><span class="badge-sucursal">${i.sucursal || 'Desconocida'}</span></td><td class="fw-bold" style="color: var(--neon-amarillo);">${i.unidadActual} ${i.medida}</td><td><button class="btn btn-sm btn-neon p-1" onclick="editarInsumo(${i.idInsumo})">✏️</button></td></tr>`).join('');
-        });
+        }).catch(e => console.error(e));
     }
 
     function guardarInsumo() {
@@ -539,57 +584,78 @@
 
     // --- 4. FÓRMULAS ---
     async function prepararRecetas() {
-        let [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]);
-        let prod = await rP.json();
-        let ins = await rI.json();
+        try {
+            let [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]);
+            let prod = await rP.json(); let ins = await rI.json();
 
-        if(sucursalFiltro !== 'TODAS') {
-            prod = prod.filter(p => p.sucursal === sucursalFiltro);
-            ins = ins.filter(i => i.sucursal === sucursalFiltro);
-        }
+            if(sucursalFiltro !== 'TODAS') {
+                prod = prod.filter(p => p.sucursal && p.sucursal.toLowerCase() === sucursalFiltro.toLowerCase());
+                ins = ins.filter(i => i.sucursal && i.sucursal.toLowerCase() === sucursalFiltro.toLowerCase());
+            }
 
-        document.getElementById('rec-producto').innerHTML = '<option value="">Seleccione Batido...</option>' + prod.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(p=>`<option value="${p.id}">${p.nombre} (${p.sucursal||'N/A'})</option>`).join('');
-        document.getElementById('rec-insumo').innerHTML = ins.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(i=>`<option value="${i.nombre}">${i.nombre} (${i.sucursal||'N/A'})</option>`).join('');
-        cargarTablaReceta();
+            document.getElementById('rec-producto').innerHTML = '<option value="">Seleccione Batido...</option>' + prod.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(p=>`<option value="${p.id}">${p.nombre} (${p.sucursal||'N/A'})</option>`).join('');
+            document.getElementById('rec-insumo').innerHTML = ins.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(i=>`<option value="${i.nombre}">${i.nombre} (${i.sucursal||'N/A'})</option>`).join('');
+            cargarTablaReceta();
+        } catch (e) { console.error(e); }
     }
     async function guardarReceta() { const idProd = document.getElementById('rec-producto').value; const nomInsumo = document.getElementById('rec-insumo').value; const cant = document.getElementById('rec-cantidad').value; await fetch(`/api/insumos/${idProd}/vincular-ingrediente`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ ingrediente: nomInsumo, gasto: cant }) }); document.getElementById('rec-cantidad').value=''; cargarTablaReceta(); }
     async function cargarTablaReceta() { const idProd = document.getElementById('rec-producto').value; const tbody = document.getElementById('tabla-vista-formula'); if(!idProd) { tbody.innerHTML = ''; return; } const res = await fetch(`/api/insumos/${idProd}/receta`); const texto = await res.text(); tbody.innerHTML = ''; texto.split('\n').forEach(linea => { if(!linea.trim()) return; const [nom, cant] = linea.split(':'); tbody.innerHTML += `<tr><td class="fw-bold">${nom.toUpperCase()}</td><td style="color: var(--verde-matrix);">${cant || 1}</td><td><button class="btn btn-sm btn-neon-rojo py-0 px-2" onclick="borrarDeFormula(${idProd}, '${nom.trim()}')"><i class="bi bi-trash"></i></button></td></tr>`; }); }
     async function borrarDeFormula(idProd, nombreIngr) { await fetch(`/api/insumos/${idProd}/desvincular/${nombreIngr}`, { method: 'DELETE' }); cargarTablaReceta(); }
 
-    // --- 5. CATÁLOGO MULTI-NODO ---
+    // --- 5. CATÁLOGO MULTI-NODO (ANTICOLAPSO CON BORRADO) ---
     async function cargarCatalogo() {
-        const res = await fetch('/api/productos');
-        let data = await res.json();
+        try {
+            const tb = document.getElementById('tabla-catalogo');
+            tb.innerHTML='<tr><td colspan="5" class="text-warning py-4">Sincronizando con el servidor...</td></tr>';
 
-        if(sucursalFiltro !== 'TODAS') {
-            catalogoAdmin = data.filter(p => p.sucursal === sucursalFiltro);
-        } else {
-            catalogoAdmin = data;
+            const res = await fetch('/api/productos');
+            if(!res.ok) throw new Error("Error en la respuesta del servidor");
+
+            let data = await res.json();
+
+            // Filtro robusto
+            if(sucursalFiltro !== 'TODAS') {
+                catalogoAdmin = data.filter(p => p.sucursal && p.sucursal.trim().toLowerCase() === sucursalFiltro.trim().toLowerCase());
+            } else {
+                catalogoAdmin = data;
+            }
+
+            tb.innerHTML='';
+
+            if(catalogoAdmin.length === 0) {
+                tb.innerHTML = `<tr><td colspan="5" class="text-muted py-4">No hay batidos registrados para esta sucursal. Sube un archivo CSV o créalos manualmente.</td></tr>`;
+                return;
+            }
+
+            // Ordenamiento robusto anti-nulos y generación de botones
+            catalogoAdmin.sort((a,b) => (a.sucursal || '').localeCompare(b.sucursal || '')).forEach(p => {
+                const imgHtml = p.imagen ? `<img src="${p.imagen}" class="img-preview">` : `<i class="bi bi-image text-muted fs-3"></i>`;
+                const sucursalTexto = p.sucursal || 'Sin Asignar';
+                const simbolo = sucursalTexto === 'España' ? '€' : '$';
+                const precioMostrar = p.precio || 0;
+
+                tb.innerHTML += `
+                    <tr>
+                        <td>${imgHtml}</td>
+                        <td class="text-start fw-bold">${p.nombre}</td>
+                        <td><span class="badge-sucursal">${sucursalTexto}</span></td>
+                        <td>
+                            <div class="input-group input-group-sm" style="width: 120px; margin: auto;">
+                                <span class="input-group-text bg-dark text-white border-secondary">${simbolo}</span>
+                                <input type="number" id="precio-${p.id}" class="form-control text-center" value="${precioMostrar}" step="0.1">
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-neon py-1 px-2 me-1" onclick="guardarPrecioUnico(${p.id})" title="Guardar Precio"><i class="bi bi-save"></i></button>
+                            <button class="btn btn-sm btn-neon-azul py-1 px-2 me-1" onclick="abrirModalEdicion(${p.id})" title="Editar Detalles"><i class="bi bi-pencil-square"></i></button>
+                            <button class="btn btn-sm py-1 px-2" style="background: rgba(255,0,0,0.1); color: #ff4444; border: 1px solid #ff4444; border-radius: 8px;" onclick="eliminarProducto(${p.id})" title="Borrar Producto"><i class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>`;
+            });
+        } catch (error) {
+            console.error(error);
+            document.getElementById('tabla-catalogo').innerHTML = `<tr><td colspan="5" class="text-danger py-4 fw-bold">❌ Hubo un error de red o de datos. Revisa la conexión con el servidor.</td></tr>`;
         }
-
-        const tb = document.getElementById('tabla-catalogo'); tb.innerHTML='';
-
-        // FIX localeCompare
-        catalogoAdmin.sort((a,b) => (a.sucursal || '').localeCompare(b.sucursal || '')).forEach(p => {
-            const imgHtml = p.imagen ? `<img src="${p.imagen}" class="img-preview">` : `<i class="bi bi-image text-muted fs-3"></i>`;
-            const sucursalTexto = p.sucursal || 'Sin Asignar';
-            const simbolo = sucursalTexto === 'España' ? '€' : '$';
-
-            tb.innerHTML += `
-                <tr>
-                    <td>${imgHtml}</td>
-                    <td class="text-start fw-bold">${p.nombre}</td>
-                    <td><span class="badge-sucursal">${sucursalTexto}</span></td>
-                    <td>
-                        <div class="input-group input-group-sm" style="width: 120px; margin: auto;">
-                            <span class="input-group-text bg-dark text-white border-secondary">${simbolo}</span>
-                            <input type="number" id="precio-${p.id}" class="form-control text-center" value="${p.precio || 0}" step="0.1">
-                        </div>
-                    </td>
-                    <td><button class="btn btn-sm btn-neon py-1 px-3" onclick="guardarPrecioUnico(${p.id})"><i class="bi bi-save"></i></button></td>
-                    <td><button class="btn btn-sm btn-neon-azul py-1 px-2" onclick="abrirModalEdicion(${p.id})"><i class="bi bi-pencil-square"></i> TEXTOS</button></td>
-                </tr>`;
-        });
     }
 
     async function guardarPrecioUnico(id) {
