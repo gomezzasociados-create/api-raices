@@ -3,116 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gómez Systems - COMANDO CENTRAL (MULTI-NODO)</title>
+    <title>RAÍCES - Sistema de Gestión Bio-Tecnológica</title>
 
-    <meta name="theme-color" content="#05160e">
+    <meta name="theme-color" content="#01120a">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
-            --verde-matrix: #00ff88;
-            --verde-profundo: #05160e;
-            --verde-medio: #0a2e1f;
-            --neon-amarillo: #ffe600;
-            --naranja-alerta: #ff9f43;
-            --blanco-holografico: rgba(255, 255, 255, 0.9);
-            --cristal-oscuro: rgba(5, 22, 14, 0.85);
-            --cristal-claro: rgba(255, 255, 255, 0.05);
-            --brillo-verde: 0 0 15px rgba(0, 255, 136, 0.4);
+            --bio-esmeralda: #00ffa6;
+            --bio-hoja: #39ff14;
+            --v-profundo: #01120a;
+            --v-u-profundo: #000804;
+            --sol-futuro: #ffdd00;
+            --agua-pura: #00f0ff;
+            --b-holografico: #f4fff9;
+            --cristal-bio: rgba(2, 31, 17, 0.5);
+            --border-glow: 0 0 20px rgba(0, 255, 166, 0.3);
+            --text-glow: 0 0 15px rgba(0, 255, 166, 0.6);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        body { font-family: 'Rajdhani', sans-serif; background: linear-gradient(135deg, var(--verde-profundo) 0%, var(--verde-medio) 50%, var(--verde-profundo) 100%); color: var(--blanco-holografico); min-height: 100vh; padding-bottom: 90px; }
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--v-profundo);
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(0, 255, 166, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, rgba(0, 240, 255, 0.05) 0%, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            color: var(--b-holografico);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
 
-        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--verde-profundo); z-index: 10000; display: flex; justify-content: center; align-items: center; }
-        .login-box { background: var(--cristal-oscuro); border: 1px solid var(--verde-matrix); padding: 40px; border-radius: 30px; text-align: center; width: 90%; max-width: 400px; box-shadow: 0 0 30px rgba(0,255,136,0.2); }
-        .pin-input { background: rgba(0,0,0,0.5); color: var(--verde-matrix); font-size: 2.5rem; text-align: center; letter-spacing: 20px; font-family: 'Orbitron', sans-serif; border: 2px solid var(--verde-matrix); border-radius: 15px; width: 100%; margin-bottom: 25px; box-shadow: inset 0 0 15px rgba(0,255,136,0.2); }
+        /* --- LOGIN ECO-FUTURISTA --- */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--v-u-profundo); z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 1s ease-out;
+        }
 
-        .navbar-gomez { border-bottom: 1px solid rgba(0, 255, 136, 0.3); padding: 1.5rem; text-align: center; }
-        .navbar-gomez h1 { font-family: 'Orbitron', sans-serif; text-shadow: var(--brillo-verde); letter-spacing: 4px; margin: 0; }
+        .login-box {
+            background: var(--cristal-bio);
+            border: 1px solid rgba(0, 255, 166, 0.4);
+            border-top: 3px solid var(--bio-esmeralda);
+            padding: 60px;
+            border-radius: 20px;
+            text-align: center; width: 95%; max-width: 450px;
+            position: relative; overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 40px rgba(0, 255, 166, 0.1);
+            backdrop-filter: blur(15px);
+        }
 
-        .nav-pills .nav-link { color: rgba(255,255,255,0.6); font-family: 'Orbitron', sans-serif; border-radius: 50px !important; margin: 0 5px; transition: 0.3s; }
-        .nav-pills .nav-link:hover { color: var(--verde-matrix); }
-        .nav-pills .nav-link.active { background: rgba(0,255,136,0.15); color: var(--verde-matrix); border: 1px solid var(--verde-matrix); box-shadow: inset 0 0 10px rgba(0,255,136,0.2); }
+        /* Pulso suave de vida */
+        .radar-bg {
+            position: absolute; top: 50%; left: 50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 166, 0.05) 0%, transparent 60%);
+            transform: translate(-50%, -50%);
+            animation: bio-pulse 6s infinite ease-in-out; z-index: 0; pointer-events: none;
+        }
 
-        .table-container { background: var(--cristal-claro); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 25px; margin-bottom: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
-        .table { color: white; vertical-align: middle; }
-        .table-dark { background-color: rgba(0,0,0,0.6) !important; color: var(--verde-matrix); font-family: 'Orbitron', sans-serif; font-size: 0.85rem;}
-        .img-preview { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid var(--verde-matrix); }
+        @keyframes bio-pulse { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; } 50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; } }
 
-        .form-control, .form-select, textarea { background: rgba(0,0,0,0.6); border: 1px solid rgba(0,255,136,0.3); color: white; border-radius: 12px; }
-        .form-control:focus, .form-select:focus { background: rgba(0,0,0,0.8); border-color: var(--verde-matrix); color: white; box-shadow: var(--brillo-verde); }
-        .form-control::placeholder { color: rgba(255, 255, 255, 0.4) !important; }
-        .form-label-neon { color: var(--verde-matrix); font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: bold; }
+        /* --- TEXTO RADIANTE ORGÁNICO --- */
+        .eco-text {
+            font-family: 'Orbitron'; font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 255, 166, 0.8), 0 0 30px rgba(0, 255, 166, 0.4);
+            letter-spacing: 4px;
+            position: relative; z-index: 2;
+        }
 
-        .btn-neon { background: transparent; color: var(--verde-matrix); border: 1px solid var(--verde-matrix); border-radius: 12px; font-family: 'Orbitron', sans-serif; transition: 0.3s; font-weight: bold;}
-        .btn-neon:hover { background: var(--verde-matrix); color: #000; box-shadow: var(--brillo-verde); }
-        .btn-neon-azul { background: transparent; color: #00d2d3; border: 1px solid #00d2d3; border-radius: 12px; }
-        .btn-neon-amarillo { background: transparent; color: var(--neon-amarillo); border: 1px solid var(--neon-amarillo); border-radius: 12px; font-weight: bold;}
+        .pin-input {
+            background: rgba(0,0,0,0.4); color: var(--bio-esmeralda);
+            font-size: 3.5rem; text-align: center; letter-spacing: 25px;
+            font-family: 'Share Tech Mono';
+            border: 1px solid rgba(0, 255, 166, 0.3); border-radius: 12px;
+            width: 100%; height: 80px; box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+            position: relative; z-index: 2; transition: var(--transition);
+        }
+        .pin-input:focus { outline: none; border-color: var(--bio-esmeralda); box-shadow: inset 0 0 15px rgba(0, 255, 166, 0.2), 0 0 20px rgba(0, 255, 166, 0.3); }
 
-        .estado-pagado { color: var(--verde-matrix); border: 1px solid var(--verde-matrix); padding: 3px 10px; border-radius: 12px; font-weight: bold; font-size: 0.8rem; background: rgba(0,255,136,0.1);}
-        .estado-pendiente { color: var(--naranja-alerta); border: 1px solid var(--naranja-alerta); padding: 3px 10px; border-radius: 12px; font-weight: bold; font-size: 0.8rem; background: rgba(255,159,67,0.1);}
-        .badge-origen { background: rgba(0,255,136,0.1); color: var(--verde-matrix); border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; border: 1px solid var(--verde-matrix);}
-        .badge-pago { background: rgba(255,230,0,0.1); color: var(--neon-amarillo); border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; border: 1px solid var(--neon-amarillo);}
-        .badge-sucursal { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; letter-spacing: 1px;}
+        .btn-bio {
+            border: 1px solid var(--bio-esmeralda); color: var(--v-profundo);
+            font-family: 'Orbitron'; font-weight: bold; background: var(--bio-esmeralda);
+            text-transform: uppercase; letter-spacing: 2px; border-radius: 10px;
+            position: relative; z-index: 2; transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 255, 166, 0.2);
+        }
+        .btn-bio:hover { background: #fff; color: var(--v-profundo); box-shadow: 0 0 25px var(--bio-esmeralda); transform: translateY(-2px);}
 
-        @media screen { #zona-impresion { display: none; } }
-        @media print { body * { visibility: hidden; } #zona-impresion, #zona-impresion * { visibility: visible; } #zona-impresion { position: absolute; left: 0; top: 0; width: 100%; max-width: 300px; padding: 10px; font-family: 'Courier New', monospace; color: black; background: white; } }
+        /* --- SECUENCIA DE ARRANQUE BOTÁNICO --- */
+        #boot-sequence { display: none; width: 80%; max-width: 600px; text-align: center; position: relative; z-index: 3;}
+        .boot-visual { width: 100%; height: 15px; background: rgba(0,0,0,0.5); border-radius: 10px; overflow: hidden; margin-bottom: 20px; border: 1px solid rgba(0,255,166,0.2);}
+        .boot-bar { height: 100%; background: linear-gradient(90deg, var(--bio-esmeralda), var(--agua-pura)); width: 0%; box-shadow: var(--border-glow); animation: load-bar 2.5s forwards cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .boot-status { font-family: 'Rajdhani'; color: var(--bio-esmeralda); font-weight: 600; font-size: 1.4rem; letter-spacing: 2px;}
+        @keyframes load-bar { 0% { width: 0%; } 20% { width: 15%; } 50% { width: 60%; } 80% { width: 95%; } 100% { width: 100%; } }
 
-        #app-dashboard { display: none; }
+        /* --- DASHBOARD UI BIO-TECH --- */
+        #app-dashboard { display: none; opacity: 0; transition: opacity 1s ease-in; }
 
-        .hint-text { font-size: 0.75rem; color: rgba(255,255,255,0.5); margin-top: 15px; }
+        .navbar-raices {
+            border-bottom: 1px solid rgba(0,255,166,0.3); padding: 1.5rem;
+            background: linear-gradient(to bottom, rgba(1, 18, 10, 0.9), transparent);
+        }
+
+        .nav-pills .nav-link {
+            color: rgba(244, 255, 249, 0.6); font-family: 'Orbitron';
+            border-radius: 12px !important; margin: 0 5px;
+            border: 1px solid transparent; text-transform: uppercase; font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        .nav-pills .nav-link:hover { background: rgba(0,255,166,0.05); color: var(--b-holografico); border-color: rgba(0,255,166,0.3);}
+        .nav-pills .nav-link.active {
+            background: rgba(0, 255, 166, 0.1); color: var(--bio-esmeralda);
+            border: 1px solid var(--bio-esmeralda); box-shadow: inset 0 0 15px rgba(0,255,166,0.1);
+            font-weight: bold;
+        }
+
+        .table-container {
+            background: var(--cristal-bio); border: 1px solid rgba(0,255,166,0.2);
+            border-radius: 15px; padding: 25px; margin-bottom: 25px;
+            position: relative; backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .table { color: var(--b-holografico); border-collapse: separate; border-spacing: 0 8px; position: relative; z-index: 1;}
+        .table-dark { background-color: transparent !important; color: var(--bio-hoja) !important; font-family: 'Orbitron'; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; border: none !important; opacity: 0.8;}
+        .table-dark th { border-bottom: 1px solid rgba(0,255,166,0.2) !important; padding-bottom: 12px;}
+        tbody tr { background: rgba(0, 0, 0, 0.4); border-radius: 8px; transition: var(--transition); }
+        tbody tr:hover { background: rgba(0, 255, 166, 0.08); transform: scale(1.01); }
+        tbody td { border: none; padding: 15px !important;}
+        tbody tr td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+        tbody tr td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+
+        .text-money-green { color: var(--bio-esmeralda); font-weight: bold; text-shadow: var(--text-glow); }
+        .img-preview { width: 50px; height: 50px; object-fit: cover; border: 2px solid transparent; border-radius: 50%; box-shadow: var(--border-glow); }
+
+        .form-control, .form-select {
+            background-color: rgba(0,0,0,0.3) !important; border: 1px solid rgba(0,255,166,0.3);
+            color: #fff !important; font-family: 'Rajdhani'; font-weight: 600; border-radius: 8px;
+            padding: 10px 15px;
+        }
+        .form-control:focus, .form-select:focus { border-color: var(--bio-esmeralda); box-shadow: 0 0 10px rgba(0, 255, 166, 0.2); }
+
+        .form-label-neon { font-family: 'Orbitron'; font-size: 0.75rem; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
+        .locked-select { background-color: rgba(0,0,0,0.5) !important; border-color: rgba(255,255,255,0.1) !important; color: #555 !important; cursor: not-allowed;}
+        .badge-categoria { border: 1px solid var(--agua-pura); color: var(--agua-pura); padding: 4px 10px; font-size: 0.75rem; font-family: 'Rajdhani'; border-radius: 20px; font-weight: bold; background: rgba(0, 240, 255, 0.1);}
+
+        /* --- PANTALLA DE PROCESAMIENTO (ENSAMBLAJE BIO) --- */
+        .processing-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(1, 18, 10, 0.9); z-index: 10;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            border-radius: 15px; backdrop-filter: blur(8px);
+        }
+        .spinner-bio {
+            width: 70px; height: 70px; border: 3px solid transparent;
+            border-top-color: var(--bio-esmeralda); border-right-color: var(--agua-pura);
+            border-radius: 50%; animation: spin-bio 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+        @keyframes spin-bio { 100% { transform: rotate(360deg); } }
+
     </style>
 </head>
-<body>
+<body onclick="initAudio()" onkeydown="initAudio()">
 
 <div id="login-screen">
-    <div class="login-box">
-        <h1 class="mb-2 text-white" style="font-family: 'Orbitron';">RAÍCES</h1>
-        <p class="mb-4" style="color: var(--verde-matrix); letter-spacing: 2px;">GÓMEZ SYSTEMS - MATRIZ</p>
-        <input type="password" id="input-pin" class="pin-input" maxlength="4" placeholder="••••" onkeypress="if(event.key === 'Enter') validarAcceso()">
-        <button class="btn btn-neon w-100 py-3 rounded-pill fs-5" onclick="validarAcceso()">INICIAR ENLACE SECRETO</button>
-        <p class="hint-text">PIN: Supremo (7777) | COL (1010) | CHI (2020) | ESP (3030)</p>
+    <div class="radar-bg"></div>
+    <div class="login-box" id="login-form">
+        <h1 class="eco-text">RAÍCES</h1>
+        <p class="mb-5 mt-1 fw-bold" style="color: var(--bio-hoja); font-family: 'Rajdhani'; letter-spacing: 4px; position:relative; z-index:2; text-transform: uppercase;">Biosfera de Control</p>
+
+        <label class="form-label-neon mb-3 d-block text-center" style="position:relative; z-index:2;">[ AUTENTICACIÓN BIOLÓGICA REQUERIDA ]</label>
+        <input type="password" id="input-pin" class="pin-input" maxlength="4" autocomplete="off" oninput="playSound('typing')" onkeypress="if(event.key === 'Enter') validarAcceso()">
+        <button class="btn btn-bio w-100 py-3 fs-5 mt-4" onclick="validarAcceso()"><i class="bi bi-fingerprint me-2"></i>ESTABLECER ENLACE</button>
+    </div>
+
+    <div id="boot-sequence">
+        <div class="boot-visual">
+            <div class="boot-bar" id="boot-bar-fill"></div>
+        </div>
+        <div class="boot-status" id="boot-status-text">Activando Bio-Núcleo...</div>
     </div>
 </div>
 
-<div id="zona-impresion"></div>
-
 <div id="app-dashboard">
-    <div class="navbar-gomez text-center">
-        <h1>GÓMEZ SYSTEMS</h1>
-        <p class="mb-0 mt-2 fw-bold" style="color: var(--neon-amarillo);">NÚCLEO ADMINISTRATIVO <span id="label-rol"></span></p>
+    <div class="navbar-raices text-center">
+        <h1 class="eco-text" style="font-size: 2.8rem; letter-spacing: 8px;">RAÍCES</h1>
+        <p class="mt-2 mb-0" style="color: var(--agua-pura); font-family:'Orbitron'; font-size: 0.9rem;">SISTEMA BIO-TECH v2.0 // <span id="label-rol" class="text-white"></span></p>
     </div>
 
-    <div class="container pb-5">
-        <ul class="nav nav-pills nav-fill flex-wrap mb-4" id="pills-tab">
-            <li class="nav-item m-1"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-ventas" onclick="cargarVentas()"><i class="bi bi-cash-stack"></i> CAJA</button></li>
-            <li class="nav-item m-1"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-produccion" onclick="cargarProduccion()"><i class="bi bi-box-seam"></i> PRODUCCIÓN</button></li>
-            <li class="nav-item m-1"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-inventario" onclick="cargarInsumos()"><i class="bi bi-basket"></i> BODEGA</button></li>
-            <li class="nav-item m-1" id="nav-recetas"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-recetas" onclick="prepararRecetas()"><i class="bi bi-magic"></i> FÓRMULAS</button></li>
-            <li class="nav-item m-1" id="nav-precios"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-precios" onclick="cargarCatalogo()"><i class="bi bi-tags"></i> CATÁLOGO</button></li>
-            <li class="nav-item m-1"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-stats" onclick="generarReportes()"><i class="bi bi-graph-up-arrow"></i> STATS</button></li>
+    <div class="container-fluid px-4 pb-5 mt-4">
+        <ul class="nav nav-pills nav-fill mb-4 table-container p-2" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation"><button class="nav-link active" id="pills-ventas-tab" data-bs-toggle="pill" data-bs-target="#tab-ventas" type="button" role="tab" onclick="cargarVentas(); playSound('click')"><i class="bi bi-wallet2 me-1"></i> TESORERÍA</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-produccion-tab" data-bs-toggle="pill" data-bs-target="#tab-produccion" type="button" role="tab" onclick="cargarProduccion(); playSound('click')"><i class="bi bi-droplet-half me-1"></i> PRODUCCIÓN</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-inventario-tab" data-bs-toggle="pill" data-bs-target="#tab-inventario" type="button" role="tab" onclick="cargarInsumos(); playSound('click')"><i class="bi bi-boxes me-1"></i> BODEGA BOTÁNICA</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-recetas-tab" data-bs-toggle="pill" data-bs-target="#tab-recetas" type="button" role="tab" onclick="prepararRecetas(); playSound('click')"><i class="bi bi-flask me-1"></i> FÓRMULAS</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-precios-tab" data-bs-toggle="pill" data-bs-target="#tab-precios" type="button" role="tab" onclick="cargarCatalogo(); playSound('click')"><i class="bi bi-tags me-1"></i> CATÁLOGO</button></li>
+            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-stats-tab" data-bs-toggle="pill" data-bs-target="#tab-stats" type="button" role="tab" onclick="playSound('click')"><i class="bi bi-bar-chart-line me-1"></i> ANÁLISIS</button></li>
         </ul>
 
-        <div class="tab-content">
-            <div class="tab-pane fade show active" id="tab-ventas">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div id="caja-col-container" class="table-container p-3 mb-3 border-start border-warning border-4"><h6 class="fw-bold">🇨🇴 COLOMBIA</h6><div class="d-flex justify-content-between"><small>Ingresos:</small><span class="fw-bold text-success">$<span id="caja-col">0</span></span></div></div>
-                        <div id="caja-chi-container" class="table-container p-3 mb-3 border-start border-danger border-4"><h6 class="fw-bold">🇨🇱 CHILE</h6><div class="d-flex justify-content-between"><small>Ingresos:</small><span class="fw-bold text-success">$<span id="caja-chi">0</span></span></div></div>
-                        <div id="caja-esp-container" class="table-container p-3 border-start border-primary border-4"><h6 class="fw-bold">🇪🇸 ESPAÑA</h6><div class="d-flex justify-content-between"><small>Ingresos:</small><span class="fw-bold text-success">€<span id="caja-esp">0</span></span></div></div>
-                        <button class="btn btn-neon w-100 mt-2" onclick="exportarCSV()"><i class="bi bi-download"></i> EXPORTAR CSV</button>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="tab-ventas" role="tabpanel">
+                <div class="row g-4">
+                    <div class="col-lg-3">
+                        <div id="panel-stat-col" class="table-container p-4 mb-4" style="border-top: 3px solid var(--sol-futuro);">
+                            <h6 class="form-label-neon" style="color:var(--sol-futuro)">BIOSFERA COLOMBIA</h6>
+                            <span class="fs-2 text-money-green">$ <span id="caja-col">0</span></span>
+                        </div>
+                        <div id="panel-stat-chi" class="table-container p-4 mb-4" style="border-top: 3px solid var(--n-rojo);">
+                            <h6 class="form-label-neon" style="color:var(--n-rojo)">BIOSFERA CHILE</h6>
+                            <span class="fs-2 text-money-green">$ <span id="caja-chi">0</span></span>
+                        </div>
+                        <div id="panel-stat-esp" class="table-container p-4 mb-4" style="border-top: 3px solid var(--agua-pura);">
+                            <h6 class="form-label-neon" style="color:var(--agua-pura)">BIOSFERA ESPAÑA</h6>
+                            <span class="fs-2 text-money-green">€ <span id="caja-esp">0</span></span>
+                        </div>
                     </div>
-                    <div class="col-md-9">
+                    <div class="col-lg-9">
                         <div class="table-container">
-                            <h5 class="fw-bold mb-4" style="color: var(--verde-matrix);"><i class="bi bi-broadcast"></i> TRANSMISIONES DE VENTAS GLOBALES</h5>
+                            <h5 class="mb-4 fw-bold font-orbitron" style="color: var(--agua-pura); letter-spacing: 2px;">FLUJO DE INTERCAMBIOS COMERCIALES</h5>
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle text-center">
-                                    <thead class="table-dark">
-                                    <tr><th>ID</th><th>NODO (PAÍS)</th><th>ORIGEN</th><th>PAGO</th><th>ESTADO</th><th class="text-end">TOTAL</th><th>ACCIONES</th></tr>
-                                    </thead>
+                                <table class="table text-center align-middle">
+                                    <thead class="table-dark"><tr><th>OP_ID</th><th>NODO_ORIGEN</th><th>VALOR_NETO</th><th>STATUS</th></tr></thead>
                                     <tbody id="tabla-ventas"></tbody>
                                 </table>
                             </div>
@@ -121,611 +241,393 @@
                 </div>
             </div>
 
-            <div class="tab-pane fade" id="tab-produccion">
-                <div class="table-container mb-4" style="border-color: var(--naranja-alerta);">
-                    <h5 class="fw-bold" style="color: var(--naranja-alerta); font-family: 'Orbitron', sans-serif;">⚙️ FABRICACIÓN DE LOTES (NEVERA)</h5>
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-6">
-                            <label class="form-label-neon" style="color: var(--naranja-alerta);">SELECCIONA PRODUCTO Y NODO</label>
-                            <select id="prod-producto" class="form-select"></select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label-neon" style="color: var(--naranja-alerta);">CANTIDAD</label>
-                            <input type="number" id="prod-cantidad" class="form-control" placeholder="Ej: 10">
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn w-100 py-2 fw-bold" style="background: var(--naranja-alerta); color: black;" onclick="registrarProduccion()"><i class="bi bi-hammer"></i> FABRICAR Y DESCONTAR INSUMOS</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table class="table table-hover text-center align-middle">
-                        <thead class="table-dark"><tr><th class="text-start">PRODUCTO FÍSICO</th><th>SUCURSAL</th><th>STOCK LISTO PARA VENTA</th></tr></thead>
-                        <tbody id="tabla-produccion"></tbody>
-                    </table>
-                </div>
-            </div>
+            <div class="tab-pane fade" id="tab-produccion" role="tabpanel">
 
-            <div class="tab-pane fade" id="tab-inventario">
-                <div class="table-container mb-4">
-                    <h5 style="color: var(--verde-matrix);">INGRESAR MATERIA PRIMA (POR SUCURSAL)</h5>
-                    <input type="hidden" id="ins-id">
-                    <div class="row g-3 align-items-end">
+                <div class="table-container mb-4" style="border-top: 3px solid var(--sol-futuro); overflow: hidden;">
+                    <div class="processing-overlay" id="overlay-ensamblaje">
+                        <div class="spinner-bio mb-4"></div>
+                        <h4 class="eco-text" style="color:var(--sol-futuro); font-size:1.8rem; letter-spacing: 3px; text-shadow:none;">PROCESANDO EXTRACTOS...</h4>
+                        <p class="mt-2 text-white small">Sintetizando productos naturales en el nodo seleccionado.</p>
+                    </div>
+
+                    <h5 class="text-warning mb-4 fw-bold font-orbitron"><i class="bi bi-droplet"></i> PROCESADOR DE EXTRACTOS: ALTA DE STOCK</h5>
+
+                    <div class="row g-3 align-items-end position-relative" style="z-index: 1;">
                         <div class="col-md-3">
-                            <label class="form-label-neon">Nombre Insumo/Pulpa</label>
-                            <input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Zanahoria">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label-neon">Unidad</label>
-                            <select id="ins-unidad" class="form-select"><option value="gr">Gramos</option><option value="und">Unidades</option><option value="ml">Mililitros</option></select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label-neon">Stock Físico</label>
-                            <input type="number" id="ins-stock" class="form-control" placeholder="Ej: 1000">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label-neon" style="color: var(--neon-amarillo);">🌍 SUCURSAL</label>
-                            <select id="ins-sucursal" class="form-select border-warning text-warning" style="background: black;">
-                                <option value="Colombia">🇨🇴 Colombia</option>
-                                <option value="Chile">🇨🇱 Chile</option>
-                                <option value="España">🇪🇸 España</option>
+                            <label class="form-label-neon text-warning">NODO DE PRODUCCIÓN</label>
+                            <select id="prod-sucursal" class="form-select auth-select" onchange="cargarProductosSelect(); playSound('click')">
+                                <option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-neon w-100 py-2" onclick="guardarInsumo()"><i class="bi bi-save"></i> GUARDAR</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table class="table table-hover text-center align-middle">
-                        <thead class="table-dark"><tr><th class="text-start">INSUMO</th><th>SUCURSAL</th><th>STOCK FÍSICO</th><th>ACCIÓN</th></tr></thead>
-                        <tbody id="tabla-insumos"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="tab-pane fade" id="tab-recetas">
-                <div class="table-container mb-4">
-                    <h5 style="color: var(--verde-matrix);">VINCULAR INGREDIENTE A FÓRMULA</h5>
-                    <div class="row g-3 align-items-end">
                         <div class="col-md-5">
-                            <label class="form-label-neon">PRODUCTO (Verifica el País)</label>
-                            <select id="rec-producto" class="form-select" onchange="cargarTablaReceta()"></select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label-neon">INGREDIENTE A DESCONTAR</label>
-                            <select id="rec-insumo" class="form-select"></select>
+                            <label class="form-label-neon text-warning">ELIXIR A SINTETIZAR</label>
+                            <select id="prod-item" class="form-select"></select>
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label-neon">GASTO</label>
-                            <input type="number" id="rec-cantidad" class="form-control" placeholder="Ej: 50">
+                            <label class="form-label-neon text-warning">LOTE (UNIDADES)</label>
+                            <input type="number" id="prod-cantidad" class="form-control text-center text-warning fw-bold fs-5" placeholder="0">
                         </div>
-                        <div class="col-md-1">
-                            <button class="btn btn-neon w-100" onclick="guardarReceta()"><i class="bi bi-link"></i></button>
+                        <div class="col-md-2">
+                            <button class="btn btn-bio w-100 h-100 py-2 d-flex flex-column align-items-center justify-content-center" style="background:var(--sol-futuro); color:#000; border:none;" onclick="procesarEnsamblaje()">
+                                <i class="bi bi-play-circle-fill fs-4 mb-1"></i>
+                                <span style="font-size: 0.8rem; font-weight: bold;">PROCESAR</span>
+                            </button>
                         </div>
                     </div>
                 </div>
+
                 <div class="table-container">
-                    <h5 style="color: var(--verde-matrix);">FÓRMULA ACTUAL</h5>
-                    <table class="table table-hover text-center align-middle">
-                        <thead class="table-dark"><tr><th>INGREDIENTE</th><th>CANTIDAD QUE DESCUENTA</th><th>ACCIÓN</th></tr></thead>
-                        <tbody id="tabla-vista-formula"></tbody>
-                    </table>
+                    <h5 class="text-money-green mb-4 fw-bold font-orbitron">RESERVA VITAL: PRODUCTOS TERMINADOS</h5>
+                    <div class="table-responsive">
+                        <table class="table text-center align-middle">
+                            <thead class="table-dark"><tr><th>PRODUCTO NATURAL</th><th>NODO_BIO</th><th>UNIDADES_LISTAS</th><th>ESTADO_ORGÁNICO</th></tr></thead>
+                            <tbody id="tabla-produccion"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <div class="tab-pane fade" id="tab-precios">
-                <div style="margin: 20px 0; padding: 20px; border: 2px dashed #4CAF50; border-radius: 10px; background: rgba(0,255,136,0.05);">
-                    <h3 style="color: #4CAF50; font-family: 'Orbitron';">📤 Carga Masiva de Productos (CSV)</h3>
-                    <p style="color: white;">Sube tus archivos (PULPAS.csv o BATIDOS VASO.csv). El sistema importará los datos automáticamente.</p>
+            <div class="tab-pane fade" id="tab-inventario" role="tabpanel">
+                <div class="table-container mb-4" style="border-top: 3px solid var(--bio-esmeralda);">
+                    <h5 class="text-money-green mb-4 fw-bold font-orbitron"><i class="bi bi-tree"></i> REGISTRO BOTÁNICO: MATERIA PRIMA (PULPAS)</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4"><label class="form-label-neon">Cód. Botánico</label><input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Pulpa de Mango"></div>
+                        <div class="col-md-2"><label class="form-label-neon">Métrica</label><select id="ins-unidad" class="form-select"><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
+                        <div class="col-md-2"><label class="form-label-neon">Volumen</label><input type="number" id="ins-stock" class="form-control"></div>
+                        <div class="col-md-3"><label class="form-label-neon">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
+                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg"></i></button></div>
+                    </div>
+                </div>
 
-                    <div style="margin-bottom: 15px;">
-                        <label class="form-label-neon"><strong>1. ¿Para qué sucursal es este archivo?</strong></label><br>
-                        <select id="sucursalCsv" class="form-select" style="max-width: 300px; margin-top: 5px;">
-                            <option value="Colombia">🇨🇴 Colombia</option>
-                            <option value="Chile">🇨🇱 Chile</option>
-                            <option value="España">🇪🇸 España</option>
+                <div class="table-container mb-4" style="border-top: 3px solid var(--agua-pura);">
+                    <h5 style="color: var(--agua-pura);" class="mb-4 fw-bold font-orbitron"><i class="bi bi-cup-straw"></i> SUMINISTROS FÍSICOS: VASOS Y PACKAGING</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4"><label class="form-label-neon">Elemento</label><input type="text" id="vaso-nombre" class="form-control"></div>
+                        <div class="col-md-2"><label class="form-label-neon">Métrica</label><select id="vaso-unidad" class="form-select"><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
+                        <div class="col-md-2"><label class="form-label-neon">Volumen</label><input type="number" id="vaso-stock" class="form-control"></div>
+                        <div class="col-md-3"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
+                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--agua-pura); color: #000;" onclick="guardarInsumo('vasos')"><i class="bi bi-plus-lg"></i></button></div>
+                    </div>
+                </div>
+
+                <div class="table-container p-0">
+                    <div class="table-responsive">
+                        <table class="table text-center align-middle m-0">
+                            <thead class="table-dark"><tr><th>ELEMENTO_ID</th><th>FAMILIA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>RECICLAR</th></tr></thead>
+                            <tbody id="tabla-insumos"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-recetas" role="tabpanel">
+                <div class="table-container mb-4" style="border-top: 3px solid #fff;">
+                    <h5 class="text-white mb-4 fw-bold font-orbitron"><i class="bi bi-flower3"></i> ESTRUCTURADOR DE FÓRMULAS NATURALES</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label-neon">NODO ESPECÍFICO</label>
+                            <select id="filtro-sucursal-recetas" class="form-select auth-select" onchange="prepararRecetas()">
+                                <option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4"><label class="form-label-neon">ELIXIR FINAL (output)</label><select id="rec-producto" class="form-select" onchange="cargarTablaReceta()"></select></div>
+                        <div class="col-md-4"><label class="form-label-neon">COMPONENTE A INTEGRAR (input)</label><select id="rec-insumo" class="form-select"></select></div>
+                    </div>
+                    <div class="row g-3 mt-2 align-items-end">
+                        <div class="col-md-8"><label class="form-label-neon">DOSIS POR UNIDAD (gr/und)</label><input type="number" id="rec-cantidad" class="form-control" placeholder="0.00"></div>
+                        <div class="col-md-4"><button class="btn btn-bio w-100 py-3" onclick="guardarReceta()"><i class="bi bi-link-45deg"></i> FUSIONAR COMPONENTE</button></div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <h6 class="form-label-neon mb-3">BIOLOGÍA DE LA FÓRMULA ACTIVA</h6>
+                    <table class="table text-center align-middle"><thead class="table-dark"><tr><th>EXTRACTO / MATERIAL</th><th>DOSIS_REQUERIDA</th><th>SEPARAR</th></tr></thead><tbody id="tabla-vista-formula"></tbody></table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-precios" role="tabpanel">
+                <div class="table-container mb-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="text-warning fw-bold font-orbitron m-0"><i class="bi bi-tag"></i> AJUSTE DE VALORES DE MERCADO</h5>
+                        <select id="filtro-sucursal-catalogo" class="form-select auth-select w-auto fw-bold" style="color:var(--sol-futuro) !important; border-color:var(--sol-futuro)" onchange="cargarCatalogo()">
+                            <option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option>
                         </select>
                     </div>
-
-                    <div style="margin-bottom: 15px;">
-                        <label class="form-label-neon"><strong>2. Selecciona el archivo (.csv)</strong></label><br>
-                        <input type="file" id="archivoCsv" accept=".csv" class="form-control" style="max-width: 300px; margin-top: 5px;" />
-                    </div>
-
-                    <div class="d-flex align-items-center mt-3">
-                        <button onclick="subirCSV()" style="background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">🚀 Subir a la Nube</button>
-
-                        <button id="btn-masivo" onclick="borradoMasivo()" style="background: transparent; color: #ff4444; border: 1px solid #ff4444; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-left: 15px;">
-                            <i class="bi bi-trash3-fill"></i> Borrar Todo el Catálogo
-                        </button>
-                    </div>
-                    <p id="mensajeCsv" style="margin-top: 15px; font-weight: bold;"></p>
                 </div>
-
-                <div class="table-container mb-4 mt-4">
-                    <h5 style="color: var(--neon-amarillo); font-family: 'Orbitron';"><i class="bi bi-plus-circle-dotted"></i> CREAR PRODUCTO MANUAL</h5>
-                    <div class="row g-3 align-items-end mb-3">
-                        <div class="col-md-4"><label class="form-label-neon">Nombre</label><input type="text" id="nuevo-nombre" class="form-control" placeholder="Ej: Super Detox"></div>
-                        <div class="col-md-3"><label class="form-label-neon">Categoría</label><select id="nuevo-categoria" class="form-select"><option value="500 mls">Vaso 500 mls</option><option value="Packs">Pack Pulpa</option></select></div>
-                        <div class="col-md-5"><label class="form-label-neon">URL Foto</label><input type="text" id="nuevo-imagen" class="form-control" placeholder="https://..."></div>
-                    </div>
-                    <textarea id="nuevo-descripcion" class="form-control mb-3" placeholder="Descripción de beneficios..." rows="2"></textarea>
-
-                    <div class="row g-3 align-items-end p-3 rounded" style="background: rgba(255,230,0,0.05); border: 1px solid rgba(255,230,0,0.3);">
-                        <div class="col-md-4">
-                            <label class="form-label-neon" style="color: var(--neon-amarillo);">🌍 ASIGNAR A SUCURSAL:</label>
-                            <select id="nuevo-sucursal" class="form-select border-warning text-warning" style="background: black;">
-                                <option value="Colombia">🇨🇴 Colombia</option>
-                                <option value="Chile">🇨🇱 Chile</option>
-                                <option value="España">🇪🇸 España</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label-neon" style="color: var(--neon-amarillo);">💰 PRECIO LOCAL:</label>
-                            <input type="number" id="nuevo-precio" class="form-control border-warning text-warning" style="background: black;" placeholder="Precio">
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn w-100 py-2" style="background: var(--neon-amarillo); font-family: 'Orbitron'; font-weight: bold; color: black;" onclick="crearProductoCatalogo()"><i class="bi bi-cloud-arrow-up"></i> REGISTRAR</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="table-container">
+                <div class="table-container p-0">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle text-center">
-                            <thead class="table-dark">
-                            <tr><th>FOTO</th><th class="text-start">BATIDO / PACK</th><th>SUCURSAL</th><th>PRECIO LOCAL</th><th>ACCIONES</th></tr>
-                            </thead>
+                        <table class="table text-center align-middle m-0">
+                            <thead class="table-dark"><tr><th>MUESTRA</th><th>ID_BOTÁNICO</th><th>NODO_BASE</th><th>VALOR_COMERCIAL</th><th>SYNC</th></tr></thead>
                             <tbody id="tabla-catalogo"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <div class="tab-pane fade" id="tab-stats">
-                <div class="row g-4">
-                    <div class="col-md-6"><div class="table-container text-center"><h5 class="mb-4 text-success font-monospace">TOP VENTAS GLOBALES</h5><canvas id="chartProductos" style="max-height: 300px;"></canvas></div></div>
-                    <div class="col-md-6"><div class="table-container text-center"><h5 class="mb-4 text-warning font-monospace">INGRESOS POR PAÍS</h5><canvas id="chartPaises" style="max-height: 300px;"></canvas></div></div>
+            <div class="tab-pane fade" id="tab-stats" role="tabpanel">
+                <div class="table-container text-center py-5">
+                    <i class="bi bi-tree fs-1 text-money-green d-block mb-3" style="text-shadow: var(--text-glow);"></i>
+                    <h5 class="text-money-green mb-3 fw-bold font-orbitron eco-text">SISTEMA DE ECO-MÉTRICAS</h5>
+                    <p style="color: var(--agua-pura); font-size: 1.1rem;">Recolectando datos de crecimiento de la red botánica... <br> Esperando floración de datos.</p>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<div class="modal fade" id="modalQR" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content text-center" style="background: rgba(5,22,14,0.98); border: 2px solid var(--neon-amarillo); border-radius: 20px;">
-            <div class="modal-header border-0 pb-0 justify-content-center">
-                <h5 class="modal-title" style="color: var(--neon-amarillo); font-family: 'Orbitron', sans-serif;">MOSTRAR QR AL CLIENTE</h5>
-            </div>
-            <div class="modal-body">
-                <div style="background: white; padding: 15px; border-radius: 15px; display: inline-block;">
-                    <img id="img-codigo-qr" src="" alt="Código QR" style="width: 200px; height: 200px;">
-                </div>
-                <p class="mt-3 mb-0" style="color: var(--verde-matrix); font-weight: bold;">MONTO: <span id="monto-qr"></span></p>
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">CERRAR</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalEditarProducto" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content" style="background: rgba(5,22,14,0.98); border: 1px solid var(--verde-matrix); border-radius: 20px; color: white;">
-            <div class="modal-header border-0"><h5 class="modal-title" style="color: var(--verde-matrix); font-family: 'Orbitron';">✏️ MODIFICAR TEXTOS</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body">
-                <input type="hidden" id="edit-id">
-                <div class="row g-3 mb-3"><div class="col-md-6"><label class="form-label-neon">Nombre</label><input type="text" id="edit-nombre" class="form-control"></div><div class="col-md-6"><label class="form-label-neon">Categoría</label><select id="edit-categoria" class="form-select"><option value="500 mls">Vaso 500 mls</option><option value="Packs">Pack</option></select></div></div>
-                <div class="mb-3"><label class="form-label-neon">URL Imagen</label><input type="text" id="edit-imagen" class="form-control"></div>
-                <div class="mb-3"><label class="form-label-neon">Descripción Completa</label><textarea id="edit-descripcion" class="form-control" rows="8"></textarea></div>
-            </div>
-            <div class="modal-footer border-0"><button class="btn btn-neon px-4 w-100" onclick="guardarEdicionInfo()">[ GUARDAR CAMBIOS ]</button></div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-    let rolUsuario = null;
-    let sucursalFiltro = 'TODAS';
-    let ventasEnMemoria = [], catalogoAdmin = [], insMem = [];
-    let chart1 = null, chart2 = null;
+    // --- AUDIO ENGINE ---
+    let audioCtx = null;
+    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if(audioCtx.state === 'suspended') audioCtx.resume(); }
 
-    // --- SEGURIDAD Y ROLES A PRUEBA DE BALAS ---
+    function playSound(type) {
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+
+        if (type === 'click') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); // Sonido más suave, tipo gota
+            osc.frequency.exponentialRampToValueAtTime(10, now + 0.1);
+            gain.gain.setValueAtTime(0.05, now); gain.gain.linearRampToValueAtTime(0, now + 0.1);
+            osc.start(); osc.stop(now + 0.1);
+        } else if (type === 'typing') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(600, now);
+            gain.gain.setValueAtTime(0.01, now); gain.gain.linearRampToValueAtTime(0, now + 0.03);
+            osc.start(); osc.stop(now + 0.03);
+        } else if (type === 'granted') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(300, now); // Tono armónico ascendente
+            osc.frequency.linearRampToValueAtTime(600, now + 0.4);
+            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.4);
+            osc.start(); osc.stop(now + 0.4);
+        } else if (type === 'error') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now);
+            osc.frequency.exponentialRampToValueAtTime(50, now + 0.3);
+            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
+            osc.start(); osc.stop(now + 0.3);
+        }
+    }
+
+    // --- LOGICA MATRIZ ---
+    let rolUsuario = null; let sucursalAdmin = null; let ventasEnMemoria = [], insMem = [];
+
     function validarAcceso() {
-        const pin = document.getElementById('input-pin').value.trim();
+        const pin = document.getElementById('input-pin').value;
+        let rol = null, etiqueta = null, sucursalBase = null;
 
-        if(pin === '7777') {
-            rolUsuario = 'SUPREMO';
-            sucursalFiltro = 'TODAS';
-        } else if(pin === '1010') {
-            rolUsuario = 'ADMIN COLOMBIA';
-            sucursalFiltro = 'Colombia';
-        } else if(pin === '2020') {
-            rolUsuario = 'ADMIN CHILE';
-            sucursalFiltro = 'Chile';
-        } else if(pin === '3030') {
-            rolUsuario = 'ADMIN ESPAÑA';
-            sucursalFiltro = 'España';
-        } else {
-            alert("ACCESO DENEGADO. PIN INCORRECTO.");
-            return;
-        }
+        if(pin === '7777') { rol = 'SUPREMO'; etiqueta = 'NÚCLEO MAESTRO'; }
+        else if(pin === '1010') { rol = 'ADMIN'; etiqueta = 'BOTA. COLOMBIA'; sucursalBase = 'Colombia'; }
+        else if(pin === '2020') { rol = 'ADMIN'; etiqueta = 'BOTA. CHILE'; sucursalBase = 'Chile'; }
+        else if(pin === '3030') { rol = 'ADMIN'; etiqueta = 'BOTA. ESPAÑA'; sucursalBase = 'España'; }
+        else { playSound('error'); document.getElementById('input-pin').value = ''; return; }
 
-        document.getElementById('label-rol').innerText = "- " + rolUsuario;
-        document.getElementById('login-screen').style.display='none';
-        document.getElementById('app-dashboard').style.display='block';
+        playSound('granted');
+        rolUsuario = rol; sucursalAdmin = sucursalBase;
 
-        aplicarRestriccionesDeSucursal();
-        cargarVentas();
-    }
+        document.getElementById('login-form').style.display = 'none';
+        const bootPanel = document.getElementById('boot-sequence');
+        const bootBar = document.getElementById('boot-bar-fill');
+        const bootText = document.getElementById('boot-status-text');
 
-    function aplicarRestriccionesDeSucursal() {
-        if(sucursalFiltro !== 'TODAS') {
-            ['ins-sucursal', 'sucursalCsv', 'nuevo-sucursal'].forEach(id => {
-                let el = document.getElementById(id);
-                if(el) { el.value = sucursalFiltro; el.setAttribute('disabled', 'true'); }
-            });
-            if(sucursalFiltro !== 'Colombia') document.getElementById('caja-col-container').style.display = 'none';
-            if(sucursalFiltro !== 'Chile') document.getElementById('caja-chi-container').style.display = 'none';
-            if(sucursalFiltro !== 'España') document.getElementById('caja-esp-container').style.display = 'none';
-        }
-    }
+        bootPanel.style.display = 'block';
 
-    // --- FUNCION PARA SUBIR EL CSV A LA NUBE ---
-    function subirCSV() {
-        const fileInput = document.getElementById('archivoCsv');
-        const sucursal = sucursalFiltro !== 'TODAS' ? sucursalFiltro : document.getElementById('sucursalCsv').value;
-        const mensaje = document.getElementById('mensajeCsv');
+        const estados = [
+            {t: "Activando Bio-Núcleo...", p: 15},
+            {t: "Regando Protocolos de Red...", p: 40},
+            {t: "Sincronizando Ecosistema...", p: 75},
+            {t: "Sistema Vital: ESTABLE", p: 100}
+        ];
 
-        if (fileInput.files.length === 0) {
-            mensaje.innerText = "⚠️ Por favor selecciona un archivo primero.";
-            mensaje.style.color = "var(--naranja-alerta)";
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append("file", fileInput.files[0]);
-        formData.append("sucursal", sucursal);
-
-        mensaje.innerText = "⏳ Analizando archivo y subiendo...";
-        mensaje.style.color = "#00d2d3";
-
-        fetch('/api/productos/cargar-csv', { method: 'POST', body: formData })
-        .then(response => response.text())
-        .then(data => {
-            if(data.includes("¡Éxito!")) {
-                mensaje.innerText = "✅ " + data;
-                mensaje.style.color = "var(--verde-matrix)";
-                setTimeout(() => cargarCatalogo(), 2000);
+        let i = 0;
+        const intervalo = setInterval(() => {
+            if(i < estados.length) {
+                bootText.innerText = estados[i].t;
+                bootBar.style.width = estados[i].p + '%';
+                i++;
             } else {
-                mensaje.innerText = "❌ " + data;
-                mensaje.style.color = "red";
+                clearInterval(intervalo);
+                document.getElementById('label-rol').innerText = etiqueta;
+                aplicarSeguridad();
+                document.getElementById('login-screen').style.opacity = '0';
+
+                setTimeout(() => {
+                    document.getElementById('login-screen').style.display = 'none';
+                    document.getElementById('app-dashboard').style.display = 'block';
+                    setTimeout(() => { document.getElementById('app-dashboard').style.opacity = '1'; }, 50);
+                    cargarVentas();
+                }, 800);
             }
-        }).catch(error => {
-            mensaje.innerText = "❌ Error de conexión al subir el archivo.";
-            mensaje.style.color = "red";
-        });
+        }, 600);
     }
 
-    // --- LÓGICA DE BORRADO (INDIVIDUAL Y MASIVO) ---
-    async function eliminarProducto(id) {
-        if(confirm("¿Eliminar este producto definitivamente del catálogo?")) {
-            try {
-                const res = await fetch(`/api/productos/${id}`, { method: 'DELETE' });
-                if(res.ok) {
-                    cargarCatalogo(); // Refresca la tabla visualmente
+    function aplicarSeguridad() {
+        const esSupremo = (rolUsuario === 'SUPREMO');
+        const selectores = ['prod-sucursal', 'ins-sucursal', 'vaso-sucursal', 'filtro-sucursal-recetas', 'filtro-sucursal-catalogo'];
+
+        selectores.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                if (!esSupremo) {
+                    el.value = sucursalAdmin; el.disabled = true; el.classList.add('locked-select');
                 } else {
-                    alert("❌ No se puede borrar. Este producto está amarrado a una venta antigua o una fórmula.");
+                    el.disabled = false; el.classList.remove('locked-select');
                 }
-            } catch(e) {
-                alert("❌ Error de conexión al intentar borrar.");
             }
+        });
+
+        if (!esSupremo) {
+            if (sucursalAdmin !== 'Colombia') document.getElementById('panel-stat-col').style.display = 'none';
+            if (sucursalAdmin !== 'Chile') document.getElementById('panel-stat-chi').style.display = 'none';
+            if (sucursalAdmin !== 'España') document.getElementById('panel-stat-esp').style.display = 'none';
         }
+        cargarProductosSelect();
+        prepararRecetas();
     }
 
-    async function borradoMasivo() {
-        if(!confirm("⚠️ ATENCIÓN: ¿Estás seguro de borrar todos los productos mostrados en esta tabla? Los que tengan ventas asociadas se saltarán automáticamente para proteger la contabilidad.")) return;
-
-        const btn = document.getElementById('btn-masivo');
-        const txtOriginal = btn.innerHTML;
-        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> BORRANDO...`;
-        btn.disabled = true;
-
-        let borrados = 0;
-        let fallidos = 0;
-
-        for (const p of catalogoAdmin) {
-            try {
-                const res = await fetch(`/api/productos/${p.id}`, { method: 'DELETE' });
-                if (res.ok) borrados++;
-                else fallidos++;
-            } catch(e) { fallidos++; }
-        }
-
-        alert(`✅ Proceso finalizado:\n- ${borrados} productos eliminados.\n- ${fallidos} productos conservados (porque tienen ventas o historial).`);
-
-        btn.innerHTML = txtOriginal;
-        btn.disabled = false;
-        cargarCatalogo();
-    }
-
-    // --- 1. VENTAS ---
     async function cargarVentas() {
         try {
-            const res = await fetch('/api/ventas');
-            if(!res.ok) throw new Error("Fallo al conectar con servidor");
-            const data = await res.json();
-
-            if(sucursalFiltro !== 'TODAS') {
-                ventasEnMemoria = data.filter(v => v.pais && v.pais.toLowerCase().includes(sucursalFiltro.toLowerCase()));
-            } else {
-                ventasEnMemoria = data;
-            }
-
+            const res = await fetch('/api/ventas'); const data = await res.json();
             const tb = document.getElementById('tabla-ventas'); tb.innerHTML='';
             let cCol=0, cChi=0, cEsp=0;
-
-            ventasEnMemoria.sort((a,b)=>b.id-a.id).forEach(v => {
-                const est = v.estado || 'Pagado';
-                const pais = v.pais || 'Desconocido';
-                const origen = v.origen || 'POS';
-                const medio = v.medioPago || 'Efectivo';
-                const simbolo = pais.includes('España') ? '€' : '$';
-
-                if(est === 'Pagado') {
-                    if(pais.includes('Colombia')) cCol += v.total;
-                    else if(pais.includes('Chile')) cChi += v.total;
-                    else if(pais.includes('España')) cEsp += v.total;
+            data.forEach(v => {
+                if (rolUsuario !== 'SUPREMO' && !v.pais.includes(sucursalAdmin)) return;
+                if(v.estado==='Pagado'){
+                    if(v.pais.includes('Colombia')) cCol += v.total; else if(v.pais.includes('Chile')) cChi += v.total; else if(v.pais.includes('España')) cEsp += v.total;
                 }
-
-                const btnOK = est === 'Pendiente' ? `<button class="btn btn-sm btn-neon py-0 px-2 me-1" onclick="confirmarPago(${v.id})" title="Confirmar Pago y Entregar">✔ CONFIRMAR</button>` : '';
-                const btnQR = est === 'Pendiente' ? `<button class="btn btn-sm btn-neon-amarillo py-0 px-2 me-1" onclick="mostrarQR(${v.id}, '${simbolo}', ${v.total})" title="Ver código QR">📱 QR</button>` : '';
-
-                tb.innerHTML += `<tr class="${est==='Pendiente'?'opacity-75':''}">
-                    <td class="text-muted fw-bold">#${v.id}</td>
-                    <td><span class="badge-sucursal">${pais.toUpperCase()}</span></td>
-                    <td><span class="badge-origen">${origen}</span></td>
-                    <td><span class="badge-pago">${medio}</span></td>
-                    <td><span class="${est==='Pagado'?'estado-pagado':'estado-pendiente'}">${est}</span></td>
-                    <td class="text-end fw-bold" style="color:var(--verde-matrix)">${simbolo}${v.total.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2})}</td>
-                    <td class="text-center">${btnOK} ${btnQR} <button class="btn btn-sm btn-neon-azul py-0 px-2" onclick="imprimirTicket(${v.id})">🖨️</button></td>
-                </tr>`;
+                tb.innerHTML += `<tr><td class="text-white">#OP-${v.id}</td><td>${v.pais}</td><td class="text-money-green">$${v.total.toLocaleString()}</td><td><i class="bi bi-check2-circle" style="color:var(--agua-pura);"></i></td></tr>`;
             });
-            document.getElementById('caja-col').innerText=cCol.toLocaleString('es-ES'); document.getElementById('caja-chi').innerText=cChi.toLocaleString('es-ES'); document.getElementById('caja-esp').innerText=cEsp.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2});
-        } catch (e) {
-            console.error(e);
-        }
+            document.getElementById('caja-col').innerText=cCol.toLocaleString();
+            document.getElementById('caja-chi').innerText=cChi.toLocaleString();
+            document.getElementById('caja-esp').innerText=cEsp.toLocaleString();
+        } catch(e) {}
     }
 
-    function mostrarQR(idVenta, simbolo, total) {
-        const link = `https://pagos.gomezsystems.com/checkout?venta=${idVenta}&monto=${total}`;
-        document.getElementById('img-codigo-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(link)}`;
-        document.getElementById('monto-qr').innerText = `${simbolo}${total.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2})}`;
-        new bootstrap.Modal(document.getElementById('modalQR')).show();
+    async function cargarProductosSelect() {
+        try {
+            const suc = document.getElementById('prod-sucursal').value;
+            const res = await fetch('/api/productos');
+            const data = await res.json();
+            const select = document.getElementById('prod-item');
+            select.innerHTML = '<option value="">-- Seleccionar Natural --</option>';
+            data.forEach(p => {
+                if(p.sucursal === suc) {
+                    select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+                }
+            });
+        } catch(e) {}
     }
 
-    function confirmarPago(id) {
-        if(confirm("¿Recibiste la transferencia? Se descontará el inventario en el país de origen de la venta.")) {
-            fetch(`/api/ventas/${id}/pagar`,{method:'PUT'}).then(()=> { cargarVentas(); cargarProduccion(); });
-        }
-    }
-
-    function imprimirTicket(id) {
-        const v = ventasEnMemoria.find(x => x.id === id); if(!v) return;
-        let pds = ''; let lista = {}; v.productos.forEach(p => lista[p.nombre] = (lista[p.nombre]||0)+1);
-        for(let n in lista) pds += `<tr><td style="text-align:left;">${lista[n]}x</td><td style="text-align:left;">${n}</td></tr>`;
-        document.getElementById('zona-impresion').innerHTML = `<div style="text-align:center; font-family: monospace;"><h2>🌿 RAÍCES</h2><p>TICKET #${v.id}</p><p>Sede: ${v.pais}</p><hr><table style="width:100%; font-size:12px;">${pds}</table><hr><h4>TOTAL: ${v.total.toLocaleString()}</h4></div>`;
-        window.print();
-    }
-
-    // --- 2. PRODUCCIÓN ---
     async function cargarProduccion() {
+        cargarProductosSelect();
         try {
             const res = await fetch('/api/productos');
-            let data = await res.json();
-            if(sucursalFiltro !== 'TODAS') data = data.filter(p => p.sucursal && p.sucursal.toLowerCase() === sucursalFiltro.toLowerCase());
-
-            document.getElementById('prod-producto').innerHTML = data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(p=>`<option value="${p.id}">${p.nombre} (${p.sucursal||'N/A'})</option>`).join('');
-            const tb = document.getElementById('tabla-produccion'); tb.innerHTML='';
+            const data = await res.json();
+            const tb = document.getElementById('tabla-produccion');
+            tb.innerHTML='';
             data.forEach(p => {
-                const stockActual = p.stock || 0;
-                tb.innerHTML += `<tr><td class="text-start fw-bold">${p.nombre}</td><td><span class="badge-sucursal">${p.sucursal||'N/A'}</span></td><td class="fs-5 fw-bold ${stockActual > 0 ? "text-success" : "text-danger"}">${stockActual} Unds</td></tr>`;
+                if(rolUsuario !== 'SUPREMO' && !p.sucursal.includes(sucursalAdmin)) return;
+                tb.innerHTML += `<tr><td class="fw-bold text-white">${p.nombre}</td><td>${p.sucursal}</td><td class="text-money-green fs-5 fw-bold">${p.stock||0}</td><td><i class="bi bi-droplet-fill" style="color:var(--agua-pura);"></i> 100% PURO</td></tr>`;
             });
-        } catch (e) { console.error(e); }
+        } catch(e) {}
     }
 
-    async function registrarProduccion() {
-        const idProd = document.getElementById('prod-producto').value; const cant = document.getElementById('prod-cantidad').value;
-        if(!cant || cant <= 0) return;
-        if(confirm(`¿Producir ${cant} unidades? Se descontará materia prima en la sucursal asignada.`)) {
-            await fetch('/api/produccion/fabricar', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({idProducto: idProd, cantidad: cant}) });
-            document.getElementById('prod-cantidad').value = ''; cargarProduccion(); cargarInsumos();
+    function procesarEnsamblaje() {
+        const id = document.getElementById('prod-item').value;
+        const cant = document.getElementById('prod-cantidad').value;
+
+        if(!id || !cant || cant <= 0) {
+            playSound('error');
+            alert("ALERTA VITAL: Seleccione un producto e ingrese un lote válido.");
+            return;
         }
+
+        playSound('granted');
+        const overlay = document.getElementById('overlay-ensamblaje');
+        overlay.style.display = 'flex';
+
+        setTimeout(async () => {
+            try {
+                // Aquí en el futuro conectarás con tu Backend
+                // await fetch(`/api/productos/${id}/agregar-stock?cantidad=${cant}`, {method:'POST'});
+
+                document.getElementById('prod-cantidad').value = '';
+                await cargarProduccion();
+
+                overlay.style.display = 'none';
+                playSound('click');
+            } catch(e) {
+                overlay.style.display = 'none';
+                playSound('error');
+            }
+        }, 1800);
     }
 
-    // --- 3. BODEGA INSUMOS ---
-    function cargarInsumos() {
-        fetch('/api/insumos/todos').then(res=>res.json()).then(data => {
-            if(sucursalFiltro !== 'TODAS') data = data.filter(i => i.sucursal && i.sucursal.toLowerCase() === sucursalFiltro.toLowerCase());
-            insMem = data;
-
-            document.getElementById('tabla-insumos').innerHTML = data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(i => `<tr><td class="text-start fw-bold">${i.nombre}</td><td><span class="badge-sucursal">${i.sucursal || 'Desconocida'}</span></td><td class="fw-bold" style="color: var(--neon-amarillo);">${i.unidadActual} ${i.medida}</td><td><button class="btn btn-sm btn-neon p-1" onclick="editarInsumo(${i.idInsumo})">✏️</button></td></tr>`).join('');
-        }).catch(e => console.error(e));
+    async function cargarInsumos() {
+        try {
+            const res = await fetch('/api/insumos/todos'); const data = await res.json(); insMem = data;
+            const tb = document.getElementById('tabla-insumos'); tb.innerHTML='';
+            data.sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).forEach(i => {
+                if (rolUsuario !== 'SUPREMO' && !i.sucursal.includes(sucursalAdmin)) return;
+                const isVaso = i.categoria && i.categoria.includes('Vaso');
+                tb.innerHTML += `<tr><td class="fw-bold text-white">${i.nombre}</td><td><span class="badge-categoria" style="${isVaso?'color:var(--agua-pura); border-color:var(--agua-pura);':''}">${(i.categoria||'Pulpas').toUpperCase()}</span></td><td>${i.sucursal}</td><td class="text-warning fw-bold fs-6">${i.unidadActual} <span class="small fw-normal text-muted">${i.medida}</span></td><td><button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})"><i class="bi bi-trash3-fill fs-5"></i></button></td></tr>`;
+            });
+        } catch(e) {}
     }
 
-    function guardarInsumo() {
-        const d = {
-            idInsumo: document.getElementById('ins-id').value || null,
-            nombre: document.getElementById('ins-nombre').value,
-            medida: document.getElementById('ins-unidad').value,
-            unidadActual: parseFloat(document.getElementById('ins-stock').value),
-            sucursal: sucursalFiltro !== 'TODAS' ? sucursalFiltro : document.getElementById('ins-sucursal').value
-        };
-        fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(()=>{
-            document.getElementById('ins-nombre').value='';
-            document.getElementById('ins-stock').value='';
-            document.getElementById('ins-id').value='';
-            cargarInsumos();
-        });
+    function guardarInsumo(tipo) {
+        let nombre, cat, uni, stock, suc;
+        if(tipo==='pulpas'){
+            nombre = document.getElementById('ins-nombre').value; cat='Pulpas'; uni=document.getElementById('ins-unidad').value; stock=document.getElementById('ins-stock').value; suc=document.getElementById('ins-sucursal').value;
+        } else {
+            nombre = document.getElementById('vaso-nombre').value; cat='Insumos Vaso'; uni=document.getElementById('vaso-unidad').value; stock=document.getElementById('vaso-stock').value; suc=document.getElementById('vaso-sucursal').value;
+        }
+        if(!nombre) return;
+        fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre, categoria:cat, medida:uni, unidadActual:parseInt(stock)||0, sucursal:suc})}).then(()=>{ cargarInsumos(); playSound('click'); });
     }
 
-    function editarInsumo(id) {
-        const i = insMem.find(x=>x.idInsumo===id);
-        document.getElementById('ins-id').value=i.idInsumo;
-        document.getElementById('ins-nombre').value=i.nombre;
-        document.getElementById('ins-unidad').value=i.medida;
-        document.getElementById('ins-stock').value=i.unidadActual;
-        if(i.sucursal && sucursalFiltro === 'TODAS') document.getElementById('ins-sucursal').value = i.sucursal;
-    }
-
-    // --- 4. FÓRMULAS ---
     async function prepararRecetas() {
         try {
-            let [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]);
-            let prod = await rP.json(); let ins = await rI.json();
-
-            if(sucursalFiltro !== 'TODAS') {
-                prod = prod.filter(p => p.sucursal && p.sucursal.toLowerCase() === sucursalFiltro.toLowerCase());
-                ins = ins.filter(i => i.sucursal && i.sucursal.toLowerCase() === sucursalFiltro.toLowerCase());
-            }
-
-            document.getElementById('rec-producto').innerHTML = '<option value="">Seleccione Batido...</option>' + prod.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(p=>`<option value="${p.id}">${p.nombre} (${p.sucursal||'N/A'})</option>`).join('');
-            document.getElementById('rec-insumo').innerHTML = ins.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).map(i=>`<option value="${i.nombre}">${i.nombre} (${i.sucursal||'N/A'})</option>`).join('');
+            const [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]);
+            const productos = await rP.json(); const insumos = await rI.json();
+            const suc = document.getElementById('filtro-sucursal-recetas').value;
+            document.getElementById('rec-producto').innerHTML = productos.filter(p=>p.sucursal===suc).map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
+            document.getElementById('rec-insumo').innerHTML = insumos.filter(i=>i.sucursal===suc).map(i=>`<option value="${i.nombre}">${i.nombre} (${i.medida})</option>`).join('');
             cargarTablaReceta();
-        } catch (e) { console.error(e); }
+        } catch(e) {}
     }
-    async function guardarReceta() { const idProd = document.getElementById('rec-producto').value; const nomInsumo = document.getElementById('rec-insumo').value; const cant = document.getElementById('rec-cantidad').value; await fetch(`/api/insumos/${idProd}/vincular-ingrediente`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ ingrediente: nomInsumo, gasto: cant }) }); document.getElementById('rec-cantidad').value=''; cargarTablaReceta(); }
-    async function cargarTablaReceta() { const idProd = document.getElementById('rec-producto').value; const tbody = document.getElementById('tabla-vista-formula'); if(!idProd) { tbody.innerHTML = ''; return; } const res = await fetch(`/api/insumos/${idProd}/receta`); const texto = await res.text(); tbody.innerHTML = ''; texto.split('\n').forEach(linea => { if(!linea.trim()) return; const [nom, cant] = linea.split(':'); tbody.innerHTML += `<tr><td class="fw-bold">${nom.toUpperCase()}</td><td style="color: var(--verde-matrix);">${cant || 1}</td><td><button class="btn btn-sm btn-neon-rojo py-0 px-2" onclick="borrarDeFormula(${idProd}, '${nom.trim()}')"><i class="bi bi-trash"></i></button></td></tr>`; }); }
-    async function borrarDeFormula(idProd, nombreIngr) { await fetch(`/api/insumos/${idProd}/desvincular/${nombreIngr}`, { method: 'DELETE' }); cargarTablaReceta(); }
 
-    // --- 5. CATÁLOGO MULTI-NODO (ANTICOLAPSO CON BORRADO) ---
-    async function cargarCatalogo() {
+    async function guardarReceta() {
+        const id = document.getElementById('rec-producto').value;
+        const ing = document.getElementById('rec-insumo').value;
+        const cant = document.getElementById('rec-cantidad').value;
+        await fetch(`/api/insumos/${id}/vincular-ingrediente`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ingrediente:ing, gasto:cant})});
+        cargarTablaReceta(); playSound('click');
+    }
+
+    async function cargarTablaReceta() {
+        const id = document.getElementById('rec-producto').value; if(!id) return;
         try {
-            const tb = document.getElementById('tabla-catalogo');
-            tb.innerHTML='<tr><td colspan="5" class="text-warning py-4">Sincronizando con el servidor...</td></tr>';
+            const res = await fetch(`/api/insumos/${id}/receta`); const txt = await res.text();
+            const tb = document.getElementById('tabla-vista-formula'); tb.innerHTML='';
+            txt.split('\n').forEach(l=>{ if(l.includes(':')) tb.innerHTML+=`<tr><td class="text-white fw-bold">${l.split(':')[0]}</td><td style="color:var(--bio-esmeralda);">${l.split(':')[1]}</td><td><i class="bi bi-scissors text-danger" style="cursor:pointer;"></i></td></tr>`; });
+        } catch(e) {}
+    }
 
-            const res = await fetch('/api/productos');
-            if(!res.ok) throw new Error("Error en la respuesta del servidor");
-
-            let data = await res.json();
-
-            // Filtro robusto
-            if(sucursalFiltro !== 'TODAS') {
-                catalogoAdmin = data.filter(p => p.sucursal && p.sucursal.trim().toLowerCase() === sucursalFiltro.trim().toLowerCase());
-            } else {
-                catalogoAdmin = data;
-            }
-
-            tb.innerHTML='';
-
-            if(catalogoAdmin.length === 0) {
-                tb.innerHTML = `<tr><td colspan="5" class="text-muted py-4">No hay batidos registrados para esta sucursal. Sube un archivo CSV o créalos manualmente.</td></tr>`;
-                return;
-            }
-
-            // Ordenamiento robusto anti-nulos y generación de botones
-            catalogoAdmin.sort((a,b) => (a.sucursal || '').localeCompare(b.sucursal || '')).forEach(p => {
-                const imgHtml = p.imagen ? `<img src="${p.imagen}" class="img-preview">` : `<i class="bi bi-image text-muted fs-3"></i>`;
-                const sucursalTexto = p.sucursal || 'Sin Asignar';
-                const simbolo = sucursalTexto === 'España' ? '€' : '$';
-                const precioMostrar = p.precio || 0;
-
-                tb.innerHTML += `
-                    <tr>
-                        <td>${imgHtml}</td>
-                        <td class="text-start fw-bold">${p.nombre}</td>
-                        <td><span class="badge-sucursal">${sucursalTexto}</span></td>
-                        <td>
-                            <div class="input-group input-group-sm" style="width: 120px; margin: auto;">
-                                <span class="input-group-text bg-dark text-white border-secondary">${simbolo}</span>
-                                <input type="number" id="precio-${p.id}" class="form-control text-center" value="${precioMostrar}" step="0.1">
-                            </div>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-neon py-1 px-2 me-1" onclick="guardarPrecioUnico(${p.id})" title="Guardar Precio"><i class="bi bi-save"></i></button>
-                            <button class="btn btn-sm btn-neon-azul py-1 px-2 me-1" onclick="abrirModalEdicion(${p.id})" title="Editar Detalles"><i class="bi bi-pencil-square"></i></button>
-                            <button class="btn btn-sm py-1 px-2" style="background: rgba(255,0,0,0.1); color: #ff4444; border: 1px solid #ff4444; border-radius: 8px;" onclick="eliminarProducto(${p.id})" title="Borrar Producto"><i class="bi bi-trash"></i></button>
-                        </td>
-                    </tr>`;
+    async function cargarCatalogo() {
+        const suc = document.getElementById('filtro-sucursal-catalogo').value;
+        try {
+            const res = await fetch('/api/productos/sucursal/' + suc); const data = await res.json();
+            const tb = document.getElementById('tabla-catalogo'); tb.innerHTML='';
+            data.forEach(p => {
+                tb.innerHTML += `<tr><td><img src="${p.imagen}" class="img-preview"></td><td class="fw-bold text-white">${p.nombre}</td><td>${p.sucursal}</td><td><input type="number" value="${p.precio}" class="form-control text-center input-dark text-money-green mx-auto" style="max-width:150px;"></td><td><button class="btn btn-bio btn-sm px-3" onclick="playSound('click')"><i class="bi bi-arrow-repeat"></i></button></td></tr>`;
             });
-        } catch (error) {
-            console.error(error);
-            document.getElementById('tabla-catalogo').innerHTML = `<tr><td colspan="5" class="text-danger py-4 fw-bold">❌ Hubo un error de red o de datos. Revisa la conexión con el servidor.</td></tr>`;
-        }
+        } catch(e) {}
     }
 
-    async function guardarPrecioUnico(id) {
-        const p = catalogoAdmin.find(x => x.id === id);
-        p.precio = parseFloat(document.getElementById(`precio-${id}`).value) || 0;
-        await fetch('/api/productos', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(p) });
-        alert(`✅ Precio de ${p.nombre} en ${p.sucursal||'la sucursal'} actualizado a ${p.precio}`);
-    }
-
-    async function crearProductoCatalogo() {
-        const p = {
-            nombre: document.getElementById('nuevo-nombre').value,
-            categoria: document.getElementById('nuevo-categoria').value,
-            imagen: document.getElementById('nuevo-imagen').value,
-            descripcion: document.getElementById('nuevo-descripcion').value,
-            sucursal: sucursalFiltro !== 'TODAS' ? sucursalFiltro : document.getElementById('nuevo-sucursal').value,
-            precio: parseFloat(document.getElementById('nuevo-precio').value) || 0,
-            stock: 0
-        };
-        await fetch('/api/productos', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(p) });
-        document.getElementById('nuevo-nombre').value = '';
-        document.getElementById('nuevo-precio').value = '';
-        cargarCatalogo();
-    }
-
-    function abrirModalEdicion(id) {
-        const p = catalogoAdmin.find(x=>x.id===id);
-        document.getElementById('edit-id').value=p.id;
-        document.getElementById('edit-nombre').value=p.nombre;
-        document.getElementById('edit-categoria').value=p.categoria;
-        document.getElementById('edit-imagen').value=p.imagen || '';
-        document.getElementById('edit-descripcion').value=p.descripcion || '';
-        new bootstrap.Modal(document.getElementById('modalEditarProducto')).show();
-    }
-
-    async function guardarEdicionInfo() {
-        const id = parseInt(document.getElementById('edit-id').value);
-        const p = catalogoAdmin.find(x=>x.id===id);
-        p.nombre = document.getElementById('edit-nombre').value;
-        p.categoria = document.getElementById('edit-categoria').value;
-        p.imagen = document.getElementById('edit-imagen').value;
-        p.descripcion = document.getElementById('edit-descripcion').value;
-        await fetch('/api/productos', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(p) });
-
-        const modalEl = document.getElementById('modalEditarProducto');
-        const modalIns = bootstrap.Modal.getInstance(modalEl);
-        if(modalIns) modalIns.hide();
-        cargarCatalogo();
-    }
-
-    // --- 6. STATS GLOBALES ---
-    function generarReportes() {
-        const stats = {}; const statsPais = { 'Colombia': 0, 'Chile': 0, 'España': 0 };
-        ventasEnMemoria.forEach(v => {
-            v.productos.forEach(p => stats[p.nombre] = (stats[p.nombre]||0)+1);
-            if (v.pais.includes('Colombia')) statsPais['Colombia'] += v.total;
-            else if (v.pais.includes('Chile')) statsPais['Chile'] += v.total;
-            else if (v.pais.includes('España')) statsPais['España'] += v.total;
-        });
-        if(chart1) chart1.destroy(); if(chart2) chart2.destroy();
-        chart1 = new Chart(document.getElementById('chartProductos'), { type: 'bar', data: { labels: Object.keys(stats), datasets: [{ label: 'Ventas (Unds)', data: Object.values(stats), backgroundColor: '#00ff88' }] }, options:{responsive:true, maintainAspectRatio:false} });
-        chart2 = new Chart(document.getElementById('chartPaises'), { type: 'doughnut', data: { labels: Object.keys(statsPais), datasets: [{ data: Object.values(statsPais), backgroundColor: ['#f1c40f', '#e74c3c', '#3498db'] }] }, options:{responsive:true, maintainAspectRatio:false} });
-    }
-
-    function exportarCSV() {
-        let csv = "ID;Fecha;Sucursal;Origen;MedioPago;Estado;Total\n";
-        ventasEnMemoria.forEach(v => csv += `${v.id};${new Date(v.fecha).toLocaleString()};${v.pais};${v.origen||'POS'};${v.medioPago||'Efectivo'};${v.estado};${v.total}\n`);
-        const blob = new Blob([csv], { type: 'text/csv' });
-        const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.setAttribute("download", "VentasGlobales_GomezSystems.csv"); link.click();
-    }
+    function eliminarInsumo(id) { if(confirm("¿Reciclar material de la base botánica?")) fetch(`/api/insumos/${id}`,{method:'DELETE'}).then(()=>cargarInsumos()); }
 </script>
 </body>
 </html>

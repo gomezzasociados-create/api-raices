@@ -3,358 +3,439 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Raíces - Eco-Futurismo Premium</title>
+    <title>RAÍCES - Portal Bio-Nutricional Premium</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
         :root {
-            --verde-matrix: #00ff88;
-            --verde-profundo: #05160e;
-            --verde-medio: #0a2e1f;
-            --neon-amarillo: #ffe600;
-            --blanco-holografico: rgba(255, 255, 255, 0.9);
-            --cristal-extremo: rgba(255, 255, 255, 0.03);
-            --brillo-verde: 0 0 15px rgba(0, 255, 136, 0.4);
-            --brillo-amarillo: 0 0 25px rgba(255, 230, 0, 0.7), inset 0 0 15px rgba(255, 230, 0, 0.3);
+            --bio-oro: #ffd700;
+            --bio-aqua: #00f0ff;
+            --borde-madera: #2d180b;
+            --v-profundo: #01120a;
+            --resplandor-divino: 0 0 35px rgba(255, 215, 0, 0.6);
         }
 
         body {
             font-family: 'Rajdhani', sans-serif;
-            background: linear-gradient(135deg, var(--verde-profundo) 0%, var(--verde-medio) 50%, var(--verde-profundo) 100%);
-            background-size: 200% 200%;
-            animation: respiracionFondo 15s ease infinite;
-            color: var(--blanco-holografico);
-            min-height: 100vh;
-            padding-bottom: 90px;
-            overflow-x: hidden;
-        }
-        @keyframes respiracionFondo { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-        .hero-raices {
-            position: relative; padding: 80px 20px; text-align: center; border-radius: 0 0 40px 40px;
-            background-image: linear-gradient(180deg, rgba(5, 22, 14, 0.2) 0%, var(--verde-profundo) 100%), url('https://res.cloudinary.com/doi0o3hlr/image/upload/v1774498342/Gemini_Generated_Image_vokg6mvokg6mvokg_ymhlax.png');
-            background-size: cover; background-position: center; border-bottom: 1px solid rgba(0, 255, 136, 0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.8); overflow: hidden;
+            background-color: var(--v-profundo);
+            background-image:
+                linear-gradient(rgba(1, 10, 5, 0.8), rgba(1, 10, 5, 0.95)),
+                url('https://res.cloudinary.com/doi0o3hlr/image/upload/v1774759858/Gemini_Generated_Image_2ocvdw2ocvdw2ocv_ixqdsz.png');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            color: #fff; min-height: 100vh; margin: 0; overflow-x: hidden;
         }
 
-        .hero-raices::after {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(rgba(0,255,136,0) 0%, rgba(0,255,136,0.03) 50%, rgba(0,255,136,0) 100%);
-            animation: scanline 10s linear infinite; pointer-events: none; z-index: 1;
+        #pantalla-inicio {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
         }
-        @keyframes scanline { 0% { transform: translateY(-50%); } 100% { transform: translateY(50%); } }
+        .btn-iniciar-juego {
+            background: transparent; color: var(--bio-oro); border: 2px solid var(--bio-oro);
+            padding: 20px 50px; font-family: 'Orbitron'; font-size: 1.5rem; font-weight: 900;
+            letter-spacing: 5px; text-transform: uppercase; cursor: pointer; transition: 0.4s;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); border-radius: 10px;
+        }
+        .btn-iniciar-juego:hover { background: var(--bio-oro); color: #000; box-shadow: var(--resplandor-divino); transform: scale(1.05); }
 
-        .titulo-neon { font-family: 'Orbitron', sans-serif; font-weight: 900; color: #ffffff; text-shadow: var(--brillo-verde), 0 0 30px rgba(255,255,255,0.5); letter-spacing: 8px; position: relative; z-index: 2; text-transform: uppercase; }
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,255,136,0.05) 50%, rgba(0,255,136,0.05));
+            background-size: 100% 8px; z-index: 9998; pointer-events: none;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        body.hologram-active .scanlines {
+            opacity: 1; animation: scrollScanlines 10s linear infinite;
+        }
+        @keyframes scrollScanlines { from { background-position: 0 0; } to { background-position: 0 100vh; } }
+
+        .fireflies { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .firefly { position: absolute; border-radius: 50%; opacity: 0; animation: float-up linear infinite, parpadeo ease-in-out infinite alternate; }
+        @keyframes float-up { 0% { transform: translateY(105vh) translateX(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(-15vh) translateX(50px); opacity: 0; } }
+        @keyframes parpadeo { 0% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .btn-musica {
+            position: fixed; bottom: 20px; left: 20px; z-index: 2000;
+            background: rgba(26, 16, 5, 0.8); border: 2px solid var(--bio-oro);
+            color: var(--bio-oro); width: 45px; height: 45px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; cursor: pointer; transition: 0.3s;
+        }
+        .btn-musica:hover { transform: scale(1.1); box-shadow: var(--resplandor-divino); }
+
+        .header-raices { position: relative; z-index: 10; padding: 60px 20px 30px; text-align: center; }
+        .titulo-raices {
+            font-family: 'Orbitron', sans-serif; font-size: 4.5rem; font-weight: 900;
+            color: transparent; -webkit-text-stroke: 2px #b38600;
+            background: linear-gradient(180deg, #fff 30%, var(--bio-oro));
+            background-clip: text; -webkit-background-clip: text;
+            text-shadow: 0 0 35px rgba(255, 215, 0, 0.7); letter-spacing: 10px;
+        }
 
         .selector-sucursal {
-            background: rgba(10, 46, 31, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(0, 255, 136, 0.4); color: var(--verde-matrix); font-family: 'Orbitron', sans-serif; padding: 12px 25px; border-radius: 30px; transition: all 0.3s ease; appearance: none; padding-right: 45px; position: relative; z-index: 2; font-size: 0.9rem; letter-spacing: 1px; cursor: pointer;
+            background: rgba(1, 10, 5, 0.6); backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 215, 0, 0.4); color: var(--bio-oro);
+            font-family: 'Orbitron', sans-serif; padding: 12px 35px; border-radius: 10px;
+            appearance: none; position: relative; z-index: 2; font-size: 0.9rem; letter-spacing: 2px;
+            box-shadow: inset 0 0 10px rgba(255,215,0,0.2); transition: 0.3s; cursor: pointer;
         }
-        .selector-sucursal:focus { outline: none; box-shadow: var(--brillo-verde); border-color: var(--verde-matrix); }
-        .selector-sucursal option { background: var(--verde-profundo); color: white; }
 
-        .contenedor-categorias { display: flex; gap: 15px; justify-content: center; padding: 15px 5px; flex-wrap: wrap; }
+        .contenedor-categorias { display: flex; gap: 20px; justify-content: center; margin: 30px 0 40px; z-index: 10; position: relative; }
         .categoria-badge {
-            background: rgba(0,0,0,0.6); color: rgba(255,255,255,0.6); padding: 12px 30px; border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.2); transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            backdrop-filter: blur(5px); font-weight: 700; letter-spacing: 2px; font-family: 'Orbitron', sans-serif;
-            font-size: 0.95rem; text-transform: uppercase;
+            background: rgba(26, 15, 5, 0.8); color: rgba(255,255,255,0.7); padding: 12px 35px; border-radius: 8px;
+            border: 2px solid rgba(255,215,0,0.3); transition: 0.3s; font-weight: 700; letter-spacing: 3px;
+            font-family: 'Orbitron', sans-serif; cursor: pointer; text-transform: uppercase;
         }
-        .categoria-badge:hover { color: white; border-color: rgba(0, 255, 136, 0.5); transform: translateY(-3px); }
-        .categoria-badge.active {
-            background: rgba(0, 255, 136, 0.15); color: var(--neon-amarillo); border-color: var(--verde-matrix);
-            box-shadow: 0 0 20px rgba(0,255,136,0.3), inset 0 0 10px rgba(0,255,136,0.2); transform: scale(1.05);
+        .categoria-badge.active { background: rgba(255, 215, 0, 0.15); color: var(--bio-oro); border-color: var(--bio-oro); box-shadow: var(--resplandor-divino); transform: scale(1.05); }
+
+        .card-escena { perspective: 1500px; -webkit-perspective: 1500px; width: 100%; height: 460px; z-index: 10; position: relative; margin-bottom: 20px; }
+        .card-flipper { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; -webkit-transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-escena.flipped .card-flipper { transform: rotateY(180deg); }
+
+        .card-front, .card-back {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            backface-visibility: hidden; -webkit-backface-visibility: hidden;
+            border-radius: 15px; border: 6px solid var(--borde-madera);
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.9), inset 0 0 30px rgba(0,0,0,0.8);
         }
 
-        @keyframes materializar {
-            0% { opacity: 0; transform: translateY(50px) scale(0.8); filter: blur(20px); box-shadow: 0 0 50px var(--verde-matrix); }
-            60% { opacity: 0.8; transform: translateY(-10px) scale(1.03); filter: blur(3px); box-shadow: 0 0 30px var(--neon-amarillo); }
-            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); box-shadow: none; }
-        }
+        .card-front { background: linear-gradient(rgba(26, 16, 5, 0.8), rgba(26, 16, 5, 0.95)), url('https://www.transparenttextures.com/patterns/wood-burn-pattern.png'); padding: 25px 20px; justify-content: space-between; }
+        .card-back { background: #0a0502; background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png'); transform: rotateY(180deg); padding: 40px 30px; border-color: var(--bio-oro); }
 
-        .card-menu {
-            position: relative; background: var(--cristal-extremo); backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%); border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 24px; overflow: hidden; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            height: 100%; display: flex; flex-direction: column;
-        }
-        .card-menu:hover { transform: translateY(-5px); border-color: var(--neon-amarillo); box-shadow: var(--brillo-amarillo); background: rgba(255, 230, 0, 0.02); }
+        .card-escena:hover .card-front { border-color: #5c3a21; box-shadow: 0 30px 40px rgba(0,0,0,1), 0 0 20px rgba(255, 215, 0, 0.2); }
 
-        .img-container { position: relative; padding: 0; display: flex; justify-content: center; align-items: center; height: 180px; cursor: pointer; overflow: hidden; }
-        .img-container::before { content: ''; position: absolute; width: 120px; height: 120px; background: radial-gradient(circle, rgba(0,255,136,0.3) 0%, transparent 70%); transition: all 0.6s ease; filter: blur(10px); }
-        .card-menu:hover .img-container::before { background: radial-gradient(circle, rgba(255,230,0,0.5) 0%, transparent 70%); transform: scale(1.5); }
-        .img-batido { width: 95%; height: 90%; object-fit: contain; position: relative; z-index: 1; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.7)); opacity: 0.8; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
-        .card-menu:hover .img-batido { opacity: 1; transform: scale(1.08) rotate(3deg); filter: drop-shadow(0 20px 35px rgba(255,230,0,0.3)); }
+        .img-zona { height: 210px; display: flex; justify-content: center; align-items: center; position: relative; }
+        .img-batido { width: 85%; height: 85%; object-fit: contain; z-index: 2; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.9)); transition: 0.6s; animation: flotar 4s infinite alternate ease-in-out; }
+        @keyframes flotar { from { transform: translateY(5px); } to { transform: translateY(-5px); } }
+        .card-escena:hover .img-batido { transform: translateY(-15px) rotate(5deg) scale(1.15); filter: drop-shadow(0 25px 35px rgba(0,0,0,1)) drop-shadow(0 0 15px rgba(255, 215, 0, 0.4));}
 
-        .card-body { padding: 20px; background: rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.05); flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; }
-        .card-title-holo { font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 8px; letter-spacing: 0.5px; transition: all 0.3s ease; }
-        .precio-holografico { font-family: 'Orbitron', sans-serif; color: var(--verde-matrix); font-weight: 700; font-size: 1.1rem; transition: color 0.4s; }
-        .card-menu:hover .precio-holografico { color: var(--neon-amarillo); text-shadow: 0 0 10px rgba(255,230,0,0.5); }
+        .nombre-prod { font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; font-weight: 700; color: #fff; text-transform: uppercase; margin-bottom: 5px; text-shadow: 0 2px 5px #000; text-align: center; }
+        .precio-prod { font-family: 'Orbitron', sans-serif; color: var(--bio-oro); font-weight: 900; font-size: 1.6rem; text-shadow: 0 2px 5px #000; text-align: center; }
 
-        .descripcion-completa { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.8s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.8s ease, margin-top 0.4s ease; }
-        .descripcion-completa p { font-size: 0.9rem; color: rgba(255,255,255,0.85); line-height: 1.6; margin-bottom: 15px; text-align: left; }
-        .card-menu.mostrar-info { border-color: var(--neon-amarillo); box-shadow: var(--brillo-amarillo); background: rgba(255, 230, 0, 0.05); }
-        .card-menu.mostrar-info .descripcion-completa { max-height: 1500px; opacity: 1; margin-top: 15px; }
+        .btn-info-flip { position: absolute; top: 15px; right: 15px; background: rgba(255,215,0,0.1); color: var(--bio-oro); border: 1px solid var(--bio-oro); width: 35px; height: 35px; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 30; transition: 0.3s; }
+        .btn-info-flip:hover { background: var(--bio-oro); color: #000; transform: rotate(90deg); }
 
-        .btn-add { background: transparent; color: var(--verde-matrix); border: 1px solid var(--verde-matrix); border-radius: 14px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: all 0.4s ease; position: relative; z-index: 2; font-size: 1.1rem; margin-top: auto; }
-        .btn-add:hover { background: var(--verde-matrix); color: #000; box-shadow: var(--brillo-verde); transform: scale(1.1) rotate(90deg); }
+        .btn-extraer { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.3) 100%); color: var(--bio-oro); border: 1px solid var(--bio-oro); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; cursor: pointer; }
+        .btn-extraer:hover { background: var(--bio-oro); color: #000; box-shadow: var(--resplandor-divino); transform: scale(1.02); }
 
-        .carrito-bar { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 420px; background: rgba(5, 22, 14, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(0, 255, 136, 0.4); padding: 15px 25px; border-radius: 25px; display: none; justify-content: space-between; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 20px rgba(0,255,136,0.1); z-index: 1000; animation: slideUpCarrito 0.5s cubic-bezier(0.23, 1, 0.32, 1); cursor: pointer; }
-        @keyframes slideUpCarrito { from { bottom: -100px; opacity: 0; } to { bottom: 25px; opacity: 1; } }
-        .btn-pedir { background: var(--verde-matrix); color: #000; font-family: 'Orbitron', sans-serif; font-weight: 900; border: none; padding: 12px 25px; border-radius: 18px; transition: all 0.3s ease; letter-spacing: 1px; text-transform: uppercase; font-size: 0.9rem; }
-        .btn-pedir:hover { box-shadow: var(--brillo-verde); transform: translateY(-3px) scale(1.03); background: var(--neon-amarillo); }
+        .back-titulo { font-family: 'Orbitron'; color: var(--bio-oro); font-size: 1.1rem; border-bottom: 1px solid var(--bio-oro); padding-bottom: 10px; margin-bottom: 20px; letter-spacing: 2px; text-align: center;}
+        .back-desc { font-size: 1rem; color: #fff; line-height: 1.7; overflow-y: auto; text-align: left; padding-right: 10px; height: 180px; }
+        .back-desc::-webkit-scrollbar { width: 5px; }
+        .back-desc::-webkit-scrollbar-thumb { background: var(--bio-oro); border-radius: 10px; }
+        .btn-cerrar-flip { position: absolute; top: 15px; right: 15px; color: #fff; background: none; border: none; font-size: 1.5rem; cursor: pointer; opacity: 0.7; transition: 0.3s; }
 
-        @media (max-width: 768px) {
-            .hero-raices { padding: 60px 15px; border-radius: 0 0 30px 30px; }
-            .titulo-neon { font-size: 2rem; letter-spacing: 5px; }
-            .img-container { height: 150px; }
-        }
+        .carrito-bar { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 450px; background: rgba(26, 16, 5, 0.95); border: 2px solid var(--bio-oro); padding: 15px 30px; border-radius: 15px; display: none; justify-content: space-between; align-items: center; box-shadow: 0 20px 50px rgba(0,0,0,0.9); z-index: 1000; cursor: pointer; }
+        .modal-content { background: #0a0502; background-image: url('https://www.transparenttextures.com/patterns/wood-burn-pattern.png'); border: 2px solid var(--bio-oro); border-radius: 15px; color: white; }
     </style>
 </head>
 <body>
 
-<div class="hero-raices">
-    <h1 class="titulo-neon">RAÍCES</h1>
-    <p class="mb-4" style="color: var(--verde-matrix); letter-spacing: 3px; font-weight: 600; position: relative; z-index: 2;">NUTRICIÓN <span style="color: white; font-weight: 700;">FUTURO</span></p>
+<div class="scanlines"></div>
 
-    <select id="sucursal-activa" class="selector-sucursal" onchange="renderizar(true)">
-        <option value="1">SISTEMA: TULUÁ (COP)</option>
-        <option value="2">SISTEMA: ANTOFAGASTA (CLP)</option>
-        <option value="3">SISTEMA: MALLORCA (EUR)</option>
-    </select>
+<audio id="bgMusic" loop preload="auto">
+    <source src="https://cdn.pixabay.com/audio/2021/09/06/audio_47f4244bd9.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="sfxCash" preload="auto">
+    <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=cash-register-purchase-87313.mp3" type="audio/mpeg">
+</audio>
+
+<div id="pantalla-inicio">
+    <h1 style="font-family: 'Orbitron'; color: var(--bio-oro); margin-bottom: 30px; font-size: 3.5rem; text-shadow: 0 0 20px rgba(255,215,0,0.5);">RAÍCES</h1>
+    <p style="color: var(--bio-aqua); font-family: 'Rajdhani'; letter-spacing: 5px; margin-bottom: 50px;">E X P E R I E N C I A   B I O - N U T R I C I O N A L</p>
+    <button class="btn-iniciar-juego" onclick="iniciarExperiencia()">Entrar al Bosque</button>
 </div>
 
-<div class="container mt-4">
-    <div class="contenedor-categorias mb-3">
-        <button class="categoria-badge active" onclick="filtrar('500 mls', this)">VASOS 500 MLS</button>
-        <button class="categoria-badge" onclick="filtrar('Packs', this)">PACKS 16 UNIDADES</button>
+<button class="btn-musica" id="btn-music" onclick="toggleMusic(event)" style="display: none;" title="Control de Sonido">
+    <i class="bi bi-volume-up-fill" id="music-icon"></i>
+</button>
+
+<div class="fireflies" id="firefly-container"></div>
+
+<div class="header-raices" id="main-content" style="display: none;">
+    <h1 class="titulo-raices">RAÍCES</h1>
+
+    <select id="sucursal-activa" class="selector-sucursal mt-4" onchange="playSfx('click'); cargarMenu()">
+        <option value="Colombia">NODO: TULUÁ (COP)</option>
+        <option value="Chile">NODO: ANTOFAGASTA (CLP)</option>
+        <option value="España">NODO: MALLORCA (EUR)</option>
+    </select>
+
+    <div class="contenedor-categorias">
+        <button class="categoria-badge active" onclick="filtrar('500 mls', this)">Elíxires Naturales</button>
+        <button class="categoria-badge" onclick="filtrar('Packs', this)">Packs Botánicos</button>
     </div>
 
-    <div id="grid-container" class="p-3 rounded-4">
-        <div id="grid-menu" class="row g-3 g-md-4 mb-5 align-items-start"></div>
+    <div class="container">
+        <div id="grid-menu" class="row g-4 mb-5 pb-5 p-2"></div>
     </div>
 </div>
 
 <div id="carrito-bar" class="carrito-bar" onclick="abrirModalCarrito()">
     <div class="d-flex flex-column">
-        <span class="fw-bold" style="font-size: 0.95rem; color: rgba(255,255,255,0.7);"><i class="bi bi-box-seam me-2"></i><span id="items-count">0</span> PROD.</span>
-        <span id="total-precio" class="precio-holografico" style="font-size: 1.3rem;">$0</span>
+        <span class="fw-bold" style="font-size: 0.85rem; color: var(--bio-aqua); font-family: 'Orbitron';">RESERVA VITAL (<span id="items-count">0</span>)</span>
+        <span id="total-precio" style="font-size: 1.6rem; font-weight: 900; color: var(--bio-oro); font-family: 'Orbitron';">$0</span>
     </div>
-    <button class="btn-pedir">VER ORDEN <i class="bi bi-chevron-right ms-1"></i></button>
+    <button class="btn btn-warning fw-bold text-dark px-4" onclick="event.stopPropagation(); abrirModalCarrito()">EXTRAER</button>
 </div>
 
 <div class="modal fade" id="modalCarritoCliente" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content" style="background: rgba(5, 22, 14, 0.98); backdrop-filter: blur(25px); border: 1px solid var(--neon-amarillo); border-radius: 20px; color: white; box-shadow: 0 0 40px rgba(0,255,136,0.2);">
-            <div class="modal-header border-0 pb-0 pt-4">
-                <h5 class="modal-title" style="font-family: 'Orbitron', sans-serif; color: var(--neon-amarillo); font-weight: 900;"><i class="bi bi-cart4 me-2"></i> TU RESERVA DE ENERGÍA</h5>
-                <button type="button" class="btn-close" style="filter: invert(1);" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0 pt-4 px-4">
+                <h5 class="modal-title font-orbitron" style="color: var(--bio-oro); font-weight: 900;"><i class="bi bi-box-seam me-2"></i> TRANSFERENCIA VITAL</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="playSfx('click')"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body px-4">
                 <div id="lista-carrito-modal" class="mb-3"></div>
-
-                <div class="d-flex justify-content-between align-items-center mt-3 pt-3" style="border-top: 1px solid rgba(0,255,136,0.2);">
-                    <span style="color: rgba(255,255,255,0.6); font-family: 'Orbitron', sans-serif; font-size: 0.9rem;">TOTAL A TRANSFERIR:</span>
-                    <span id="total-modal-caja" class="precio-holografico fs-3" style="color: var(--neon-amarillo);">$0</span>
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3" style="border-top: 1px dashed rgba(255,215,0,0.3);">
+                    <span style="font-family: 'Rajdhani'; font-size: 1rem;">TOTAL:</span>
+                    <span id="total-modal-caja" style="color: var(--bio-oro); font-weight: 900; font-size: 1.8rem; font-family: 'Orbitron';">$0</span>
                 </div>
             </div>
-            <div class="modal-footer border-0 pt-0 pb-4 justify-content-center">
-                <button type="button" class="btn-pedir w-100" style="padding: 15px; font-size: 1.1rem;" onclick="confirmarPedido()">
-                    INICIAR PAGO SEGURO <i class="bi bi-shield-lock-fill ms-2"></i>
+            <div class="modal-footer border-0 pt-0 pb-4 px-4">
+                <button type="button" id="btn-procesar-pago" class="btn-extraer w-100 py-3" onclick="confirmarPedido()">
+                    AUTORIZAR PAGO <i class="bi bi-shield-check ms-1"></i>
                 </button>
-                <small class="text-center mt-2 d-block w-100" style="color: rgba(255,255,255,0.4); font-size: 0.75rem;">Procesado vía Mercado Pago</small>
             </div>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    let productosRaw = [];
-    let carrito = [];
-    let filtroActual = '500 mls';
-    let simboloActual = '$';
+    let audioCtx = null;
+    let bgMusic = document.getElementById('bgMusic');
+    let cashSound = document.getElementById('sfxCash');
+    bgMusic.volume = 0.4;
 
-    // Instancia del modal de Bootstrap
+    // --- VOZ DE IA ---
+    function darBienvenidaVoz() {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const mensaje = new SpeechSynthesisUtterance("Bienvenidos al bosque Raíces. Déjate encantar por nuestros sabores.");
+
+            mensaje.lang = 'es-ES';
+            mensaje.rate = 0.9;
+
+            let voces = window.speechSynthesis.getVoices();
+            let vocesEsp = voces.filter(v => v.lang.startsWith('es'));
+
+            // Búsqueda simple de mujer
+            let vozElegida = vocesEsp.find(v =>
+                v.name.toLowerCase().includes('female') ||
+                v.name.toLowerCase().includes('mujer') ||
+                v.name.toLowerCase().includes('monica') ||
+                v.name.toLowerCase().includes('paulina') ||
+                v.name.toLowerCase().includes('google español')
+            );
+
+            if (vozElegida) {
+                mensaje.voice = vozElegida;
+            } else if (vocesEsp.length > 0) {
+                mensaje.voice = vocesEsp[0];
+            }
+
+            // Efecto visual activado
+            document.body.classList.add('hologram-active');
+            mensaje.onend = function() {
+                document.body.classList.remove('hologram-active');
+            };
+
+            window.speechSynthesis.speak(mensaje);
+        }
+    }
+
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+    }
+
+    function iniciarExperiencia() {
+        document.getElementById('pantalla-inicio').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+        document.getElementById('btn-music').style.display = 'flex';
+
+        // ¡LOS PÁJAROS SUENAN DE UNA VEZ, SIN ESPERAR NADA!
+        bgMusic.play().catch(e => console.log("Pájaros bloqueados", e));
+
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        // La voz suena por encima de los pájaros
+        darBienvenidaVoz();
+        cargarMenu();
+    }
+
+    function toggleMusic(event) {
+        event.stopPropagation();
+        let icon = document.getElementById('music-icon');
+        if (bgMusic.paused) { bgMusic.play(); icon.className = 'bi bi-volume-up-fill'; }
+        else { bgMusic.pause(); icon.className = 'bi bi-volume-mute-fill'; }
+    }
+
+    function playSfx(type) {
+        if (!audioCtx || audioCtx.state !== 'running') return;
+        const t = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+
+        if (type === 'hover') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(300, t);
+            gain.gain.setValueAtTime(0.015, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+        } else if (type === 'click') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(600, t);
+            osc.frequency.exponentialRampToValueAtTime(150, t + 0.1);
+            gain.gain.setValueAtTime(0.1, t); gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+        }
+        osc.start(t); osc.stop(t + 0.1);
+    }
+
+    function playCashSound() {
+        cashSound.currentTime = 0;
+        let playPromise = cashSound.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(e => console.log("Caja no lista aún"));
+        }
+    }
+
+    const containerL = document.getElementById('firefly-container');
+    const colores = ['#ffd700', '#00ff88', '#00e5ff'];
+    for(let i=0; i<60; i++) {
+        let f = document.createElement('div'); f.className = 'firefly';
+        let size = Math.random() * 4 + 2;
+        f.style.width = size + 'px'; f.style.height = size + 'px';
+        f.style.background = colores[Math.floor(Math.random() * colores.length)];
+        f.style.boxShadow = `0 0 ${size*3}px ${size}px ${f.style.background}`;
+        f.style.left = Math.random() * 100 + 'vw';
+        f.style.animationDuration = (Math.random() * 8 + 8) + 's, ' + (Math.random() * 2 + 1) + 's';
+        f.style.animationDelay = (Math.random() * 5) + 's, 0s';
+        containerL.appendChild(f);
+    }
+
+    let productosRaw = []; let carrito = []; let filtroActual = '500 mls'; let simboloActual = '$';
     let modalCarritoCliente;
-    window.addEventListener('DOMContentLoaded', () => {
-        modalCarritoCliente = new bootstrap.Modal(document.getElementById('modalCarritoCliente'));
-    });
+    window.addEventListener('DOMContentLoaded', () => { modalCarritoCliente = new bootstrap.Modal(document.getElementById('modalCarritoCliente')); });
 
     async function cargarMenu() {
-        try {
-            const res = await fetch('/api/productos');
-            if(res.ok) { productosRaw = await res.json(); }
-            else { cargarDatosDePrueba(); }
-            renderizar(true);
-        } catch (error) { cargarDatosDePrueba(); renderizar(true); }
-    }
-
-    function cargarDatosDePrueba() {
-        productosRaw = [
-            { id: 1, nombre: "Detox Verde Max", categoria: "500 mls", precio: 18000, imagen: "https://www.pngmart.com/files/10/Green-Smoothie-PNG-Transparent.png", descripcion: "🥬 Batido Green Détox 🌱✨\nIdeal para depurar.\n\nContiene:\n• Espinaca\n• Apio\n• Piña" }
-        ];
-    }
-
-    function renderizar(conEfecto = false) {
         const grid = document.getElementById('grid-menu');
-        grid.innerHTML = '';
-        const paisID = document.getElementById('sucursal-activa').value;
-        let lista = productosRaw.filter(p => p.categoria && p.categoria.toLowerCase() === filtroActual.toLowerCase());
+        const nodo = document.getElementById('sucursal-activa').value;
+        try {
+            const res = await fetch('/api/productos/sucursal/' + nodo);
+            productosRaw = res.ok ? await res.json() : [];
+            renderizar();
+        } catch (e) { productosRaw = []; renderizar(); }
+    }
 
-        lista.forEach((p, index) => {
-            let precioMostrar = 0; simboloActual = '$';
-            if (paisID === "1") { precioMostrar = p.precioColombia || p.precio || 0; simboloActual = '$'; }
-            else if (paisID === "2") { precioMostrar = p.precioChile || p.precio || 0; simboloActual = '$'; }
-            else if (paisID === "3") { precioMostrar = p.precioMallorca || p.precio || 0; simboloActual = '€'; }
+    function renderizar() {
+        const grid = document.getElementById('grid-menu'); grid.innerHTML = '';
+        const nodo = document.getElementById('sucursal-activa').value;
+        simboloActual = (nodo === "España") ? '€' : '$';
 
-            const imgSrc = p.imagen || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
-            let descHtml = (p.descripcion || "Nutrición.").replace(/\n/g, '<br>').replace(/•/g, '<strong style="color: var(--neon-amarillo);">•</strong>');
+        let lista = productosRaw.filter(p => {
+            if (!p.categoria) return false;
+            const cat = p.categoria.toLowerCase(); const f = filtroActual.toLowerCase();
+            return f === 'packs' ? (cat.includes('pack') || cat.includes('16')) : (cat.includes('500') || cat.includes('vaso'));
+        });
 
+        if (lista.length === 0) {
+            grid.innerHTML = '<div class="col-12 text-center text-white py-5">No hay ítems en esta zona.</div>'; return;
+        }
+
+        lista.forEach(p => {
+            let desc = (p.descripcion || "Análisis botánico confidencial.").replace(/\n/g, '<br>');
+            let img = p.imagen || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
             grid.innerHTML += `
-                <div class="col-6 col-md-4 col-lg-3" style="animation: materializar 0.8s cubic-bezier(0.23, 1, 0.32, 1) ${index * 0.08}s forwards; opacity: 0;">
-                    <div class="card-menu" id="card-${p.id}">
-                        <div class="img-container" onclick="toggleInfo(event, '${p.id}')"><img src="${imgSrc}" class="img-batido"></div>
-                        <div class="card-body">
-                            <h6 class="card-title-holo text-truncate">${p.nombre}</h6>
-                            <div class="descripcion-completa"><p>${descHtml}</p></div>
-                            <div class="d-flex justify-content-between align-items-center mt-3">
-                                <span class="precio-holografico">${simboloActual}${precioMostrar.toLocaleString('es-ES')}</span>
-                                <button class="btn-add" onclick="agregar(event, '${p.id}', '${p.nombre}', ${precioMostrar}, '${simboloActual}')"><i class="bi bi-plus-lg"></i></button>
+                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                    <div class="card-escena" id="card-${p.id}" onmouseenter="playSfx('hover')">
+                        <div class="card-flipper">
+                            <div class="card-front">
+                                <button class="btn-info-flip" onclick="playSfx('click'); flip('${p.id}')"><i class="bi bi-info-lg"></i></button>
+                                <div class="img-zona"><img src="${img}" class="img-batido"></div>
+                                <div>
+                                    <div class="nombre-prod text-truncate">${p.nombre}</div>
+                                    <div class="precio-prod">${simboloActual}${p.precio.toLocaleString('es-ES')}</div>
+                                </div>
+                                <button class="btn-extraer mt-3" onclick="agregar('${p.id}', '${p.nombre}', ${p.precio}, this)">EXTRAER</button>
+                            </div>
+                            <div class="card-back">
+                                <button class="btn-cerrar-flip" onclick="playSfx('click'); flip('${p.id}')"><i class="bi bi-x-lg"></i></button>
+                                <div class="back-titulo">BIO-ANÁLISIS</div>
+                                <div class="back-desc">${desc}</div>
+                                <button class="btn-extraer mt-auto" style="background:var(--bio-oro); color:#000;" onclick="playSfx('click'); flip('${p.id}')">CERRAR</button>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
         });
-        actualizarCarrito();
     }
 
-    function toggleInfo(event, id) {
-        event.stopPropagation();
-        document.querySelectorAll('.card-menu').forEach(c => { if(c.id !== `card-${id}`) c.classList.remove('mostrar-info'); });
-        document.getElementById(`card-${id}`).classList.toggle('mostrar-info');
-        if (navigator.vibrate) navigator.vibrate(10);
-    }
+    function flip(id) { document.getElementById(`card-${id}`).classList.toggle('flipped'); }
+    function filtrar(cat, btn) { playSfx('click'); filtroActual = cat; document.querySelectorAll('.categoria-badge').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderizar(); }
 
-    function agregar(event, id, nombre, precio, simbolo) {
-        event.stopPropagation();
-        carrito.push({ id: id, nombre: nombre, precio: Number(precio) });
-        actualizarCarrito();
-        if (navigator.vibrate) navigator.vibrate([30, 30]);
+    function agregar(id, nombre, precio, btn) {
+        playSfx('click');
+        btn.innerHTML = '<i class="bi bi-check2"></i>'; btn.style.background = 'var(--bio-oro)'; btn.style.color = '#000';
+        setTimeout(()=>{ btn.innerHTML = 'EXTRAER'; btn.style=''; }, 600);
+        carrito.push({ id, nombre, precio: Number(precio) }); actualizarCarrito();
     }
 
     function actualizarCarrito() {
         const bar = document.getElementById('carrito-bar');
-        if (carrito.length > 0) {
+        if(carrito.length > 0) {
             bar.style.display = 'flex';
             document.getElementById('items-count').innerText = carrito.length;
-            const total = carrito.reduce((sum, p) => sum + p.precio, 0);
-            document.getElementById('total-precio').innerText = `${simboloActual}${total.toLocaleString('es-ES')}`;
-        } else {
-            bar.style.display = 'none';
-            if (modalCarritoCliente) modalCarritoCliente.hide();
-        }
+            document.getElementById('total-precio').innerText = simboloActual + carrito.reduce((s, i) => s + i.precio, 0).toLocaleString('es-ES');
+        } else { bar.style.display = 'none'; }
     }
 
-    // --- NUEVAS FUNCIONES DE CARRITO CLIENTE ---
     function abrirModalCarrito() {
+        playCashSound();
         if(carrito.length === 0) return;
-        renderizarListaModal();
+        const cont = document.getElementById('lista-carrito-modal'); cont.innerHTML = '';
+        carrito.forEach((i, idx) => {
+            cont.innerHTML += `<div class="d-flex justify-content-between mb-3 p-3" style="border: 1px solid rgba(255,215,0,0.3); border-radius: 8px;"><span>${i.nombre}</span><b>${simboloActual}${i.precio.toLocaleString('es-ES')} <i class="bi bi-x-lg text-danger ms-2" style="cursor:pointer" onclick="eliminar(${idx}, event)"></i></b></div>`;
+        });
+        document.getElementById('total-modal-caja').innerText = document.getElementById('total-precio').innerText;
         modalCarritoCliente.show();
     }
 
-    function renderizarListaModal() {
-        const contenedor = document.getElementById('lista-carrito-modal');
-        contenedor.innerHTML = '';
-        let total = 0;
+    function eliminar(idx, e) { playSfx('click'); e.stopPropagation(); carrito.splice(idx, 1); actualizarCarrito(); if(carrito.length > 0) abrirModalCarrito(); else modalCarritoCliente.hide(); }
 
-        carrito.forEach((item, index) => {
-            total += item.precio;
-            contenedor.innerHTML += `
-                <div class="d-flex justify-content-between align-items-center mb-3 p-3" style="background: rgba(0,255,136,0.05); border-radius: 12px; border: 1px solid rgba(0,255,136,0.2);">
-                    <span style="color: white; font-weight: 600;">${item.nombre}</span>
-                    <div class="d-flex align-items-center">
-                        <span class="text-white me-3 fw-bold" style="font-family: 'Orbitron';">${simboloActual}${item.precio.toLocaleString('es-ES')}</span>
-                        <button class="btn btn-sm" style="background: rgba(255, 68, 68, 0.2); color: #ff4444; border: 1px solid #ff4444; border-radius: 8px;" onclick="eliminarDelCarrito(${index}, event)">
-                            <i class="bi bi-trash3"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-        });
-        document.getElementById('total-modal-caja').innerText = `${simboloActual}${total.toLocaleString('es-ES')}`;
-    }
-
-    function eliminarDelCarrito(index, event) {
-        event.stopPropagation(); // Evita que cierre el modal por accidente
-        carrito.splice(index, 1);
-        actualizarCarrito(); // Refresca barra flotante
-        if(carrito.length > 0) { renderizarListaModal(); } // Refresca lista adentro del modal
-    }
-
-    // --- NUEVO FLUJO MERCADO PAGO + DESCUENTO INVENTARIO ---
     async function confirmarPedido() {
-        // Cambiar botón a estado de carga
-        const btn = document.querySelector('#modalCarritoCliente .btn-pedir');
+        playSfx('click');
+        const btn = document.getElementById('btn-procesar-pago');
         const contenidoOriginal = btn.innerHTML;
-        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> CONECTANDO MATRIZ...`;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> CONECTANDO NÚCLEO...`;
         btn.disabled = true;
 
         const selectPais = document.getElementById('sucursal-activa');
         const paisNombre = selectPais.options[selectPais.selectedIndex].text;
 
         try {
-            // 1. Generar Link Mercado Pago
             const resMp = await fetch('/api/pagos/mercadopago', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ items: carrito })
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: carrito })
             });
 
             if (resMp.ok) {
                 const linkMercadoPago = await resMp.text();
+                await fetch(`/api/ventas?origen=Reserva Bio-Tech&pais=${encodeURIComponent(paisNombre)}&metodo=MercadoPago`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(carrito) });
+                carrito.forEach(item => fetch(`/api/inventario/vender?idProducto=${item.id}&cantidad=1`, { method: 'POST' }));
 
-                // 2. Guardar Venta
-                await fetch(`/api/ventas?origen=Compra Web&pais=${encodeURIComponent(paisNombre)}&metodo=MercadoPago`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(carrito)
-                });
-
-                // 3. Descontar Inventario Automáticamente
-                const promesasDescuento = carrito.map(item =>
-                    fetch(`/api/inventario/vender?idProducto=${item.id}&cantidad=1`, { method: 'POST' })
-                );
-                await Promise.all(promesasDescuento);
-
-                // 4. Limpiar y Redirigir
-                carrito = [];
-                actualizarCarrito();
-                modalCarritoCliente.hide();
-
-                alert("✅ ¡Matriz Sincronizada! Redirigiendo a pago seguro...");
-                window.location.href = linkMercadoPago; // TE LLEVA A MERCADO PAGO
-            } else {
-                alert("❌ Error: No se pudo generar el link de pago.");
-                btn.innerHTML = contenidoOriginal;
-                btn.disabled = false;
-            }
+                carrito = []; actualizarCarrito(); modalCarritoCliente.hide();
+                window.location.href = linkMercadoPago;
+            } else { throw new Error("Fallo en servidor"); }
         } catch (error) {
-            alert("❌ Error de red con el sistema central.");
-            btn.innerHTML = contenidoOriginal;
-            btn.disabled = false;
+            setTimeout(() => {
+                alert("Simulando redirección a pasarela de pago (Servidor local no detectado)...");
+                carrito = []; actualizarCarrito(); modalCarritoCliente.hide();
+                btn.innerHTML = contenidoOriginal; btn.disabled = false;
+            }, 1500);
         }
     }
-
-    function filtrar(cat, btn) {
-        filtroActual = cat;
-        renderizar(true);
-        document.querySelectorAll('.categoria-badge').forEach(b => b.classList.remove('active'));
-        if(btn) btn.classList.add('active');
-        if (navigator.vibrate) navigator.vibrate(15);
-    }
-
-    cargarMenu();
 </script>
 </body>
 </html>

@@ -18,17 +18,28 @@ public class Insumo {
     // --- ETIQUETA MULTI-NODO ---
     private String sucursal;
 
+    // --- NUEVO: CLASIFICACIÓN DE BODEGA ---
+    private String categoria;
+
     // Getters y Setters
     public Long getIdInsumo() { return idInsumo; }
     public void setIdInsumo(Long idInsumo) { this.idInsumo = idInsumo; }
+
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
+
     public Integer getUnidadActual() { return unidadActual; }
     public void setUnidadActual(Integer unidadActual) { this.unidadActual = unidadActual; }
+
     public Integer getCantidadPorcion() { return cantidadPorcion; }
     public void setCantidadPorcion(Integer cantidadPorcion) { this.cantidadPorcion = cantidadPorcion; }
+
     public String getMedida() { return medida; }
     public void setMedida(String medida) { this.medida = medida; }
+
     public String getSucursal() { return sucursal; }
     public void setSucursal(String sucursal) { this.sucursal = sucursal; }
+
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
 }
