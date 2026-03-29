@@ -19,6 +19,7 @@
             --v-u-profundo: #000804;
             --sol-futuro: #ffdd00;
             --agua-pura: #00f0ff;
+            --n-rojo: #ff0055;
             --b-holografico: #f4fff9;
             --cristal-bio: rgba(2, 31, 17, 0.5);
             --border-glow: 0 0 20px rgba(0, 255, 166, 0.3);
@@ -36,9 +37,7 @@
                 linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
             color: var(--b-holografico);
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
+            min-height: 100vh; overflow-x: hidden; position: relative;
         }
 
         /* --- LOGIN ECO-FUTURISTA --- */
@@ -50,56 +49,39 @@
         }
 
         .login-box {
-            background: var(--cristal-bio);
-            border: 1px solid rgba(0, 255, 166, 0.4);
-            border-top: 3px solid var(--bio-esmeralda);
-            padding: 60px;
-            border-radius: 20px;
-            text-align: center; width: 95%; max-width: 450px;
+            background: var(--cristal-bio); border: 1px solid rgba(0, 255, 166, 0.4);
+            border-top: 3px solid var(--bio-esmeralda); padding: 50px 40px;
+            border-radius: 20px; text-align: center; width: 95%; max-width: 450px;
             position: relative; overflow: hidden;
             box-shadow: 0 15px 35px rgba(0,0,0,0.5), 0 0 40px rgba(0, 255, 166, 0.1);
             backdrop-filter: blur(15px);
         }
 
-        /* Pulso suave de vida */
         .radar-bg {
             position: absolute; top: 50%; left: 50%; width: 200%; height: 200%;
             background: radial-gradient(circle, rgba(0, 255, 166, 0.05) 0%, transparent 60%);
-            transform: translate(-50%, -50%);
-            animation: bio-pulse 6s infinite ease-in-out; z-index: 0; pointer-events: none;
+            transform: translate(-50%, -50%); animation: bio-pulse 6s infinite ease-in-out; z-index: 0; pointer-events: none;
         }
-
         @keyframes bio-pulse { 0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; } 50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; } }
 
-        /* --- TEXTO RADIANTE ORGÁNICO --- */
-        .eco-text {
-            font-family: 'Orbitron'; font-weight: 900;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(0, 255, 166, 0.8), 0 0 30px rgba(0, 255, 166, 0.4);
-            letter-spacing: 4px;
-            position: relative; z-index: 2;
-        }
+        .eco-text { font-family: 'Orbitron'; font-weight: 900; color: #fff; text-shadow: 0 0 10px rgba(0, 255, 166, 0.8), 0 0 30px rgba(0, 255, 166, 0.4); letter-spacing: 4px; position: relative; z-index: 2; }
 
-        .pin-input {
-            background: rgba(0,0,0,0.4); color: var(--bio-esmeralda);
-            font-size: 3.5rem; text-align: center; letter-spacing: 25px;
-            font-family: 'Share Tech Mono';
-            border: 1px solid rgba(0, 255, 166, 0.3); border-radius: 12px;
-            width: 100%; height: 80px; box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+        .input-login {
+            background: rgba(0,0,0,0.6); border: 1px solid rgba(0, 255, 166, 0.5);
+            color: var(--bio-esmeralda); font-family: 'Orbitron'; text-align: center;
+            padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 15px; letter-spacing: 2px;
             position: relative; z-index: 2; transition: var(--transition);
         }
-        .pin-input:focus { outline: none; border-color: var(--bio-esmeralda); box-shadow: inset 0 0 15px rgba(0, 255, 166, 0.2), 0 0 20px rgba(0, 255, 166, 0.3); }
+        .input-login:focus { outline: none; border-color: var(--bio-esmeralda); box-shadow: inset 0 0 15px rgba(0,255,166,0.2), 0 0 20px rgba(0,255,166,0.3); }
 
         .btn-bio {
             border: 1px solid var(--bio-esmeralda); color: var(--v-profundo);
             font-family: 'Orbitron'; font-weight: bold; background: var(--bio-esmeralda);
             text-transform: uppercase; letter-spacing: 2px; border-radius: 10px;
-            position: relative; z-index: 2; transition: var(--transition);
-            box-shadow: 0 5px 15px rgba(0, 255, 166, 0.2);
+            position: relative; z-index: 2; transition: var(--transition); box-shadow: 0 5px 15px rgba(0, 255, 166, 0.2);
         }
         .btn-bio:hover { background: #fff; color: var(--v-profundo); box-shadow: 0 0 25px var(--bio-esmeralda); transform: translateY(-2px);}
 
-        /* --- SECUENCIA DE ARRANQUE BOTÁNICO --- */
         #boot-sequence { display: none; width: 80%; max-width: 600px; text-align: center; position: relative; z-index: 3;}
         .boot-visual { width: 100%; height: 15px; background: rgba(0,0,0,0.5); border-radius: 10px; overflow: hidden; margin-bottom: 20px; border: 1px solid rgba(0,255,166,0.2);}
         .boot-bar { height: 100%; background: linear-gradient(90deg, var(--bio-esmeralda), var(--agua-pura)); width: 0%; box-shadow: var(--border-glow); animation: load-bar 2.5s forwards cubic-bezier(0.2, 0.8, 0.2, 1); }
@@ -108,69 +90,39 @@
 
         /* --- DASHBOARD UI BIO-TECH --- */
         #app-dashboard { display: none; opacity: 0; transition: opacity 1s ease-in; }
-
-        .navbar-raices {
-            border-bottom: 1px solid rgba(0,255,166,0.3); padding: 1.5rem;
-            background: linear-gradient(to bottom, rgba(1, 18, 10, 0.9), transparent);
-        }
+        .navbar-raices { border-bottom: 1px solid rgba(0,255,166,0.3); padding: 1.5rem; background: linear-gradient(to bottom, rgba(1, 18, 10, 0.9), transparent); }
 
         .nav-pills .nav-link {
-            color: rgba(244, 255, 249, 0.6); font-family: 'Orbitron';
-            border-radius: 12px !important; margin: 0 5px;
-            border: 1px solid transparent; text-transform: uppercase; font-size: 0.9rem;
-            transition: var(--transition);
+            color: rgba(244, 255, 249, 0.6); font-family: 'Orbitron'; border-radius: 12px !important; margin: 0 5px;
+            border: 1px solid transparent; text-transform: uppercase; font-size: 0.85rem; transition: var(--transition);
         }
         .nav-pills .nav-link:hover { background: rgba(0,255,166,0.05); color: var(--b-holografico); border-color: rgba(0,255,166,0.3);}
-        .nav-pills .nav-link.active {
-            background: rgba(0, 255, 166, 0.1); color: var(--bio-esmeralda);
-            border: 1px solid var(--bio-esmeralda); box-shadow: inset 0 0 15px rgba(0,255,166,0.1);
-            font-weight: bold;
-        }
+        .nav-pills .nav-link.active { background: rgba(0, 255, 166, 0.1); color: var(--bio-esmeralda); border: 1px solid var(--bio-esmeralda); box-shadow: inset 0 0 15px rgba(0,255,166,0.1); font-weight: bold; }
 
-        .table-container {
-            background: var(--cristal-bio); border: 1px solid rgba(0,255,166,0.2);
-            border-radius: 15px; padding: 25px; margin-bottom: 25px;
-            position: relative; backdrop-filter: blur(12px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
+        .table-container { background: var(--cristal-bio); border: 1px solid rgba(0,255,166,0.2); border-radius: 15px; padding: 25px; margin-bottom: 25px; position: relative; backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
 
         .table { color: var(--b-holografico); border-collapse: separate; border-spacing: 0 8px; position: relative; z-index: 1;}
         .table-dark { background-color: transparent !important; color: var(--bio-hoja) !important; font-family: 'Orbitron'; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; border: none !important; opacity: 0.8;}
         .table-dark th { border-bottom: 1px solid rgba(0,255,166,0.2) !important; padding-bottom: 12px;}
         tbody tr { background: rgba(0, 0, 0, 0.4); border-radius: 8px; transition: var(--transition); }
         tbody tr:hover { background: rgba(0, 255, 166, 0.08); transform: scale(1.01); }
-        tbody td { border: none; padding: 15px !important;}
+        tbody td { border: none; padding: 15px !important; vertical-align: middle;}
         tbody tr td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
         tbody tr td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
 
         .text-money-green { color: var(--bio-esmeralda); font-weight: bold; text-shadow: var(--text-glow); }
         .img-preview { width: 50px; height: 50px; object-fit: cover; border: 2px solid transparent; border-radius: 50%; box-shadow: var(--border-glow); }
 
-        .form-control, .form-select {
-            background-color: rgba(0,0,0,0.3) !important; border: 1px solid rgba(0,255,166,0.3);
-            color: #fff !important; font-family: 'Rajdhani'; font-weight: 600; border-radius: 8px;
-            padding: 10px 15px;
-        }
+        .form-control, .form-select { background-color: rgba(0,0,0,0.3) !important; border: 1px solid rgba(0,255,166,0.3); color: #fff !important; font-family: 'Rajdhani'; font-weight: 600; border-radius: 8px; padding: 10px 15px; }
         .form-control:focus, .form-select:focus { border-color: var(--bio-esmeralda); box-shadow: 0 0 10px rgba(0, 255, 166, 0.2); }
-
         .form-label-neon { font-family: 'Orbitron'; font-size: 0.75rem; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
         .locked-select { background-color: rgba(0,0,0,0.5) !important; border-color: rgba(255,255,255,0.1) !important; color: #555 !important; cursor: not-allowed;}
         .badge-categoria { border: 1px solid var(--agua-pura); color: var(--agua-pura); padding: 4px 10px; font-size: 0.75rem; font-family: 'Rajdhani'; border-radius: 20px; font-weight: bold; background: rgba(0, 240, 255, 0.1);}
 
-        /* --- PANTALLA DE PROCESAMIENTO (ENSAMBLAJE BIO) --- */
-        .processing-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(1, 18, 10, 0.9); z-index: 10;
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            border-radius: 15px; backdrop-filter: blur(8px);
-        }
-        .spinner-bio {
-            width: 70px; height: 70px; border: 3px solid transparent;
-            border-top-color: var(--bio-esmeralda); border-right-color: var(--agua-pura);
-            border-radius: 50%; animation: spin-bio 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
+        /* ENSAMBLAJE BIO */
+        .processing-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(1, 18, 10, 0.9); z-index: 10; display: none; flex-direction: column; justify-content: center; align-items: center; border-radius: 15px; backdrop-filter: blur(8px); }
+        .spinner-bio { width: 70px; height: 70px; border: 3px solid transparent; border-top-color: var(--bio-esmeralda); border-right-color: var(--agua-pura); border-radius: 50%; animation: spin-bio 1s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
         @keyframes spin-bio { 100% { transform: rotate(360deg); } }
-
     </style>
 </head>
 <body onclick="initAudio()" onkeydown="initAudio()">
@@ -179,17 +131,19 @@
     <div class="radar-bg"></div>
     <div class="login-box" id="login-form">
         <h1 class="eco-text">RAÍCES</h1>
-        <p class="mb-5 mt-1 fw-bold" style="color: var(--bio-hoja); font-family: 'Rajdhani'; letter-spacing: 4px; position:relative; z-index:2; text-transform: uppercase;">Biosfera de Control</p>
+        <p class="mb-4 mt-1 fw-bold" style="color: var(--bio-hoja); font-family: 'Rajdhani'; letter-spacing: 4px; position:relative; z-index:2; text-transform: uppercase;">Biosfera de Control</p>
 
-        <label class="form-label-neon mb-3 d-block text-center" style="position:relative; z-index:2;">[ AUTENTICACIÓN BIOLÓGICA REQUERIDA ]</label>
-        <input type="password" id="input-pin" class="pin-input" maxlength="4" autocomplete="off" oninput="playSound('typing')" onkeypress="if(event.key === 'Enter') validarAcceso()">
+        <label class="form-label-neon mb-3 d-block text-center" style="position:relative; z-index:2;">[ CREDENCIALES REQUERIDAS ]</label>
+
+        <input type="text" id="input-usuario" class="input-login" placeholder="ID OPERADOR" autocomplete="off" oninput="playSound('typing')">
+        <input type="password" id="input-clave" class="input-login" placeholder="CLAVE" autocomplete="off" oninput="playSound('typing')" onkeypress="if(event.key === 'Enter') validarAcceso()">
+
         <button class="btn btn-bio w-100 py-3 fs-5 mt-4" onclick="validarAcceso()"><i class="bi bi-fingerprint me-2"></i>ESTABLECER ENLACE</button>
+        <p id="error-login" class="text-danger mt-3 fw-bold" style="display:none; position:relative; z-index:2; font-family:'Orbitron';">CREDENCIALES INVÁLIDAS</p>
     </div>
 
     <div id="boot-sequence">
-        <div class="boot-visual">
-            <div class="boot-bar" id="boot-bar-fill"></div>
-        </div>
+        <div class="boot-visual"><div class="boot-bar" id="boot-bar-fill"></div></div>
         <div class="boot-status" id="boot-status-text">Activando Bio-Núcleo...</div>
     </div>
 </div>
@@ -197,20 +151,23 @@
 <div id="app-dashboard">
     <div class="navbar-raices text-center">
         <h1 class="eco-text" style="font-size: 2.8rem; letter-spacing: 8px;">RAÍCES</h1>
-        <p class="mt-2 mb-0" style="color: var(--agua-pura); font-family:'Orbitron'; font-size: 0.9rem;">SISTEMA BIO-TECH v2.0 // <span id="label-rol" class="text-white"></span></p>
+        <p class="mt-2 mb-0" style="color: var(--agua-pura); font-family:'Orbitron'; font-size: 0.9rem;">SISTEMA BIO-TECH v3.0 // <span id="label-rol" class="text-white fw-bold"></span></p>
     </div>
 
     <div class="container-fluid px-4 pb-5 mt-4">
         <ul class="nav nav-pills nav-fill mb-4 table-container p-2" id="pills-tab" role="tablist">
-            <li class="nav-item" role="presentation"><button class="nav-link active" id="pills-ventas-tab" data-bs-toggle="pill" data-bs-target="#tab-ventas" type="button" role="tab" onclick="cargarVentas(); playSound('click')"><i class="bi bi-wallet2 me-1"></i> TESORERÍA</button></li>
-            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-produccion-tab" data-bs-toggle="pill" data-bs-target="#tab-produccion" type="button" role="tab" onclick="cargarProduccion(); playSound('click')"><i class="bi bi-droplet-half me-1"></i> PRODUCCIÓN</button></li>
-            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-inventario-tab" data-bs-toggle="pill" data-bs-target="#tab-inventario" type="button" role="tab" onclick="cargarInsumos(); playSound('click')"><i class="bi bi-boxes me-1"></i> BODEGA BOTÁNICA</button></li>
-            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-recetas-tab" data-bs-toggle="pill" data-bs-target="#tab-recetas" type="button" role="tab" onclick="prepararRecetas(); playSound('click')"><i class="bi bi-flask me-1"></i> FÓRMULAS</button></li>
-            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-precios-tab" data-bs-toggle="pill" data-bs-target="#tab-precios" type="button" role="tab" onclick="cargarCatalogo(); playSound('click')"><i class="bi bi-tags me-1"></i> CATÁLOGO</button></li>
-            <li class="nav-item" role="presentation"><button class="nav-link" id="pills-stats-tab" data-bs-toggle="pill" data-bs-target="#tab-stats" type="button" role="tab" onclick="playSound('click')"><i class="bi bi-bar-chart-line me-1"></i> ANÁLISIS</button></li>
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-ventas" type="button" onclick="cargarVentas(); playSound('click')"><i class="bi bi-wallet2 me-1"></i> TESORERÍA / PEDIDOS</button></li>
+
+            <li class="nav-item" id="nav-crm" style="display:none;"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-crm" type="button" onclick="cargarCRM(); playSound('click')"><i class="bi bi-people-fill me-1"></i> CRM CLIENTES</button></li>
+
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-produccion" type="button" onclick="cargarProduccion(); playSound('click')"><i class="bi bi-droplet-half me-1"></i> PRODUCCIÓN</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-inventario" type="button" onclick="cargarInsumos(); playSound('click')"><i class="bi bi-boxes me-1"></i> BODEGA BOTÁNICA</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-recetas" type="button" onclick="prepararRecetas(); playSound('click')"><i class="bi bi-flask me-1"></i> FÓRMULAS</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-precios" type="button" onclick="cargarCatalogo(); playSound('click')"><i class="bi bi-tags me-1"></i> CATÁLOGO</button></li>
         </ul>
 
         <div class="tab-content" id="pills-tabContent">
+
             <div class="tab-pane fade show active" id="tab-ventas" role="tabpanel">
                 <div class="row g-4">
                     <div class="col-lg-3">
@@ -229,10 +186,10 @@
                     </div>
                     <div class="col-lg-9">
                         <div class="table-container">
-                            <h5 class="mb-4 fw-bold font-orbitron" style="color: var(--agua-pura); letter-spacing: 2px;">FLUJO DE INTERCAMBIOS COMERCIALES</h5>
+                            <h5 class="mb-4 fw-bold font-orbitron" style="color: var(--agua-pura); letter-spacing: 2px;">FILA DE PEDIDOS EN PROCESO</h5>
                             <div class="table-responsive">
                                 <table class="table text-center align-middle">
-                                    <thead class="table-dark"><tr><th>OP_ID</th><th>NODO_ORIGEN</th><th>VALOR_NETO</th><th>STATUS</th></tr></thead>
+                                    <thead class="table-dark"><tr><th>OP_ID</th><th>NODO_ORIGEN</th><th>VALOR_NETO</th><th>STATUS</th><th>ACCIÓN_COMANDO</th></tr></thead>
                                     <tbody id="tabla-ventas"></tbody>
                                 </table>
                             </div>
@@ -241,8 +198,29 @@
                 </div>
             </div>
 
-            <div class="tab-pane fade" id="tab-produccion" role="tabpanel">
+            <div class="tab-pane fade" id="tab-crm" role="tabpanel">
+                <div class="table-container mb-4" style="border-top: 3px solid var(--sol-futuro);">
+                    <h5 class="text-warning mb-4 fw-bold font-orbitron"><i class="bi bi-person-plus"></i> REGISTRO DE NUEVO CLIENTE VIP</h5>
+                    <div class="row g-3">
+                        <input type="hidden" id="crm-id">
+                        <div class="col-md-3"><label class="form-label-neon">Identificación</label><input type="text" id="crm-nombre" class="form-control" placeholder="Nombre completo"></div>
+                        <div class="col-md-3"><label class="form-label-neon">Enlace (Teléfono)</label><input type="text" id="crm-tel" class="form-control" placeholder="WhatsApp"></div>
+                        <div class="col-md-3"><label class="form-label-neon">Coordenadas</label><input type="text" id="crm-dir" class="form-control" placeholder="Dirección de envío"></div>
+                        <div class="col-md-2"><label class="form-label-neon">Nodo Base</label><select id="crm-nodo" class="form-select"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
+                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" onclick="guardarCliente()"><i class="bi bi-hdd-network"></i></button></div>
+                    </div>
+                </div>
+                <div class="table-container p-0">
+                    <div class="table-responsive">
+                        <table class="table text-center align-middle m-0">
+                            <thead class="table-dark"><tr><th>IDENTIFICACIÓN</th><th>ENLACE COMUNICACIÓN</th><th>COORDENADAS</th><th>NODO_BASE</th><th>ADMINISTRAR</th></tr></thead>
+                            <tbody id="tabla-crm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
+            <div class="tab-pane fade" id="tab-produccion" role="tabpanel">
                 <div class="table-container mb-4" style="border-top: 3px solid var(--sol-futuro); overflow: hidden;">
                     <div class="processing-overlay" id="overlay-ensamblaje">
                         <div class="spinner-bio mb-4"></div>
@@ -251,7 +229,6 @@
                     </div>
 
                     <h5 class="text-warning mb-4 fw-bold font-orbitron"><i class="bi bi-droplet"></i> PROCESADOR DE EXTRACTOS: ALTA DE STOCK</h5>
-
                     <div class="row g-3 align-items-end position-relative" style="z-index: 1;">
                         <div class="col-md-3">
                             <label class="form-label-neon text-warning">NODO DE PRODUCCIÓN</label>
@@ -363,14 +340,6 @@
                 </div>
             </div>
 
-            <div class="tab-pane fade" id="tab-stats" role="tabpanel">
-                <div class="table-container text-center py-5">
-                    <i class="bi bi-tree fs-1 text-money-green d-block mb-3" style="text-shadow: var(--text-glow);"></i>
-                    <h5 class="text-money-green mb-3 fw-bold font-orbitron eco-text">SISTEMA DE ECO-MÉTRICAS</h5>
-                    <p style="color: var(--agua-pura); font-size: 1.1rem;">Recolectando datos de crecimiento de la red botánica... <br> Esperando floración de datos.</p>
-                </div>
-            </div>
-
         </div>
     </div>
 </div>
@@ -384,14 +353,10 @@
 
     function playSound(type) {
         if (!audioCtx) return;
-        const now = audioCtx.currentTime;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
+        const now = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
         osc.connect(gain); gain.connect(audioCtx.destination);
-
         if (type === 'click') {
-            osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); // Sonido más suave, tipo gota
-            osc.frequency.exponentialRampToValueAtTime(10, now + 0.1);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(10, now + 0.1);
             gain.gain.setValueAtTime(0.05, now); gain.gain.linearRampToValueAtTime(0, now + 0.1);
             osc.start(); osc.stop(now + 0.1);
         } else if (type === 'typing') {
@@ -399,60 +364,73 @@
             gain.gain.setValueAtTime(0.01, now); gain.gain.linearRampToValueAtTime(0, now + 0.03);
             osc.start(); osc.stop(now + 0.03);
         } else if (type === 'granted') {
-            osc.type = 'sine'; osc.frequency.setValueAtTime(300, now); // Tono armónico ascendente
-            osc.frequency.linearRampToValueAtTime(600, now + 0.4);
+            osc.type = 'sine'; osc.frequency.setValueAtTime(300, now); osc.frequency.linearRampToValueAtTime(600, now + 0.4);
             gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.4);
             osc.start(); osc.stop(now + 0.4);
         } else if (type === 'error') {
-            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now);
-            osc.frequency.exponentialRampToValueAtTime(50, now + 0.3);
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(50, now + 0.3);
             gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
             osc.start(); osc.stop(now + 0.3);
         }
     }
 
-    // --- LOGICA MATRIZ ---
-    let rolUsuario = null; let sucursalAdmin = null; let ventasEnMemoria = [], insMem = [];
+    // --- LOGICA MATRIZ Y ROLES ---
+    let rolUsuario = null; let sucursalAdmin = null; let insMem = [];
+    let baseCRM = JSON.parse(localStorage.getItem('raices_crm')) || [];
 
     function validarAcceso() {
-        const pin = document.getElementById('input-pin').value;
-        let rol = null, etiqueta = null, sucursalBase = null;
+        const userRaw = document.getElementById('input-usuario').value.trim();
+        const pass = document.getElementById('input-clave').value.trim();
+        const normalizar = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        const userNorm = normalizar(userRaw);
 
-        if(pin === '7777') { rol = 'SUPREMO'; etiqueta = 'NÚCLEO MAESTRO'; }
-        else if(pin === '1010') { rol = 'ADMIN'; etiqueta = 'BOTA. COLOMBIA'; sucursalBase = 'Colombia'; }
-        else if(pin === '2020') { rol = 'ADMIN'; etiqueta = 'BOTA. CHILE'; sucursalBase = 'Chile'; }
-        else if(pin === '3030') { rol = 'ADMIN'; etiqueta = 'BOTA. ESPAÑA'; sucursalBase = 'España'; }
-        else { playSound('error'); document.getElementById('input-pin').value = ''; return; }
+        let rol = null, etiqueta = null, sucursalBase = null, msgVoz = "";
+
+        if(userNorm === 'admin' && pass === '1234') {
+            rol = 'SUPREMO'; etiqueta = 'COMANDANTE SUPREMO';
+            msgVoz = "Bienvenido Comandante Supremo. Todos los módulos habilitados.";
+        }
+        else if(userNorm === 'linda mama spa' && pass === '3002') {
+            rol = 'ADMIN'; etiqueta = 'ADMINISTRADOR CHILE'; sucursalBase = 'Chile';
+            msgVoz = "Linda mamá spa y raíces, la combinación perfecta.";
+        }
+        else if(userNorm === 'administrador juan' && pass === '1807') {
+            rol = 'ADMIN'; etiqueta = 'ADMINISTRADOR ESPAÑA'; sucursalBase = 'España';
+            msgVoz = "Juan eres el mejor, nunca lo olvides, y todo lo que el ser humano se proponga, lo puede lograr.";
+        }
+        else if(userNorm === 'carolina' && pass === '2907') {
+            rol = 'ADMIN'; etiqueta = 'ADMINISTRADOR ESPAÑA'; sucursalBase = 'España';
+            msgVoz = "Bienvenida Carolina, que tengas un excelente turno operando en Raíces.";
+        }
+        else if(userNorm === 'hermana' && pass === '1307') {
+            rol = 'ADMIN'; etiqueta = 'ADMINISTRADOR ESPAÑA'; sucursalBase = 'España';
+            msgVoz = "Hola Hermana, lista para iniciar la operación con la mejor energía.";
+        }
+        else { playSound('error'); document.getElementById('error-login').style.display='block'; return; }
 
         playSound('granted');
         rolUsuario = rol; sucursalAdmin = sucursalBase;
 
+        if ('speechSynthesis' in window && msgVoz !== "") {
+            const voz = new SpeechSynthesisUtterance(msgVoz);
+            voz.lang = 'es-ES'; voz.rate = 1.0; window.speechSynthesis.speak(voz);
+        }
+
         document.getElementById('login-form').style.display = 'none';
-        const bootPanel = document.getElementById('boot-sequence');
-        const bootBar = document.getElementById('boot-bar-fill');
-        const bootText = document.getElementById('boot-status-text');
+        document.getElementById('boot-sequence').style.display = 'block';
 
-        bootPanel.style.display = 'block';
-
-        const estados = [
-            {t: "Activando Bio-Núcleo...", p: 15},
-            {t: "Regando Protocolos de Red...", p: 40},
-            {t: "Sincronizando Ecosistema...", p: 75},
-            {t: "Sistema Vital: ESTABLE", p: 100}
-        ];
-
+        const estados = [{t: "Activando Bio-Núcleo...", p: 15}, {t: "Sincronizando Ecosistema...", p: 75}, {t: "Sistema Vital: ESTABLE", p: 100}];
         let i = 0;
         const intervalo = setInterval(() => {
             if(i < estados.length) {
-                bootText.innerText = estados[i].t;
-                bootBar.style.width = estados[i].p + '%';
+                document.getElementById('boot-status-text').innerText = estados[i].t;
+                document.getElementById('boot-bar-fill').style.width = estados[i].p + '%';
                 i++;
             } else {
                 clearInterval(intervalo);
                 document.getElementById('label-rol').innerText = etiqueta;
                 aplicarSeguridad();
                 document.getElementById('login-screen').style.opacity = '0';
-
                 setTimeout(() => {
                     document.getElementById('login-screen').style.display = 'none';
                     document.getElementById('app-dashboard').style.display = 'block';
@@ -465,16 +443,18 @@
 
     function aplicarSeguridad() {
         const esSupremo = (rolUsuario === 'SUPREMO');
-        const selectores = ['prod-sucursal', 'ins-sucursal', 'vaso-sucursal', 'filtro-sucursal-recetas', 'filtro-sucursal-catalogo'];
 
+        if (esSupremo) {
+            document.getElementById('nav-crm').style.display = 'block';
+            cargarCRM();
+        }
+
+        const selectores = ['prod-sucursal', 'ins-sucursal', 'vaso-sucursal', 'filtro-sucursal-recetas', 'filtro-sucursal-catalogo'];
         selectores.forEach(id => {
             const el = document.getElementById(id);
             if (el) {
-                if (!esSupremo) {
-                    el.value = sucursalAdmin; el.disabled = true; el.classList.add('locked-select');
-                } else {
-                    el.disabled = false; el.classList.remove('locked-select');
-                }
+                if (!esSupremo) { el.value = sucursalAdmin; el.disabled = true; el.classList.add('locked-select'); }
+                else { el.disabled = false; el.classList.remove('locked-select'); }
             }
         });
 
@@ -483,50 +463,152 @@
             if (sucursalAdmin !== 'Chile') document.getElementById('panel-stat-chi').style.display = 'none';
             if (sucursalAdmin !== 'España') document.getElementById('panel-stat-esp').style.display = 'none';
         }
-        cargarProductosSelect();
-        prepararRecetas();
+        cargarProductosSelect(); prepararRecetas();
     }
 
+    // ==========================================
+    // 1. MODULO VENTAS / PEDIDOS
+    // ==========================================
     async function cargarVentas() {
         try {
             const res = await fetch('/api/ventas'); const data = await res.json();
             const tb = document.getElementById('tabla-ventas'); tb.innerHTML='';
             let cCol=0, cChi=0, cEsp=0;
+
             data.forEach(v => {
                 if (rolUsuario !== 'SUPREMO' && !v.pais.includes(sucursalAdmin)) return;
-                if(v.estado==='Pagado'){
-                    if(v.pais.includes('Colombia')) cCol += v.total; else if(v.pais.includes('Chile')) cChi += v.total; else if(v.pais.includes('España')) cEsp += v.total;
+
+                let totalVal = v.total || 0;
+                let smb = (v.pais === 'España') ? '€' : '$';
+
+                if(v.estado === 'Pagado'){
+                    if(v.pais.includes('Colombia')) cCol += totalVal;
+                    else if(v.pais.includes('Chile')) cChi += totalVal;
+                    else if(v.pais.includes('España')) cEsp += totalVal;
                 }
-                tb.innerHTML += `<tr><td class="text-white">#OP-${v.id}</td><td>${v.pais}</td><td class="text-money-green">$${v.total.toLocaleString()}</td><td><i class="bi bi-check2-circle" style="color:var(--agua-pura);"></i></td></tr>`;
+
+                let badgeEstado = v.estado === 'Pagado'
+                    ? `<span style="color:var(--bio-esmeralda); font-weight:bold;"><i class="bi bi-shield-check"></i> PAGADO</span>`
+                    : `<span style="color:var(--sol-futuro); font-weight:bold;"><i class="bi bi-clock-history"></i> PENDIENTE</span>`;
+
+                let botonesAccion = v.estado === 'Pendiente'
+                    ? `<button class="btn btn-sm btn-outline-success me-2 border-0" style="background: rgba(0,255,166,0.1); color: var(--bio-esmeralda);" onclick="aprobarPedido(${v.id})"><i class="bi bi-check-lg fs-5"></i></button>
+                       <button class="btn btn-sm btn-outline-danger border-0" style="background: rgba(255,0,85,0.1); color: var(--n-rojo);" onclick="anularPedido(${v.id})"><i class="bi bi-trash fs-5"></i></button>`
+                    : `<span class="text-muted"><i class="bi bi-lock-fill"></i> ARCHIVADO</span>`;
+
+                tb.innerHTML += `<tr>
+                    <td class="text-white fw-bold">#OP-${v.id}</td>
+                    <td>${v.pais} <br><small class="text-muted">Origen: ${v.origen || 'Desconocido'}</small></td>
+                    <td class="text-money-green fs-5 fw-bold">${smb}${totalVal.toLocaleString('es-ES')}</td>
+                    <td>${badgeEstado}</td>
+                    <td>${botonesAccion}</td>
+                </tr>`;
             });
-            document.getElementById('caja-col').innerText=cCol.toLocaleString();
-            document.getElementById('caja-chi').innerText=cChi.toLocaleString();
-            document.getElementById('caja-esp').innerText=cEsp.toLocaleString();
-        } catch(e) {}
+            document.getElementById('caja-col').innerText=cCol.toLocaleString('es-ES');
+            document.getElementById('caja-chi').innerText=cChi.toLocaleString('es-ES');
+            document.getElementById('caja-esp').innerText=cEsp.toLocaleString('es-ES');
+        } catch(e) { console.log("Fallo API Ventas", e); }
     }
 
+    async function aprobarPedido(id) {
+        playSound('click');
+        try {
+            const res = await fetch(`/api/ventas/${id}/pagar`, { method: 'PUT' });
+            if(res.ok) { cargarVentas(); } else { alert("❌ Error al aprobar pedido."); }
+        } catch(e) { console.error(e); }
+    }
+
+    async function anularPedido(id) {
+        playSound('error');
+        if(confirm("⚠️ ¿Eliminar y anular este pedido pendiente de la base de datos?")) {
+            try {
+                const res = await fetch(`/api/ventas/${id}`, { method: 'DELETE' });
+                if(res.ok) { cargarVentas(); } else { alert("❌ Error al anular."); }
+            } catch(e) { console.error(e); }
+        }
+    }
+
+    // ==========================================
+    // 2. MODULO CRM (SOLO ADMIN SUPREMO)
+    // ==========================================
+    function cargarCRM() {
+        const tb = document.getElementById('tabla-crm'); tb.innerHTML='';
+        baseCRM.forEach(c => {
+            tb.innerHTML += `<tr>
+                <td class="fw-bold" style="color: var(--agua-pura);">${c.nombre}</td>
+                <td class="text-white">${c.tel}</td>
+                <td class="text-muted small">${c.dir}</td>
+                <td><span class="badge bg-dark border border-secondary">${c.nodo}</span></td>
+                <td>
+                    <button class="btn btn-sm text-info border-0 me-1" onclick="editarCliente(${c.id})"><i class="bi bi-pencil-square fs-5"></i></button>
+                    <button class="btn btn-sm text-danger border-0" onclick="eliminarCliente(${c.id})"><i class="bi bi-trash3 fs-5"></i></button>
+                </td>
+            </tr>`;
+        });
+    }
+
+    function guardarCliente() {
+        playSound('click');
+        const id = document.getElementById('crm-id').value;
+        const nombre = document.getElementById('crm-nombre').value;
+        const tel = document.getElementById('crm-tel').value;
+        const dir = document.getElementById('crm-dir').value;
+        const nodo = document.getElementById('crm-nodo').value;
+
+        if(!nombre) return alert("Falta identificación.");
+
+        if(id) {
+            let cli = baseCRM.find(c => c.id == id);
+            if(cli) { cli.nombre = nombre; cli.tel = tel; cli.dir = dir; cli.nodo = nodo; }
+        } else {
+            let nuevoId = baseCRM.length > 0 ? Math.max(...baseCRM.map(c=>c.id)) + 1 : 1;
+            baseCRM.push({ id: nuevoId, nombre, tel, dir, nodo });
+        }
+
+        document.getElementById('crm-id').value = ''; document.getElementById('crm-nombre').value = '';
+        document.getElementById('crm-tel').value = ''; document.getElementById('crm-dir').value = '';
+
+        localStorage.setItem('raices_crm', JSON.stringify(baseCRM));
+        cargarCRM();
+    }
+
+    function editarCliente(id) {
+        playSound('click');
+        let cli = baseCRM.find(c => c.id === id);
+        if(cli) {
+            document.getElementById('crm-id').value = cli.id; document.getElementById('crm-nombre').value = cli.nombre;
+            document.getElementById('crm-tel').value = cli.tel; document.getElementById('crm-dir').value = cli.dir;
+            document.getElementById('crm-nodo').value = cli.nodo;
+        }
+    }
+
+    function eliminarCliente(id) {
+        playSound('error');
+        if(confirm("¿Eliminar registro de este cliente?")) {
+            baseCRM = baseCRM.filter(c => c.id !== id);
+            localStorage.setItem('raices_crm', JSON.stringify(baseCRM));
+            cargarCRM();
+        }
+    }
+
+    // ==========================================
+    // 3. RESTO DE FUNCIONES API INTACTAS
+    // ==========================================
     async function cargarProductosSelect() {
         try {
             const suc = document.getElementById('prod-sucursal').value;
-            const res = await fetch('/api/productos');
-            const data = await res.json();
+            const res = await fetch('/api/productos'); const data = await res.json();
             const select = document.getElementById('prod-item');
             select.innerHTML = '<option value="">-- Seleccionar Natural --</option>';
-            data.forEach(p => {
-                if(p.sucursal === suc) {
-                    select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
-                }
-            });
+            data.forEach(p => { if(p.sucursal === suc) { select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`; } });
         } catch(e) {}
     }
 
     async function cargarProduccion() {
         cargarProductosSelect();
         try {
-            const res = await fetch('/api/productos');
-            const data = await res.json();
-            const tb = document.getElementById('tabla-produccion');
-            tb.innerHTML='';
+            const res = await fetch('/api/productos'); const data = await res.json();
+            const tb = document.getElementById('tabla-produccion'); tb.innerHTML='';
             data.forEach(p => {
                 if(rolUsuario !== 'SUPREMO' && !p.sucursal.includes(sucursalAdmin)) return;
                 tb.innerHTML += `<tr><td class="fw-bold text-white">${p.nombre}</td><td>${p.sucursal}</td><td class="text-money-green fs-5 fw-bold">${p.stock||0}</td><td><i class="bi bi-droplet-fill" style="color:var(--agua-pura);"></i> 100% PURO</td></tr>`;
@@ -535,33 +617,18 @@
     }
 
     function procesarEnsamblaje() {
-        const id = document.getElementById('prod-item').value;
-        const cant = document.getElementById('prod-cantidad').value;
-
-        if(!id || !cant || cant <= 0) {
-            playSound('error');
-            alert("ALERTA VITAL: Seleccione un producto e ingrese un lote válido.");
-            return;
-        }
+        const id = document.getElementById('prod-item').value; const cant = document.getElementById('prod-cantidad').value;
+        if(!id || !cant || cant <= 0) { playSound('error'); alert("ALERTA VITAL: Seleccione producto y lote."); return; }
 
         playSound('granted');
-        const overlay = document.getElementById('overlay-ensamblaje');
-        overlay.style.display = 'flex';
+        const overlay = document.getElementById('overlay-ensamblaje'); overlay.style.display = 'flex';
 
         setTimeout(async () => {
             try {
-                // Aquí en el futuro conectarás con tu Backend
-                // await fetch(`/api/productos/${id}/agregar-stock?cantidad=${cant}`, {method:'POST'});
-
+                await fetch(`/api/productos/${id}/agregar-stock?cantidad=${cant}`, {method:'POST'});
                 document.getElementById('prod-cantidad').value = '';
-                await cargarProduccion();
-
-                overlay.style.display = 'none';
-                playSound('click');
-            } catch(e) {
-                overlay.style.display = 'none';
-                playSound('error');
-            }
+                await cargarProduccion(); overlay.style.display = 'none'; playSound('click');
+            } catch(e) { overlay.style.display = 'none'; playSound('error'); }
         }, 1800);
     }
 
@@ -579,11 +646,8 @@
 
     function guardarInsumo(tipo) {
         let nombre, cat, uni, stock, suc;
-        if(tipo==='pulpas'){
-            nombre = document.getElementById('ins-nombre').value; cat='Pulpas'; uni=document.getElementById('ins-unidad').value; stock=document.getElementById('ins-stock').value; suc=document.getElementById('ins-sucursal').value;
-        } else {
-            nombre = document.getElementById('vaso-nombre').value; cat='Insumos Vaso'; uni=document.getElementById('vaso-unidad').value; stock=document.getElementById('vaso-stock').value; suc=document.getElementById('vaso-sucursal').value;
-        }
+        if(tipo==='pulpas'){ nombre = document.getElementById('ins-nombre').value; cat='Pulpas'; uni=document.getElementById('ins-unidad').value; stock=document.getElementById('ins-stock').value; suc=document.getElementById('ins-sucursal').value; }
+        else { nombre = document.getElementById('vaso-nombre').value; cat='Insumos Vaso'; uni=document.getElementById('vaso-unidad').value; stock=document.getElementById('vaso-stock').value; suc=document.getElementById('vaso-sucursal').value; }
         if(!nombre) return;
         fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre, categoria:cat, medida:uni, unidadActual:parseInt(stock)||0, sucursal:suc})}).then(()=>{ cargarInsumos(); playSound('click'); });
     }
@@ -600,9 +664,7 @@
     }
 
     async function guardarReceta() {
-        const id = document.getElementById('rec-producto').value;
-        const ing = document.getElementById('rec-insumo').value;
-        const cant = document.getElementById('rec-cantidad').value;
+        const id = document.getElementById('rec-producto').value; const ing = document.getElementById('rec-insumo').value; const cant = document.getElementById('rec-cantidad').value;
         await fetch(`/api/insumos/${id}/vincular-ingrediente`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ingrediente:ing, gasto:cant})});
         cargarTablaReceta(); playSound('click');
     }

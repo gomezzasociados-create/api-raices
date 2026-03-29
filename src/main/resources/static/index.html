@@ -2,10 +2,14 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>COMANDO CENTRAL POS - Raíces</title>
 
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#01120a">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -26,6 +30,7 @@
             background-image: linear-gradient(rgba(1, 15, 10, 0.9), rgba(1, 15, 10, 0.97)), url('https://res.cloudinary.com/doi0o3hlr/image/upload/v1774759858/Gemini_Generated_Image_2ocvdw2ocvdw2ocv_ixqdsz.png');
             background-size: cover; background-attachment: fixed;
             color: #fff; min-height: 100vh; overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .scanlines {
@@ -55,21 +60,28 @@
         .input-login:focus { outline: none; box-shadow: var(--resplandor-aqua); border-color: var(--bio-aqua); }
 
         /* =========================================================
-           INTERFAZ POS (CAJA REGISTRADORA)
+           INTERFAZ POS
            ========================================================= */
         .navbar-pos {
             background: rgba(0, 0, 0, 0.8); border-bottom: 1px solid var(--bio-aqua);
             padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 10px;
         }
 
         .selector-sucursal {
             background: rgba(1, 10, 5, 0.8); border: 1px solid var(--bio-oro); color: var(--bio-oro);
-            font-family: 'Orbitron', sans-serif; padding: 5px 15px; border-radius: 5px; outline: none;
+            font-family: 'Orbitron', sans-serif; padding: 5px 10px; border-radius: 5px; outline: none; font-size: 0.85rem;
         }
         .selector-sucursal:disabled { opacity: 0.5; cursor: not-allowed; border-color: #555; color: #aaa; }
 
-        /* BOTONES DE PRODUCTO TIPO CAJA TÁCTIL */
+        .btn-instalar-pos {
+            background: rgba(0, 240, 255, 0.1); color: var(--bio-aqua); border: 1px solid var(--bio-aqua);
+            padding: 5px 10px; border-radius: 5px; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 700;
+            cursor: pointer; box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); transition: 0.3s;
+        }
+        .btn-instalar-pos:hover { background: var(--bio-aqua); color: #000; }
+
+        /* BOTONES DE PRODUCTO */
         .btn-pos-item {
             background: rgba(5, 20, 15, 0.6); border: 1px solid rgba(0, 240, 255, 0.3);
             border-radius: 10px; padding: 15px 10px; height: 100%; width: 100%;
@@ -81,23 +93,15 @@
         .pos-item-nombre { font-family: 'Rajdhani'; font-weight: 700; font-size: 1.1rem; line-height: 1.1; margin-bottom: 8px; color: #fff; text-transform: uppercase;}
         .pos-item-precio { font-family: 'Orbitron'; color: var(--bio-oro); font-weight: 700; font-size: 1rem; }
 
-        /* PANEL DEL TICKET (CARRITO) */
+        /* PANEL DEL TICKET ESCRITORIO */
         .panel-ticket {
             background: rgba(0,0,0,0.6); border: 1px solid var(--bio-oro);
-            border-radius: 10px; height: calc(100vh - 100px); display: flex; flex-direction: column;
+            border-radius: 10px; height: calc(100vh - 120px); display: flex; flex-direction: column;
         }
         .ticket-header { background: rgba(255,215,0,0.1); padding: 15px; border-bottom: 1px dashed var(--bio-oro); text-align: center; font-family: 'Orbitron'; color: var(--bio-oro); font-weight: bold;}
         .ticket-items { flex-grow: 1; overflow-y: auto; padding: 10px; }
-
-        .ticket-item-row {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px 0;
-        }
-
-        .ticket-total-box {
-            background: rgba(0,0,0,0.8); border-top: 2px solid var(--bio-oro);
-            padding: 20px; text-align: center;
-        }
+        .ticket-item-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px 0; }
+        .ticket-total-box { background: rgba(0,0,0,0.8); border-top: 2px solid var(--bio-oro); padding: 20px; text-align: center; }
 
         .btn-cobrar {
             background: var(--bio-oro); color: #000; font-family: 'Orbitron'; font-weight: 900;
@@ -107,17 +111,31 @@
         .btn-cobrar:hover { box-shadow: var(--resplandor-oro); transform: scale(1.02); }
 
         /* BOTONES GENERALES */
-        .btn-bio {
-            background: rgba(0, 240, 255, 0.1); color: var(--bio-aqua); border: 1px solid var(--bio-aqua);
-            border-radius: 8px; padding: 8px 15px; font-family: 'Orbitron'; font-weight: 700;
-            cursor: pointer; transition: 0.3s;
-        }
+        .btn-bio { background: rgba(0, 240, 255, 0.1); color: var(--bio-aqua); border: 1px solid var(--bio-aqua); border-radius: 8px; padding: 8px 15px; font-family: 'Orbitron'; font-weight: 700; cursor: pointer; transition: 0.3s; }
         .btn-bio:hover { background: var(--bio-aqua); color: #000; }
 
+        /* BARRA FLOTANTE MÓVIL (TIPO DELIVERY) */
+        .carrito-bar-mobile {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: 95%; max-width: 400px; background: rgba(2, 10, 7, 0.98);
+            border: 2px solid var(--bio-oro); padding: 12px 20px; border-radius: 12px;
+            display: none; justify-content: space-between; align-items: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9), var(--resplandor-oro); z-index: 1000; cursor: pointer;
+        }
+
         /* MODALES */
-        .modal-content-bio { background: rgba(2, 10, 7, 0.95); border: 2px solid var(--bio-aqua); border-radius: 15px; color: white; }
-        .btn-opcion-pago { border: 1px solid rgba(0,240,255,0.3); background: rgba(0,0,0,0.6); border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; font-family: 'Orbitron'; font-size: 0.8rem; color: #fff;}
-        .btn-opcion-pago.active { background: rgba(0,240,255,0.2); border-color: var(--bio-aqua); color: var(--bio-aqua); font-weight: bold;}
+        .modal-content-bio { background: rgba(2, 10, 7, 0.95); border: 2px solid var(--bio-aqua); border-radius: 15px; color: white; backdrop-filter: blur(10px);}
+        .btn-opcion-pago { border: 1px solid rgba(0,240,255,0.3); background: rgba(0,0,0,0.6); border-radius: 8px; padding: 10px 5px; text-align: center; cursor: pointer; font-family: 'Orbitron'; font-size: 0.75rem; color: #fff;}
+        .btn-opcion-pago.active { background: rgba(0,240,255,0.2); border-color: var(--bio-aqua); color: var(--bio-aqua); font-weight: bold; box-shadow: inset 0 0 10px rgba(0,240,255,0.2);}
+
+        /* INPUTS CRM EN MODAL DE COBRO */
+        .input-crm {
+            background: rgba(0,0,0,0.6); border: 1px solid rgba(255,215,0,0.4);
+            color: #fff; font-family: 'Rajdhani'; padding: 8px 12px;
+            border-radius: 6px; width: 100%; margin-bottom: 10px; font-size: 0.95rem;
+        }
+        .input-crm:focus { outline: none; border-color: var(--bio-oro); box-shadow: inset 0 0 8px rgba(255,215,0,0.3); }
+        .input-crm::placeholder { color: rgba(255,255,255,0.4); }
     </style>
 </head>
 <body>
@@ -142,54 +160,49 @@
 
     <div class="navbar-pos">
         <div class="d-flex align-items-center">
-            <h4 class="mb-0 me-4" style="font-family: 'Orbitron'; color: var(--bio-aqua); font-weight: 900; text-shadow: var(--resplandor-aqua);">RAÍCES POS</h4>
-            <span class="badge bg-dark border border-secondary" id="nombre-cajero">Operador: </span>
+            <h4 class="mb-0 me-3" style="font-family: 'Orbitron'; color: var(--bio-aqua); font-weight: 900; text-shadow: var(--resplandor-aqua);">RAÍCES POS</h4>
+            <span class="badge bg-dark border border-secondary d-none d-sm-inline" id="nombre-cajero">Operador: </span>
         </div>
-        <div class="d-flex align-items-center">
-            <select id="sucursal-activa" class="selector-sucursal me-3" onchange="cambiarSucursal()">
-                <option value="Colombia">NODO: TULUÁ (COP)</option>
-                <option value="Chile">NODO: ANTOFAGASTA (CLP)</option>
-                <option value="España">NODO: MALLORCA (EUR)</option>
+        <div class="d-flex align-items-center gap-2">
+            <button id="btnInstalarPOS" class="btn-instalar-pos" style="display: none;">
+                <i class="bi bi-download"></i> APP
+            </button>
+            <select id="sucursal-activa" class="selector-sucursal" onchange="cambiarSucursal()">
+                <option value="Colombia">TULUÁ (COP)</option>
+                <option value="Chile">ANTOFAGASTA (CLP)</option>
+                <option value="España">MALLORCA (EUR)</option>
             </select>
-            <button class="btn btn-outline-danger btn-sm" onclick="cerrarSesion()"><i class="bi bi-power"></i> SALIR</button>
+            <button class="btn btn-outline-danger btn-sm" onclick="cerrarSesion()"><i class="bi bi-power"></i></button>
         </div>
     </div>
 
-    <div class="container-fluid mt-3">
+    <div class="container-fluid mt-3 pb-5">
         <div class="row">
 
-            <div class="col-lg-8 col-md-7 mb-3">
-                <div class="d-flex gap-2 mb-3">
+            <div class="col-lg-8 col-md-7 mb-5 pb-4">
+                <div class="d-flex gap-2 mb-3 overflow-auto" style="white-space: nowrap; padding-bottom: 5px;">
                     <button class="btn-bio" onclick="filtrarPos('Todos')">TODOS</button>
-                    <button class="btn-bio" onclick="filtrarPos('500')">ELÍXIRES 500ml</button>
+                    <button class="btn-bio" onclick="filtrarPos('500')">500ml</button>
                     <button class="btn-bio" onclick="filtrarPos('Pack')">PACKS</button>
-                    <button class="btn-bio" onclick="abrirModalNuevoProducto()" style="margin-left: auto; border-color: var(--bio-oro); color: var(--bio-oro);"><i class="bi bi-plus-lg"></i> CREAR</button>
+                    <button class="btn-bio" onclick="abrirModalNuevoProducto()" style="margin-left: auto; border-color: var(--bio-oro); color: var(--bio-oro);"><i class="bi bi-plus-lg"></i></button>
                 </div>
 
-                <div id="grid-pos-productos" class="row g-2" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 5px;">
+                <div id="grid-pos-productos" class="row g-2" style="max-height: calc(100vh - 180px); overflow-y: auto; padding-right: 5px;">
                 </div>
             </div>
 
-            <div class="col-lg-4 col-md-5">
+            <div class="col-lg-4 col-md-5 d-none d-md-block">
                 <div class="panel-ticket">
-                    <div class="ticket-header">
-                        TICKET DE EXTRACCIÓN <i class="bi bi-receipt"></i>
+                    <div class="ticket-header">TICKET DE EXTRACCIÓN <i class="bi bi-receipt"></i></div>
+                    <div class="ticket-items" id="lista-ticket-desktop">
+                        <div class="text-center text-muted mt-5 ticket-vacio"><i class="bi bi-cart-x fs-1 opacity-50"></i><br>Ningún producto</div>
                     </div>
-
-                    <div class="ticket-items" id="lista-ticket">
-                        <div class="text-center text-muted mt-5" id="ticket-vacio">
-                            <i class="bi bi-cart-x fs-1 opacity-50"></i><br>Ningún producto seleccionado
-                        </div>
-                    </div>
-
                     <div class="ticket-total-box">
                         <div class="d-flex justify-content-between mb-3">
                             <span style="color: rgba(255,255,255,0.7); font-size: 1.2rem;">TOTAL:</span>
-                            <span id="total-caja-display" style="font-family: 'Orbitron'; font-size: 1.8rem; color: var(--bio-oro); font-weight: bold;">$0</span>
+                            <span class="total-caja-display" style="font-family: 'Orbitron'; font-size: 1.8rem; color: var(--bio-oro); font-weight: bold;">$0</span>
                         </div>
-                        <button class="btn-cobrar" onclick="abrirModalCobro()" id="btn-cobrar-ticket" disabled>
-                            COBRAR <i class="bi bi-wallet2 ms-2"></i>
-                        </button>
+                        <button class="btn-cobrar btn-cobrar-ticket" onclick="abrirModalCobro()" disabled>COBRAR <i class="bi bi-wallet2 ms-2"></i></button>
                     </div>
                 </div>
             </div>
@@ -198,26 +211,64 @@
     </div>
 </div>
 
+<div id="carrito-bar-mobile" class="carrito-bar-mobile d-md-none" onclick="abrirModalTicketMobile()">
+    <div class="d-flex flex-column text-white">
+        <span class="fw-bold" style="font-size: 0.75rem; color: var(--bio-aqua); font-family: 'Orbitron';">TICKET (<span id="items-count-mobile">0</span>)</span>
+        <span class="total-caja-display" style="font-size: 1.4rem; font-weight: 900; color: var(--bio-oro); font-family: 'Orbitron';">$0</span>
+    </div>
+    <button class="btn btn-warning fw-bold text-dark px-3 py-2" style="font-size: 0.9rem;" onclick="event.stopPropagation(); abrirModalCobro()">COBRAR</button>
+</div>
+
+<div class="modal fade" id="modalTicketMobile" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content modal-content-bio">
+            <div class="modal-header border-0 pb-0 pt-4 px-3">
+                <h5 style="font-family: 'Orbitron'; color: var(--bio-oro);"><i class="bi bi-receipt me-2"></i> RESUMEN TICKET</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body px-3" id="lista-ticket-mobile">
+            </div>
+            <div class="modal-footer border-0 pt-0 pb-4 px-3">
+                <button type="button" class="btn-cobrar w-100" onclick="cerrarTicketMobileYAbrirCobro()">
+                    PROCEDER AL COBRO
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="modalCobro" tabindex="-1" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content modal-content-bio">
             <div class="modal-header border-0 pb-0 pt-3 px-4">
-                <h5 style="font-family: 'Orbitron'; color: var(--bio-oro);">LIQUIDAR TICKET</h5>
+                <h5 style="font-family: 'Orbitron'; color: var(--bio-oro);"><i class="bi bi-terminal-check me-2"></i> LIQUIDAR TICKET</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body px-4">
-                <h2 class="text-center mb-4" id="monto-cobro-final" style="font-family: 'Orbitron'; color: var(--bio-oro); font-size: 2.5rem; text-shadow: 0 0 20px rgba(255,215,0,0.5);"></h2>
 
-                <label style="color: var(--bio-aqua); font-family: 'Orbitron'; font-size: 0.8rem; margin-bottom: 10px;">MÉTODO DE INGRESO:</label>
+                <div style="background: rgba(0,0,0,0.5); padding: 15px; border-radius: 10px; border: 1px dashed var(--bio-oro); margin-bottom: 20px;">
+                    <h2 class="text-center total-caja-display mb-0" style="font-family: 'Orbitron'; color: var(--bio-oro); font-size: 2.2rem; text-shadow: 0 0 15px rgba(255,215,0,0.4);"></h2>
+                </div>
+
+                <div class="mb-3 p-3" style="background: rgba(255,215,0,0.05); border-radius: 10px; border: 1px solid rgba(255,215,0,0.2);">
+                    <label style="color: var(--bio-oro); font-family: 'Orbitron'; font-size: 0.75rem; letter-spacing: 1px; display: block; margin-bottom: 10px;"><i class="bi bi-person-lines-fill me-1"></i> DATOS DEL CLIENTE (OPCIONALES)</label>
+                    <input type="text" id="crm-nombre" class="input-crm" placeholder="Nombre completo">
+                    <input type="tel" id="crm-telefono" class="input-crm" placeholder="WhatsApp / Teléfono">
+                    <input type="text" id="crm-direccion" class="input-crm mb-0" placeholder="Dirección para envío (si aplica)">
+                </div>
+
+                <label style="color: var(--bio-aqua); font-family: 'Orbitron'; font-size: 0.75rem; margin-bottom: 8px; display: block;"><i class="bi bi-wallet2 me-1"></i> MÉTODO DE INGRESO:</label>
                 <div class="row g-2 mb-4">
-                    <div class="col-4"><div class="btn-opcion-pago active" id="pago-efectivo" onclick="seleccionarMetodo('Efectivo')"><i class="bi bi-cash-stack fs-3 d-block mb-1"></i> FÍSICO</div></div>
-                    <div class="col-4"><div class="btn-opcion-pago" id="pago-tarjeta" onclick="seleccionarMetodo('Tarjeta')"><i class="bi bi-credit-card fs-3 d-block mb-1"></i> DATÁFONO</div></div>
-                    <div class="col-4"><div class="btn-opcion-pago" id="pago-qr" onclick="seleccionarMetodo('Transferencia/QR')"><i class="bi bi-qr-code-scan fs-3 d-block mb-1"></i> BANCO / QR</div></div>
+                    <div class="col-4"><div class="btn-opcion-pago active" id="pago-efectivo" onclick="seleccionarMetodo('Efectivo')"><i class="bi bi-cash-stack fs-4 d-block mb-1"></i> FÍSICO</div></div>
+                    <div class="col-4"><div class="btn-opcion-pago" id="pago-tarjeta" onclick="seleccionarMetodo('Tarjeta')"><i class="bi bi-credit-card fs-4 d-block mb-1"></i> DATÁFONO</div></div>
+                    <div class="col-4"><div class="btn-opcion-pago" id="pago-bizum" onclick="seleccionarMetodo('Bizum')"><i class="bi bi-phone-vibrate fs-4 d-block mb-1"></i> BIZUM</div></div>
+                    <div class="col-6"><div class="btn-opcion-pago" id="pago-qr" onclick="seleccionarMetodo('Transferencia/QR')"><i class="bi bi-qr-code-scan fs-4 d-block mb-1"></i> TRANSFER / QR</div></div>
+                    <div class="col-6"><div class="btn-opcion-pago" id="pago-enlace" onclick="seleccionarMetodo('Enlace Web')"><i class="bi bi-link-45deg fs-4 d-block mb-1"></i> ENLACE WEB</div></div>
                 </div>
                 <input type="hidden" id="metodo-seleccionado" value="Efectivo">
 
-                <button class="btn-bio w-100 py-3" style="font-size: 1.2rem; background: rgba(0, 240, 255, 0.2);" onclick="procesarPagoFinal()">
-                    CONFIRMAR PAGO <i class="bi bi-check2-circle ms-2"></i>
+                <button class="btn-bio w-100 py-3" style="font-size: 1.1rem; background: rgba(0, 240, 255, 0.15);" onclick="procesarPagoFinal()">
+                    PROCESAR TRANSACCIÓN <i class="bi bi-check2-circle ms-2"></i>
                 </button>
             </div>
         </div>
@@ -239,6 +290,33 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // ==========================================
+    // INSTALACIÓN PWA COMANDO CENTRAL
+    // ==========================================
+    let eventoInstalacionPOS;
+    const btnInstalarPOS = document.getElementById('btnInstalarPOS');
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').catch(err => console.log('Error SW', err));
+        });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        eventoInstalacionPOS = e;
+        btnInstalarPOS.style.display = 'block';
+    });
+
+    btnInstalarPOS.addEventListener('click', async () => {
+        if (eventoInstalacionPOS) {
+            eventoInstalacionPOS.prompt();
+            const resultado = await eventoInstalacionPOS.userChoice;
+            eventoInstalacionPOS = null;
+            btnInstalarPOS.style.display = 'none';
+        }
+    });
+
+    // ==========================================
     // LÓGICA DE SEGURIDAD (ROLES, VOCES Y SUCURSALES)
     // ==========================================
     function validarAcceso() {
@@ -246,31 +324,26 @@
         const pass = document.getElementById('pass-operador').value.trim();
         const selectorSucursal = document.getElementById('sucursal-activa');
 
-        // Función para normalizar el texto (quitar tildes y mayúsculas para evitar errores de tipeo)
         const normalizar = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
         const userNorm = normalizar(userRaw);
 
         let loginExitoso = false;
         let mensajeVoz = "";
 
-        // 1. USUARIO: LINDA MAMÁ SPA
         if (userNorm === "linda mama spa" && pass === "3002") {
-            loginExitoso = true;
-            selectorSucursal.value = "Chile";
-            selectorSucursal.disabled = true; // Bloquear a su sucursal
+            loginExitoso = true; selectorSucursal.value = "Chile"; selectorSucursal.disabled = true;
             mensajeVoz = "Linda mamá spa y raíces, la combinación perfecta.";
-        }
-        // 2. USUARIO: ADMINISTRADOR JUAN
-        else if (userNorm === "administrador juan" && pass === "1807") {
-            loginExitoso = true;
-            selectorSucursal.value = "España";
-            selectorSucursal.disabled = true; // Bloquear a su sucursal
+        } else if (userNorm === "administrador juan" && pass === "1807") {
+            loginExitoso = true; selectorSucursal.value = "España"; selectorSucursal.disabled = true;
             mensajeVoz = "Juan eres el mejor, nunca lo olvides, y todo lo que el ser humano se proponga, lo puede lograr.";
-        }
-        // 3. USUARIO: MASTER ADMIN
-        else if (userNorm === "admin" && pass === "1234") {
-            loginExitoso = true;
-            selectorSucursal.disabled = false; // Acceso total
+        } else if (userNorm === "carolina" && pass === "2907") {
+            loginExitoso = true; selectorSucursal.value = "España"; selectorSucursal.disabled = true;
+            mensajeVoz = "Bienvenida Carolina, que tengas un excelente turno operando en Raíces.";
+        } else if (userNorm === "hermana" && pass === "1307") {
+            loginExitoso = true; selectorSucursal.value = "España"; selectorSucursal.disabled = true;
+            mensajeVoz = "Hola Hermana, lista para iniciar la operación con la mejor energía.";
+        } else if (userNorm === "admin" && pass === "1234") {
+            loginExitoso = true; selectorSucursal.disabled = false;
             mensajeVoz = "Acceso maestro concedido. Bienvenido al Comando Central.";
         }
 
@@ -279,17 +352,11 @@
             document.getElementById('sistema-pos').style.display = 'block';
             document.getElementById('nombre-cajero').innerText = "Operador: " + userRaw.toUpperCase();
 
-            // =====================================
-            // MAGIA DE VOZ (TEXT-TO-SPEECH)
-            // =====================================
             if ('speechSynthesis' in window && mensajeVoz !== "") {
                 const voz = new SpeechSynthesisUtterance(mensajeVoz);
-                voz.lang = 'es-ES'; // Acento español
-                voz.rate = 1.0;     // Velocidad normal
-                voz.pitch = 1.1;    // Tono ligero y tecnológico
+                voz.lang = 'es-ES'; voz.rate = 1.0; voz.pitch = 1.1;
                 window.speechSynthesis.speak(voz);
             }
-
             iniciarSistemaPOS();
         } else {
             document.getElementById('error-login').style.display = 'block';
@@ -297,8 +364,7 @@
     }
 
     function cerrarSesion() {
-        document.getElementById('user-operador').value = '';
-        document.getElementById('pass-operador').value = '';
+        document.getElementById('user-operador').value = ''; document.getElementById('pass-operador').value = '';
         document.getElementById('error-login').style.display = 'none';
         document.getElementById('pantalla-login').style.display = 'flex';
         document.getElementById('sistema-pos').style.display = 'none';
@@ -310,6 +376,11 @@
     // ==========================================
     const API_PRODUCTOS = '/api/productos';
     let catalogoGlobal = [], carrito = [], simboloActual = '$', totalActualCaja = 0;
+    let modalTicketMobileInst;
+
+    window.addEventListener('DOMContentLoaded', () => {
+        modalTicketMobileInst = new bootstrap.Modal(document.getElementById('modalTicketMobile'));
+    });
 
     function iniciarSistemaPOS() { cambiarSucursal(); }
 
@@ -369,64 +440,106 @@
     function eliminarDelTicket(index) {
         carrito.splice(index, 1);
         renderizarTicket();
+        if(carrito.length === 0) { modalTicketMobileInst.hide(); }
     }
 
     function renderizarTicket() {
-        const lista = document.getElementById('lista-ticket');
-        const btnCobrar = document.getElementById('btn-cobrar-ticket');
-        const textoVacio = document.getElementById('ticket-vacio');
+        const listaDesktop = document.getElementById('lista-ticket-desktop');
+        const listaMobile = document.getElementById('lista-ticket-mobile');
+        const barraMobile = document.getElementById('carrito-bar-mobile');
+        const btnsCobrar = document.querySelectorAll('.btn-cobrar-ticket');
+        const vacioHTML = `<div class="text-center text-muted mt-5 ticket-vacio"><i class="bi bi-cart-x fs-1 opacity-50"></i><br>Ningún producto</div>`;
 
-        lista.innerHTML = '';
-        totalActualCaja = 0;
+        listaDesktop.innerHTML = ''; listaMobile.innerHTML = ''; totalActualCaja = 0;
 
         if(carrito.length === 0) {
-            lista.appendChild(textoVacio);
-            textoVacio.style.display = 'block';
-            btnCobrar.disabled = true;
-            document.getElementById('total-caja-display').innerText = `${simboloActual}0`;
+            listaDesktop.innerHTML = vacioHTML;
+            listaMobile.innerHTML = vacioHTML;
+            btnsCobrar.forEach(btn => btn.disabled = true);
+            barraMobile.style.display = 'none';
+            actualizarTextosTotal(`${simboloActual}0`);
             return;
         }
 
-        textoVacio.style.display = 'none';
-        btnCobrar.disabled = false;
+        btnsCobrar.forEach(btn => btn.disabled = false);
+        barraMobile.style.display = 'flex';
+        document.getElementById('items-count-mobile').innerText = carrito.length;
 
         carrito.forEach((item, index) => {
             totalActualCaja += item.precio;
-            lista.innerHTML += `
-                <div class="ticket-item-row">
-                    <div style="font-family: 'Rajdhani'; font-weight: 600; width: 60%; line-height: 1.1;">${item.nombre}</div>
+            const filaHTML = `
+                <div class="ticket-item-row" style="border-bottom: 1px solid rgba(0,240,255,0.2);">
+                    <div style="font-family: 'Rajdhani'; font-weight: 600; width: 60%; line-height: 1.1; color: white;">${item.nombre}</div>
                     <div style="font-family: 'Orbitron'; color: var(--bio-oro);">${simboloActual}${item.precio.toLocaleString('es-ES')}</div>
                     <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="eliminarDelTicket(${index})"><i class="bi bi-x"></i></button>
                 </div>
             `;
+            listaDesktop.innerHTML += filaHTML;
+            listaMobile.innerHTML += filaHTML;
         });
 
-        document.getElementById('total-caja-display').innerText = `${simboloActual}${totalActualCaja.toLocaleString('es-ES')}`;
+        actualizarTextosTotal(`${simboloActual}${totalActualCaja.toLocaleString('es-ES')}`);
+    }
+
+    function actualizarTextosTotal(texto) {
+        document.querySelectorAll('.total-caja-display').forEach(el => el.innerText = texto);
+    }
+
+    function abrirModalTicketMobile() {
+        if(carrito.length > 0) modalTicketMobileInst.show();
+    }
+
+    function cerrarTicketMobileYAbrirCobro() {
+        modalTicketMobileInst.hide();
+        setTimeout(abrirModalCobro, 400);
     }
 
     // ==========================================
-    // CHECKOUT Y PAGO
+    // CHECKOUT Y PAGO (CON CRM)
     // ==========================================
     function abrirModalCobro() {
-        document.getElementById('monto-cobro-final').innerText = `${simboloActual}${totalActualCaja.toLocaleString('es-ES')}`;
         seleccionarMetodo('Efectivo');
-        const modal = new bootstrap.Modal(document.getElementById('modalCobro'));
-        modal.show();
+
+        // Limpiar campos CRM
+        document.getElementById('crm-nombre').value = '';
+        document.getElementById('crm-telefono').value = '';
+        document.getElementById('crm-direccion').value = '';
+
+        new bootstrap.Modal(document.getElementById('modalCobro')).show();
     }
 
     function seleccionarMetodo(metodo) {
         document.querySelectorAll('.btn-opcion-pago').forEach(el => el.classList.remove('active'));
         if(metodo === 'Efectivo') document.getElementById('pago-efectivo').classList.add('active');
         if(metodo === 'Tarjeta') document.getElementById('pago-tarjeta').classList.add('active');
+        if(metodo === 'Bizum') document.getElementById('pago-bizum').classList.add('active');
         if(metodo === 'Transferencia/QR') document.getElementById('pago-qr').classList.add('active');
+        if(metodo === 'Enlace Web') document.getElementById('pago-enlace').classList.add('active');
+
         document.getElementById('metodo-seleccionado').value = metodo;
     }
 
     function procesarPagoFinal() {
         const metodo = document.getElementById('metodo-seleccionado').value;
         const pais = document.getElementById('sucursal-activa').value;
+        const nombreCajero = document.getElementById('nombre-cajero').innerText.replace('Operador: ', '');
 
-        alert(`✅ VENTA REGISTRADA CON ÉXITO\nMétodo: ${metodo}\nTotal: ${simboloActual}${totalActualCaja.toLocaleString('es-ES')}\nNodo: ${pais}`);
+        // Capturar datos CRM (Opcionales)
+        const crmNombre = document.getElementById('crm-nombre').value.trim() || 'Consumidor Final';
+        const crmTelefono = document.getElementById('crm-telefono').value.trim() || 'N/A';
+        const crmDireccion = document.getElementById('crm-direccion').value.trim() || 'Entregado en tienda';
+
+        let msjAlerta = `✅ VENTA REGISTRADA CON ÉXITO\n`;
+        msjAlerta += `---------------------------\n`;
+        msjAlerta += `Total: ${simboloActual}${totalActualCaja.toLocaleString('es-ES')}\n`;
+        msjAlerta += `Método: ${metodo}\n`;
+        msjAlerta += `Nodo: ${pais}\n`;
+        msjAlerta += `Operador: ${nombreCajero}\n`;
+        msjAlerta += `---------------------------\n`;
+        msjAlerta += `Cliente: ${crmNombre}\n`;
+        msjAlerta += `Tel: ${crmTelefono}\n`;
+
+        alert(msjAlerta);
 
         carrito = [];
         renderizarTicket();
