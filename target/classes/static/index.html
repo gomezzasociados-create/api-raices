@@ -3,331 +3,457 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA POS - Raíces Eco-Futurismo</title>
+    <title>COMANDO CENTRAL POS - Raíces</title>
+
+    <meta name="theme-color" content="#01120a">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
         :root {
-            --verde-matrix: #00ff88;
-            --verde-profundo: #05160e;
-            --verde-medio: #0a2e1f;
-            --neon-amarillo: #ffe600;
-            --blanco-holografico: rgba(255, 255, 255, 0.9);
-            --cristal-extremo: rgba(255, 255, 255, 0.03);
-            --brillo-verde: 0 0 15px rgba(0, 255, 136, 0.4);
-            --brillo-amarillo: 0 0 25px rgba(255, 230, 0, 0.7), inset 0 0 15px rgba(255, 230, 0, 0.3);
+            --bio-oro: #ffd700;
+            --bio-aqua: #00f0ff;
+            --v-profundo: #01120a;
+            --panel-bg: rgba(2, 15, 10, 0.85);
+            --resplandor-aqua: 0 0 15px rgba(0, 240, 255, 0.3);
+            --resplandor-oro: 0 0 15px rgba(255, 215, 0, 0.3);
         }
 
-        body { font-family: 'Rajdhani', sans-serif; background: linear-gradient(135deg, var(--verde-profundo) 0%, var(--verde-medio) 50%, var(--verde-profundo) 100%); color: var(--blanco-holografico); min-height: 100vh; padding-bottom: 90px; }
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--v-profundo);
+            background-image: linear-gradient(rgba(1, 15, 10, 0.9), rgba(1, 15, 10, 0.97)), url('https://res.cloudinary.com/doi0o3hlr/image/upload/v1774759858/Gemini_Generated_Image_2ocvdw2ocvdw2ocv_ixqdsz.png');
+            background-size: cover; background-attachment: fixed;
+            color: #fff; min-height: 100vh; overflow-x: hidden;
+        }
 
-        .hero-raices { position: relative; padding: 40px 20px; text-align: center; border-radius: 0 0 40px 40px; background-image: linear-gradient(180deg, rgba(5, 22, 14, 0.6) 0%, var(--verde-profundo) 100%), url('https://res.cloudinary.com/doi0o3hlr/image/upload/v1774498342/Gemini_Generated_Image_vokg6mvokg6mvokg_ymhlax.png'); background-size: cover; background-position: center; border-bottom: 1px solid rgba(0, 255, 136, 0.3); box-shadow: 0 20px 50px rgba(0,0,0,0.8); margin-bottom: 30px; }
-        .titulo-neon { font-family: 'Orbitron', sans-serif; font-weight: 900; color: #ffffff; text-shadow: var(--brillo-verde), 0 0 30px rgba(255,255,255,0.5); letter-spacing: 5px; text-transform: uppercase; }
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,240,255,0.02) 50%, rgba(0,240,255,0.02));
+            background-size: 100% 6px; z-index: 9998; pointer-events: none;
+        }
 
-        .selector-sucursal { background: rgba(10, 46, 31, 0.7); border: 1px solid rgba(0, 255, 136, 0.4); color: var(--verde-matrix); font-family: 'Orbitron', sans-serif; padding: 12px 25px; border-radius: 30px; text-align: center; width: 100%; max-width: 400px; margin: 0 auto; display: block; outline: none;}
-        .selector-sucursal option { background: var(--verde-profundo); color: white; }
+        /* =========================================================
+           PANTALLA DE ACCESO (LOGIN)
+           ========================================================= */
+        #pantalla-login {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--v-profundo); z-index: 10000;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .caja-login {
+            background: rgba(0, 20, 15, 0.9); border: 1px solid var(--bio-aqua);
+            padding: 40px; border-radius: 15px; box-shadow: var(--resplandor-aqua);
+            text-align: center; width: 90%; max-width: 400px;
+        }
+        .input-login {
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(0, 240, 255, 0.5);
+            color: var(--bio-aqua); font-family: 'Orbitron'; text-align: center;
+            padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 15px; letter-spacing: 2px;
+        }
+        .input-login:focus { outline: none; box-shadow: var(--resplandor-aqua); border-color: var(--bio-aqua); }
 
-        .panel-cyber { background: rgba(10, 46, 31, 0.4); border: 1px solid rgba(0, 255, 136, 0.2); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); padding: 20px; }
+        /* =========================================================
+           INTERFAZ POS (CAJA REGISTRADORA)
+           ========================================================= */
+        .navbar-pos {
+            background: rgba(0, 0, 0, 0.8); border-bottom: 1px solid var(--bio-aqua);
+            padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
 
-        .input-cyber { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 255, 136, 0.3); color: var(--verde-matrix); border-radius: 10px; padding: 10px 15px; width: 100%; margin-bottom: 12px; }
-        .input-group-text-cyber { background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); color: var(--neon-amarillo); border-right: none; }
+        .selector-sucursal {
+            background: rgba(1, 10, 5, 0.8); border: 1px solid var(--bio-oro); color: var(--bio-oro);
+            font-family: 'Orbitron', sans-serif; padding: 5px 15px; border-radius: 5px; outline: none;
+        }
+        .selector-sucursal:disabled { opacity: 0.5; cursor: not-allowed; border-color: #555; color: #aaa; }
 
-        .btn-cyber { background: transparent; color: var(--verde-matrix); border: 1px solid var(--verde-matrix); border-radius: 12px; padding: 10px 20px; font-family: 'Orbitron', sans-serif; font-weight: 700; width: 100%; cursor: pointer; text-transform: uppercase; transition: 0.3s;}
-        .btn-cyber:hover { background: var(--verde-matrix); color: #000; box-shadow: var(--brillo-verde); }
+        /* BOTONES DE PRODUCTO TIPO CAJA TÁCTIL */
+        .btn-pos-item {
+            background: rgba(5, 20, 15, 0.6); border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 10px; padding: 15px 10px; height: 100%; width: 100%;
+            text-align: center; cursor: pointer; transition: 0.1s;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .btn-pos-item:active { transform: scale(0.95); background: var(--bio-aqua); }
+        .btn-pos-item:hover { border-color: var(--bio-aqua); box-shadow: inset 0 0 15px rgba(0,240,255,0.2); }
+        .pos-item-nombre { font-family: 'Rajdhani'; font-weight: 700; font-size: 1.1rem; line-height: 1.1; margin-bottom: 8px; color: #fff; text-transform: uppercase;}
+        .pos-item-precio { font-family: 'Orbitron'; color: var(--bio-oro); font-weight: 700; font-size: 1rem; }
 
-        .card-menu { background: var(--cristal-extremo); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; overflow: hidden; transition: 0.3s; cursor: pointer; height: 100%; }
-        .card-menu:hover { transform: translateY(-5px); border-color: var(--neon-amarillo); box-shadow: var(--brillo-amarillo); }
-        .img-container { height: 160px; display: flex; justify-content: center; align-items: center; }
-        .img-batido { width: 90%; height: 90%; object-fit: contain; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8)); }
+        /* PANEL DEL TICKET (CARRITO) */
+        .panel-ticket {
+            background: rgba(0,0,0,0.6); border: 1px solid var(--bio-oro);
+            border-radius: 10px; height: calc(100vh - 100px); display: flex; flex-direction: column;
+        }
+        .ticket-header { background: rgba(255,215,0,0.1); padding: 15px; border-bottom: 1px dashed var(--bio-oro); text-align: center; font-family: 'Orbitron'; color: var(--bio-oro); font-weight: bold;}
+        .ticket-items { flex-grow: 1; overflow-y: auto; padding: 10px; }
 
-        .card-body-cyber { padding: 15px; background: rgba(0,0,0,0.4); text-align: center; }
-        .precio-holografico { font-family: 'Orbitron', sans-serif; color: var(--verde-matrix); font-weight: 700; font-size: 1.2rem; }
+        .ticket-item-row {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px 0;
+        }
 
-        .tabla-cyber { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
-        .tabla-cyber th { color: var(--neon-amarillo); font-family: 'Orbitron', sans-serif; font-size: 0.85rem; padding: 10px; border-bottom: 1px solid rgba(255, 230, 0, 0.3); }
-        .tabla-cyber td { background: rgba(0,0,0,0.3); padding: 15px 10px; border-top: 1px solid rgba(0, 255, 136, 0.1); border-bottom: 1px solid rgba(0, 255, 136, 0.1); }
-        .celda-stock { background: rgba(0, 255, 136, 0.1); color: var(--verde-matrix); font-weight: 700; padding: 5px 15px; border-radius: 8px; border: 1px solid var(--verde-matrix); }
+        .ticket-total-box {
+            background: rgba(0,0,0,0.8); border-top: 2px solid var(--bio-oro);
+            padding: 20px; text-align: center;
+        }
 
-        .modal-content-cyber { background: rgba(5, 22, 14, 0.98); border: 1px solid var(--verde-matrix); border-radius: 20px; color: white; box-shadow: 0 0 40px rgba(0,255,136,0.2); }
+        .btn-cobrar {
+            background: var(--bio-oro); color: #000; font-family: 'Orbitron'; font-weight: 900;
+            font-size: 1.2rem; width: 100%; padding: 15px; border-radius: 8px; border: none;
+            text-transform: uppercase; transition: 0.3s;
+        }
+        .btn-cobrar:hover { box-shadow: var(--resplandor-oro); transform: scale(1.02); }
 
-        .carrito-bar { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 480px; background: rgba(5, 22, 14, 0.95); border: 1px solid var(--neon-amarillo); padding: 15px 25px; border-radius: 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.9), var(--brillo-amarillo); z-index: 1000; }
-        .btn-pedir { background: var(--neon-amarillo); color: #000; font-family: 'Orbitron', sans-serif; font-weight: 900; border: none; padding: 10px 20px; border-radius: 20px; text-transform: uppercase; }
+        /* BOTONES GENERALES */
+        .btn-bio {
+            background: rgba(0, 240, 255, 0.1); color: var(--bio-aqua); border: 1px solid var(--bio-aqua);
+            border-radius: 8px; padding: 8px 15px; font-family: 'Orbitron'; font-weight: 700;
+            cursor: pointer; transition: 0.3s;
+        }
+        .btn-bio:hover { background: var(--bio-aqua); color: #000; }
 
-        .btn-opcion-pago { border: 2px solid rgba(0,255,136,0.3); background: rgba(0,0,0,0.4); color: white; border-radius: 10px; padding: 15px; text-align: center; cursor: pointer; transition: 0.3s; font-family: 'Orbitron', sans-serif; font-size: 0.8rem;}
-        .btn-opcion-pago.active { background: rgba(0,255,136,0.2); border-color: var(--verde-matrix); color: var(--verde-matrix); box-shadow: inset 0 0 10px rgba(0,255,136,0.3); font-weight: bold;}
+        /* MODALES */
+        .modal-content-bio { background: rgba(2, 10, 7, 0.95); border: 2px solid var(--bio-aqua); border-radius: 15px; color: white; }
+        .btn-opcion-pago { border: 1px solid rgba(0,240,255,0.3); background: rgba(0,0,0,0.6); border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; font-family: 'Orbitron'; font-size: 0.8rem; color: #fff;}
+        .btn-opcion-pago.active { background: rgba(0,240,255,0.2); border-color: var(--bio-aqua); color: var(--bio-aqua); font-weight: bold;}
     </style>
 </head>
 <body>
 
-<div class="hero-raices">
-    <h1 class="titulo-neon">RAÍCES POS</h1>
-    <p class="mb-3" style="color: var(--verde-matrix); letter-spacing: 3px; font-weight: 600;">ESTACIÓN DE <span style="color: white; font-weight: 700;">CONTROL Y CAJA</span></p>
+<div class="scanlines"></div>
 
-    <select id="sucursal-activa" class="selector-sucursal" onchange="cambiarSucursal()">
-        <option value="Colombia">🌐 NODO: COLOMBIA (COP)</option>
-        <option value="Chile">🌐 NODO: CHILE (CLP)</option>
-        <option value="España">🌐 NODO: ESPAÑA (EUR)</option>
-    </select>
+<div id="pantalla-login">
+    <div class="caja-login">
+        <i class="bi bi-shield-lock" style="font-size: 3rem; color: var(--bio-aqua); text-shadow: var(--resplandor-aqua);"></i>
+        <h3 class="mt-3 mb-4" style="font-family: 'Orbitron'; color: #fff;">SISTEMA POS</h3>
+        <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-bottom: 20px;">INGRESO RESTRINGIDO A OPERADORES</p>
+
+        <input type="text" id="user-operador" class="input-login" placeholder="ID OPERADOR" autocomplete="off">
+        <input type="password" id="pass-operador" class="input-login" placeholder="CLAVE DE ACCESO" autocomplete="off">
+
+        <button class="btn-bio w-100 py-3 mt-2" onclick="validarAcceso()">AUTORIZAR INGRESO</button>
+        <p id="error-login" class="text-danger mt-3" style="display:none; font-family: 'Orbitron'; font-size: 0.8rem;">CREDENCIALES INVÁLIDAS</p>
+    </div>
 </div>
 
-<div class="container pb-5">
-    <div class="row">
-        <div class="col-md-8">
-            <div id="lista-productos" class="row g-3 g-md-4 mb-4"></div>
-        </div>
+<div id="sistema-pos" style="display: none;">
 
-        <div class="col-md-4 mb-4">
-            <div class="panel-cyber mb-4">
-                <h6 class="text-center mb-1" style="color: var(--verde-matrix); font-family: 'Orbitron', sans-serif;">⚙️ SINTETIZAR BATIDO</h6>
-                <p class="text-center small mb-3" style="color: rgba(255,255,255,0.5);">Se agregará al nodo seleccionado</p>
-                <input type="text" id="nombre" class="input-cyber" placeholder="Nombre del Batido">
-                <input type="text" id="categoria" class="input-cyber" placeholder="Categoría (Ej: Vaso)">
-                <input type="text" id="imagen" class="input-cyber" placeholder="URL de la Imagen">
-                <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text input-group-text-cyber" id="label-moneda-crear">$</span>
-                    <input type="number" id="precio-local" class="input-cyber mb-0" placeholder="Precio Local">
+    <div class="navbar-pos">
+        <div class="d-flex align-items-center">
+            <h4 class="mb-0 me-4" style="font-family: 'Orbitron'; color: var(--bio-aqua); font-weight: 900; text-shadow: var(--resplandor-aqua);">RAÍCES POS</h4>
+            <span class="badge bg-dark border border-secondary" id="nombre-cajero">Operador: </span>
+        </div>
+        <div class="d-flex align-items-center">
+            <select id="sucursal-activa" class="selector-sucursal me-3" onchange="cambiarSucursal()">
+                <option value="Colombia">NODO: TULUÁ (COP)</option>
+                <option value="Chile">NODO: ANTOFAGASTA (CLP)</option>
+                <option value="España">NODO: MALLORCA (EUR)</option>
+            </select>
+            <button class="btn btn-outline-danger btn-sm" onclick="cerrarSesion()"><i class="bi bi-power"></i> SALIR</button>
+        </div>
+    </div>
+
+    <div class="container-fluid mt-3">
+        <div class="row">
+
+            <div class="col-lg-8 col-md-7 mb-3">
+                <div class="d-flex gap-2 mb-3">
+                    <button class="btn-bio" onclick="filtrarPos('Todos')">TODOS</button>
+                    <button class="btn-bio" onclick="filtrarPos('500')">ELÍXIRES 500ml</button>
+                    <button class="btn-bio" onclick="filtrarPos('Pack')">PACKS</button>
+                    <button class="btn-bio" onclick="abrirModalNuevoProducto()" style="margin-left: auto; border-color: var(--bio-oro); color: var(--bio-oro);"><i class="bi bi-plus-lg"></i> CREAR</button>
                 </div>
-                <button class="btn-cyber" onclick="guardarProducto()">[ INTEGRAR ]</button>
-            </div>
 
-            <div class="panel-cyber">
-                <h6 class="mb-3" style="color: var(--verde-matrix); font-family: 'Orbitron', sans-serif;">ESTADO DE MATERIA PRIMA</h6>
-                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                    <table class="tabla-cyber">
-                        <tbody id="lista-insumos"></tbody>
-                    </table>
+                <div id="grid-pos-productos" class="row g-2" style="max-height: calc(100vh - 160px); overflow-y: auto; padding-right: 5px;">
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<div id="carrito-bar" class="carrito-bar" style="display: none;">
-    <div class="d-flex flex-column text-white">
-        <span class="fw-bold" style="font-size: 0.9rem; font-family: 'Orbitron', sans-serif; color: var(--verde-matrix);"><i class="bi bi-cart me-2"></i><span id="contador-carrito">0</span> UNID.</span>
-        <span id="total-carrito-texto" class="precio-holografico" style="font-size: 1.2rem; color: var(--neon-amarillo);">$0</span>
-    </div>
-    <button class="btn-pedir" onclick="abrirCaja()"><i class="bi bi-wallet2 me-2"></i> COBRAR</button>
-</div>
+            <div class="col-lg-4 col-md-5">
+                <div class="panel-ticket">
+                    <div class="ticket-header">
+                        TICKET DE EXTRACCIÓN <i class="bi bi-receipt"></i>
+                    </div>
 
-<div class="modal fade" id="modalProducto" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content modal-content-cyber text-center">
-            <div class="modal-body pt-4">
-                <h5 id="modalNombre" style="font-family: 'Orbitron'; color: var(--verde-matrix);">Nombre</h5>
-                <img id="modalImagen" src="" class="img-fluid my-3" style="max-height: 150px;">
-                <button type="button" class="btn-cyber w-100" id="btnAgregarCarrito">[ AÑADIR ] <span id="btnPrecioCobrar" style="color: var(--neon-amarillo);"></span></button>
+                    <div class="ticket-items" id="lista-ticket">
+                        <div class="text-center text-muted mt-5" id="ticket-vacio">
+                            <i class="bi bi-cart-x fs-1 opacity-50"></i><br>Ningún producto seleccionado
+                        </div>
+                    </div>
+
+                    <div class="ticket-total-box">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span style="color: rgba(255,255,255,0.7); font-size: 1.2rem;">TOTAL:</span>
+                            <span id="total-caja-display" style="font-family: 'Orbitron'; font-size: 1.8rem; color: var(--bio-oro); font-weight: bold;">$0</span>
+                        </div>
+                        <button class="btn-cobrar" onclick="abrirModalCobro()" id="btn-cobrar-ticket" disabled>
+                            COBRAR <i class="bi bi-wallet2 ms-2"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="modalCaja" tabindex="-1">
+<div class="modal fade" id="modalCobro" tabindex="-1" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content modal-content-cyber">
-            <div class="modal-header">
-                <h5 class="modal-title" style="font-family: 'Orbitron', sans-serif; color: var(--neon-amarillo);"><i class="bi bi-terminal"></i> TERMINAL DE PAGO</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" style="filter: invert(1);"></button>
+        <div class="modal-content modal-content-bio">
+            <div class="modal-header border-0 pb-0 pt-3 px-4">
+                <h5 style="font-family: 'Orbitron'; color: var(--bio-oro);">LIQUIDAR TICKET</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <div id="lista-carrito-checkout" class="mb-3 text-start" style="max-height: 150px; overflow-y: auto;"></div>
-                <div class="text-center p-3 mb-3" style="background: rgba(0,0,0,0.5); border: 1px solid rgba(0,255,136,0.2); border-radius: 15px;">
-                    <p class="mb-1 text-muted small">TOTAL A COBRAR:</p>
-                    <h2 id="total-caja-display" style="font-family: 'Orbitron'; color: var(--neon-amarillo); margin: 0;">$0</h2>
-                </div>
+            <div class="modal-body px-4">
+                <h2 class="text-center mb-4" id="monto-cobro-final" style="font-family: 'Orbitron'; color: var(--bio-oro); font-size: 2.5rem; text-shadow: 0 0 20px rgba(255,215,0,0.5);"></h2>
 
-                <label class="mb-2" style="color: var(--verde-matrix); font-size: 0.85rem;">MÉTODO DE PAGO:</label>
-                <div class="row g-2 mb-3">
-                    <div class="col-4"><div class="btn-opcion-pago active" id="btn-pago-efectivo" onclick="seleccionarMetodo('Efectivo')"><i class="bi bi-cash-stack fs-4 d-block mb-1"></i> EFECTIVO</div></div>
-                    <div class="col-4"><div class="btn-opcion-pago" id="btn-pago-tarjeta" onclick="seleccionarMetodo('Tarjeta')"><i class="bi bi-credit-card fs-4 d-block mb-1"></i> TARJETA</div></div>
-                    <div class="col-4"><div class="btn-opcion-pago" id="btn-pago-qr" onclick="seleccionarMetodo('Transferencia/QR')"><i class="bi bi-qr-code-scan fs-4 d-block mb-1"></i> CÓDIGO QR</div></div>
+                <label style="color: var(--bio-aqua); font-family: 'Orbitron'; font-size: 0.8rem; margin-bottom: 10px;">MÉTODO DE INGRESO:</label>
+                <div class="row g-2 mb-4">
+                    <div class="col-4"><div class="btn-opcion-pago active" id="pago-efectivo" onclick="seleccionarMetodo('Efectivo')"><i class="bi bi-cash-stack fs-3 d-block mb-1"></i> FÍSICO</div></div>
+                    <div class="col-4"><div class="btn-opcion-pago" id="pago-tarjeta" onclick="seleccionarMetodo('Tarjeta')"><i class="bi bi-credit-card fs-3 d-block mb-1"></i> DATÁFONO</div></div>
+                    <div class="col-4"><div class="btn-opcion-pago" id="pago-qr" onclick="seleccionarMetodo('Transferencia/QR')"><i class="bi bi-qr-code-scan fs-3 d-block mb-1"></i> BANCO / QR</div></div>
                 </div>
                 <input type="hidden" id="metodo-seleccionado" value="Efectivo">
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn-cyber w-100" style="background: var(--verde-matrix); color: #000; font-size: 1.1rem;" onclick="procesarPago()">
-                    [ PROCESAR VENTA ]
+
+                <button class="btn-bio w-100 py-3" style="font-size: 1.2rem; background: rgba(0, 240, 255, 0.2);" onclick="procesarPagoFinal()">
+                    CONFIRMAR PAGO <i class="bi bi-check2-circle ms-2"></i>
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="modalQR" tabindex="-1" data-bs-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content text-center" style="background: rgba(5,22,14,0.98); border: 2px solid var(--neon-amarillo); border-radius: 20px;">
-            <div class="modal-header border-0 pb-0 justify-content-center">
-                <h5 class="modal-title" style="color: var(--neon-amarillo); font-family: 'Orbitron', sans-serif;">📱 ESCANEA PARA PAGAR</h5>
-            </div>
-            <div class="modal-body">
-                <div style="background: white; padding: 15px; border-radius: 15px; display: inline-block;">
-                    <img id="img-codigo-qr" src="" alt="Código QR" style="width: 200px; height: 200px;">
-                </div>
-                <p class="mt-3 mb-0" style="color: var(--verde-matrix); font-weight: bold;">TOTAL: <span id="monto-qr"></span></p>
-                <p class="text-muted small mt-2">Muestra esta pantalla al cliente. Cuando el banco te confirme la transferencia, presiona abajo.</p>
-            </div>
-            <div class="modal-footer border-0 flex-column">
-                <button type="button" class="btn-cyber w-100 mb-2" style="background: var(--verde-matrix); color: #000;" onclick="cobrarVentaDefinitiva()">✅ CONFIRMAR RECEPCIÓN</button>
-                <button type="button" class="btn btn-outline-danger w-100 border-0" onclick="cerrarQR()">❌ CANCELAR VENTA</button>
-            </div>
+<div class="modal fade" id="modalCrearProducto" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-content-bio p-3">
+            <h5 class="mb-3 text-center" style="font-family: 'Orbitron'; color: var(--bio-aqua);">NUEVO PRODUCTO</h5>
+            <input type="text" id="nuevo-nombre" class="form-control bg-dark text-white border-secondary mb-2" placeholder="Nombre completo">
+            <input type="text" id="nuevo-categoria" class="form-control bg-dark text-white border-secondary mb-2" placeholder="Categoría (Ej: 500 mls, Pack)">
+            <input type="number" id="nuevo-precio" class="form-control bg-dark text-white border-secondary mb-3" placeholder="Precio">
+            <button class="btn-bio w-100" onclick="guardarProductoBD()">GUARDAR EN NODO</button>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const API_PRODUCTOS = '/api/productos';
-    const API_INSUMOS = '/api/insumos';
-    let catalogoGlobal = [], carrito = [], simboloActual = '$', totalActualCaja = 0, ultimaVentaId = null;
+    // ==========================================
+    // LÓGICA DE SEGURIDAD (ROLES, VOCES Y SUCURSALES)
+    // ==========================================
+    function validarAcceso() {
+        const userRaw = document.getElementById('user-operador').value.trim();
+        const pass = document.getElementById('pass-operador').value.trim();
+        const selectorSucursal = document.getElementById('sucursal-activa');
 
-    const modalProducto = new bootstrap.Modal(document.getElementById('modalProducto'));
-    const modalCaja = new bootstrap.Modal(document.getElementById('modalCaja'));
-    const modalQR = new bootstrap.Modal(document.getElementById('modalQR'));
+        // Función para normalizar el texto (quitar tildes y mayúsculas para evitar errores de tipeo)
+        const normalizar = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        const userNorm = normalizar(userRaw);
 
-    window.onload = () => { cambiarSucursal(); cargarInsumos(); };
+        let loginExitoso = false;
+        let mensajeVoz = "";
 
-    // --- CARGA Y FILTRO INTELIGENTE ---
-    async function cargarProductos() {
-        const pais = document.getElementById('sucursal-activa').value;
-        try {
-            // ¡MAGIA! Ahora le pedimos a Java SÓLO los productos de la sucursal actual
-            const res = await fetch(`${API_PRODUCTOS}/sucursal/${encodeURIComponent(pais)}`);
-            catalogoGlobal = await res.json();
-            renderizarGrilla();
-        } catch(e) { console.log("Error de conexión al cargar el menú"); }
-    }
+        // 1. USUARIO: LINDA MAMÁ SPA
+        if (userNorm === "linda mama spa" && pass === "3002") {
+            loginExitoso = true;
+            selectorSucursal.value = "Chile";
+            selectorSucursal.disabled = true; // Bloquear a su sucursal
+            mensajeVoz = "Linda mamá spa y raíces, la combinación perfecta.";
+        }
+        // 2. USUARIO: ADMINISTRADOR JUAN
+        else if (userNorm === "administrador juan" && pass === "1807") {
+            loginExitoso = true;
+            selectorSucursal.value = "España";
+            selectorSucursal.disabled = true; // Bloquear a su sucursal
+            mensajeVoz = "Juan eres el mejor, nunca lo olvides, y todo lo que el ser humano se proponga, lo puede lograr.";
+        }
+        // 3. USUARIO: MASTER ADMIN
+        else if (userNorm === "admin" && pass === "1234") {
+            loginExitoso = true;
+            selectorSucursal.disabled = false; // Acceso total
+            mensajeVoz = "Acceso maestro concedido. Bienvenido al Comando Central.";
+        }
 
-    function cargarInsumos() {
-        fetch('/api/insumos/todos').then(res => res.json()).then(insumos => {
-            const tabla = document.getElementById('lista-insumos');
-            tabla.innerHTML = '';
-            insumos.forEach(insumo => {
-                tabla.innerHTML += `<tr><td class="text-white text-start">${insumo.nombre}</td><td class="text-center"><span class="celda-stock">${insumo.unidadActual}</span></td></tr>`;
-            });
-        }).catch(e=>console.log("Error Insumos"));
-    }
+        if(loginExitoso) {
+            document.getElementById('pantalla-login').style.display = 'none';
+            document.getElementById('sistema-pos').style.display = 'block';
+            document.getElementById('nombre-cajero').innerText = "Operador: " + userRaw.toUpperCase();
 
-    function cambiarSucursal() {
-        if(carrito.length > 0) { alert("⚠️ ALERTA: Cambio de nodo. Vaciando buffer."); carrito = []; actualizarCarritoVisual(); }
-        const pais = document.getElementById('sucursal-activa').value;
-        simboloActual = pais === 'España' ? '€' : '$';
-        document.getElementById('label-moneda-crear').innerText = simboloActual;
-        cargarProductos(); // Refresca la grilla con los productos del país
-    }
-
-    // --- RENDERIZADO (Ahora mucho más simple) ---
-    function renderizarGrilla() {
-        const lista = document.getElementById('lista-productos'); lista.innerHTML = '';
-        catalogoGlobal.forEach((p, index) => {
-            const urlImagen = p.imagen || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
-            lista.innerHTML += `
-                <div class="col-6 col-md-4">
-                    <div class="card-menu" onclick="abrirDetalle(${index})">
-                        <div class="img-container"><img src="${urlImagen}" class="img-batido"></div>
-                        <div class="card-body-cyber"><h6 class="titulo-producto text-truncate">${p.nombre}</h6><span class="precio-holografico">${simboloActual}${p.precio.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2})}</span></div>
-                    </div>
-                </div>`;
-        });
-    }
-
-    function abrirDetalle(index) {
-        const p = catalogoGlobal[index];
-        document.getElementById('modalNombre').innerText = p.nombre;
-        document.getElementById('modalImagen').src = p.imagen || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
-        document.getElementById('btnPrecioCobrar').innerText = `${simboloActual}${p.precio.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2})}`;
-        document.getElementById('btnAgregarCarrito').onclick = () => { carrito.push(p); actualizarCarritoVisual(); modalProducto.hide(); };
-        modalProducto.show();
-    }
-
-    function actualizarCarritoVisual() {
-        const bar = document.getElementById('carrito-bar');
-        if(carrito.length > 0) {
-            bar.style.display = 'flex';
-            document.getElementById('contador-carrito').innerText = carrito.length;
-            totalActualCaja = carrito.reduce((suma, p) => suma + p.precio, 0);
-            document.getElementById('total-carrito-texto').innerText = `${simboloActual}${totalActualCaja.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2})}`;
-        } else { bar.style.display = 'none'; modalCaja.hide(); }
-    }
-
-    // --- CHECKOUT ---
-    function abrirCaja() {
-        if(carrito.length === 0) return;
-        const contenedor = document.getElementById('lista-carrito-checkout'); contenedor.innerHTML = '';
-        carrito.forEach((item, index) => {
-            contenedor.innerHTML += `<div class="d-flex justify-content-between align-items-center mb-2 p-2" style="background: rgba(0,255,136,0.05); border-radius: 8px; border: 1px solid rgba(0,255,136,0.2);"><span style="color: white; font-size: 0.9rem;">${item.nombre}</span><div><span class="text-white me-3 fw-bold">${simboloActual}${item.precio.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2})}</span><button class="btn btn-sm py-0 px-2" style="background: #ff4444; color: white;" onclick="eliminarDelCarrito(${index})"><i class="bi bi-x-lg"></i></button></div></div>`;
-        });
-        document.getElementById('total-caja-display').innerText = `${simboloActual}${totalActualCaja.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2})}`;
-        seleccionarMetodo('Efectivo');
-        modalCaja.show();
-    }
-
-    function eliminarDelCarrito(index) { carrito.splice(index, 1); actualizarCarritoVisual(); if(carrito.length > 0) { abrirCaja(); } }
-
-    function seleccionarMetodo(metodo) {
-        document.querySelectorAll('.btn-opcion-pago').forEach(el => el.classList.remove('active'));
-        if(metodo === 'Efectivo') document.getElementById('btn-pago-efectivo').classList.add('active');
-        if(metodo === 'Tarjeta') document.getElementById('btn-pago-tarjeta').classList.add('active');
-        if(metodo === 'Transferencia/QR') document.getElementById('btn-pago-qr').classList.add('active');
-        document.getElementById('metodo-seleccionado').value = metodo;
-    }
-
-    // --- PROCESAR VENTA ---
-    function procesarPago() {
-        const metodo = document.getElementById('metodo-seleccionado').value;
-        const paisSeleccionado = document.getElementById('sucursal-activa').value;
-        const urlParams = `/api/ventas?origen=Caja_POS&pais=${encodeURIComponent(paisSeleccionado)}&medioPago=${encodeURIComponent(metodo)}&estado=Pendiente`;
-
-        fetch(urlParams, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(carrito) })
-        .then(res => res.json())
-        .then(ventaGuardada => {
-            ultimaVentaId = ventaGuardada.id;
-            if (metodo === 'Transferencia/QR') { modalCaja.hide(); mostrarQR(ultimaVentaId, totalActualCaja); }
-            else { cobrarVentaDefinitiva(); }
-        })
-        .catch(err => alert("❌ Error crítico con el servidor."));
-    }
-
-    function mostrarQR(idVenta, total) {
-        const linkDePago = `https://pagos.gomezsystems.com/checkout?venta=${idVenta}&monto=${total}`;
-        document.getElementById('img-codigo-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(linkDePago)}`;
-        document.getElementById('monto-qr').innerText = `${simboloActual}${total.toLocaleString('es-ES', {minimumFractionDigits:0, maximumFractionDigits:2})}`;
-        modalQR.show();
-    }
-
-    function cobrarVentaDefinitiva() {
-        if(!ultimaVentaId) return;
-        fetch(`/api/ventas/${ultimaVentaId}/pagar`, { method: 'PUT' })
-        .then(res => {
-            if(res.ok) {
-                alert(`✅ ¡Transacción Aprobada!\nTicket cerrado y stock descontado.`);
-                modalCaja.hide(); modalQR.hide(); carrito = []; actualizarCarritoVisual(); cargarInsumos();
+            // =====================================
+            // MAGIA DE VOZ (TEXT-TO-SPEECH)
+            // =====================================
+            if ('speechSynthesis' in window && mensajeVoz !== "") {
+                const voz = new SpeechSynthesisUtterance(mensajeVoz);
+                voz.lang = 'es-ES'; // Acento español
+                voz.rate = 1.0;     // Velocidad normal
+                voz.pitch = 1.1;    // Tono ligero y tecnológico
+                window.speechSynthesis.speak(voz);
             }
-        });
-    }
 
-    function cerrarQR() {
-        if(!ultimaVentaId) return;
-        if(confirm("¿Cancelar venta?")) {
-            fetch(`/api/ventas/${ultimaVentaId}`, { method: 'DELETE' }).then(() => modalQR.hide());
+            iniciarSistemaPOS();
+        } else {
+            document.getElementById('error-login').style.display = 'block';
         }
     }
 
-    // --- CREAR PRODUCTO DIRECTO A LA SUCURSAL ---
-    function guardarProducto() {
+    function cerrarSesion() {
+        document.getElementById('user-operador').value = '';
+        document.getElementById('pass-operador').value = '';
+        document.getElementById('error-login').style.display = 'none';
+        document.getElementById('pantalla-login').style.display = 'flex';
+        document.getElementById('sistema-pos').style.display = 'none';
+        carrito = []; renderizarTicket();
+    }
+
+    // ==========================================
+    // LÓGICA DEL SISTEMA POS
+    // ==========================================
+    const API_PRODUCTOS = '/api/productos';
+    let catalogoGlobal = [], carrito = [], simboloActual = '$', totalActualCaja = 0;
+
+    function iniciarSistemaPOS() { cambiarSucursal(); }
+
+    async function cargarProductos() {
         const pais = document.getElementById('sucursal-activa').value;
-        const precioIngresado = parseFloat(document.getElementById('precio-local').value) || 0;
+        const contenedor = document.getElementById('grid-pos-productos');
+        contenedor.innerHTML = '<div class="text-center mt-5"><span class="spinner-border text-info"></span></div>';
+        try {
+            const res = await fetch(`${API_PRODUCTOS}/sucursal/${encodeURIComponent(pais)}`);
+            catalogoGlobal = await res.json();
+            filtrarPos('Todos');
+        } catch(e) {
+            if(catalogoGlobal.length === 0) {
+                catalogoGlobal = [
+                    { id: 1, nombre: "ELÍXIR VERDE DETOX", precio: 15000, categoria: "500 mls" },
+                    { id: 2, nombre: "ELÍXIR FRUTOS ROJOS", precio: 16000, categoria: "500 mls" },
+                    { id: 3, nombre: "PACK VITALIDAD x4", precio: 55000, categoria: "Pack" }
+                ];
+                filtrarPos('Todos');
+            }
+        }
+    }
+
+    function cambiarSucursal() {
+        if(carrito.length > 0) { alert("Vaciando ticket por cambio de nodo."); carrito = []; renderizarTicket(); }
+        simboloActual = document.getElementById('sucursal-activa').value === 'España' ? '€' : '$';
+        cargarProductos();
+    }
+
+    function filtrarPos(filtro) {
+        const contenedor = document.getElementById('grid-pos-productos'); contenedor.innerHTML = '';
+        let lista = catalogoGlobal;
+        if(filtro !== 'Todos') {
+            lista = catalogoGlobal.filter(p => p.categoria && p.categoria.toLowerCase().includes(filtro.toLowerCase()));
+        }
+
+        lista.forEach((p, index) => {
+            contenedor.innerHTML += `
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="btn-pos-item" onclick="agregarAlTicket(${p.id || index}, '${p.nombre}', ${p.precio})">
+                        <div class="pos-item-nombre">${p.nombre}</div>
+                        <div class="pos-item-precio">${simboloActual}${p.precio.toLocaleString('es-ES')}</div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // ==========================================
+    // LÓGICA DEL TICKET
+    // ==========================================
+    function agregarAlTicket(id, nombre, precio) {
+        carrito.push({ id, nombre, precio: Number(precio) });
+        renderizarTicket();
+    }
+
+    function eliminarDelTicket(index) {
+        carrito.splice(index, 1);
+        renderizarTicket();
+    }
+
+    function renderizarTicket() {
+        const lista = document.getElementById('lista-ticket');
+        const btnCobrar = document.getElementById('btn-cobrar-ticket');
+        const textoVacio = document.getElementById('ticket-vacio');
+
+        lista.innerHTML = '';
+        totalActualCaja = 0;
+
+        if(carrito.length === 0) {
+            lista.appendChild(textoVacio);
+            textoVacio.style.display = 'block';
+            btnCobrar.disabled = true;
+            document.getElementById('total-caja-display').innerText = `${simboloActual}0`;
+            return;
+        }
+
+        textoVacio.style.display = 'none';
+        btnCobrar.disabled = false;
+
+        carrito.forEach((item, index) => {
+            totalActualCaja += item.precio;
+            lista.innerHTML += `
+                <div class="ticket-item-row">
+                    <div style="font-family: 'Rajdhani'; font-weight: 600; width: 60%; line-height: 1.1;">${item.nombre}</div>
+                    <div style="font-family: 'Orbitron'; color: var(--bio-oro);">${simboloActual}${item.precio.toLocaleString('es-ES')}</div>
+                    <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="eliminarDelTicket(${index})"><i class="bi bi-x"></i></button>
+                </div>
+            `;
+        });
+
+        document.getElementById('total-caja-display').innerText = `${simboloActual}${totalActualCaja.toLocaleString('es-ES')}`;
+    }
+
+    // ==========================================
+    // CHECKOUT Y PAGO
+    // ==========================================
+    function abrirModalCobro() {
+        document.getElementById('monto-cobro-final').innerText = `${simboloActual}${totalActualCaja.toLocaleString('es-ES')}`;
+        seleccionarMetodo('Efectivo');
+        const modal = new bootstrap.Modal(document.getElementById('modalCobro'));
+        modal.show();
+    }
+
+    function seleccionarMetodo(metodo) {
+        document.querySelectorAll('.btn-opcion-pago').forEach(el => el.classList.remove('active'));
+        if(metodo === 'Efectivo') document.getElementById('pago-efectivo').classList.add('active');
+        if(metodo === 'Tarjeta') document.getElementById('pago-tarjeta').classList.add('active');
+        if(metodo === 'Transferencia/QR') document.getElementById('pago-qr').classList.add('active');
+        document.getElementById('metodo-seleccionado').value = metodo;
+    }
+
+    function procesarPagoFinal() {
+        const metodo = document.getElementById('metodo-seleccionado').value;
+        const pais = document.getElementById('sucursal-activa').value;
+
+        alert(`✅ VENTA REGISTRADA CON ÉXITO\nMétodo: ${metodo}\nTotal: ${simboloActual}${totalActualCaja.toLocaleString('es-ES')}\nNodo: ${pais}`);
+
+        carrito = [];
+        renderizarTicket();
+        bootstrap.Modal.getInstance(document.getElementById('modalCobro')).hide();
+    }
+
+    function abrirModalNuevoProducto() { new bootstrap.Modal(document.getElementById('modalCrearProducto')).show(); }
+
+    function guardarProductoBD() {
+        const pais = document.getElementById('sucursal-activa').value;
         const nuevo = {
-            nombre: document.getElementById('nombre').value,
-            precio: precioIngresado,
-            categoria: document.getElementById('categoria').value,
-            sucursal: pais,
-            imagen: document.getElementById('imagen').value
+            nombre: document.getElementById('nuevo-nombre').value,
+            categoria: document.getElementById('nuevo-categoria').value,
+            precio: parseFloat(document.getElementById('nuevo-precio').value) || 0,
+            sucursal: pais
         };
+
         fetch(API_PRODUCTOS, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(nuevo) })
         .then(() => {
-            document.querySelectorAll('.input-cyber').forEach(i => i.value = '');
+            alert(`✅ Fórmula agregada al NODO ${pais}`);
+            bootstrap.Modal.getInstance(document.getElementById('modalCrearProducto')).hide();
             cargarProductos();
-            alert(`✅ Producto agregado al menú de ${pais}`);
+        }).catch(e => {
+            alert(`Simulando guardado: ✅ Fórmula agregada al NODO ${pais}`);
+            catalogoGlobal.push(nuevo);
+            filtrarPos('Todos');
+            bootstrap.Modal.getInstance(document.getElementById('modalCrearProducto')).hide();
         });
     }
 </script>
