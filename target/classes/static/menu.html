@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RAÍCES - Portal Bio-Nutricional Premium</title>
+    <title>RAÍCES - Portal Bio-Nutricional</title>
 
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#01120a">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -23,7 +26,6 @@
         body {
             font-family: 'Rajdhani', sans-serif;
             background-color: var(--v-profundo);
-            /* AQUÍ ESTÁ LA MAGIA DEL FONDO: Degradado súper suave para que los colores exploten */
             background-image:
                 linear-gradient(rgba(1, 10, 5, 0.2), rgba(1, 10, 5, 0.5)),
                 url('https://res.cloudinary.com/doi0o3hlr/image/upload/v1774759858/Gemini_Generated_Image_2ocvdw2ocvdw2ocv_ixqdsz.png');
@@ -34,19 +36,66 @@
 
         #pantalla-inicio {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9999; display: flex; flex-direction: column;
+            z-index: 9999; display: flex; flex-direction: column;
             justify-content: center; align-items: center; text-align: center;
+            overflow: hidden;
         }
 
-        .btn-iniciar-juego {
-            background: transparent; color: var(--bio-oro); border: 2px solid var(--bio-oro);
-            padding: 15px 40px; font-family: 'Orbitron'; font-size: 1.2rem; font-weight: 900;
-            letter-spacing: 3px; text-transform: uppercase; cursor: pointer; transition: 0.4s;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); border-radius: 10px; width: 80%; max-width: 300px;
+        .fondo-puerta-viva {
+            position: absolute; top: -5%; left: -5%; width: 110%; height: 110%;
+            background-color: #050505;
+            background-image: linear-gradient(rgba(1, 18, 10, 0.2), rgba(1, 18, 10, 0.6)), url('puerta-magica.jpg');
+            background-size: cover; background-position: center;
+            z-index: 1;
+            animation: respiracionMagica 6s infinite alternate ease-in-out;
+            transition: transform 1.5s cubic-bezier(0.5, 0, 0.2, 1), filter 1.5s ease-in;
         }
-        .btn-iniciar-juego:hover { background: var(--bio-oro); color: #000; box-shadow: var(--resplandor-divino); transform: scale(1.05); }
 
-        /* Scanlines más sutiles para no ensuciar tu espectacular fondo */
+        @keyframes respiracionMagica {
+            0% { transform: scale(1); filter: brightness(0.95) contrast(1.05) hue-rotate(0deg); }
+            100% { transform: scale(1.04); filter: brightness(1.2) contrast(1.15) hue-rotate(8deg); }
+        }
+
+        .contenido-inicio {
+            position: relative; z-index: 10;
+            display: flex; flex-direction: column; align-items: center;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+
+        .btn-magico {
+            background: radial-gradient(circle, rgba(10, 20, 15, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%);
+            backdrop-filter: blur(10px); color: var(--bio-oro); border: 2px solid var(--bio-oro);
+            padding: 18px 50px; font-family: 'Orbitron'; font-size: 1.4rem; font-weight: 900;
+            letter-spacing: 5px; text-transform: uppercase; cursor: pointer; border-radius: 50px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 0 15px rgba(255, 215, 0, 0.2);
+            transition: all 0.4s ease; animation: latidoPortal 2s infinite;
+        }
+
+        .btn-magico:hover {
+            color: #fff; border-color: var(--bio-aqua); background: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 40px var(--bio-aqua), inset 0 0 20px var(--bio-aqua);
+            text-shadow: 0 0 10px #fff, 0 0 20px var(--bio-aqua); transform: scale(1.05); animation: none;
+        }
+
+        @keyframes latidoPortal {
+            0% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.2); }
+            50% { box-shadow: 0 0 35px rgba(255, 215, 0, 0.8), inset 0 0 25px rgba(255, 215, 0, 0.5); text-shadow: 0 0 15px rgba(255,215,0,0.8); }
+            100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.2); }
+        }
+
+        .efecto-wow-puerta {
+            transform: scale(5) translateZ(0) !important; filter: brightness(3) contrast(1.5) blur(3px) !important;
+        }
+
+        #destello-luz {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #ffffff 10%, #ccffff 90%);
+            z-index: 99999; opacity: 0; pointer-events: none;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); mix-blend-mode: screen;
+        }
+
+        /* ========================================================= */
+
         .scanlines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,255,136,0.03) 50%, rgba(0,255,136,0.03));
@@ -61,6 +110,17 @@
         @keyframes parpadeo { 0% { opacity: 0.3; } 100% { opacity: 1; } }
 
         .header-raices { position: relative; z-index: 10; padding: 40px 15px 20px; text-align: center; }
+
+        /* BOTÓN DE INSTALAR APP (Aparecerá automáticamente) */
+        .btn-instalar-app {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(0, 240, 255, 0.1); color: var(--bio-aqua); border: 1px solid var(--bio-aqua);
+            padding: 8px 15px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 700;
+            cursor: pointer; z-index: 100; box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); backdrop-filter: blur(5px);
+            transition: 0.3s;
+        }
+        .btn-instalar-app:hover { background: var(--bio-aqua); color: #000; box-shadow: 0 0 20px rgba(0, 240, 255, 0.6); }
+
         .titulo-raices {
             font-family: 'Orbitron', sans-serif; font-size: 3rem; font-weight: 900;
             color: transparent; -webkit-text-stroke: 1.5px #b38600;
@@ -70,76 +130,60 @@
         }
 
         .selector-sucursal {
-            background: rgba(1, 10, 5, 0.85); backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 215, 0, 0.6); color: var(--bio-oro);
-            font-family: 'Orbitron', sans-serif; padding: 12px 20px; border-radius: 10px;
-            width: 100%; max-width: 350px; font-size: 0.9rem; letter-spacing: 1px; text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+            background: rgba(1, 10, 5, 0.85); backdrop-filter: blur(15px); border: 1px solid rgba(255, 215, 0, 0.6); color: var(--bio-oro); font-family: 'Orbitron', sans-serif; padding: 12px 20px; border-radius: 10px; width: 100%; max-width: 350px; font-size: 0.9rem; letter-spacing: 1px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.8);
         }
 
         .contenedor-categorias { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0 30px; z-index: 10; position: relative; }
-        .categoria-badge {
-            background: rgba(10, 5, 2, 0.85); color: rgba(255,255,255,0.9); padding: 10px 20px; border-radius: 8px;
-            border: 2px solid rgba(255,215,0,0.4); font-weight: 700; letter-spacing: 2px;
-            font-family: 'Orbitron', sans-serif; font-size: 0.8rem; text-transform: uppercase; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.8); backdrop-filter: blur(5px);
-        }
+        .categoria-badge { background: rgba(10, 5, 2, 0.85); color: rgba(255,255,255,0.9); padding: 10px 20px; border-radius: 8px; border: 2px solid rgba(255,215,0,0.4); font-weight: 700; letter-spacing: 2px; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; text-transform: uppercase; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
         .categoria-badge.active { background: rgba(255, 215, 0, 0.2); color: var(--bio-oro); border-color: var(--bio-oro); box-shadow: var(--resplandor-divino); }
 
-        .card-escena { perspective: 1000px; width: 100%; height: 400px; z-index: 10; position: relative; margin-bottom: 20px; }
+        .item-tarjeta { position: relative; z-index: 1; transition: z-index 0.2s; }
+        .item-tarjeta:hover { z-index: 100; }
+
+        .card-escena { perspective: 1000px; width: 100%; height: 400px; position: relative; margin-bottom: 20px; }
         .card-flipper { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .card-escena.flipped .card-flipper { transform: rotateY(180deg); }
 
-        .card-front, .card-back {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            backface-visibility: hidden; border-radius: 15px;
-            /* AQUÍ: Marco de madera realista tallada en 3D */
-            border: 6px solid #3e2312;
-            border-bottom-color: #1a0f07; border-right-color: #1a0f07;
-            border-top-color: #5a361d; border-left-color: #5a361d;
-            display: flex; flex-direction: column; overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.95), inset 0 0 30px rgba(0,0,0,0.9);
-            backdrop-filter: blur(10px);
-        }
-
+        .card-front, .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; border: 6px solid #3e2312; border-bottom-color: #1a0f07; border-right-color: #1a0f07; border-top-color: #5a361d; border-left-color: #5a361d; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.95), inset 0 0 30px rgba(0,0,0,0.9); backdrop-filter: blur(10px); }
         .card-front { background: linear-gradient(rgba(20, 10, 2, 0.7), rgba(20, 10, 2, 0.9)), url('https://www.transparenttextures.com/patterns/wood-burn-pattern.png'); padding: 20px 15px; justify-content: space-between; }
         .card-back { background: #0a0502; background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png'); transform: rotateY(180deg); padding: 30px 20px; border-color: var(--bio-oro); }
 
-        /* ESTE ES EL MOLDE PARA TU LIANA REAL. Solo pon la URL aquí dentro cuando la tengas */
-        .liana-decor {
-            position: absolute;
-            top: -10px; left: -10px; right: -10px; bottom: -10px;
-            /* Descomenta la línea de abajo y pon tu link para ver la magia */
-            /* background-image: url('TU_IMAGEN_DE_LIANA_TRANSPARENTE.png'); */
-            background-size: 100% 100%; background-repeat: no-repeat;
-            pointer-events: none; z-index: 5;
-        }
+        .enredadera-magica { position: absolute; top: -12px; left: -12px; right: -12px; bottom: -12px; background-image: url('lianas-limpias.png'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; pointer-events: none; z-index: 15; }
+        .card-escena.flipped .enredadera-magica { opacity: 0; transition: opacity 0.3s; }
 
-        .img-zona { height: 180px; display: flex; justify-content: center; align-items: center; position: relative; }
+        .img-zona { height: 180px; display: flex; justify-content: center; align-items: center; position: relative; z-index: 10; }
         .img-batido { width: 80%; height: 80%; object-fit: contain; z-index: 2; filter: drop-shadow(0 15px 25px rgba(0,0,0,1)); animation: flotar 4s infinite alternate ease-in-out; }
         @keyframes flotar { from { transform: translateY(5px); } to { transform: translateY(-5px); } }
 
-        .nombre-prod { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: #fff; text-transform: uppercase; margin-bottom: 2px; text-shadow: 0 3px 8px #000; text-align: center; }
-        .precio-prod { font-family: 'Orbitron', sans-serif; color: var(--bio-oro); font-weight: 900; font-size: 1.4rem; text-shadow: 0 3px 8px #000; text-align: center; }
+        .nombre-prod { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: #fff; text-transform: uppercase; margin-bottom: 2px; text-shadow: 0 3px 8px #000, 0 0 15px rgba(0,0,0,0.9); text-align: center; position: relative; z-index: 25; }
+        .precio-prod { font-family: 'Orbitron', sans-serif; color: var(--bio-oro); font-weight: 900; font-size: 1.4rem; text-shadow: 0 3px 8px #000, 0 0 15px rgba(0,0,0,0.9); text-align: center; position: relative; z-index: 25; }
 
-        .btn-info-flip { position: absolute; top: 10px; right: 10px; background: rgba(255,215,0,0.1); color: var(--bio-oro); border: 1px solid var(--bio-oro); width: 35px; height: 35px; border-radius: 8px; display: flex; align-items: center; justify-content: center; z-index: 30; border: none; box-shadow: 0 2px 5px #000;}
+        .btn-info-flip { position: absolute; top: 10px; right: 10px; background: rgba(5, 2, 0, 0.85); color: var(--bio-oro); border: 1px solid var(--bio-oro); width: auto; padding: 6px 14px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; z-index: 30; box-shadow: 0 5px 10px rgba(0,0,0,0.8); backdrop-filter: blur(5px); cursor: pointer; transition: 0.3s; }
+        .btn-info-flip:hover { background: var(--bio-oro); color: #000; }
 
-        .btn-extraer { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.3) 100%); color: var(--bio-oro); border: 1px solid var(--bio-oro); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.6); position: relative; z-index: 20;}
+        .btn-extraer { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.3) 100%); color: var(--bio-oro); border: 1px solid var(--bio-oro); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.6); position: relative; z-index: 25;}
 
         .back-titulo { font-family: 'Orbitron'; color: var(--bio-oro); font-size: 1rem; border-bottom: 1px solid var(--bio-oro); padding-bottom: 10px; margin-bottom: 15px; text-align: center;}
         .back-desc { font-size: 0.95rem; color: #fff; line-height: 1.5; overflow-y: auto; text-align: left; padding-right: 5px; height: 160px; font-weight: 500;}
         .btn-cerrar-flip { position: absolute; top: 10px; right: 10px; color: #fff; background: none; border: none; font-size: 1.5rem; opacity: 0.7; cursor: pointer;}
 
         .carrito-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 400px; background: rgba(10, 5, 2, 0.98); border: 2px solid var(--bio-oro); padding: 12px 20px; border-radius: 12px; display: none; justify-content: space-between; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.9); z-index: 1000; cursor: pointer;}
+
         .modal-content { background: #0a0502; background-image: url('https://www.transparenttextures.com/patterns/wood-burn-pattern.png'); border: 2px solid var(--bio-oro); border-radius: 15px; color: white; }
+
+        .input-bio { background: rgba(5, 2, 0, 0.8); border: 1px solid var(--bio-oro); color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; border-radius: 8px; padding: 10px 15px; width: 100%; margin-bottom: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); transition: all 0.3s ease; }
+        .input-bio:focus { outline: none; border-color: var(--bio-aqua); box-shadow: 0 0 10px rgba(0, 240, 255, 0.3), inset 0 2px 5px rgba(0,0,0,0.8); }
+        .input-bio::placeholder { color: rgba(255, 215, 0, 0.4); font-size: 0.95rem;}
+        .label-bio { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; color: var(--bio-aqua); margin-bottom: 5px; display: block; letter-spacing: 1px; font-weight: 700; }
     </style>
 </head>
 <body>
 
+<div id="destello-luz"></div>
 <div class="scanlines"></div>
 
 <audio id="mainAudio" preload="auto" loop>
-    <source src="Raíces_del_Santuario.mp3" type="audio/mpeg">
+    <source src="audio_fondo.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="sfxCash" preload="auto">
@@ -147,14 +191,24 @@
 </audio>
 
 <div id="pantalla-inicio">
-    <h1 style="font-family: 'Orbitron'; color: var(--bio-oro); margin-bottom: 20px; font-size: 2.8rem; text-shadow: 0 0 20px rgba(255,215,0,0.5);">RAÍCES</h1>
-    <p style="color: var(--bio-aqua); font-family: 'Rajdhani'; letter-spacing: 3px; margin-bottom: 40px;">B I O - N U T R I C I Ó N</p>
-    <button class="btn-iniciar-juego" onclick="iniciarExperiencia()">Entrar al Bosque</button>
+    <div id="fondo-puerta" class="fondo-puerta-viva"></div>
+    <div class="contenido-inicio" id="contenido-textos-inicio">
+        <h1 style="font-family: 'Orbitron'; color: var(--bio-aqua); margin-bottom: 20px; font-size: 4.5rem; text-shadow: 0 0 30px rgba(0,0,0,0.9), 0 0 20px rgba(0, 240, 255, 0.8);">RAÍCES</h1>
+        <p style="color: var(--bio-oro); font-family: 'Rajdhani'; letter-spacing: 6px; font-weight: 700; margin-bottom: 60px; text-shadow: 0 0 15px rgba(0,0,0,0.9);">B I O - N U T R I C I Ó N</p>
+
+        <button class="btn-magico" onclick="iniciarExperiencia()">
+            <i class="bi bi-stars me-2"></i> Abrir Portal <i class="bi bi-stars ms-2"></i>
+        </button>
+    </div>
 </div>
 
 <div class="fireflies" id="firefly-container"></div>
 
 <div class="header-raices" id="main-content" style="display: none;">
+    <button id="btnInstalarApp" class="btn-instalar-app" style="display: none;">
+        <i class="bi bi-phone-vibrate"></i> INSTALAR APP
+    </button>
+
     <h1 class="titulo-raices">RAÍCES</h1>
 
     <select id="sucursal-activa" class="selector-sucursal mt-2" onchange="cargarMenu()">
@@ -188,13 +242,28 @@
                 <h5 class="modal-title font-orbitron" style="color: var(--bio-oro); font-weight: 900; font-size: 1.1rem;"><i class="bi bi-box-seam me-2"></i> TRANSFERENCIA</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
+
             <div class="modal-body px-3">
+                <div class="datos-cliente mb-4 pb-3" style="border-bottom: 1px dashed rgba(255,215,0,0.3);">
+                    <label class="label-bio">IDENTIFICACIÓN (NOMBRE)</label>
+                    <input type="text" id="nombreCliente" class="input-bio" placeholder="Ej. Gabriel Gómez" autocomplete="name">
+
+                    <label class="label-bio">COORDENADAS (DIRECCIÓN)</label>
+                    <input type="text" id="direccionCliente" class="input-bio" placeholder="Ubicación de entrega" autocomplete="street-address">
+
+                    <label class="label-bio">ENLACE COMUNICACIÓN (TELÉFONO)</label>
+                    <input type="tel" id="telefonoCliente" class="input-bio" placeholder="Número de contacto" autocomplete="tel">
+                </div>
+
+                <label class="label-bio mb-3">ELÍXIRES EXTRAÍDOS</label>
                 <div id="lista-carrito-modal" class="mb-2"></div>
+
                 <div class="d-flex justify-content-between align-items-center mt-3 pt-3" style="border-top: 1px dashed rgba(255,215,0,0.3);">
                     <span style="font-family: 'Rajdhani'; font-size: 0.9rem;">TOTAL:</span>
                     <span id="total-modal-caja" style="color: var(--bio-oro); font-weight: 900; font-size: 1.5rem; font-family: 'Orbitron';">$0</span>
                 </div>
             </div>
+
             <div class="modal-footer border-0 pt-0 pb-4 px-3">
                 <button type="button" id="btn-procesar-pago" class="btn-extraer w-100 py-3" onclick="confirmarPedido()">
                     AUTORIZAR PAGO <i class="bi bi-shield-check ms-1"></i>
@@ -206,20 +275,72 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // ==========================================
+    // LÓGICA DE INSTALACIÓN PWA (APP CELULAR)
+    // ==========================================
+    let eventoInstalacion;
+    const btnInstalar = document.getElementById('btnInstalarApp');
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').then(reg => {
+                console.log('PWA Lista');
+            }).catch(err => console.log('Error PWA', err));
+        });
+    }
+
+    // Capturar el evento del navegador cuando la app es instalable
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault(); // Evita que chrome muestre su cartel genérico
+        eventoInstalacion = e; // Guardamos el evento
+        btnInstalar.style.display = 'block'; // Mostramos nuestro botón mágico
+    });
+
+    // Qué pasa cuando el usuario toca "INSTALAR APP"
+    btnInstalar.addEventListener('click', async () => {
+        if (eventoInstalacion) {
+            eventoInstalacion.prompt(); // Mostrar cartel nativo del celular
+            const resultado = await eventoInstalacion.userChoice;
+            if (resultado.outcome === 'accepted') {
+                console.log('El usuario instaló la App RAÍCES');
+            }
+            eventoInstalacion = null;
+            btnInstalar.style.display = 'none'; // Ocultar botón una vez instalado
+        }
+    });
+    // ==========================================
+
     let mainAudio = document.getElementById('mainAudio');
     let cashSound = document.getElementById('sfxCash');
 
     function iniciarExperiencia() {
-        document.getElementById('pantalla-inicio').style.display = 'none';
-        document.getElementById('main-content').style.display = 'block';
-        mainAudio.play().catch(e => console.error("Error al reproducir tu MP3:", e));
-        cargarMenu();
+        const puerta = document.getElementById('fondo-puerta');
+        const pantallaInicio = document.getElementById('pantalla-inicio');
+        const textosInicio = document.getElementById('contenido-textos-inicio');
+        const destello = document.getElementById('destello-luz');
+
+        textosInicio.style.transform = 'scale(0.8)';
+        textosInicio.style.opacity = '0';
+
+        puerta.classList.add('efecto-wow-puerta');
+
+        mainAudio.play().catch(e => console.error("Música bloquedada", e));
+
+        setTimeout(() => { destello.style.opacity = '1'; }, 600);
+
+        setTimeout(() => {
+            pantallaInicio.style.display = 'none';
+            document.getElementById('main-content').style.display = 'block';
+            cargarMenu();
+        }, 1200);
+
+        setTimeout(() => {
+            destello.style.transition = 'opacity 1.5s ease-out';
+            destello.style.opacity = '0';
+        }, 1500);
     }
 
-    function playCashSound() {
-        cashSound.currentTime = 0;
-        cashSound.play().catch(e => console.error("Error caja registradora:", e));
-    }
+    function playCashSound() { cashSound.currentTime = 0; cashSound.play().catch(e => console.error(e)); }
 
     const containerL = document.getElementById('firefly-container');
     const colores = ['#ffd700', '#00ff88', '#00e5ff'];
@@ -235,19 +356,12 @@
         containerL.appendChild(f);
     }
 
-    let productosRaw = [];
-    let carrito = [];
-    let filtroActual = '500 mls';
-    let simboloActual = '$';
-    let modalCarritoCliente;
+    let productosRaw = []; let carrito = []; let filtroActual = '500 mls'; let simboloActual = '$'; let modalCarritoCliente;
 
-    window.addEventListener('DOMContentLoaded', () => {
-        modalCarritoCliente = new bootstrap.Modal(document.getElementById('modalCarritoCliente'));
-    });
+    window.addEventListener('DOMContentLoaded', () => { modalCarritoCliente = new bootstrap.Modal(document.getElementById('modalCarritoCliente')); });
 
     async function cargarMenu() {
-        const grid = document.getElementById('grid-menu');
-        const nodo = document.getElementById('sucursal-activa').value;
+        const grid = document.getElementById('grid-menu'); const nodo = document.getElementById('sucursal-activa').value;
         grid.innerHTML = '<div class="col-12 text-center text-white py-5">Sincronizando con el Núcleo...</div>';
         try {
             const res = await fetch('/api/productos/sucursal/' + nodo);
@@ -257,10 +371,8 @@
     }
 
     function renderizar() {
-        const grid = document.getElementById('grid-menu');
-        grid.innerHTML = '';
-        const nodo = document.getElementById('sucursal-activa').value;
-        simboloActual = (nodo === "España") ? '€' : '$';
+        const grid = document.getElementById('grid-menu'); grid.innerHTML = '';
+        const nodo = document.getElementById('sucursal-activa').value; simboloActual = (nodo === "España") ? '€' : '$';
 
         let lista = productosRaw.filter(p => {
             if (!p.categoria) return false;
@@ -269,110 +381,72 @@
         });
 
         if (lista.length === 0) {
-            grid.innerHTML = '<div class="col-12 text-center text-white py-5">No hay productos disponibles en esta categoría.</div>';
-            return;
+            lista = [{ id: 'test', nombre: 'ELÍXIR DE PRUEBA', precio: 15000, descripcion: '¡Sistema PWA de descarga a celular activado!', imagen: 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png' }];
         }
 
         lista.forEach(p => {
-            let desc = (p.descripcion || "Análisis botánico confidencial.").replace(/\n/g, '<br>');
-            let img = p.imagen || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+            let desc = (p.descripcion || "").replace(/\n/g, '<br>'); let img = p.imagen || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
             grid.innerHTML += `
-                <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="col-12 col-md-6 col-lg-4 col-xl-3 item-tarjeta">
                     <div class="card-escena" id="card-${p.id}">
                         <div class="card-flipper">
                             <div class="card-front">
-                                <div class="liana-decor"></div>
-                                <button class="btn-info-flip" onclick="event.stopPropagation(); flip('${p.id}')"><i class="bi bi-info-lg"></i></button>
+                                <div class="enredadera-magica"></div>
+                                <button class="btn-info-flip" onclick="event.stopPropagation(); flip('${p.id}')">INFORMACIÓN <i class="bi bi-info-circle ms-2"></i></button>
                                 <div class="img-zona"><img src="${img}" class="img-batido"></div>
-                                <div>
-                                    <div class="nombre-prod text-truncate">${p.nombre}</div>
-                                    <div class="precio-prod">${simboloActual}${p.precio.toLocaleString('es-ES')}</div>
-                                </div>
+                                <div><div class="nombre-prod text-truncate">${p.nombre}</div><div class="precio-prod">${simboloActual}${p.precio.toLocaleString('es-ES')}</div></div>
                                 <button class="btn-extraer mt-3" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre}', ${p.precio}, this)">EXTRAER</button>
                             </div>
                             <div class="card-back">
                                 <button class="btn-cerrar-flip" onclick="flip('${p.id}')"><i class="bi bi-x-lg"></i></button>
-                                <div class="back-titulo">BIO-ANÁLISIS</div>
-                                <div class="back-desc">${desc}</div>
+                                <div class="back-titulo">BIO-ANÁLISIS</div><div class="back-desc">${desc}</div>
                                 <button class="btn-extraer mt-auto" style="background:var(--bio-oro); color:#000;" onclick="flip('${p.id}')">CERRAR</button>
                             </div>
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
     }
 
     function flip(id) { document.getElementById(`card-${id}`).classList.toggle('flipped'); }
-
-    function filtrar(cat, btn) {
-        filtroActual = cat;
-        document.querySelectorAll('.categoria-badge').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active'); renderizar();
-    }
+    function filtrar(cat, btn) { filtroActual = cat; document.querySelectorAll('.categoria-badge').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderizar(); }
 
     function agregar(id, nombre, precio, btn) {
-        const originalHTML = btn.innerHTML;
-        btn.innerHTML = '<i class="bi bi-check2"></i>';
-        btn.style.background = 'var(--bio-oro)'; btn.style.color = '#000';
-        setTimeout(()=>{ btn.innerHTML = originalHTML; btn.style=''; }, 600);
-        carrito.push({ id, nombre, precio: Number(precio) }); actualizarCarrito();
+        const originalHTML = btn.innerHTML; btn.innerHTML = '<i class="bi bi-check2"></i>'; btn.style.background = 'var(--bio-oro)'; btn.style.color = '#000';
+        setTimeout(()=>{ btn.innerHTML = originalHTML; btn.style=''; }, 600); carrito.push({ id, nombre, precio: Number(precio) }); actualizarCarrito();
     }
 
     function actualizarCarrito() {
         const bar = document.getElementById('carrito-bar');
-        if(carrito.length > 0) {
-            bar.style.display = 'flex';
-            document.getElementById('items-count').innerText = carrito.length;
-            document.getElementById('total-precio').innerText = simboloActual + carrito.reduce((s, i) => s + i.precio, 0).toLocaleString('es-ES');
-        } else { bar.style.display = 'none'; }
+        if(carrito.length > 0) { bar.style.display = 'flex'; document.getElementById('items-count').innerText = carrito.length; document.getElementById('total-precio').innerText = simboloActual + carrito.reduce((s, i) => s + i.precio, 0).toLocaleString('es-ES'); } else { bar.style.display = 'none'; }
     }
 
     function abrirModalCarrito() {
-        playCashSound();
-        if(carrito.length === 0) return;
-        const cont = document.getElementById('lista-carrito-modal');
-        cont.innerHTML = '';
-        carrito.forEach((i, idx) => {
-            cont.innerHTML += `<div class="d-flex justify-content-between mb-2 p-2" style="border: 1px solid rgba(255,215,0,0.3); border-radius: 8px; font-size:0.9rem;"><span>${i.nombre}</span><b>${simboloActual}${i.precio.toLocaleString('es-ES')} <i class="bi bi-x-lg text-danger ms-2" style="cursor:pointer" onclick="eliminar(${idx}, event)"></i></b></div>`;
-        });
-        document.getElementById('total-modal-caja').innerText = document.getElementById('total-precio').innerText;
-        modalCarritoCliente.show();
+        playCashSound(); if(carrito.length === 0) return; const cont = document.getElementById('lista-carrito-modal'); cont.innerHTML = '';
+        carrito.forEach((i, idx) => { cont.innerHTML += `<div class="d-flex justify-content-between mb-2 p-2" style="border: 1px solid rgba(255,215,0,0.3); border-radius: 8px; font-size:0.9rem;"><span>${i.nombre}</span><b>${simboloActual}${i.precio.toLocaleString('es-ES')} <i class="bi bi-x-lg text-danger ms-2" style="cursor:pointer" onclick="eliminar(${idx}, event)"></i></b></div>`; });
+        document.getElementById('total-modal-caja').innerText = document.getElementById('total-precio').innerText; modalCarritoCliente.show();
     }
 
-    function eliminar(idx, e) {
-        e.stopPropagation(); carrito.splice(idx, 1); actualizarCarrito();
-        if(carrito.length > 0) { abrirModalCarrito(); } else { modalCarritoCliente.hide(); }
-    }
+    function eliminar(idx, e) { e.stopPropagation(); carrito.splice(idx, 1); actualizarCarrito(); if(carrito.length > 0) { abrirModalCarrito(); } else { modalCarritoCliente.hide(); } }
 
     async function confirmarPedido() {
-        const btn = document.getElementById('btn-procesar-pago');
-        const contenidoOriginal = btn.innerHTML;
-        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> CONECTANDO NÚCLEO...`;
-        btn.disabled = true;
+        const nombre = document.getElementById('nombreCliente').value.trim(); const direccion = document.getElementById('direccionCliente').value.trim(); const telefono = document.getElementById('telefonoCliente').value.trim();
+        if(!nombre || !direccion || !telefono) { alert("Por favor, ingresa tu Identificación, Coordenadas y Enlace (Nombre, Dirección y Teléfono) para procesar la extracción."); return; }
 
-        const selectPais = document.getElementById('sucursal-activa');
-        const paisNombre = selectPais.options[selectPais.selectedIndex].text;
+        const btn = document.getElementById('btn-procesar-pago'); const contenidoOriginal = btn.innerHTML; btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> CONECTANDO NÚCLEO...`; btn.disabled = true;
+        const selectPais = document.getElementById('sucursal-activa'); const paisNombre = selectPais.options[selectPais.selectedIndex].text;
+        const payload = { cliente: { nombre, direccion, telefono }, items: carrito, origen: 'Reserva Bio-Tech', pais: paisNombre };
 
         try {
-            const resMp = await fetch('/api/pagos/mercadopago', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: carrito })
-            });
-
+            const resMp = await fetch('/api/pagos/mercadopago', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
             if (resMp.ok) {
                 const linkMercadoPago = await resMp.text();
-                await fetch(`/api/ventas?origen=Reserva Bio-Tech&pais=${encodeURIComponent(paisNombre)}&metodo=MercadoPago`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(carrito) });
+                await fetch(`/api/ventas?metodo=MercadoPago`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 carrito.forEach(item => fetch(`/api/inventario/vender?idProducto=${item.id}&cantidad=1`, { method: 'POST' }));
-
-                carrito = []; actualizarCarrito(); modalCarritoCliente.hide();
-                window.location.href = linkMercadoPago;
+                carrito = []; actualizarCarrito(); modalCarritoCliente.hide(); window.location.href = linkMercadoPago;
             } else { throw new Error("Fallo en servidor"); }
         } catch (error) {
-            setTimeout(() => {
-                alert("Simulando redirección a pasarela de pago (Servidor local no detectado)...");
-                carrito = []; actualizarCarrito(); modalCarritoCliente.hide();
-                btn.innerHTML = contenidoOriginal; btn.disabled = false;
-            }, 1500);
+            setTimeout(() => { alert(`Simulando redirección a pago para: ${nombre}...\n(Servidor local no detectado)`); carrito = []; actualizarCarrito(); modalCarritoCliente.hide(); btn.innerHTML = contenidoOriginal; btn.disabled = false; }, 1500);
         }
     }
 </script>
