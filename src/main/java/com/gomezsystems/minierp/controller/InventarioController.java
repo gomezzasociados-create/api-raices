@@ -1,8 +1,8 @@
 package com.gomezsystems.minierp.controller; // <-- 1. PAQUETE CORREGIDO
 
 import com.gomezsystems.minierp.model.Insumo; // <-- 2. ¡IMPORTACIÓN MÁGICA AGREGADA!
-import com.gomezsystems.minierp.service.InventarioService;
 import com.gomezsystems.minierp.repository.InsumoRepository;
+import com.gomezsystems.minierp.service.InventarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

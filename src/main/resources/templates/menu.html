@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RAÍCES - Portal Bio-Nutricional</title>
 
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest_menu.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#01120a">
@@ -60,27 +60,22 @@
             position: relative; z-index: 10;
             display: flex; flex-direction: column; align-items: center;
             transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            width: 100%;
         }
 
-        .btn-magico {
+        /* NUEVOS BOTONES DE NODO (PAÍSES) */
+        .btn-nodo {
             background: radial-gradient(circle, rgba(10, 20, 15, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%);
             backdrop-filter: blur(10px); color: var(--bio-oro); border: 2px solid var(--bio-oro);
-            padding: 18px 50px; font-family: 'Orbitron'; font-size: 1.4rem; font-weight: 900;
-            letter-spacing: 5px; text-transform: uppercase; cursor: pointer; border-radius: 50px;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 0 15px rgba(255, 215, 0, 0.2);
-            transition: all 0.4s ease; animation: latidoPortal 2s infinite;
+            padding: 15px 20px; font-family: 'Orbitron'; font-size: 1.1rem; font-weight: 900;
+            letter-spacing: 2px; cursor: pointer; border-radius: 12px;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2), inset 0 0 10px rgba(255, 215, 0, 0.1);
+            transition: all 0.3s ease; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-
-        .btn-magico:hover {
-            color: #fff; border-color: var(--bio-aqua); background: rgba(0, 240, 255, 0.1);
-            box-shadow: 0 0 40px var(--bio-aqua), inset 0 0 20px var(--bio-aqua);
-            text-shadow: 0 0 10px #fff, 0 0 20px var(--bio-aqua); transform: scale(1.05); animation: none;
-        }
-
-        @keyframes latidoPortal {
-            0% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.2); }
-            50% { box-shadow: 0 0 35px rgba(255, 215, 0, 0.8), inset 0 0 25px rgba(255, 215, 0, 0.5); text-shadow: 0 0 15px rgba(255,215,0,0.8); }
-            100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.3), inset 0 0 10px rgba(255, 215, 0, 0.2); }
+        .btn-nodo:hover, .btn-nodo:active {
+            color: #fff; border-color: var(--bio-aqua); background: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 30px var(--bio-aqua), inset 0 0 15px var(--bio-aqua);
+            text-shadow: 0 0 8px #fff, 0 0 15px var(--bio-aqua); transform: scale(1.03);
         }
 
         .efecto-wow-puerta {
@@ -111,7 +106,17 @@
 
         .header-raices { position: relative; z-index: 10; padding: 40px 15px 20px; text-align: center; }
 
-        /* BOTÓN DE INSTALAR APP (Aparecerá automáticamente) */
+        /* BOTÓN DE AUDIO */
+        .btn-audio-toggle {
+            position: absolute; top: 15px; left: 15px;
+            background: rgba(0, 240, 255, 0.1); color: var(--bio-aqua); border: 1px solid var(--bio-aqua);
+            width: 45px; height: 45px; border-radius: 50%; font-size: 1.2rem;
+            cursor: pointer; z-index: 100; box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); backdrop-filter: blur(5px);
+            transition: 0.3s; display: flex; justify-content: center; align-items: center;
+        }
+        .btn-audio-toggle:hover { background: var(--bio-aqua); color: #000; box-shadow: 0 0 20px rgba(0, 240, 255, 0.6); }
+
+        /* BOTÓN DE INSTALAR APP */
         .btn-instalar-app {
             position: absolute; top: 15px; right: 15px;
             background: rgba(0, 240, 255, 0.1); color: var(--bio-aqua); border: 1px solid var(--bio-aqua);
@@ -126,11 +131,16 @@
             color: transparent; -webkit-text-stroke: 1.5px #b38600;
             background: linear-gradient(180deg, #fff 30%, var(--bio-oro));
             background-clip: text; -webkit-background-clip: text;
-            text-shadow: 0 5px 25px rgba(0, 0, 0, 0.9); letter-spacing: 8px; margin-bottom: 10px;
+            text-shadow: 0 5px 25px rgba(0, 0, 0, 0.9); letter-spacing: 8px; margin-bottom: 5px;
         }
 
-        .selector-sucursal {
-            background: rgba(1, 10, 5, 0.85); backdrop-filter: blur(15px); border: 1px solid rgba(255, 215, 0, 0.6); color: var(--bio-oro); font-family: 'Orbitron', sans-serif; padding: 12px 20px; border-radius: 10px; width: 100%; max-width: 350px; font-size: 0.9rem; letter-spacing: 1px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+        /* BADGE INDICADOR DE SUCURSAL */
+        .badge-nodo-actual {
+            background: rgba(1, 10, 5, 0.85); border: 1px solid rgba(255, 215, 0, 0.5);
+            color: var(--bio-oro); font-family: 'Orbitron', sans-serif; padding: 6px 15px;
+            border-radius: 20px; display: inline-block; font-size: 0.85rem; letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.8), 0 0 10px rgba(255, 215, 0, 0.2); backdrop-filter: blur(5px);
+            margin-top: 5px; margin-bottom: 15px; text-transform: uppercase;
         }
 
         .contenedor-categorias { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0 30px; z-index: 10; position: relative; }
@@ -163,6 +173,8 @@
 
         .btn-extraer { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.3) 100%); color: var(--bio-oro); border: 1px solid var(--bio-oro); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.6); position: relative; z-index: 25;}
 
+        .btn-disabled-pago { background: rgba(50, 50, 50, 0.5); color: rgba(255, 255, 255, 0.5); border: 1px dashed rgba(255, 255, 255, 0.3); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: not-allowed; }
+
         .back-titulo { font-family: 'Orbitron'; color: var(--bio-oro); font-size: 1rem; border-bottom: 1px solid var(--bio-oro); padding-bottom: 10px; margin-bottom: 15px; text-align: center;}
         .back-desc { font-size: 0.95rem; color: #fff; line-height: 1.5; overflow-y: auto; text-align: left; padding-right: 5px; height: 160px; font-weight: 500;}
         .btn-cerrar-flip { position: absolute; top: 10px; right: 10px; color: #fff; background: none; border: none; font-size: 1.5rem; opacity: 0.7; cursor: pointer;}
@@ -175,6 +187,18 @@
         .input-bio:focus { outline: none; border-color: var(--bio-aqua); box-shadow: 0 0 10px rgba(0, 240, 255, 0.3), inset 0 2px 5px rgba(0,0,0,0.8); }
         .input-bio::placeholder { color: rgba(255, 215, 0, 0.4); font-size: 0.95rem;}
         .label-bio { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; color: var(--bio-aqua); margin-bottom: 5px; display: block; letter-spacing: 1px; font-weight: 700; }
+
+        /* ESTILOS DEL BOTÓN DEL MICRÓFONO PARA CLIENTES */
+        .btn-mic-flotante {
+            position: fixed; bottom: 90px; right: 20px; width: 60px; height: 60px;
+            border-radius: 50%; background: rgba(10, 20, 15, 0.85); border: 2px solid var(--bio-aqua);
+            color: var(--bio-aqua); display: flex; justify-content: center; align-items: center;
+            font-size: 1.8rem; cursor: pointer; z-index: 999; box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+            backdrop-filter: blur(10px); transition: all 0.3s ease;
+        }
+        .btn-mic-flotante:hover { transform: scale(1.1); background: var(--bio-aqua); color: #000; box-shadow: 0 0 30px rgba(0, 240, 255, 0.8); }
+        .btn-mic-flotante.escuchando { animation: latidoMic 1s infinite; border-color: var(--bio-oro); color: var(--bio-oro); box-shadow: 0 0 30px var(--bio-oro); }
+        @keyframes latidoMic { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -192,40 +216,53 @@
 
 <div id="pantalla-inicio">
     <div id="fondo-puerta" class="fondo-puerta-viva"></div>
-    <div class="contenido-inicio" id="contenido-textos-inicio">
-        <h1 style="font-family: 'Orbitron'; color: var(--bio-aqua); margin-bottom: 20px; font-size: 4.5rem; text-shadow: 0 0 30px rgba(0,0,0,0.9), 0 0 20px rgba(0, 240, 255, 0.8);">RAÍCES</h1>
-        <p style="color: var(--bio-oro); font-family: 'Rajdhani'; letter-spacing: 6px; font-weight: 700; margin-bottom: 60px; text-shadow: 0 0 15px rgba(0,0,0,0.9);">B I O - N U T R I C I Ó N</p>
+    <div class="contenido-inicio px-3" id="contenido-textos-inicio">
+        <h1 style="font-family: 'Orbitron'; color: var(--bio-aqua); margin-bottom: 5px; font-size: 4rem; text-shadow: 0 0 30px rgba(0,0,0,0.9), 0 0 20px rgba(0, 240, 255, 0.8);">RAÍCES</h1>
+        <p style="color: var(--bio-oro); font-family: 'Rajdhani'; letter-spacing: 6px; font-weight: 700; margin-bottom: 40px; text-shadow: 0 0 15px rgba(0,0,0,0.9);">B I O - N U T R I C I Ó N</p>
 
-        <button class="btn-magico" onclick="iniciarExperiencia()">
-            <i class="bi bi-stars me-2"></i> Abrir Portal <i class="bi bi-stars ms-2"></i>
-        </button>
+        <p style="color: var(--bio-aqua); font-family: 'Orbitron'; letter-spacing: 2px; margin-bottom: 20px; font-size: 0.95rem; text-shadow: 0 0 10px rgba(0,240,255,0.5);">SELECCIONA TU CÁPSULA VITAL</p>
+
+        <div class="d-flex flex-column gap-3 w-100" style="max-width: 320px;">
+            <button class="btn-nodo" onclick="iniciarExperiencia('Chile')">
+                <span style="font-size: 1.5rem;">🇨🇱</span> NODO ANTOFAGASTA
+            </button>
+            <button class="btn-nodo" onclick="iniciarExperiencia('Colombia')">
+                <span style="font-size: 1.5rem;">🇨🇴</span> NODO TULUÁ
+            </button>
+            <button class="btn-nodo" onclick="iniciarExperiencia('España')">
+                <span style="font-size: 1.5rem;">🇪🇸</span> NODO MALLORCA
+            </button>
+        </div>
     </div>
 </div>
 
 <div class="fireflies" id="firefly-container"></div>
 
 <div class="header-raices" id="main-content" style="display: none;">
+    <button id="btn-audio-toggle" class="btn-audio-toggle" onclick="toggleAudio()" style="display: none;">
+        <i class="bi bi-volume-up-fill" id="icono-audio"></i>
+    </button>
+
     <button id="btnInstalarApp" class="btn-instalar-app" style="display: none;">
-        <i class="bi bi-phone-vibrate"></i> INSTALAR APP
+        <i class="bi bi-phone-vibrate"></i> APP
     </button>
 
     <h1 class="titulo-raices">RAÍCES</h1>
 
-    <select id="sucursal-activa" class="selector-sucursal mt-2" onchange="cargarMenu()">
-        <option value="Colombia">NODO: TULUÁ (COP)</option>
-        <option value="Chile">NODO: ANTOFAGASTA (CLP)</option>
-        <option value="España">NODO: MALLORCA (EUR)</option>
-    </select>
-
-    <div class="contenedor-categorias">
-        <button class="categoria-badge active" onclick="filtrar('500 mls', this)">Elíxires</button>
-        <button class="categoria-badge" onclick="filtrar('Packs', this)">Packs</button>
-    </div>
+    <div id="display-nodo-actual" class="badge-nodo-actual">🇨🇱 NODO ANTOFAGASTA</div>
+    <input type="hidden" id="sucursal-activa" value="Chile"> <div class="contenedor-categorias">
+    <button class="categoria-badge active" onclick="filtrar('500 mls', this)">Elíxires</button>
+    <button class="categoria-badge" onclick="filtrar('Packs', this)">Packs</button>
+</div>
 
     <div class="container px-2">
         <div id="grid-menu" class="row g-3 mb-5 pb-5"></div>
     </div>
 </div>
+
+<button id="btn-mic-cliente" class="btn-mic-flotante" onclick="iniciarVozCliente()" style="display: none;" title="Hablar con el Biosistema">
+    <i class="bi bi-mic"></i>
+</button>
 
 <div id="carrito-bar" class="carrito-bar" onclick="abrirModalCarrito()">
     <div class="d-flex flex-column">
@@ -244,6 +281,10 @@
             </div>
 
             <div class="modal-body px-3">
+                <button id="btn-mic-modal" class="btn btn-outline-info w-100 mb-4 py-2 font-orbitron fw-bold" onclick="iniciarVozModal()" style="border-radius: 8px; border-color: var(--bio-aqua); color: var(--bio-aqua); letter-spacing: 1px;">
+                    <i class="bi bi-mic-fill me-2"></i> DICTAR DATOS POR VOZ
+                </button>
+
                 <div class="datos-cliente mb-4 pb-3" style="border-bottom: 1px dashed rgba(255,215,0,0.3);">
                     <label class="label-bio">IDENTIFICACIÓN (NOMBRE)</label>
                     <input type="text" id="nombreCliente" class="input-bio" placeholder="Ej. Gabriel Gómez" autocomplete="name">
@@ -265,9 +306,7 @@
             </div>
 
             <div class="modal-footer border-0 pt-0 pb-4 px-3">
-                <button type="button" id="btn-procesar-pago" class="btn-extraer w-100 py-3" onclick="confirmarPedido()">
-                    AUTORIZAR PAGO <i class="bi bi-shield-check ms-1"></i>
-                </button>
+                <div id="contenedor-botones-pago" class="w-100"></div>
             </div>
         </div>
     </div>
@@ -283,54 +322,83 @@
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').then(reg => {
+            navigator.serviceWorker.register('sw.js').then(reg => {
                 console.log('PWA Lista');
             }).catch(err => console.log('Error PWA', err));
         });
     }
 
-    // Capturar el evento del navegador cuando la app es instalable
     window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault(); // Evita que chrome muestre su cartel genérico
-        eventoInstalacion = e; // Guardamos el evento
-        btnInstalar.style.display = 'block'; // Mostramos nuestro botón mágico
+        e.preventDefault();
+        eventoInstalacion = e;
+        if (btnInstalar) btnInstalar.style.display = 'block';
     });
 
-    // Qué pasa cuando el usuario toca "INSTALAR APP"
-    btnInstalar.addEventListener('click', async () => {
-        if (eventoInstalacion) {
-            eventoInstalacion.prompt(); // Mostrar cartel nativo del celular
-            const resultado = await eventoInstalacion.userChoice;
-            if (resultado.outcome === 'accepted') {
-                console.log('El usuario instaló la App RAÍCES');
+    if (btnInstalar) {
+        btnInstalar.addEventListener('click', async () => {
+            if (eventoInstalacion) {
+                eventoInstalacion.prompt();
+                const resultado = await eventoInstalacion.userChoice;
+                if (resultado.outcome === 'accepted') {
+                    console.log('El usuario instaló la App RAÍCES');
+                }
+                eventoInstalacion = null;
+                btnInstalar.style.display = 'none';
             }
-            eventoInstalacion = null;
-            btnInstalar.style.display = 'none'; // Ocultar botón una vez instalado
-        }
-    });
-    // ==========================================
+        });
+    }
 
+    // ==========================================
+    // ANIMACIÓN INICIAL, SELECCIÓN DE NODO Y AUDIO
+    // ==========================================
     let mainAudio = document.getElementById('mainAudio');
     let cashSound = document.getElementById('sfxCash');
 
-    function iniciarExperiencia() {
+    function toggleAudio() {
+        const icono = document.getElementById('icono-audio');
+        if (mainAudio.paused) {
+            mainAudio.play();
+            icono.className = 'bi bi-volume-up-fill';
+        } else {
+            mainAudio.pause();
+            icono.className = 'bi bi-volume-mute-fill';
+        }
+    }
+
+    function iniciarExperiencia(paisSeleccionado) {
+        // Guardar selección
+        document.getElementById('sucursal-activa').value = paisSeleccionado;
+        let displayBadge = '';
+        if(paisSeleccionado === 'Chile') displayBadge = '🇨🇱 NODO ANTOFAGASTA';
+        if(paisSeleccionado === 'Colombia') displayBadge = '🇨🇴 NODO TULUÁ';
+        if(paisSeleccionado === 'España') displayBadge = '🇪🇸 NODO MALLORCA';
+        document.getElementById('display-nodo-actual').innerText = displayBadge;
+
+        // Efectos visuales
         const puerta = document.getElementById('fondo-puerta');
         const pantallaInicio = document.getElementById('pantalla-inicio');
         const textosInicio = document.getElementById('contenido-textos-inicio');
         const destello = document.getElementById('destello-luz');
+        const btnMic = document.getElementById('btn-mic-cliente');
+        const btnAudio = document.getElementById('btn-audio-toggle');
 
         textosInicio.style.transform = 'scale(0.8)';
         textosInicio.style.opacity = '0';
 
         puerta.classList.add('efecto-wow-puerta');
 
-        mainAudio.play().catch(e => console.error("Música bloquedada", e));
+        mainAudio.play().catch(e => {
+            console.error("Música bloquedada", e);
+            document.getElementById('icono-audio').className = 'bi bi-volume-mute-fill';
+        });
 
         setTimeout(() => { destello.style.opacity = '1'; }, 600);
 
         setTimeout(() => {
             pantallaInicio.style.display = 'none';
             document.getElementById('main-content').style.display = 'block';
+            btnAudio.style.display = 'flex';
+            if('webkitSpeechRecognition' in window) { btnMic.style.display = 'flex'; }
             cargarMenu();
         }, 1200);
 
@@ -356,9 +424,19 @@
         containerL.appendChild(f);
     }
 
+    // ==========================================
+    // LÓGICA DE MENÚ Y CARRITO
+    // ==========================================
     let productosRaw = []; let carrito = []; let filtroActual = '500 mls'; let simboloActual = '$'; let modalCarritoCliente;
 
     window.addEventListener('DOMContentLoaded', () => { modalCarritoCliente = new bootstrap.Modal(document.getElementById('modalCarritoCliente')); });
+
+    // Resetea el estado del asistente de voz del modal cuando lo cierran
+    document.getElementById('modalCarritoCliente').addEventListener('hidden.bs.modal', function () {
+        estadoModalVoz = 'LIBRE';
+        window.speechSynthesis.cancel();
+        if(recVozModal) recVozModal.stop();
+    });
 
     async function cargarMenu() {
         const grid = document.getElementById('grid-menu'); const nodo = document.getElementById('sucursal-activa').value;
@@ -412,8 +490,11 @@
     function filtrar(cat, btn) { filtroActual = cat; document.querySelectorAll('.categoria-badge').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderizar(); }
 
     function agregar(id, nombre, precio, btn) {
-        const originalHTML = btn.innerHTML; btn.innerHTML = '<i class="bi bi-check2"></i>'; btn.style.background = 'var(--bio-oro)'; btn.style.color = '#000';
-        setTimeout(()=>{ btn.innerHTML = originalHTML; btn.style=''; }, 600); carrito.push({ id, nombre, precio: Number(precio) }); actualizarCarrito();
+        if(btn) {
+            const originalHTML = btn.innerHTML; btn.innerHTML = '<i class="bi bi-check2"></i>'; btn.style.background = 'var(--bio-oro)'; btn.style.color = '#000';
+            setTimeout(()=>{ btn.innerHTML = originalHTML; btn.style=''; }, 600);
+        }
+        carrito.push({ id, nombre, precio: Number(precio) }); actualizarCarrito();
     }
 
     function actualizarCarrito() {
@@ -422,33 +503,230 @@
     }
 
     function abrirModalCarrito() {
-        playCashSound(); if(carrito.length === 0) return; const cont = document.getElementById('lista-carrito-modal'); cont.innerHTML = '';
+        playCashSound();
+        if(carrito.length === 0) return;
+
+        const cont = document.getElementById('lista-carrito-modal'); cont.innerHTML = '';
         carrito.forEach((i, idx) => { cont.innerHTML += `<div class="d-flex justify-content-between mb-2 p-2" style="border: 1px solid rgba(255,215,0,0.3); border-radius: 8px; font-size:0.9rem;"><span>${i.nombre}</span><b>${simboloActual}${i.precio.toLocaleString('es-ES')} <i class="bi bi-x-lg text-danger ms-2" style="cursor:pointer" onclick="eliminar(${idx}, event)"></i></b></div>`; });
-        document.getElementById('total-modal-caja').innerText = document.getElementById('total-precio').innerText; modalCarritoCliente.show();
+        document.getElementById('total-modal-caja').innerText = document.getElementById('total-precio').innerText;
+
+        // RENDERIZAR BOTONES DE PAGO SEGÚN SUCURSAL
+        renderizarBotonesPagoModal();
+
+        modalCarritoCliente.show();
+    }
+
+    function renderizarBotonesPagoModal() {
+        const pais = document.getElementById('sucursal-activa').value;
+        const container = document.getElementById('contenedor-botones-pago');
+        let html = '';
+
+        if (pais === 'Chile') {
+            html = `<button type="button" class="btn-extraer w-100 py-3 mb-2" onclick="confirmarPedido('MercadoPago')">
+                        PAGAR CON WEBPAY / TARJETAS <i class="bi bi-credit-card ms-1"></i>
+                    </button>`;
+        } else if (pais === 'Colombia') {
+            html = `<button type="button" class="btn-disabled-pago mb-2" disabled>
+                        PAGO COLOMBIA (PRÓXIMAMENTE) <i class="bi bi-lock ms-1"></i>
+                    </button>`;
+        } else if (pais === 'España') {
+            html = `<button type="button" class="btn-disabled-pago mb-2" disabled>
+                        PAGO ESPAÑA (PRÓXIMAMENTE) <i class="bi bi-lock ms-1"></i>
+                    </button>`;
+        }
+
+        container.innerHTML = html;
     }
 
     function eliminar(idx, e) { e.stopPropagation(); carrito.splice(idx, 1); actualizarCarrito(); if(carrito.length > 0) { abrirModalCarrito(); } else { modalCarritoCliente.hide(); } }
 
-    async function confirmarPedido() {
+    async function confirmarPedido(metodoPago) {
         const nombre = document.getElementById('nombreCliente').value.trim(); const direccion = document.getElementById('direccionCliente').value.trim(); const telefono = document.getElementById('telefonoCliente').value.trim();
         if(!nombre || !direccion || !telefono) { alert("Por favor, ingresa tu Identificación, Coordenadas y Enlace (Nombre, Dirección y Teléfono) para procesar la extracción."); return; }
 
-        const btn = document.getElementById('btn-procesar-pago'); const contenidoOriginal = btn.innerHTML; btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> CONECTANDO NÚCLEO...`; btn.disabled = true;
-        const selectPais = document.getElementById('sucursal-activa'); const paisNombre = selectPais.options[selectPais.selectedIndex].text;
+        // Buscamos el botón dentro del contenedor para ponerle el loading
+        const btn = document.querySelector('#contenedor-botones-pago button');
+        const contenidoOriginal = btn.innerHTML;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> CONECTANDO NÚCLEO...`; btn.disabled = true;
+
+        // El nombre de la sucursal ya no viene del select text, porque el select ya no existe.
+        // Lo sacamos directamente del input oculto.
+        const paisNombre = document.getElementById('sucursal-activa').value;
         const payload = { cliente: { nombre, direccion, telefono }, items: carrito, origen: 'Reserva Bio-Tech', pais: paisNombre };
 
         try {
-            const resMp = await fetch('/api/pagos/mercadopago', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            if (resMp.ok) {
-                const linkMercadoPago = await resMp.text();
-                await fetch(`/api/ventas?metodo=MercadoPago`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                carrito.forEach(item => fetch(`/api/inventario/vender?idProducto=${item.id}&cantidad=1`, { method: 'POST' }));
-                carrito = []; actualizarCarrito(); modalCarritoCliente.hide(); window.location.href = linkMercadoPago;
-            } else { throw new Error("Fallo en servidor"); }
+            if (metodoPago === 'MercadoPago') {
+                const resMp = await fetch('/api/pagos/mercadopago', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (resMp.ok) {
+                    const linkMercadoPago = await resMp.text();
+                    await fetch(`/api/ventas?metodo=MercadoPago`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    carrito.forEach(item => fetch(`/api/inventario/vender?idProducto=${item.id}&cantidad=1`, { method: 'POST' }));
+                    carrito = []; actualizarCarrito(); modalCarritoCliente.hide(); window.location.href = linkMercadoPago;
+                } else { throw new Error("Fallo en servidor"); }
+            }
         } catch (error) {
             setTimeout(() => { alert(`Simulando redirección a pago para: ${nombre}...\n(Servidor local no detectado)`); carrito = []; actualizarCarrito(); modalCarritoCliente.hide(); btn.innerHTML = contenidoOriginal; btn.disabled = false; }, 1500);
         }
     }
+
+    // ==========================================
+    // SISTEMA DE VOZ INTELIGENTE (CARRITO / GLOBAL)
+    // ==========================================
+    let recVozCliente = null;
+
+    function hablarCliente(texto) {
+        window.speechSynthesis.cancel();
+        const voz = new SpeechSynthesisUtterance(texto);
+        voz.lang = 'es-ES'; voz.rate = 1.0; voz.pitch = 1.1;
+        window.speechSynthesis.speak(voz);
+    }
+
+    function iniciarVozCliente() {
+        if (!('webkitSpeechRecognition' in window)) {
+            alert("Tu navegador no soporta el reconocimiento de voz."); return;
+        }
+
+        const btnMic = document.getElementById('btn-mic-cliente');
+
+        if(recVozCliente) recVozCliente.stop();
+
+        recVozCliente = new webkitSpeechRecognition();
+        recVozCliente.lang = 'es-ES';
+        recVozCliente.continuous = false;
+        recVozCliente.interimResults = false;
+
+        recVozCliente.onstart = function() {
+            btnMic.classList.add('escuchando');
+        };
+
+        recVozCliente.onresult = function(event) {
+            const comandoRaw = event.results[0][0].transcript;
+            procesarComandoCliente(comandoRaw);
+        };
+
+        recVozCliente.onend = function() {
+            btnMic.classList.remove('escuchando');
+        };
+
+        recVozCliente.start();
+    }
+
+    function procesarComandoCliente(comandoRaw) {
+        const normalizar = (str) => {
+            if(!str) return "";
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+        };
+
+        const comando = normalizar(comandoRaw);
+
+        if (comando.includes("pagar") || comando.includes("cobrar") || comando.includes("ver carrito") || comando.includes("terminar")) {
+            if(carrito.length > 0) {
+                abrirModalCarrito();
+                hablarCliente("Revisemos tu selección para proceder a la extracción.");
+            } else {
+                hablarCliente("Tu reserva vital está vacía. Añade elíxires primero.");
+            }
+            return;
+        }
+
+        if (comando.includes("limpiar") || comando.includes("borrar") || comando.includes("vaciar")) {
+            if (carrito.length > 0) {
+                carrito = []; actualizarCarrito(); hablarCliente("Tu reserva ha sido purgada.");
+            }
+            return;
+        }
+
+        let candidatos = productosRaw.filter(p => {
+            if(!p.nombre) return false;
+            return comando.includes(normalizar(p.nombre));
+        });
+
+        candidatos.sort((a, b) => b.nombre.length - a.nombre.length);
+        let productoEncontrado = candidatos[0];
+
+        if (productoEncontrado) {
+            let btnElement = document.querySelector(`#card-${productoEncontrado.id} .btn-extraer`);
+            agregar(productoEncontrado.id, productoEncontrado.nombre, productoEncontrado.precio, btnElement);
+            hablarCliente("Excelente elección. He añadido " + productoEncontrado.nombre + " a tu reserva.");
+        } else {
+            hablarCliente("Lo siento, no pude identificar ese elíxir. Intenta pronunciar su nombre nuevamente.");
+        }
+    }
+
+    // ==========================================
+    // SISTEMA DE VOZ WIZARD (DENTRO DEL MODAL DATOS)
+    // ==========================================
+    let estadoModalVoz = 'LIBRE';
+    let recVozModal = null;
+
+    function hablarModal(texto, siguienteEstado) {
+        window.speechSynthesis.cancel();
+        estadoModalVoz = siguienteEstado || 'LIBRE';
+        const voz = new SpeechSynthesisUtterance(texto);
+        voz.lang = 'es-ES'; voz.rate = 1.0; voz.pitch = 1.1;
+
+        if (siguienteEstado) {
+            voz.onend = function() {
+                setTimeout(iniciarReconocimientoModal, 300);
+            };
+        }
+        window.speechSynthesis.speak(voz);
+    }
+
+    function iniciarVozModal() {
+        hablarModal("Iniciando captura de datos. Por favor, dime tu nombre.", 'ESPERANDO_NOMBRE');
+    }
+
+    function iniciarReconocimientoModal() {
+        if (!('webkitSpeechRecognition' in window)) return;
+        if (recVozModal) recVozModal.stop();
+
+        recVozModal = new webkitSpeechRecognition();
+        recVozModal.lang = 'es-ES';
+        recVozModal.continuous = false;
+        recVozModal.interimResults = false;
+
+        const btnMicModal = document.getElementById('btn-mic-modal');
+
+        recVozModal.onstart = function() {
+            btnMicModal.style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
+            btnMicModal.style.borderColor = '#ff4444';
+            btnMicModal.style.color = '#ff4444';
+            btnMicModal.innerHTML = '<i class="bi bi-mic-fill me-2" style="animation: latidoMic 1s infinite;"></i> ESCUCHANDO...';
+        };
+
+        recVozModal.onresult = function(event) {
+            const comandoRaw = event.results[0][0].transcript;
+            procesarComandoModal(comandoRaw);
+        };
+
+        recVozModal.onend = function() {
+            btnMicModal.style.backgroundColor = 'transparent';
+            btnMicModal.style.borderColor = 'var(--bio-aqua)';
+            btnMicModal.style.color = 'var(--bio-aqua)';
+            btnMicModal.innerHTML = '<i class="bi bi-mic-fill me-2"></i> DICTAR DATOS POR VOZ';
+        };
+
+        recVozModal.start();
+    }
+
+    function procesarComandoModal(comandoRaw) {
+        if (estadoModalVoz === 'ESPERANDO_NOMBRE') {
+            document.getElementById('nombreCliente').value = comandoRaw.toUpperCase();
+            hablarModal("Nombre registrado. ¿Cuál es tu dirección de entrega?", 'ESPERANDO_DIRECCION');
+        }
+        else if (estadoModalVoz === 'ESPERANDO_DIRECCION') {
+            document.getElementById('direccionCliente').value = comandoRaw.toUpperCase();
+            hablarModal("Coordenadas guardadas. Finalmente, díctame tu número de teléfono.", 'ESPERANDO_TELEFONO');
+        }
+        else if (estadoModalVoz === 'ESPERANDO_TELEFONO') {
+            document.getElementById('telefonoCliente').value = comandoRaw.replace(/\s/g, '');
+            // Terminamos el flujo y le advertimos que el pago es manual por seguridad
+            hablarModal("Datos completados. Por protocolos de seguridad, el método de pago debe seleccionarse de forma manual. Por favor, autoriza la transacción en pantalla.");
+            estadoModalVoz = 'LIBRE';
+        }
+    }
+
 </script>
 </body>
 </html>

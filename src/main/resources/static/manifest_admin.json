@@ -1,0 +1,18 @@
+{
+  "name": "admin",
+  "short_name": "admin",
+  "id": "/admin-app",
+  "start_url": "/admin.html",
+  "display": "standalone",
+  "background_color": "#010308",
+  "theme_color": "#ff00ea",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://res.cloudinary.com/doi0o3hlr/image/upload/v1774921160/Gemini_Generated_Image_e1uzsae1uzsae1uz_efew8u.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

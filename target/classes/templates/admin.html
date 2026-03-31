@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAÍCES - Nave de Control Pandora</title>
+
+    <link rel="manifest" href="/manifest_admin.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#010308">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <style>
+        :root {
+            --bg-abismo: #010308;
+            --panel-cristal: rgba(4, 15, 30, 0.85);
+            --p-cyan: #00e5ff;
+            --p-magenta: #ff00ea;
+            --p-bio-green: #00ffa6;
+            --p-warning: #ffdd00;
+            --p-danger: #ff0055;
+            --text-blanco: #ffffff;
+
+            --border-glow: 0 0 15px rgba(0, 229, 255, 0.4);
+            --magenta-glow: 0 0 20px rgba(255, 0, 234, 0.5);
+            --green-glow: 0 0 15px rgba(0, 255, 166, 0.5);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--bg-abismo);
+            background-image: linear-gradient(rgba(0, 5, 2, 0.93), rgba(0, 5, 2, 0.98)), url('https://res.cloudinary.com/doi0o3hlr/image/upload/v1774759858/Gemini_Generated_Image_2ocvdw2ocvdw2ocv_ixqdsz.png');
+            background-size: cover; background-attachment: fixed;
+            color: #ffffff; min-height: 100vh; overflow-x: hidden;
+        }
+
+        .hex-grid {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: url('data:image/svg+xml;utf8,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><path d="M30 0l25.98 15v30L30 60 4.02 45V15z" fill="none" stroke="rgba(0,255,166,0.03)" stroke-width="1"/></svg>');
+            z-index: -3; pointer-events: none;
+        }
+
+        .spores {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: radial-gradient(circle, var(--p-eco-green) 1.5px, transparent 2px), radial-gradient(circle, var(--p-cyan) 1px, transparent 2px);
+            background-size: 150px 150px, 200px 200px; background-position: 0 0, 50px 50px;
+            animation: floatSpores 40s linear infinite; opacity: 0.25; z-index: -2; pointer-events: none;
+        }
+        @keyframes floatSpores { 100% { background-position: 1000px 1000px, -1500px 500px; } }
+
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,255,166,0.03) 50%, rgba(0,255,166,0.03));
+            background-size: 100% 8px; z-index: 9999; pointer-events: none;
+        }
+
+        .glitch-text { animation: glitch 3s infinite alternate; position: relative; display: inline-block; }
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 var(--p-magenta), -2px 0 var(--p-cyan); }
+            5% { text-shadow: -2px 0 var(--p-magenta), 2px 0 var(--p-cyan); }
+            10% { text-shadow: 2px 0 var(--p-magenta), -2px 0 var(--p-cyan); }
+            15% { text-shadow: 0 0 var(--p-eco-green); }
+            100% { text-shadow: 0 0 15px var(--p-eco-green); }
+        }
+
+        .glitch-critical { animation: glitch-critical 0.3s infinite; }
+        @keyframes glitch-critical {
+            0% { transform: translate(0); text-shadow: 0 0 10px red; }
+            20% { transform: translate(-2px, 1px); text-shadow: 2px 0 blue; }
+            40% { transform: translate(2px, -1px); text-shadow: -2px 0 red; }
+            60% { transform: translate(-1px, 2px); text-shadow: 0 0 20px red; }
+            80% { transform: translate(1px, -2px); text-shadow: 2px 0 yellow; }
+            100% { transform: translate(0); text-shadow: 0 0 10px red; }
+        }
+
+        /* --- LOGIN NAVE PANDORA --- */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #00140a 0%, #000000 100%);
+            z-index: 10000; display: flex; justify-content: center; align-items: center;
+            transition: opacity 1s ease-out;
+        }
+        .login-box {
+            background: rgba(0, 10, 5, 0.85); border: 1px solid var(--p-eco-green);
+            padding: 50px; border-radius: 20px; box-shadow: 0 0 40px rgba(0,255,166,0.2), inset 0 0 20px rgba(0,255,166,0.1);
+            text-align: center; width: 90%; max-width: 420px; backdrop-filter: blur(15px);
+            position: relative; overflow: hidden;
+        }
+        .input-login {
+            background: rgba(0,0,0,0.8) !important; border: 1px solid var(--p-cyan);
+            color: var(--p-cyan) !important; font-family: 'Orbitron'; text-align: center;
+            padding: 15px; border-radius: 8px; width: 100%; margin-bottom: 20px; letter-spacing: 3px; font-weight: 900;
+        }
+        .input-login:focus { outline: none; box-shadow: var(--resplandor-cyan); border-color: var(--p-magenta); color: var(--p-magenta) !important;}
+
+        .btn-bio {
+            background: linear-gradient(90deg, var(--p-cyan), var(--p-eco-green));
+            border: none; color: #000; font-family: 'Orbitron'; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 3px; border-radius: 8px; padding: 15px;
+            box-shadow: var(--resplandor-eco); transition: var(--transition); cursor: pointer;
+        }
+        .btn-bio:hover { box-shadow: 0 0 30px var(--p-eco-green); transform: translateY(-2px); color: #fff;}
+
+        /* --- DASHBOARD UI --- */
+        #app-dashboard { display: none; opacity: 0; transition: opacity 1s ease-in; position: relative; z-index: 10; }
+        .navbar-raices { border-bottom: 2px solid var(--p-cyan); padding: 2rem; background: rgba(0, 5, 10, 0.95); box-shadow: var(--border-glow); position: relative; }
+
+        .nav-pills .nav-link {
+            color: rgba(255, 255, 255, 0.6); font-family: 'Orbitron'; border-radius: 12px !important; margin: 0 5px;
+            border: 1px solid rgba(0, 229, 255, 0.2); text-transform: uppercase; font-size: 0.9rem; font-weight: 600; background: rgba(0,0,0,0.5);
+        }
+        .nav-pills .nav-link:hover { color: #fff; border-color: var(--p-cyan); background: rgba(0, 229, 255, 0.1); }
+        .nav-pills .nav-link.active { background: rgba(255, 0, 234, 0.15); color: #fff; border: 1px solid var(--p-magenta); box-shadow: var(--magenta-glow); font-weight: 900; }
+
+        .table-container { background: var(--panel-cristal); border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 15px; padding: 30px; margin-bottom: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.9); }
+
+        .table { --bs-table-bg: transparent; --bs-table-color: var(--text-blanco); border-collapse: separate; border-spacing: 0 10px; margin-top: 10px; }
+        .table>:not(caption)>*>* { border-bottom-width: 0px !important; background-color: transparent !important; }
+        .table-dark th { color: var(--p-cyan) !important; font-family: 'Orbitron'; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; border-bottom: 2px solid rgba(0, 229, 255, 0.4) !important; padding-bottom: 15px; text-shadow: 0 0 10px rgba(0, 229, 255, 0.5); }
+
+        tbody tr { background: #00050d !important; box-shadow: 0 4px 10px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(0, 229, 255, 0.2); border-radius: 10px; transition: var(--transition); }
+        tbody tr:hover { background: #021224 !important; box-shadow: 0 5px 15px rgba(0,0,0,0.9), inset 0 0 15px rgba(0, 229, 255, 0.3); transform: scale(1.01); }
+        tbody td { color: #ffffff !important; font-size: 1rem !important; font-weight: 600 !important; padding: 15px !important; vertical-align: middle; }
+        tbody tr td:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+        tbody tr td:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+
+        .text-money-green { color: var(--p-bio-green) !important; font-weight: 900 !important; text-shadow: var(--green-glow); font-size: 1.2rem;}
+        .form-label-neon { font-family: 'Orbitron'; font-size: 0.85rem; color: var(--p-cyan); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; display: block; text-shadow: 0 0 8px rgba(0,229,255,0.6); }
+
+        .form-control, .form-select { background-color: #000 !important; border: 1px solid var(--p-cyan); color: #fff !important; font-family: 'Rajdhani'; font-weight: 700; font-size: 1.1rem; border-radius: 8px; padding: 12px 15px; }
+        .form-control:focus, .form-select:focus { border-color: var(--p-magenta); box-shadow: var(--magenta-glow); }
+        .locked-select { background-color: rgba(0,0,0,0.9) !important; border-color: #444 !important; color: #888 !important; cursor: not-allowed; }
+
+        /* BARRAS DE ESTADO BIOLÓGICO (PRODUCCIÓN) */
+        .bio-indicator { width: 100%; height: 18px; background: #000; border: 1px solid rgba(0,255,166,0.3); border-radius: 10px; overflow: hidden; box-shadow: inset 0 0 10px #000; position: relative; }
+        .bio-fill { height: 100%; width: 0%; transition: width 1.5s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .bio-fill.optimal { background: linear-gradient(90deg, var(--p-cyan), var(--p-eco-green)); box-shadow: 0 0 20px var(--p-eco-green); animation: pulse-optimal 2s infinite alternate;}
+        .bio-fill.warning { background: linear-gradient(90deg, #ff8800, var(--p-warning)); box-shadow: 0 0 20px var(--p-warning); animation: pulse-warning 1s infinite alternate;}
+        .bio-fill.critical { background: linear-gradient(90deg, #aa0000, var(--p-danger)); box-shadow: 0 0 25px var(--p-danger); animation: glitch-critical 0.2s infinite;}
+
+        @keyframes pulse-optimal { 0% { opacity: 0.8; } 100% { opacity: 1; box-shadow: 0 0 30px var(--p-eco-green); } }
+        @keyframes pulse-warning { 0% { opacity: 0.6; } 100% { opacity: 1; box-shadow: 0 0 30px var(--p-warning); } }
+
+        /* INPUTS MATRIZ DE CATÁLOGO */
+        .input-matriz {
+            background: transparent !important; border: 1px dashed rgba(0, 229, 255, 0.3) !important;
+            color: #fff !important; border-radius: 6px; padding: 8px; font-family: 'Rajdhani'; transition: var(--transition);
+        }
+        .input-matriz:focus {
+            background: rgba(0, 0, 0, 0.8) !important; border: 1px solid var(--p-bio-green) !important;
+            box-shadow: var(--green-glow) !important; outline: none;
+        }
+        .pointer-events-none { pointer-events: none; resize: none; opacity: 0.8; border-color: transparent !important; }
+
+        .badge-categoria { border: 1px solid var(--p-magenta); color: var(--text-blanco); padding: 6px 15px; font-size: 0.85rem; font-family: 'Orbitron'; border-radius: 20px; font-weight: bold; background: rgba(255, 0, 234, 0.2); text-shadow: 0 0 5px var(--p-magenta);}
+        .img-preview { width: 70px; height: 70px; object-fit: cover; border: 2px solid var(--p-cyan); border-radius: 10px; box-shadow: var(--border-glow); }
+
+        .processing-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 5, 2, 0.95); z-index: 10500; display: none; flex-direction: column; justify-content: center; align-items: center; backdrop-filter: blur(20px); }
+        .dna-core { width: 150px; height: 150px; border: 4px solid transparent; border-top-color: var(--p-eco-green); border-bottom-color: var(--p-cyan); border-radius: 50%; animation: spin-bio 1.5s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite; box-shadow: 0 0 50px rgba(0, 255, 166, 0.4), inset 0 0 50px rgba(0, 229, 255, 0.4); position: relative;}
+        .dna-core::after { content: ''; position: absolute; top: 15px; left: 15px; right: 15px; bottom: 15px; border: 4px solid transparent; border-left-color: var(--p-magenta); border-right-color: var(--p-warning); border-radius: 50%; animation: spin-bio 1s linear infinite reverse; }
+        @keyframes spin-bio { 100% { transform: rotate(360deg); } }
+
+        .upload-zone { border: 2px dashed var(--p-cyan); border-radius: 15px; background: rgba(0, 0, 0, 0.6); padding: 40px; text-align: center; cursor: pointer; transition: var(--transition); }
+        .upload-zone:hover, .upload-zone.dragover { background: rgba(0, 229, 255, 0.1); border-color: var(--p-magenta); box-shadow: inset 0 0 40px rgba(255,0,234,0.1), var(--magenta-glow); transform: scale(1.01); }
+        .upload-zone i { font-size: 4rem; color: var(--p-magenta); text-shadow: var(--magenta-glow); transition: var(--transition); }
+        .upload-zone:hover i { transform: translateY(-10px) scale(1.1); color: var(--p-cyan); text-shadow: var(--border-glow);}
+
+        /* ESTILOS DEL BOTÓN DEL MICRÓFONO PARA ADMIN */
+        .btn-mic-flotante {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: rgba(4, 15, 30, 0.9);
+            border: 2px solid var(--p-magenta);
+            color: var(--p-magenta);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 9999;
+            box-shadow: 0 0 20px rgba(255, 0, 234, 0.4);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .btn-mic-flotante:hover {
+            transform: scale(1.1);
+            background: var(--p-magenta);
+            color: #000;
+            box-shadow: 0 0 30px rgba(255, 0, 234, 0.8);
+        }
+        .btn-mic-flotante.escuchando {
+            animation: latidoMicAdmin 1s infinite;
+            border-color: var(--p-cyan);
+            color: var(--p-cyan);
+            box-shadow: 0 0 30px var(--p-cyan);
+        }
+        @keyframes latidoMicAdmin {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body onclick="initAudio()" onkeydown="initAudio()">
+
+<div class="hex-grid"></div>
+<div class="spores"></div>
+<div class="scanlines"></div>
+
+<button id="btn-mic-admin" class="btn-mic-flotante" onclick="iniciarVozAdmin()" style="display: none;" title="Asistente de Inteligencia Bio-Tech">
+    <i class="bi bi-mic"></i>
+</button>
+
+<div class="processing-overlay" id="overlay-ensamblaje">
+    <div class="dna-core mb-5"></div>
+    <h2 class="glitch-text mb-2" style="font-family: 'Orbitron'; font-weight: 900; font-size: 3rem; color: var(--p-eco-green); letter-spacing: 10px;">SINTETIZANDO ADN...</h2>
+    <p style="font-family: 'Share Tech Mono'; color: var(--p-cyan); font-size: 1.5rem; letter-spacing: 3px;">CALIBRANDO CICLO DE VIDA ORGÁNICA</p>
+    <div style="width: 300px; height: 4px; background: #000; border-radius: 2px; overflow: hidden; margin-top: 20px;">
+        <div style="height: 100%; background: var(--p-magenta); width: 100%; animation: loading-laser 2s infinite;"></div>
+    </div>
+</div>
+<style>@keyframes loading-laser { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }</style>
+
+<div id="login-screen">
+    <div class="login-box" id="login-form">
+        <h1 class="eco-text glitch-text">RAÍCES</h1>
+        <p class="mb-4 mt-1 fw-bold" style="color: var(--p-cyan); font-family: 'Rajdhani'; letter-spacing: 6px; text-transform: uppercase; text-shadow: var(--border-glow);">Nave de Control Pandora</p>
+        <label class="form-label-neon mb-3 d-block text-center">[ ENLACE NEURONAL REQUERIDO ]</label>
+        <input type="text" id="input-usuario" class="input-login" placeholder="ID OPERADOR" autocomplete="off" oninput="playSound('hover')">
+        <input type="password" id="input-clave" class="input-login" placeholder="CLAVE" autocomplete="off" oninput="playSound('hover')" onkeypress="if(event.key === 'Enter') validarAcceso()">
+        <button class="btn btn-bio w-100 mt-4" onclick="validarAcceso()">ESTABLECER ENLACE</button>
+        <p id="error-login" class="text-danger mt-3 fw-bold" style="display:none; font-family:'Orbitron'; text-shadow: 0 0 10px red;">CREDENCIALES INVÁLIDAS</p>
+    </div>
+</div>
+
+<div id="app-dashboard">
+    <div class="navbar-raices text-center">
+        <button id="btn-descargar-app" class="btn btn-bio position-absolute top-0 end-0 m-4" style="display: none; z-index: 1000;" onclick="instalarAppPWA()">
+            <i class="bi bi-cloud-arrow-down-fill me-2 fs-5"></i> INSTALAR NODO
+        </button>
+
+        <h1 class="eco-text glitch-text" style="font-size: 3rem; letter-spacing: 12px; margin-bottom: 0;">RAÍCES</h1>
+        <p class="mt-2 mb-0 fw-bold" style="color: var(--p-magenta); font-family:'Orbitron'; font-size: 1rem; letter-spacing: 4px; text-shadow: var(--magenta-glow);">
+            SISTEMA BIO-TECH v5.0 // <span id="label-rol" class="text-white"></span>
+        </p>
+    </div>
+
+    <div class="container-fluid px-4 pb-5 mt-4">
+        <ul class="nav nav-pills nav-fill mb-4 table-container p-3" id="pills-tab" role="tablist">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-produccion" type="button" onclick="cargarProduccion(); playSound('click')"><i class="bi bi-droplet-half me-1"></i> GÉNESIS (PRODUCCIÓN)</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-ventas" type="button" onclick="cargarVentas(); playSound('click')"><i class="bi bi-wallet2 me-1"></i> TESORERÍA</button></li>
+            <li class="nav-item" id="nav-crm" style="display:block;"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-crm" type="button" onclick="cargarCRM(); playSound('click')"><i class="bi bi-people-fill me-1"></i> RED CLIENTES</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-inventario" type="button" onclick="cargarInsumos(); playSound('click')"><i class="bi bi-boxes me-1"></i> BODEGA BOTÁNICA</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-recetas" type="button" onclick="prepararRecetas(); playSound('click')"><i class="bi bi-flask me-1"></i> FÓRMULAS</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-precios" type="button" onclick="cargarCatalogo(); playSound('click')"><i class="bi bi-hdd-network me-1"></i> MATRIZ TOTAL</button></li>
+        </ul>
+
+        <div class="tab-content" id="pills-tabContent">
+
+            <div class="tab-pane fade show active" id="tab-produccion" role="tabpanel">
+                <div class="table-container mb-4" style="border-top: 3px solid var(--p-cyan);">
+                    <h5 class="mb-4 fw-bold font-orbitron" style="color: var(--p-cyan); text-shadow: var(--border-glow); font-size: 1.5rem;"><i class="bi bi-dna"></i> SINTETIZADOR GENÉTICO (ALTA DE STOCK)</h5>
+                    <div class="row g-3 align-items-end position-relative" style="z-index: 1;">
+                        <div class="col-md-2">
+                            <label class="form-label-neon">NODO BASE</label>
+                            <select id="prod-sucursal" class="form-select auth-select" onchange="cargarProductosSelect(); playSound('click')">
+                                <option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label-neon">ELIXIR A SINTETIZAR</label>
+                            <select id="prod-item" class="form-select"></select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon text-magenta" style="color: var(--p-magenta);">CICLO DE GÉNESIS (ELAB)</label>
+                            <input type="date" id="prod-fecha" class="form-control text-center text-white fw-bold" style="border-color: var(--p-magenta);">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon">LOTE (UNIDADES)</label>
+                            <input type="number" id="prod-cantidad" class="form-control text-center text-white fw-bold fs-4" placeholder="0">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-bio w-100 h-100 py-2 d-flex flex-column align-items-center justify-content-center" onclick="procesarEnsamblaje()">
+                                <i class="bi bi-fingerprint fs-2 mb-1"></i>
+                                <span style="font-size: 0.9rem; font-weight: 900;">PROCESAR ADN</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container p-4">
+                    <h5 class="text-money-green mb-4 fw-bold font-orbitron fs-4"><i class="bi bi-activity"></i> RESERVA VITAL Y ESTABILIDAD ORGÁNICA</h5>
+                    <div class="table-responsive">
+                        <table class="table text-center align-middle" style="min-width: 900px;">
+                            <thead class="table-dark">
+                            <tr>
+                                <th style="width: 25%;">ELIXIR NATURAL</th>
+                                <th style="width: 10%;">STOCK</th>
+                                <th style="width: 15%;">GÉNESIS (ELAB)</th>
+                                <th style="width: 15%;">COLAPSO (VENC)</th>
+                                <th style="width: 35%;">BIOMARCADOR (ESTADO)</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tabla-produccion"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-ventas" role="tabpanel">
+                <div class="row g-4">
+                    <div class="col-lg-3">
+                        <div id="panel-stat-col" class="table-container p-4 mb-4" style="border-top: 3px solid #ffdd00;">
+                            <h6 class="form-label-neon" style="color:#ffdd00">BIOSFERA COLOMBIA</h6>
+                            <span class="fs-2 text-money-green">$ <span id="caja-col">0</span></span>
+                        </div>
+                        <div id="panel-stat-chi" class="table-container p-4 mb-4" style="border-top: 3px solid #ff0055;">
+                            <h6 class="form-label-neon" style="color:#ff0055">BIOSFERA CHILE</h6>
+                            <span class="fs-2 text-money-green">$ <span id="caja-chi">0</span></span>
+                        </div>
+                        <div id="panel-stat-esp" class="table-container p-4 mb-4" style="border-top: 3px solid var(--p-cyan);">
+                            <h6 class="form-label-neon" style="color:var(--p-cyan)">BIOSFERA ESPAÑA</h6>
+                            <span class="fs-2 text-money-green">€ <span id="caja-esp">0</span></span>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div class="table-container">
+                            <h5 class="mb-4 fw-bold font-orbitron" style="color: var(--p-cyan); text-shadow: var(--border-glow); letter-spacing: 2px;">FILA DE PEDIDOS EN PROCESO</h5>
+                            <div class="table-responsive">
+                                <table class="table text-center align-middle">
+                                    <thead class="table-dark"><tr><th>OP_ID</th><th>NODO_ORIGEN</th><th>VALOR_NETO</th><th>STATUS</th><th>ACCIÓN_COMANDO</th></tr></thead>
+                                    <tbody id="tabla-ventas"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-crm" role="tabpanel">
+                <div class="table-container mb-4" style="border-top: 3px solid var(--p-magenta);">
+                    <h5 class="mb-4 fw-bold font-orbitron" style="color: var(--p-magenta); text-shadow: var(--magenta-glow);"><i class="bi bi-person-plus"></i> REGISTRO DE NUEVO CLIENTE VIP</h5>
+                    <div class="row g-3">
+                        <input type="hidden" id="crm-id">
+                        <div class="col-md-3"><label class="form-label-neon">Identificación</label><input type="text" id="crm-nombre" class="form-control" placeholder="Nombre completo"></div>
+                        <div class="col-md-3"><label class="form-label-neon">Enlace (Teléfono)</label><input type="text" id="crm-tel" class="form-control" placeholder="WhatsApp"></div>
+                        <div class="col-md-3"><label class="form-label-neon">Coordenadas</label><input type="text" id="crm-dir" class="form-control" placeholder="Dirección de envío"></div>
+                        <div class="col-md-2"><label class="form-label-neon">Nodo Base</label><select id="crm-nodo" class="form-select"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
+                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" onclick="guardarCliente()"><i class="bi bi-hdd-network fs-4"></i></button></div>
+                    </div>
+                </div>
+                <div class="table-container p-0 border-0 bg-transparent box-shadow-none">
+                    <div class="table-responsive">
+                        <table class="table text-center align-middle m-0">
+                            <thead class="table-dark"><tr><th>IDENTIFICACIÓN</th><th>ENLACE COMUNICACIÓN</th><th>COORDENADAS</th><th>NODO_BASE</th><th>ADMINISTRAR</th></tr></thead>
+                            <tbody id="tabla-crm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-inventario" role="tabpanel">
+                <div class="table-container mb-4" style="border-top: 3px solid var(--p-bio-green);">
+                    <h5 class="text-money-green mb-4 fw-bold font-orbitron"><i class="bi bi-tree"></i> REGISTRO BOTÁNICO: MATERIA PRIMA (PULPAS)</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4"><label class="form-label-neon" style="color:var(--p-bio-green)">Cód. Botánico</label><input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Pulpa de Mango"></div>
+                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Métrica</label><select id="ins-unidad" class="form-select"><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
+                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control"></div>
+                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
+                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background:var(--p-bio-green); color:#000;" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg fs-4"></i></button></div>
+                    </div>
+                </div>
+
+                <div class="table-container mb-4" style="border-top: 3px solid var(--p-cyan);">
+                    <h5 style="color: var(--p-cyan); text-shadow: var(--border-glow);" class="mb-4 fw-bold font-orbitron"><i class="bi bi-cup-straw"></i> SUMINISTROS FÍSICOS: VASOS Y PACKAGING</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4"><label class="form-label-neon">Elemento</label><input type="text" id="vaso-nombre" class="form-control"></div>
+                        <div class="col-md-2"><label class="form-label-neon">Métrica</label><select id="vaso-unidad" class="form-select"><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
+                        <div class="col-md-2"><label class="form-label-neon">Volumen</label><input type="number" id="vaso-stock" class="form-control"></div>
+                        <div class="col-md-3"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
+                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-cyan); color: #000;" onclick="guardarInsumo('vasos')"><i class="bi bi-plus-lg fs-4"></i></button></div>
+                    </div>
+                </div>
+
+                <div class="table-container p-0 border-0 bg-transparent box-shadow-none">
+                    <div class="table-responsive">
+                        <table class="table text-center align-middle m-0">
+                            <thead class="table-dark"><tr><th>ELEMENTO_ID</th><th>FAMILIA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>RECICLAR</th></tr></thead>
+                            <tbody id="tabla-insumos"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-recetas" role="tabpanel">
+                <div class="table-container mb-4" style="border-top: 3px solid #fff;">
+                    <h5 class="text-white mb-4 fw-bold font-orbitron" style="text-shadow: 0 0 10px #fff;"><i class="bi bi-flower3"></i> ESTRUCTURADOR DE FÓRMULAS NATURALES</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label-neon text-white">NODO ESPECÍFICO</label>
+                            <select id="filtro-sucursal-recetas" class="form-select auth-select border-white" onchange="prepararRecetas()">
+                                <option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4"><label class="form-label-neon text-white">ELIXIR FINAL (output)</label><select id="rec-producto" class="form-select border-white" onchange="cargarTablaReceta()"></select></div>
+                        <div class="col-md-4"><label class="form-label-neon text-white">COMPONENTE A INTEGRAR (input)</label><select id="rec-insumo" class="form-select border-white"></select></div>
+                    </div>
+                    <div class="row g-3 mt-2 align-items-end">
+                        <div class="col-md-8"><label class="form-label-neon text-white">DOSIS POR UNIDAD (gr/und)</label><input type="number" id="rec-cantidad" class="form-control border-white fs-4" placeholder="0.00"></div>
+                        <div class="col-md-4"><button class="btn btn-bio w-100 py-3 bg-white text-black" onclick="guardarReceta()"><i class="bi bi-link-45deg fs-4"></i> FUSIONAR COMPONENTE</button></div>
+                    </div>
+                </div>
+                <div class="table-container p-4">
+                    <h6 class="form-label-neon mb-4 fs-5 text-center text-white">BIOLOGÍA DE LA FÓRMULA ACTIVA</h6>
+                    <table class="table text-center align-middle"><thead class="table-dark"><tr><th>EXTRACTO / MATERIAL</th><th>DOSIS_REQUERIDA</th><th>SEPARAR</th></tr></thead><tbody id="tabla-vista-formula"></tbody></table>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-precios" role="tabpanel">
+                <div class="table-container mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold font-orbitron m-0 fs-3" style="color:var(--p-magenta); text-shadow: var(--magenta-glow);"><i class="bi bi-hdd-network"></i> MATRIZ DE CONTROL TOTAL</h5>
+                        <select id="filtro-sucursal-catalogo" class="form-select auth-select w-auto fw-bold fs-5" style="color:var(--p-cyan) !important; border: 2px solid var(--p-cyan);" onchange="cargarCatalogo()">
+                            <option value="Colombia">NODO COLOMBIA</option><option value="Chile">NODO CHILE</option><option value="España">NODO ESPAÑA</option>
+                        </select>
+                    </div>
+
+                    <div class="upload-zone" id="drop-zone" onclick="document.getElementById('massive-upload').click()">
+                        <i class="bi bi-filetype-csv" id="upload-icon"></i>
+                        <h3 class="mt-3 font-orbitron fw-bold text-white" style="letter-spacing: 2px; text-shadow: 0 0 10px #fff;">PORTAL DE CARGA MASIVA (CSV)</h3>
+                        <p class="text-white fs-5 font-rajdhani mb-0">Haz clic o arrastra tu archivo <b>.csv</b> para inyectar datos de forma masiva a la matriz.</p>
+                        <input type="file" id="massive-upload" accept=".csv" class="d-none" onchange="handleMassiveUpload(event)">
+                        <div id="upload-progress-container" class="mt-4" style="display:none; position: relative; z-index: 5;">
+                            <div class="progress" style="height: 20px; background: #000; border: 2px solid var(--p-magenta); border-radius: 10px; overflow: hidden; box-shadow: var(--magenta-glow);">
+                                <div id="upload-bar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%; background: linear-gradient(90deg, var(--p-magenta), var(--p-cyan)); transition: width 0.3s ease;"></div>
+                            </div>
+                            <p id="upload-status" class="mt-2 text-white font-orbitron fs-5 tracking-widest">TRANSMITIENDO DATOS...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container p-0 border-0 bg-transparent box-shadow-none">
+                    <div class="table-responsive">
+                        <table class="table text-center align-middle m-0" style="min-width: 1100px;">
+                            <thead class="table-dark">
+                            <tr>
+                                <th style="width: 80px;">IMG</th>
+                                <th>URL IMAGEN</th>
+                                <th>ID_BOTÁNICO</th>
+                                <th>CATEGORÍA</th>
+                                <th>BIOLOGÍA (DESCRIPCIÓN)</th>
+                                <th>NODO_BASE</th>
+                                <th>VALOR</th>
+                                <th>COMANDOS</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tabla-catalogo"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // ==========================================
+    // MOTOR DE AUDIO SCI-FI EXTREMO (Web Audio API)
+    // ==========================================
+    let audioCtx = null;
+    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if(audioCtx.state === 'suspended') audioCtx.resume(); }
+
+    function playSound(type) {
+        if (!audioCtx) return;
+        const now = audioCtx.currentTime; const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+
+        if (type === 'click') {
+            osc.type = 'square'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+            gain.gain.setValueAtTime(0.05, now); gain.gain.linearRampToValueAtTime(0, now + 0.1); osc.start(); osc.stop(now + 0.1);
+        } else if (type === 'hover') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(1200, now); osc.frequency.exponentialRampToValueAtTime(1800, now + 0.05);
+            gain.gain.setValueAtTime(0.01, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05); osc.start(now); osc.stop(now + 0.05);
+        } else if (type === 'magic') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.exponentialRampToValueAtTime(800, now + 2);
+            gain.gain.setValueAtTime(0, now); gain.gain.linearRampToValueAtTime(0.1, now + 1); gain.gain.linearRampToValueAtTime(0, now + 2.5);
+            osc.start(); osc.stop(now + 2.5);
+
+            const osc2 = audioCtx.createOscillator(); const gain2 = audioCtx.createGain();
+            osc2.connect(gain2); gain2.connect(audioCtx.destination);
+            osc2.type = 'sine'; osc2.frequency.setValueAtTime(800, now); osc2.frequency.exponentialRampToValueAtTime(200, now + 2.5);
+            gain2.gain.setValueAtTime(0.05, now); gain2.gain.linearRampToValueAtTime(0, now + 2.5);
+            osc2.start(); osc2.stop(now + 2.5);
+        } else if (type === 'success') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, now);
+            gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 1);
+            osc.start(); osc.stop(now + 1);
+
+            const osc3 = audioCtx.createOscillator(); const gain3 = audioCtx.createGain();
+            osc3.connect(gain3); gain3.connect(audioCtx.destination);
+            osc3.type = 'sine'; osc3.frequency.setValueAtTime(659.25, now + 0.1);
+            gain3.gain.setValueAtTime(0.1, now + 0.1); gain3.gain.exponentialRampToValueAtTime(0.01, now + 1.1);
+            osc3.start(now + 0.1); osc3.stop(now + 1.1);
+        } else if (type === 'error') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(50, now + 0.4);
+            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.4); osc.start(); osc.stop(now + 0.4);
+        }
+    }
+
+    // --- VARIABLES GLOBALES PARA EL ASISTENTE DE VOZ ---
+    let lotesProduccion = JSON.parse(localStorage.getItem('raices_lotes_adn')) || {};
+    let catalogoGlobal = [];
+    let insMem = [];
+    let produccionGlobal = [];
+
+    // --- LÓGICA DE USUARIOS ---
+    let rolUsuario = null; let sucursalAdmin = null; let baseCRM = JSON.parse(localStorage.getItem('raices_crm')) || [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const inputFecha = document.getElementById('prod-fecha');
+        if(inputFecha) inputFecha.valueAsDate = new Date();
+    });
+
+    const normalizarStr = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : '';
+
+    function validarAcceso() {
+        playSound('magic');
+        const userRaw = document.getElementById('input-usuario').value.trim();
+        const pass = document.getElementById('input-clave').value.trim();
+        const userNorm = normalizarStr(userRaw);
+
+        let rol = null, etiqueta = null, sucursalBase = null, msgVoz = "";
+
+        if(userNorm === 'admin' && pass === '1234') {
+            rol = 'SUPREMO'; etiqueta = 'COMANDANTE SUPREMO';
+            msgVoz = "Bienvenido Comandante Supremo. Todos los módulos habilitados y enlace neuronal estable.";
+        }
+        else if(userNorm === 'linda mama spa' && pass === '3002') {
+            rol = 'ADMIN'; etiqueta = 'ADMIN CHILE'; sucursalBase = 'Chile';
+            msgVoz = "Linda mamá spa y raíces, la combinación perfecta.";
+        }
+        else if(userNorm === 'administrador juan' && pass === '1807') {
+            rol = 'ADMIN'; etiqueta = 'ADMIN ESPAÑA'; sucursalBase = 'España';
+            msgVoz = "Juan eres el mejor, nunca lo olvides, y todo lo que el ser humano se proponga, lo puede lograr.";
+        }
+        else if(userNorm === 'carolina' && pass === '2907') {
+            rol = 'ADMIN'; etiqueta = 'ADMIN ESPAÑA'; sucursalBase = 'España';
+            msgVoz = "Bienvenida Carolina, que tengas un excelente turno operando en Raíces.";
+        }
+        else if(userNorm === 'hermana' && pass === '1307') {
+            rol = 'ADMIN'; etiqueta = 'ADMIN ESPAÑA'; sucursalBase = 'España';
+            msgVoz = "Hola Hermana, lista para iniciar la operación con la mejor energía.";
+        }
+        else { playSound('error'); document.getElementById('error-login').style.display='block'; return; }
+
+        playSound('success'); rolUsuario = rol; sucursalAdmin = sucursalBase;
+
+        if ('speechSynthesis' in window && msgVoz !== "") {
+            const voz = new SpeechSynthesisUtterance(msgVoz);
+            voz.lang = 'es-ES';
+            voz.rate = 1.0;
+            window.speechSynthesis.speak(voz);
+        }
+
+        document.getElementById('login-screen').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-dashboard').style.display = 'block';
+            setTimeout(() => { document.getElementById('app-dashboard').style.opacity = '1'; }, 50);
+            document.getElementById('label-rol').innerText = etiqueta;
+
+            // MOSTRAR MICRÓFONO AL ENTRAR
+            if('webkitSpeechRecognition' in window) {
+                document.getElementById('btn-mic-admin').style.display = 'flex';
+            }
+
+            aplicarSeguridad();
+            cargarProduccion();
+            cargarVentas(); // Para tener data lista para el asistente
+            cargarInsumos(); // Para tener data lista para el asistente
+        }, 800);
+    }
+
+    // =======================================================
+    // CIFRADO DE PERMISOS ESTRICTOS (RBAC BLINDADO)
+    // =======================================================
+    function aplicarSeguridad() {
+        const esSupremo = (rolUsuario === 'SUPREMO');
+
+        const navCrm = document.getElementById('nav-crm');
+        if (navCrm) navCrm.style.display = 'block';
+        cargarCRM();
+
+        const dropZone = document.getElementById('drop-zone');
+        if (dropZone) dropZone.style.display = esSupremo ? 'block' : 'none';
+
+        const selectores = ['prod-sucursal', 'ins-sucursal', 'vaso-sucursal', 'filtro-sucursal-catalogo', 'filtro-sucursal-recetas', 'crm-nodo'];
+        selectores.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                if (!esSupremo) {
+                    const sucAdminNorm = normalizarStr(sucursalAdmin);
+                    for(let i=0; i<el.options.length; i++) {
+                        if(normalizarStr(el.options[i].value).includes(sucAdminNorm)) {
+                            el.selectedIndex = i;
+                            break;
+                        }
+                    }
+                    el.disabled = true;
+                    el.classList.add('locked-select');
+                } else {
+                    el.disabled = false;
+                    el.classList.remove('locked-select');
+                }
+            }
+        });
+
+        if (!esSupremo) {
+            const pCol = document.getElementById('panel-stat-col');
+            const pChi = document.getElementById('panel-stat-chi');
+            const pEsp = document.getElementById('panel-stat-esp');
+
+            if (sucursalAdmin !== 'Colombia' && pCol) pCol.style.display = 'none';
+            if (sucursalAdmin !== 'Chile' && pChi) pChi.style.display = 'none';
+            if (sucursalAdmin !== 'España' && pEsp) pEsp.style.display = 'none';
+        } else {
+            let p1 = document.getElementById('panel-stat-col'); if(p1) p1.style.display = 'block';
+            let p2 = document.getElementById('panel-stat-chi'); if(p2) p2.style.display = 'block';
+            let p3 = document.getElementById('panel-stat-esp'); if(p3) p3.style.display = 'block';
+        }
+    }
+
+    // =======================================================
+    // SINTETIZADOR GENÉTICO (PRODUCCIÓN CON FECHAS)
+    // =======================================================
+    async function cargarProductosSelect() {
+        try {
+            const suc = document.getElementById('prod-sucursal').value;
+            const res = await fetch('/api/productos');
+            catalogoGlobal = await res.json();
+            const select = document.getElementById('prod-item');
+            select.innerHTML = '<option value="">-- Seleccione Genética --</option>';
+            catalogoGlobal.forEach(p => { if(p.sucursal === suc) { select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`; } });
+        } catch(e) {}
+    }
+
+    async function cargarProduccion() {
+        await cargarProductosSelect();
+        try {
+            const res = await fetch('/api/productos');
+            const data = await res.json();
+            produccionGlobal = data; // Guardamos para el asistente
+            const tb = document.getElementById('tabla-produccion'); tb.innerHTML='';
+
+            data.forEach(p => {
+                const sucProd = normalizarStr(p.sucursal);
+                const sucAdmin = normalizarStr(sucursalAdmin);
+                if (rolUsuario !== 'SUPREMO' && !sucProd.includes(sucAdmin)) return;
+
+                let stock = p.stock || 0;
+                let lote = lotesProduccion[p.id];
+                let fElabHtml = `<span class="text-white-50">SIN REGISTRO</span>`;
+                let fVencHtml = `<span class="text-white-50">---</span>`;
+                let barraHtml = `<span class="text-muted font-orbitron">NO APLICA / SIN STOCK</span>`;
+
+                if(stock > 0 && lote) {
+                    fElabHtml = `<span class="text-white fw-bold font-orbitron">${lote.elaboracion}</span>`;
+                    fVencHtml = `<span class="text-white fw-bold font-orbitron">${lote.vencimiento}</span>`;
+
+                    let hoy = new Date(); hoy.setHours(0,0,0,0);
+                    let fVenc = new Date(lote.vencimiento); fVenc.setHours(0,0,0,0);
+                    let fElab = new Date(lote.elaboracion); fElab.setHours(0,0,0,0);
+
+                    let diasTotal = Math.round((fVenc - fElab) / (1000 * 60 * 60 * 24));
+                    let diasRestantes = Math.round((fVenc - hoy) / (1000 * 60 * 60 * 24));
+
+                    let pct = 0;
+                    if(diasTotal > 0) pct = (diasRestantes / diasTotal) * 100;
+                    pct = Math.max(0, Math.min(100, pct));
+
+                    let estadoClase = "optimal";
+                    let icono = `<i class="bi bi-shield-check"></i> ESTABILIDAD ÓPTIMA`;
+                    let colorTexto = "var(--p-eco-green)";
+
+                    if(pct <= 30 && pct > 0) {
+                        estadoClase = "warning";
+                        icono = `<i class="bi bi-exclamation-triangle"></i> FASE DE DEGRADACIÓN`;
+                        colorTexto = "var(--p-warning)";
+                    } else if (pct <= 0 || diasRestantes < 0) {
+                        estadoClase = "critical";
+                        icono = `<i class="bi bi-biohazard"></i> COLAPSO ORGÁNICO`;
+                        colorTexto = "var(--p-danger)";
+                        pct = 100;
+                    }
+
+                    barraHtml = `
+                        <div style="font-family:'Orbitron'; font-size:0.85rem; font-weight:bold; color:${colorTexto}; margin-bottom:6px; letter-spacing:1px; text-shadow: 0 0 10px ${colorTexto};">
+                            ${icono} (${diasRestantes} DÍAS)
+                        </div>
+                        <div class="bio-indicator">
+                            <div class="bio-fill ${estadoClase}" style="width: ${pct}%;"></div>
+                        </div>
+                    `;
+                }
+
+                tb.innerHTML += `
+                <tr>
+                    <td class="fw-bold text-white fs-5 text-start ps-3">${p.nombre}</td>
+                    <td class="text-money-green fs-3 fw-bold">${stock}</td>
+                    <td>${fElabHtml}</td>
+                    <td>${fVencHtml}</td>
+                    <td class="pe-4">${barraHtml}</td>
+                </tr>`;
+            });
+        } catch(e) {}
+    }
+
+    function procesarEnsamblaje() {
+        const id = document.getElementById('prod-item').value;
+        const cant = document.getElementById('prod-cantidad').value;
+        const fechaElab = document.getElementById('prod-fecha').value;
+
+        if(!id || !cant || cant <= 0 || !fechaElab) { playSound('error'); alert("ALERTA: Faltan parámetros genéticos para la síntesis."); return; }
+
+        playSound('magic');
+        const overlay = document.getElementById('overlay-ensamblaje');
+        overlay.style.display = 'flex';
+
+        const prod = catalogoGlobal.find(p => p.id == id);
+        let diasVidaPura = 5;
+
+        if(prod && prod.categoria) {
+            let cat = normalizarStr(prod.categoria);
+            if(cat.includes('500')) diasVidaPura = 3;
+            else if(cat.includes('pack')) diasVidaPura = 7;
+            else if(cat.includes('pulpa')) diasVidaPura = 30;
+        }
+
+        let dateElabObj = new Date(fechaElab + 'T12:00:00');
+        let dateVencObj = new Date(dateElabObj);
+        dateVencObj.setDate(dateElabObj.getDate() + diasVidaPura);
+
+        lotesProduccion[id] = {
+            elaboracion: fechaElab,
+            vencimiento: dateVencObj.toISOString().split('T')[0],
+            vidaTotalDias: diasVidaPura
+        };
+        localStorage.setItem('raices_lotes_adn', JSON.stringify(lotesProduccion));
+
+        setTimeout(async () => {
+            try {
+                await fetch(`/api/productos/${id}/agregar-stock?cantidad=${cant}`, {method:'POST'});
+                document.getElementById('prod-cantidad').value = '';
+                await cargarProduccion();
+                overlay.style.display = 'none';
+                playSound('success');
+            } catch(e) {
+                overlay.style.display = 'none'; playSound('error');
+            }
+        }, 2800);
+    }
+
+    // --- VENTAS ---
+    async function cargarVentas() {
+        try {
+            const res = await fetch('/api/ventas');
+            const data = await res.json();
+            const tb = document.getElementById('tabla-ventas'); tb.innerHTML='';
+            let cCol=0, cChi=0, cEsp=0;
+
+            data.forEach(v => {
+                const paisVenta = normalizarStr(v.pais) + " " + normalizarStr(v.origen);
+                const sucAdmin = normalizarStr(sucursalAdmin);
+
+                if (rolUsuario !== 'SUPREMO' && !paisVenta.includes(sucAdmin)) return;
+
+                let totalVal = v.total || 0;
+                let smb = (paisVenta.includes('españa') || paisVenta.includes('espana')) ? '€' : '$';
+
+                if(v.estado === 'Pagado'){
+                    if(paisVenta.includes('colombia')) cCol += totalVal;
+                    else if(paisVenta.includes('chile')) cChi += totalVal;
+                    else if(paisVenta.includes('españa') || paisVenta.includes('espana')) cEsp += totalVal;
+                }
+
+                let badgeEstado = v.estado === 'Pagado' ? `<span style="color:var(--p-bio-green); font-weight:900;"><i class="bi bi-shield-check"></i> PAGADO</span>` : `<span style="color:#ffdd00; font-weight:900;"><i class="bi bi-clock-history"></i> PENDIENTE</span>`;
+                let botonesAccion = v.estado === 'Pendiente' ? `<button class="btn btn-sm btn-outline-success me-2 border-0" style="color: var(--p-bio-green);" onclick="aprobarPedido(${v.id})"><i class="bi bi-check-lg fs-3"></i></button><button class="btn btn-sm btn-outline-danger border-0" style="color: #ff0055;" onclick="anularPedido(${v.id})"><i class="bi bi-trash fs-3"></i></button>` : `<span class="text-muted"><i class="bi bi-lock-fill"></i> ARCHIVADO</span>`;
+                tb.innerHTML += `<tr><td class="text-white fw-bold">#OP-${v.id}</td><td>${v.pais || v.origen || 'No definido'} <br><span class="text-white-50 fs-6">Origen: ${v.origen || 'Desconocido'}</span></td><td class="text-money-green fs-4">${smb}${totalVal.toLocaleString('es-ES')}</td><td>${badgeEstado}</td><td>${botonesAccion}</td></tr>`;
+            });
+            document.getElementById('caja-col').innerText=cCol.toLocaleString('es-ES');
+            document.getElementById('caja-chi').innerText=cChi.toLocaleString('es-ES');
+            document.getElementById('caja-esp').innerText=cEsp.toLocaleString('es-ES');
+        } catch(e) {}
+    }
+
+    async function aprobarPedido(id) { playSound('click'); try { const res = await fetch(`/api/ventas/${id}/pagar`, { method: 'PUT' }); if(res.ok) { cargarVentas(); } } catch(e) {} }
+    async function anularPedido(id) { playSound('error'); if(confirm("¿Eliminar pedido?")) { try { const res = await fetch(`/api/ventas/${id}`, { method: 'DELETE' }); if(res.ok) { cargarVentas(); } } catch(e) {} } }
+
+    // --- CRM ---
+    function cargarCRM() {
+        const tb = document.getElementById('tabla-crm'); tb.innerHTML='';
+        baseCRM.forEach(c => {
+            const nodoCrm = normalizarStr(c.nodo);
+            const sucAdmin = normalizarStr(sucursalAdmin);
+
+            if (rolUsuario !== 'SUPREMO' && !nodoCrm.includes(sucAdmin)) return;
+
+            tb.innerHTML += `<tr><td class="fw-bold fs-5 text-white">${c.nombre}</td><td class="text-white fs-5">${c.tel}</td><td class="text-white-50 fs-6">${c.dir}</td><td><span class="badge border border-info text-info fs-6 px-3 py-2 bg-dark">${c.nodo}</span></td><td><button class="btn btn-sm text-info border-0 me-2" onclick="editarCliente(${c.id})"><i class="bi bi-pencil-square fs-3"></i></button><button class="btn btn-sm text-danger border-0" onclick="eliminarCliente(${c.id})"><i class="bi bi-trash3 fs-3"></i></button></td></tr>`;
+        });
+    }
+
+    function guardarCliente() { playSound('click'); const id = document.getElementById('crm-id').value; const nombre = document.getElementById('crm-nombre').value; const tel = document.getElementById('crm-tel').value; const dir = document.getElementById('crm-dir').value; const nodo = document.getElementById('crm-nodo').value; if(!nombre) return alert("Falta identificación."); if(id) { let cli = baseCRM.find(c => c.id == id); if(cli) { cli.nombre = nombre; cli.tel = tel; cli.dir = dir; cli.nodo = nodo; } } else { let nuevoId = baseCRM.length > 0 ? Math.max(...baseCRM.map(c=>c.id)) + 1 : 1; baseCRM.push({ id: nuevoId, nombre, tel, dir, nodo }); } document.getElementById('crm-id').value = ''; document.getElementById('crm-nombre').value = ''; document.getElementById('crm-tel').value = ''; document.getElementById('crm-dir').value = ''; localStorage.setItem('raices_crm', JSON.stringify(baseCRM)); cargarCRM(); }
+    function editarCliente(id) { playSound('click'); let cli = baseCRM.find(c => c.id === id); if(cli) { document.getElementById('crm-id').value = cli.id; document.getElementById('crm-nombre').value = cli.nombre; document.getElementById('crm-tel').value = cli.tel; document.getElementById('crm-dir').value = cli.dir; document.getElementById('crm-nodo').value = cli.nodo; } }
+    function eliminarCliente(id) { playSound('error'); if(confirm("¿Eliminar registro?")) { baseCRM = baseCRM.filter(c => c.id !== id); localStorage.setItem('raices_crm', JSON.stringify(baseCRM)); cargarCRM(); } }
+
+    // --- INSUMOS ---
+    async function cargarInsumos() {
+        try {
+            const res = await fetch('/api/insumos/todos');
+            const data = await res.json();
+            insMem = data; // Guardamos globalmente
+            const tb = document.getElementById('tabla-insumos'); tb.innerHTML='';
+
+            data.sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).forEach(i => {
+                const sucIns = normalizarStr(i.sucursal);
+                const sucAdmin = normalizarStr(sucursalAdmin);
+                if (rolUsuario !== 'SUPREMO' && !sucIns.includes(sucAdmin)) return;
+
+                const isVaso = i.categoria && i.categoria.includes('Vaso');
+                tb.innerHTML += `<tr><td class="fw-bold text-white fs-5">${i.nombre}</td><td><span class="badge-categoria" style="${isVaso?'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan)':''}">${(i.categoria||'Pulpas').toUpperCase()}</span></td><td class="text-white">${i.sucursal}</td><td class="text-warning fw-bold fs-4" style="text-shadow:0 0 10px #ffdd00;">${i.unidadActual} <span class="fs-6 text-white-50">${i.medida}</span></td><td><button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})"><i class="bi bi-trash3-fill fs-3"></i></button></td></tr>`;
+            });
+        } catch(e) {}
+    }
+
+    function guardarInsumo(tipo) { let nombre, cat, uni, stock, suc; if(tipo==='pulpas'){ nombre = document.getElementById('ins-nombre').value; cat='Pulpas'; uni=document.getElementById('ins-unidad').value; stock=document.getElementById('ins-stock').value; suc=document.getElementById('ins-sucursal').value; } else { nombre = document.getElementById('vaso-nombre').value; cat='Insumos Vaso'; uni=document.getElementById('vaso-unidad').value; stock=document.getElementById('vaso-stock').value; suc=document.getElementById('vaso-sucursal').value; } if(!nombre) return; fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre, categoria:cat, medida:uni, unidadActual:parseInt(stock)||0, sucursal:suc})}).then(()=>{ cargarInsumos(); playSound('click'); }); }
+    function eliminarInsumo(id) { if(confirm("¿Reciclar material?")) fetch(`/api/insumos/${id}`,{method:'DELETE'}).then(()=>cargarInsumos()); }
+
+    // --- RECETAS ---
+    async function prepararRecetas() { try { const [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]); const productos = await rP.json(); const insumos = await rI.json(); const suc = document.getElementById('filtro-sucursal-recetas').value; document.getElementById('rec-producto').innerHTML = productos.filter(p=>p.sucursal===suc).map(p=>`<option value="${p.id}">${p.nombre}</option>`).join(''); document.getElementById('rec-insumo').innerHTML = insumos.filter(i=>i.sucursal===suc).map(i=>`<option value="${i.nombre}">${i.nombre} (${i.medida})</option>`).join(''); cargarTablaReceta(); } catch(e) {} }
+    async function guardarReceta() { const id = document.getElementById('rec-producto').value; const ing = document.getElementById('rec-insumo').value; const cant = document.getElementById('rec-cantidad').value; await fetch(`/api/insumos/${id}/vincular-ingrediente`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ingrediente:ing, gasto:cant})}); cargarTablaReceta(); playSound('click'); }
+    async function cargarTablaReceta() { const id = document.getElementById('rec-producto').value; if(!id) return; try { const res = await fetch(`/api/insumos/${id}/receta`); const txt = await res.text(); const tb = document.getElementById('tabla-vista-formula'); tb.innerHTML=''; txt.split('\n').forEach(l=>{ if(l.includes(':')) tb.innerHTML+=`<tr><td class="text-white fw-bold fs-4">${l.split(':')[0]}</td><td class="fs-4" style="color:var(--p-bio-green); text-shadow:var(--green-glow);">${l.split(':')[1]}</td><td><i class="bi bi-scissors text-danger fs-3" style="cursor:pointer;"></i></td></tr>`; }); } catch(e) {} }
+
+    // --- CATÁLOGO ---
+    async function cargarCatalogo() {
+        const suc = document.getElementById('filtro-sucursal-catalogo').value;
+        const esSupremo = (rolUsuario === 'SUPREMO');
+
+        try {
+            const res = await fetch('/api/productos/sucursal/' + suc);
+            const data = await res.json();
+            const tb = document.getElementById('tabla-catalogo'); tb.innerHTML='';
+
+            data.forEach(p => {
+                const imgTag = p.imagen ? `<img src="${p.imagen}" class="img-preview" id="img-display-${p.id}">` : `<i class="bi bi-file-image fs-1 text-muted" id="img-display-${p.id}"></i>`;
+
+                const attrReadonly = esSupremo ? '' : 'readonly';
+                const classInput = esSupremo ? 'input-matriz' : 'input-matriz border-0 text-white-50 pointer-events-none';
+                const classPrecio = esSupremo ? 'input-matriz text-money-green' : 'input-matriz border-0 text-money-green pointer-events-none';
+
+                const colComandos = esSupremo ? `
+                    <button class="btn btn-bio px-3 py-2 me-1 mb-1" onclick="actualizarProducto(${p.id})" title="Sobreescribir Matriz"><i class="bi bi-cloud-check-fill fs-5"></i></button>
+                    <button class="btn btn-outline-danger px-3 py-2 border-0 mb-1" onclick="eliminarProducto(${p.id})" title="Purgar"><i class="bi bi-trash3-fill fs-5"></i></button>
+                ` : `<span class="badge bg-dark border border-danger text-danger p-2 font-orbitron"><i class="bi bi-lock-fill"></i> DENEGADO</span>`;
+
+                tb.innerHTML += `<tr id="fila-prod-${p.id}">
+                    <td class="align-middle text-center">${imgTag}</td>
+                    <td class="align-middle">
+                        <input type="text" id="img-prod-${p.id}" value="${p.imagen || ''}" class="${classInput} w-100 text-info" style="font-size: 0.85rem; max-width: 150px;" placeholder="https://..." ${attrReadonly}>
+                    </td>
+                    <td class="align-middle">
+                        <input type="text" id="nombre-prod-${p.id}" value="${p.nombre}" class="${classInput} w-100 fw-bold fs-5 text-center" ${attrReadonly}>
+                    </td>
+                    <td class="align-middle">
+                        <input type="text" id="cat-prod-${p.id}" value="${p.categoria || 'Batidos'}" class="${classInput} w-100 text-warning fs-6 text-center" placeholder="Categoría" ${attrReadonly}>
+                    </td>
+                    <td class="align-middle">
+                        <textarea id="desc-prod-${p.id}" class="${classInput} w-100" style="font-size: 0.9rem; min-width: 250px; height: 65px;" placeholder="Escribe la biología del producto aquí..." ${attrReadonly}>${p.descripcion || ''}</textarea>
+                    </td>
+                    <td class="align-middle text-white">${p.sucursal}</td>
+                    <td class="align-middle">
+                        <input type="number" id="precio-prod-${p.id}" value="${p.precio}" class="${classPrecio} text-center fw-bold fs-4" style="max-width:120px;" ${attrReadonly}>
+                    </td>
+                    <td class="align-middle">
+                        ${colComandos}
+                    </td>
+                </tr>`;
+            });
+        } catch(e) { console.error("Error al cargar el catálogo:", e); }
+    }
+
+    async function actualizarProducto(id) {
+        playSound('click');
+        const nuevoNombre = document.getElementById(`nombre-prod-${id}`).value;
+        const nuevaCategoria = document.getElementById(`cat-prod-${id}`).value;
+        const nuevoPrecio = document.getElementById(`precio-prod-${id}`).value;
+        const nuevaImagen = document.getElementById(`img-prod-${id}`).value;
+        const nuevaDesc = document.getElementById(`desc-prod-${id}`).value;
+
+        try {
+            const res = await fetch(`/api/productos/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: nuevoNombre,
+                    categoria: nuevaCategoria,
+                    precio: parseInt(nuevoPrecio),
+                    imagen: nuevaImagen,
+                    descripcion: nuevaDesc
+                })
+            });
+            if(res.ok) {
+                const imgDisp = document.getElementById(`img-display-${id}`);
+                if(imgDisp && nuevaImagen) {
+                    if(imgDisp.tagName === 'I') {
+                        imgDisp.outerHTML = `<img src="${nuevaImagen}" class="img-preview" id="img-display-${id}">`;
+                    } else {
+                        imgDisp.src = nuevaImagen;
+                    }
+                }
+                const fila = document.getElementById(`fila-prod-${id}`);
+                fila.style.boxShadow = "inset 0 0 30px var(--p-bio-green)";
+                setTimeout(() => fila.style.boxShadow = "", 1000);
+            }
+        } catch(e) { playSound('error'); }
+    }
+
+    async function eliminarProducto(id) {
+        playSound('error');
+        if(confirm("ALERTA: ¿Deseas purgar este elixir de la base de datos de manera irreversible?")) {
+            try {
+                const res = await fetch(`/api/productos/${id}`, { method: 'DELETE' });
+                if(res.ok) { document.getElementById(`fila-prod-${id}`).remove(); }
+            } catch(e) { console.error("Error al purgar", e); }
+        }
+    }
+
+    // --- CARGA MASIVA CSV ---
+    const dropZone = document.getElementById('drop-zone');
+    if (dropZone) {
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault(); dropZone.classList.remove('dragover');
+            if(e.dataTransfer.files.length > 0) processUpload(e.dataTransfer.files);
+        });
+    }
+
+    function handleMassiveUpload(event) {
+        if(event.target.files.length > 0) processUpload(event.target.files);
+    }
+
+    function processUpload(files) {
+        const file = files[0];
+
+        if (!file.name.toLowerCase().endsWith('.csv')) {
+            alert("⚠️ Formato incorrecto. Sube un archivo .csv"); return;
+        }
+
+        const sucursalDestino = document.getElementById('filtro-sucursal-catalogo').value;
+        playSound('upload');
+
+        const icon = document.getElementById('upload-icon');
+        const container = document.getElementById('upload-progress-container');
+        const bar = document.getElementById('upload-bar');
+        const status = document.getElementById('upload-status');
+
+        icon.className = "bi bi-arrow-repeat spin-icon";
+        container.style.display = 'block'; bar.style.width = '0%';
+        let progress = 0; status.innerText = `LEYENDO ESTRUCTURA CSV...`;
+
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: async function(results) {
+                const data = results.data;
+                const totalItems = data.length;
+                let procesados = 0;
+
+                status.innerText = `INYECTANDO ${totalItems} DATOS AL NODO ${sucursalDestino.toUpperCase()}...`;
+
+                for (const row of data) {
+                    const nombre = row.PRODUCTO || row.producto || "";
+                    const imagen = row.IMAGEN || row.imagen || "";
+                    const precio = parseInt(row.PRECIO || row.precio || 0);
+                    const descripcion = row.DESCRIPCION || row.descripcion || "";
+                    const categoria = row.CATEGORIA || row.categoria || "Batidos";
+
+                    if (nombre) {
+                        try {
+                            await fetch('/api/productos', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    nombre: nombre,
+                                    imagen: imagen,
+                                    precio: precio,
+                                    descripcion: descripcion,
+                                    categoria: categoria,
+                                    sucursal: sucursalDestino,
+                                    stock: 0
+                                })
+                            });
+                        } catch(e) {}
+                    }
+                    procesados++;
+                    bar.style.width = (procesados / totalItems * 100) + '%';
+                }
+
+                playSound('success');
+                icon.className = "bi bi-check-circle-fill text-success";
+                status.innerText = `¡SÍNTESIS MASIVA COMPLETADA!`;
+                status.style.color = "var(--p-bio-green)";
+                bar.style.background = "var(--p-bio-green)";
+
+                cargarCatalogo();
+
+                setTimeout(() => {
+                    container.style.display = 'none';
+                    icon.className = "bi bi-filetype-csv";
+                    bar.style.width = '0%';
+                    bar.style.background = "linear-gradient(90deg, var(--p-magenta), var(--p-cyan))";
+                    status.style.color = "#fff";
+                }, 3000);
+            },
+            error: function(error) {
+                alert("Error al leer el CSV: " + error.message);
+                container.style.display = 'none';
+            }
+        });
+    }
+
+    // ==========================================
+    // ASISTENTE DE VOZ DEL ADMINISTRADOR (EYWA-ADMIN)
+    // ==========================================
+    let recVozAdmin = null;
+
+    function hablarAdmin(texto) {
+        window.speechSynthesis.cancel();
+        const voz = new SpeechSynthesisUtterance(texto);
+        voz.lang = 'es-ES';
+        voz.rate = 1.05;
+        voz.pitch = 1.0;
+        window.speechSynthesis.speak(voz);
+    }
+
+    function generarReporteVentas() {
+        let col = document.getElementById('caja-col').innerText || "0";
+        let chi = document.getElementById('caja-chi').innerText || "0";
+        let esp = document.getElementById('caja-esp').innerText || "0";
+
+        if (rolUsuario === 'SUPREMO') {
+            return `En tesorería general tenemos: Nodo Colombia con ${col} pesos. Nodo Chile con ${chi} pesos. Y Nodo España con ${esp} euros. `;
+        } else {
+            if(sucursalAdmin === 'Colombia') return `La tesorería del Nodo Colombia registra ${col} pesos. `;
+            if(sucursalAdmin === 'Chile') return `La tesorería del Nodo Chile registra ${chi} pesos. `;
+            if(sucursalAdmin === 'España') return `La tesorería del Nodo España registra ${esp} euros. `;
+        }
+        return "No hay datos de ventas disponibles. ";
+    }
+
+    function generarReporteProduccion() {
+        let totalElixires = produccionGlobal.filter(p => p.stock > 0);
+        if (rolUsuario !== 'SUPREMO') {
+            totalElixires = totalElixires.filter(p => normalizarStr(p.sucursal).includes(normalizarStr(sucursalAdmin)));
+        }
+        return `En el sintetizador genético tenemos ${totalElixires.length} elíxires con stock activo. `;
+    }
+
+    function generarReporteBodega() {
+        let totalInsumos = insMem;
+        if (rolUsuario !== 'SUPREMO') {
+            totalInsumos = totalInsumos.filter(i => normalizarStr(i.sucursal).includes(normalizarStr(sucursalAdmin)));
+        }
+        return `La bodega botánica cuenta con ${totalInsumos.length} elementos físicos y materias primas registradas. `;
+    }
+
+    function iniciarVozAdmin() {
+        if (!('webkitSpeechRecognition' in window)) {
+            alert("Tu navegador no soporta el reconocimiento de voz."); return;
+        }
+
+        const btnMic = document.getElementById('btn-mic-admin');
+
+        if(recVozAdmin) recVozAdmin.stop();
+
+        recVozAdmin = new webkitSpeechRecognition();
+        recVozAdmin.lang = 'es-ES';
+        recVozAdmin.continuous = false;
+        recVozAdmin.interimResults = false;
+
+        recVozAdmin.onstart = function() {
+            btnMic.classList.add('escuchando');
+            playSound('magic');
+        };
+
+        recVozAdmin.onresult = function(event) {
+            const comandoRaw = event.results[0][0].transcript;
+            console.log("Comando Admin: ", comandoRaw);
+            procesarComandoAdmin(comandoRaw);
+        };
+
+        recVozAdmin.onend = function() {
+            btnMic.classList.remove('escuchando');
+        };
+
+        recVozAdmin.start();
+    }
+
+    function procesarComandoAdmin(comandoRaw) {
+        const comando = normalizarStr(comandoRaw);
+
+        if (comando.includes("informe") || comando.includes("reporte") || comando.includes("resumen")) {
+            let reporteCompleto = "Comandante, iniciando escaneo de la matriz. " +
+                                  generarReporteVentas() +
+                                  generarReporteProduccion() +
+                                  generarReporteBodega() +
+                                  "Fin del comunicado.";
+            hablarAdmin(reporteCompleto);
+        }
+        else if (comando.includes("venta") || comando.includes("caja") || comando.includes("tesoreria") || comando.includes("dinero")) {
+            hablarAdmin(generarReporteVentas());
+        }
+        else if (comando.includes("produccion") || comando.includes("elixir") || comando.includes("batido")) {
+            hablarAdmin(generarReporteProduccion());
+        }
+        else if (comando.includes("bodega") || comando.includes("insumo") || comando.includes("material") || comando.includes("vaso")) {
+            hablarAdmin(generarReporteBodega());
+        }
+        else {
+            hablarAdmin("Comando no reconocido. Por favor, solicite información sobre ventas, producción, bodega o pida un informe general.");
+        }
+    }
+
+    // ==========================================
+    // INSTALADOR PWA (APP NATIVA)
+    // ==========================================
+    let eventoInstalacionPWA;
+    const btnDescarga = document.getElementById('btn-descargar-app');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        eventoInstalacionPWA = e;
+        if(btnDescarga) btnDescarga.style.display = 'inline-block';
+    });
+
+    async function instalarAppPWA() {
+        if (eventoInstalacionPWA) {
+            if(typeof playSound === 'function') playSound('granted');
+
+            eventoInstalacionPWA.prompt();
+            const { outcome } = await eventoInstalacionPWA.userChoice;
+
+            if (outcome === 'accepted') {
+                console.log('App instalada con éxito en la matriz');
+                if(btnDescarga) btnDescarga.style.display = 'none';
+            }
+            eventoInstalacionPWA = null;
+        }
+    }
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Error:', err));
+        });
+    }
+
+</script>
+</body>
+</html>
