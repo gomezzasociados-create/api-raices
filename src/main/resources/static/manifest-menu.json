@@ -9,6 +9,12 @@
   "orientation": "portrait",
   "icons": [
     {
+      "src": "https://res.cloudinary.com/doi0o3hlr/image/upload/w_192,h_192/v1774921163/Gemini_Generated_Image_ctzjekctzjekctzj_h5b5pw.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
       "src": "https://res.cloudinary.com/doi0o3hlr/image/upload/v1774921163/Gemini_Generated_Image_ctzjekctzjekctzj_h5b5pw.png",
       "sizes": "512x512",
       "type": "image/png",
