@@ -21,6 +21,9 @@ public class Venta {
     // ¡NUEVO CAMPO PARA EL CUADRE DE CAJA!
     private String medioPago;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean archivada = false;
+
     @ManyToMany
     @JoinTable(
             name = "venta_producto",
@@ -53,4 +56,7 @@ public class Venta {
 
     public List<Producto> getProductos() { return productos; }
     public void setProductos(List<Producto> productos) { this.productos = productos; }
+
+    public boolean isArchivada() { return archivada; }
+    public void setArchivada(boolean archivada) { this.archivada = archivada; }
 }

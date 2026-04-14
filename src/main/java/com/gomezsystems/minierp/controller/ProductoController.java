@@ -43,6 +43,27 @@ public class ProductoController {
         productoRepository.deleteById(id);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> actualizarProducto(@PathVariable Long id, @RequestBody Producto nuevoProducto) {
+        return productoRepository.findById(id).map(prod -> {
+            prod.setNombre(nuevoProducto.getNombre());
+            prod.setCategoria(nuevoProducto.getCategoria());
+            prod.setPrecio(nuevoProducto.getPrecio());
+            prod.setImagen(nuevoProducto.getImagen());
+            prod.setDescripcion(nuevoProducto.getDescripcion());
+            return ResponseEntity.ok(productoRepository.save(prod));
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}/ajustar-stock")
+    public ResponseEntity<String> ajustarStock(@PathVariable Long id, @RequestParam int cantidad) {
+        return productoRepository.findById(id).map(prod -> {
+            prod.setStock(cantidad);
+            productoRepository.save(prod);
+            return ResponseEntity.ok("Stock ajustado sin requerir descuento molecular");
+        }).orElse(ResponseEntity.badRequest().body("Producto no encontrado"));
+    }
+
     // 🚨 RUTA DE EMERGENCIA: Limpia toda la base de datos de productos 🚨
     @GetMapping("/limpiar")
     public String limpiarTodo() {

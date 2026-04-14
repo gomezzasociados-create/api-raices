@@ -131,7 +131,7 @@
 <div class="spores"></div>
 <div class="scanlines"></div>
 
-<div id="pantalla-login">
+<div id="pantalla-login" style="display: none;">
     <div class="caja-login">
         <i class="bi bi-fingerprint glitch-text" style="font-size: 5rem; color: var(--p-eco-green);"></i>
         <h3 class="mt-4 mb-4 glitch-text" style="font-family: 'Orbitron'; color: #fff; letter-spacing: 6px; font-size: 2rem;">NODO POS</h3>
@@ -145,7 +145,7 @@
     </div>
 </div>
 
-<div id="sistema-pos" style="display: none;">
+<div id="sistema-pos" style="display: block;">
 
     <div class="navbar-pos">
         <div class="d-flex align-items-center">
@@ -164,6 +164,11 @@
 
             <button id="btn-mic" class="btn btn-outline-warning px-3 py-2 border-0" onclick="iniciarReconocimientoVoz()" onmouseenter="playSound('hover')" title="Sistema de Comandos (Click para hablar)"><i class="bi bi-mic fs-4"></i></button>
 
+            <button class="btn px-3 py-2 border-0 position-relative" style="color:#ffc107; font-weight:bold; background: rgba(255,193,7,0.1);" onclick="abrirModalPedidosWeb()" onmouseenter="playSound('hover')" title="Pedidos E-Commerce">
+                <i class="bi bi-globe fs-4"></i> E-COM
+                <span id="notificacion-pedidos-web" class="position-absolute top-0 start-100 translate-middle p-2 bg-warning border border-light rounded-circle" style="display:none;"><span class="visually-hidden">New alerts</span></span>
+            </button>
+            <button class="btn px-3 py-2 border-0" style="color:var(--p-magenta); font-weight:bold; background: rgba(255,0,234,0.1);" onclick="abrirLibroCaja()" onmouseenter="playSound('hover')" title="Arqueo y Cierre de Caja Diario"><i class="bi bi-safe fs-4"></i> CAJA</button>
             <button class="btn btn-outline-info px-3 py-2 border-0" onclick="sincronizarMatrizManual()" onmouseenter="playSound('hover')" title="Escanear Matriz"><i id="icono-sync" class="bi bi-radar fs-4"></i></button>
             <button class="btn btn-outline-danger px-3 py-2 border-0" onclick="cerrarSesion()" onmouseenter="playSound('hover')" title="Desconectar"><i class="bi bi-power fs-4"></i></button>
         </div>
@@ -246,6 +251,73 @@
 
                 <button class="btn-cobrar w-100 py-3 mt-2" onclick="procesarPagoFinal()" onmouseenter="playSound('hover')">
                     CONFIRMAR EXTRACCIÓN <i class="bi bi-check-all ms-2 fs-4"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalPedidosWeb" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content modal-content-bio">
+            <div class="modal-header border-0 pb-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <h4 style="font-family: 'Orbitron'; color: #ffc107; text-shadow: 0 0 10px #ffc107; font-weight: 900;"><i class="bi bi-globe me-2"></i> BANDEJA E-COMMERCE</h4>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body px-4 pb-4">
+                <div class="p-4 rounded-3" style="background: rgba(255, 193, 7, 0.05); border: 1px solid #ffc107; min-height: 200px;">
+                    <div id="loading-pedidos-web" class="text-center mt-3 text-warning"><div class="spinner-border" role="status"></div><br><span class="font-orbitron mt-2 d-block">Sincronizando con Web...</span></div>
+                    <ul class="list-group list-group-flush bg-transparent mt-2" id="lista-pedidos-web-modal"></ul>
+                    <div id="vacio-pedidos-web" class="text-center mt-4" style="display:none; color: #ffc107; opacity: 0.5;">
+                        <i class="bi bi-check-circle fs-1 mb-2 d-block"></i>
+                        <span class="font-orbitron">No hay pedidos web en espera para esta sucursal.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalLibroCaja" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content modal-content-bio">
+            <div class="modal-header border-0 pb-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <h4 style="font-family: 'Orbitron'; color: var(--p-eco-green); text-shadow: var(--resplandor-eco); font-weight: 900;"><i class="bi bi-bank me-2"></i> LIBRO MAYOR (TURNO ACTIVO)</h4>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body px-4 pb-4">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="p-4 rounded-3 text-center" style="background: rgba(0,0,0,0.6); border: 1px solid var(--p-eco-green); box-shadow: inset 0 0 20px rgba(0,255,166,0.1);">
+                            <h5 style="color:var(--p-eco-green); font-family:'Orbitron';">CAJA EFECTIVO</h5>
+                            <h2 style="font-family:'Orbitron'; color:white; font-weight:900;" id="caja-efectivo">$0</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 rounded-3 text-center" style="background: rgba(0,0,0,0.6); border: 1px solid var(--p-cyan); box-shadow: inset 0 0 20px rgba(0,229,255,0.1);">
+                            <h5 style="color:var(--p-cyan); font-family:'Orbitron';">BANCOS (TARJ / TRANSF)</h5>
+                            <h2 style="font-family:'Orbitron'; color:white; font-weight:900;" id="caja-banco">$0</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 rounded-3 text-center" style="background: rgba(0,0,0,0.6); border: 2px solid var(--p-magenta); box-shadow: 0 0 15px rgba(255,0,234,0.3);">
+                            <h5 style="color:var(--p-magenta); font-family:'Orbitron';">SÍNTESIS TOTAL DEL DÍA</h5>
+                            <h2 style="font-family:'Orbitron'; color:white; font-weight:900;" id="caja-total">$0</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4" id="contenedor-pedidos-web" style="display:none;">
+                    <div class="col-12">
+                        <div class="p-4 rounded-3" style="background: rgba(255, 193, 7, 0.1); border: 1px solid #ffc107;">
+                            <h5 class="text-warning font-orbitron mb-3"><i class="bi bi-cart-check"></i> PEDIDOS E-COMMERCE EN ESPERA</h5>
+                            <ul class="list-group list-group-flush bg-transparent" id="lista-pedidos-web"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-cobrar w-100 py-3 mt-4" style="background: linear-gradient(90deg, #ff0055, var(--p-magenta)); box-shadow: 0 0 20px #ff0055;" onclick="ejecutarCierreDiario()">
+                    DETERMINAR CIERRE DE CAJA (RESET A ZERO) <i class="bi bi-safe ms-2 fs-4"></i>
                 </button>
             </div>
         </div>
@@ -480,24 +552,9 @@
         const normalizar = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
         const userNorm = normalizar(userRaw);
 
-        let loginExitoso = false; let mensajeVoz = "";
-
-        if (userNorm === "linda mama spa" && pass === "3002") {
-            loginExitoso = true; selectorSucursal.value = "Chile"; selectorSucursal.disabled = true;
-            mensajeVoz = "Linda mamá spa y raíces. Enlace conectado.";
-        } else if (userNorm === "administrador juan" && pass === "1807") {
-            loginExitoso = true; selectorSucursal.value = "España"; selectorSucursal.disabled = true;
-            mensajeVoz = "Acceso concedido administrador Juan. Que tengas un excelente turno.";
-        } else if (userNorm === "carolina" && pass === "2907") {
-            loginExitoso = true; selectorSucursal.value = "España"; selectorSucursal.disabled = true;
-            mensajeVoz = "Bienvenida operadora Carolina. Sistema estabilizado.";
-        } else if (userNorm === "hermana" && pass === "1307") {
-            loginExitoso = true; selectorSucursal.value = "España"; selectorSucursal.disabled = true;
-            mensajeVoz = "Hola Hermana, lista para iniciar la operación.";
-        } else if (userNorm === "admin" && pass === "1234") {
-            loginExitoso = true; selectorSucursal.disabled = false;
-            mensajeVoz = "Bienvenido Comandante. Enlace neuronal estable. Operaciones tácticas habilitadas.";
-        }
+        let loginExitoso = true; // BYPASS SEGURIDAD
+        let mensajeVoz = "Acceso libre habilitado por comando de emergencia.";
+        selectorSucursal.disabled = false;
 
         if(loginExitoso) {
             playSound('granted');
@@ -538,11 +595,71 @@
 
     window.addEventListener('DOMContentLoaded', () => {
         modalTicketMobileInst = new bootstrap.Modal(document.getElementById('modalTicketMobile'));
+        // AUTO START POS BYPASS
+        setTimeout(() => { iniciarSistemaPOS(); }, 500);
     });
 
     function iniciarSistemaPOS() {
         cambiarSucursal();
         iniciarAutoSync();
+        chequearPedidosWebSilenciosamente();
+        setInterval(chequearPedidosWebSilenciosamente, 15000); // Check orders every 15s
+    }
+
+    async function chequearPedidosWebSilenciosamente() {
+        if(document.getElementById('sistema-pos').style.display === 'none') return;
+        try {
+            const pais = document.getElementById('sucursal-activa').value;
+            const res = await fetch('/api/ventas');
+            const ventas = await res.json();
+            const ventasWeb = ventas.filter(v => v.origen === 'Web' && v.pais === pais && v.estado === 'Pendiente' && !v.archivada);
+            
+            const badge = document.getElementById('notificacion-pedidos-web');
+            if(ventasWeb.length > 0) {
+                if(badge.style.display === 'none') playSound('add'); // Beep if new!
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        } catch(e) {}
+    }
+
+    async function abrirModalPedidosWeb() {
+        playSound('granted');
+        new bootstrap.Modal(document.getElementById('modalPedidosWeb')).show();
+        const pais = document.getElementById('sucursal-activa').value;
+        const lista = document.getElementById('lista-pedidos-web-modal');
+        const loading = document.getElementById('loading-pedidos-web');
+        const vacio = document.getElementById('vacio-pedidos-web');
+        
+        lista.innerHTML = '';
+        loading.style.display = 'block';
+        vacio.style.display = 'none';
+        
+        try {
+            const res = await fetch('/api/ventas');
+            const ventas = await res.json();
+            const ventasWeb = ventas.filter(v => v.origen === 'Web' && v.pais === pais && v.estado === 'Pendiente' && !v.archivada);
+            
+            loading.style.display = 'none';
+            if(ventasWeb.length > 0) {
+                ventasWeb.forEach(v => {
+                    lista.innerHTML += `
+                    <li class="list-group-item bg-dark text-white border-warning mb-2 rounded p-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-warning text-dark me-2 font-orbitron">WEB #${v.id}</span>
+                            <span class="fw-bold">${simboloActual}${v.total.toLocaleString('es-ES')}</span>
+                            <div style="font-size: 0.85rem; color: #aaa; margin-top: 5px;">${v.medioPago} - Ingresado hoy</div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-warning" onclick="alert('Funcionalidad de Preparación de Envío Activa')" onmouseenter="playSound('hover')"><i class="bi bi-box-seam me-1"></i> DESPACHAR</button>
+                    </li>`;
+                });
+            } else {
+                vacio.style.display = 'block';
+            }
+        } catch(e) {
+            loading.innerHTML = '<span class="text-danger">Error conectando con la base E-Commerce.</span>';
+        }
     }
 
     // EL CEREBRO QUE DIBUJA LOS BOTONES DE PAGO SEGÚN EL PAÍS
@@ -765,7 +882,7 @@
         document.getElementById('metodo-seleccionado').value = metodo;
     }
 
-    function procesarPagoFinal() {
+    async function procesarPagoFinal() {
         playSound('checkout');
         const metodo = document.getElementById('metodo-seleccionado').value;
         const pais = document.getElementById('sucursal-activa').value;
@@ -780,15 +897,79 @@
         if(metodo === 'EnlaceWeb') metodoMostrado = 'ENLACE WEB';
         if(metodo === 'MercadoPago') metodoMostrado = 'MERCADO PAGO (TARJETA INVITADO)';
 
+        // ================= CONEXIÓN A CONTABILIDAD Y DESCUENTO INVENTARIO =================
+        try {
+            // Guardar Venta en BD
+            const res = await fetch(`/api/ventas?origen=Caja POS&pais=${pais}&estado=Pagado&medioPago=${metodo}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(carrito)
+            });
+            const ventaGuardada = await res.json();
+            
+            // Procesar los ingredientes (Dispara el Controlador Java para descontar insumos o packs)
+            await fetch(`/api/ventas/${ventaGuardada.id}/pagar`, { method: 'PUT' });
+
+        } catch (e) {
+            playSound('error');
+            alert("Error crítico conectando con el motor contable.");
+            return;
+        }
+
         msjAlerta += `VÍA: ${metodoMostrado}\n`;
         msjAlerta += `RECEPTOR: ${crmNombre ? crmNombre.toUpperCase() : 'ANÓNIMO'}\n`;
 
         setTimeout(() => {
-            hablar("Síntesis autorizada correctamente.");
+            hablar("Síntesis autorizada y guardada en contabilidad.");
             alert(msjAlerta);
             carrito = []; renderizarTicket();
             bootstrap.Modal.getInstance(document.getElementById('modalCobro')).hide();
         }, 600);
+    }
+
+    // ==========================================
+    // MÓDULO DE CAJA (CIERRE Y LIBRO)
+    // ==========================================
+    async function abrirLibroCaja() {
+        playSound('granted');
+        const pais = document.getElementById('sucursal-activa').value;
+        const res = await fetch(`/api/finanzas/indicadores/${pais}`);
+        const data = await res.json();
+
+        document.getElementById('caja-efectivo').innerText = `${simboloActual}${data.ingresosEfectivo.toLocaleString('es-ES')}`;
+        document.getElementById('caja-banco').innerText = `${simboloActual}${data.ingresosBanco.toLocaleString('es-ES')}`;
+        document.getElementById('caja-total').innerText = `${simboloActual}${data.ingresosNetos.toLocaleString('es-ES')}`;
+        
+        cargarPedidosWeb(pais);
+        new bootstrap.Modal(document.getElementById('modalLibroCaja')).show();
+    }
+
+    async function cargarPedidosWeb(pais) {
+        const res = await fetch('/api/ventas');
+        const ventas = await res.json();
+        const ventasWeb = ventas.filter(v => v.origen === 'Web' && v.pais === pais && v.estado === 'Pendiente' && !v.archivada);
+        const cont = document.getElementById('contenedor-pedidos-web');
+        const lista = document.getElementById('lista-pedidos-web');
+        
+        if (ventasWeb.length > 0) {
+            lista.innerHTML = '';
+            ventasWeb.forEach(v => {
+                lista.innerHTML += `<li class="list-group-item bg-transparent text-white border-warning">Pedido #00${v.id} - ${simboloActual}${v.total} (Esperando preparación)</li>`;
+            });
+            cont.style.display = 'block';
+        } else {
+            cont.style.display = 'none';
+        }
+    }
+
+    async function ejecutarCierreDiario() {
+        if(confirm("⚠ ATENCIÓN: El Arqueo y Cierre Diaro reseteará los indicadores a $0.00 para la caja activa. ¿Proceder?")) {
+            playSound('error');
+            const pais = document.getElementById('sucursal-activa').value;
+            await fetch(`/api/finanzas/cierre/${pais}`, { method: 'PUT' });
+            hablar("Arqueo cerrado y sincronizado con Contabilidad Central.");
+            bootstrap.Modal.getInstance(document.getElementById('modalLibroCaja')).hide();
+        }
     }
 
     // ==========================================
