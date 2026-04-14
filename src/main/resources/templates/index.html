@@ -123,6 +123,84 @@
         .spinner-bio { width: 70px; height: 70px; border: 4px solid transparent; border-top-color: var(--p-eco-green); border-right-color: var(--p-magenta); border-radius: 50%; animation: spin-bio 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
         @keyframes spin-bio { 100% { transform: rotate(360deg); } }
         .sync-spin { animation: spin-bio 1s linear infinite; color: var(--p-magenta) !important; text-shadow: var(--resplandor-magenta) !important;}
+
+        /* ==================================================================== */
+        /* INICIO REGLAS EXCLUSIVAS PARA OPTIMIZACIÓN MÓVIL (AGREGADAS)         */
+        /* ==================================================================== */
+        @media (max-width: 768px) {
+            /* 1. Evita que la barra de carrito inferior tape la última fila de productos */
+            #grid-pos-productos {
+                padding-bottom: 110px !important;
+                max-height: calc(100vh - 160px) !important;
+            }
+
+            /* 2. Ajusta el Navbar para que no se rompa el diseño si hay muchos botones */
+            .navbar-pos {
+                flex-direction: column;
+                justify-content: center;
+                padding: 10px;
+                gap: 15px;
+            }
+            .navbar-pos > div:first-child {
+                width: 100%;
+                justify-content: center;
+            }
+            .navbar-pos > div:last-child {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .navbar-pos h4 {
+                font-size: 1.5rem !important;
+                margin-right: 0 !important;
+                text-align: center;
+            }
+
+            /* 3. Escala las tarjetas de productos para que encajen perfectas de a dos */
+            .pos-item-img-container {
+                height: 100px; /* Reduce altura de imagen */
+            }
+            .pos-item-nombre {
+                font-size: 0.9rem; /* Texto más pequeño para evitar saltos raros */
+                margin-bottom: 4px;
+            }
+            .pos-item-precio {
+                font-size: 1.05rem;
+            }
+            .pos-item-body {
+                padding: 10px 5px;
+            }
+
+            /* 4. Corrige los botones de métodos de pago en el modal para que los nombres largos quepan */
+            .btn-opcion-pago {
+                padding: 12px 5px;
+                font-size: 0.65rem; /* Achica la fuente para que quepa "Transferencia" o "Mercado Pago" */
+                word-break: break-word;
+                white-space: normal;
+            }
+            .btn-opcion-pago i {
+                font-size: 1.6rem !important; /* Íconos sutilmente menores */
+            }
+
+            /* 5. Ajusta el tamaño del total grandote en el modal de cobro */
+            #modalCobro .total-caja-display {
+                font-size: 2rem !important;
+            }
+
+            /* 6. Evita que el contenedor de filtros rompa la pantalla horizontalmente */
+            .filtros-container {
+                gap: 10px;
+                padding-bottom: 5px;
+            }
+            .btn-filtro {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+        }
+        /* ==================================================================== */
+        /* FIN REGLAS EXCLUSIVAS PARA OPTIMIZACIÓN MÓVIL                        */
+        /* ==================================================================== */
+
     </style>
 </head>
 <body onclick="initAudio()" onkeydown="initAudio()">
@@ -627,7 +705,7 @@
             const res = await fetch('/api/ventas');
             const ventas = await res.json();
             const ventasWeb = ventas.filter(v => v.origen === 'Web' && v.pais === pais && v.estado === 'Pendiente' && !v.archivada);
-            
+
             const badge = document.getElementById('notificacion-pedidos-web');
             if(ventasWeb.length > 0) {
                 if(badge.style.display === 'none') playSound('add'); // Beep if new!
@@ -645,16 +723,16 @@
         const lista = document.getElementById('lista-pedidos-web-modal');
         const loading = document.getElementById('loading-pedidos-web');
         const vacio = document.getElementById('vacio-pedidos-web');
-        
+
         lista.innerHTML = '';
         loading.style.display = 'block';
         vacio.style.display = 'none';
-        
+
         try {
             const res = await fetch('/api/ventas');
             const ventas = await res.json();
             const ventasWeb = ventas.filter(v => v.origen === 'Web' && v.pais === pais && v.estado === 'Pendiente' && !v.archivada);
-            
+
             loading.style.display = 'none';
             if(ventasWeb.length > 0) {
                 ventasWeb.forEach(v => {
@@ -920,7 +998,7 @@
                 body: JSON.stringify(carrito)
             });
             const ventaGuardada = await res.json();
-            
+
             // Procesar los ingredientes (Dispara el Controlador Java para descontar insumos o packs)
             await fetch(`/api/ventas/${ventaGuardada.id}/pagar`, { method: 'PUT' });
 
@@ -953,7 +1031,7 @@
         document.getElementById('caja-efectivo').innerText = `${simboloActual}${data.ingresosEfectivo.toLocaleString('es-ES')}`;
         document.getElementById('caja-banco').innerText = `${simboloActual}${data.ingresosBanco.toLocaleString('es-ES')}`;
         document.getElementById('caja-total').innerText = `${simboloActual}${data.ingresosNetos.toLocaleString('es-ES')}`;
-        
+
         cargarPedidosWeb(pais);
         new bootstrap.Modal(document.getElementById('modalLibroCaja')).show();
     }
@@ -964,7 +1042,7 @@
         const ventasWeb = ventas.filter(v => v.origen === 'Web' && v.pais === pais && v.estado === 'Pendiente' && !v.archivada);
         const cont = document.getElementById('contenedor-pedidos-web');
         const lista = document.getElementById('lista-pedidos-web');
-        
+
         if (ventasWeb.length > 0) {
             lista.innerHTML = '';
             ventasWeb.forEach(v => {
