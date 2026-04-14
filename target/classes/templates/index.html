@@ -32,7 +32,7 @@
         body {
             font-family: 'Rajdhani', sans-serif;
             background-color: var(--bg-abismo);
-            background-image: linear-gradient(rgba(0, 5, 2, 0.93), rgba(0, 5, 2, 0.98)), url('https://res.cloudinary.com/doi0o3hlr/image/upload/v1774759858/Gemini_Generated_Image_2ocvdw2ocvdw2ocv_ixqdsz.png');
+            background-image: linear-gradient(rgba(0, 5, 2, 0.93), rgba(0, 5, 2, 0.98)), url('https://res.cloudinary.com/doi0o3hlr/image/upload/q_auto,f_auto,w_1200/v1774759858/Gemini_Generated_Image_2ocvdw2ocvdw2ocv_ixqdsz.png');
             background-size: cover; background-attachment: fixed;
             color: #ffffff; min-height: 100vh; overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
@@ -131,7 +131,7 @@
 <div class="spores"></div>
 <div class="scanlines"></div>
 
-<div id="pantalla-login" style="display: none;">
+<div id="pantalla-login" style="display: flex;">
     <div class="caja-login">
         <i class="bi bi-fingerprint glitch-text" style="font-size: 5rem; color: var(--p-eco-green);"></i>
         <h3 class="mt-4 mb-4 glitch-text" style="font-family: 'Orbitron'; color: #fff; letter-spacing: 6px; font-size: 2rem;">NODO POS</h3>
@@ -141,11 +141,11 @@
         <input type="password" id="pass-operador" class="input-login" placeholder="CLAVE NEURONAL" autocomplete="off" oninput="playSound('hover')" onkeypress="if(event.key === 'Enter') validarAcceso()">
 
         <button class="btn-bio w-100 mt-2" onclick="validarAcceso()">AUTORIZAR ENLACE</button>
-        <p id="error-login" class="text-danger mt-4 fw-bold" style="display:none; font-family: 'Orbitron'; text-shadow: 0 0 15px red; font-size: 1.1rem;">SINCRONIZACIÓN FALLIDA</p>
+        <p id="error-login" class="text-danger mt-4 fw-bold" style="display:none; font-family: 'Orbitron'; text-shadow: 0 0 15px red; font-size: 1.1rem;">CREDENCIALES INVÁLIDAS</p>
     </div>
 </div>
 
-<div id="sistema-pos" style="display: block;">
+<div id="sistema-pos" style="display: none;">
 
     <div class="navbar-pos">
         <div class="d-flex align-items-center">
@@ -157,9 +157,9 @@
                 <i class="bi bi-cloud-arrow-down-fill me-1"></i> APP
             </button>
             <select id="sucursal-activa" class="selector-sucursal" onchange="cambiarSucursal()" onmouseenter="playSound('hover')">
-                <option value="Colombia">NODO COLOMBIA (COP)</option>
-                <option value="Chile">NODO CHILE (CLP)</option>
-                <option value="España">NODO ESPAÑA (EUR)</option>
+                <option value="Colombia">🇨🇴 NODO COLOMBIA (COP)</option>
+                <option value="Chile">🇨🇱 NODO CHILE (CLP)</option>
+                <option value="España">🇪🇸 NODO ESPAÑA (EUR)</option>
             </select>
 
             <button id="btn-mic" class="btn btn-outline-warning px-3 py-2 border-0" onclick="iniciarReconocimientoVoz()" onmouseenter="playSound('hover')" title="Sistema de Comandos (Click para hablar)"><i class="bi bi-mic fs-4"></i></button>
@@ -552,9 +552,25 @@
         const normalizar = (str) => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
         const userNorm = normalizar(userRaw);
 
-        let loginExitoso = true; // BYPASS SEGURIDAD
-        let mensajeVoz = "Acceso libre habilitado por comando de emergencia.";
-        selectorSucursal.disabled = false;
+        let loginExitoso = false;
+        let mensajeVoz = "";
+
+        if (userNorm === 'admin' && pass === '1786') {
+            loginExitoso = true; mensajeVoz = "Bienvenido Maestro al Sistema Raíces. Autoridad Máxima reconocida.";
+            selectorSucursal.disabled = false; selectorSucursal.value = 'Chile';
+        } else if (userNorm === 'administrador juan' && pass === '1807') {
+            loginExitoso = true; mensajeVoz = "Bienvenido, Administrador Juan. Enlace de España habilitado.";
+            selectorSucursal.disabled = false; selectorSucursal.value = 'España';
+        } else if (userNorm === 'hermana' && pass === '1306') {
+            loginExitoso = true; mensajeVoz = "Bienvenida, Hermana. Que el sistema fluya contigo hoy.";
+            selectorSucursal.value = 'España'; selectorSucursal.disabled = true;
+        } else if (userNorm === 'carolina' && pass === '2907') {
+            loginExitoso = true; mensajeVoz = "Bienvenida, Carolina. Nodo Mallorca activado y listo para brillar.";
+            selectorSucursal.value = 'España'; selectorSucursal.disabled = true;
+        } else if (userNorm === 'linda mama spa' && pass === '3002') {
+            loginExitoso = true; mensajeVoz = "Bienvenida. Nodo Chile para Linda Mamá Spa activado.";
+            selectorSucursal.value = 'Chile'; selectorSucursal.disabled = true;
+        }
 
         if(loginExitoso) {
             playSound('granted');
@@ -570,7 +586,7 @@
         } else {
             playSound('error');
             document.getElementById('error-login').style.display = 'block';
-            hablar("Acceso denegado. Credenciales inválidas.");
+            hablar("Acceso denegado. Credenciales inválidas. Verifica tu identidad neuronal.");
         }
     }
 
@@ -595,8 +611,6 @@
 
     window.addEventListener('DOMContentLoaded', () => {
         modalTicketMobileInst = new bootstrap.Modal(document.getElementById('modalTicketMobile'));
-        // AUTO START POS BYPASS
-        setTimeout(() => { iniciarSistemaPOS(); }, 500);
     });
 
     function iniciarSistemaPOS() {
