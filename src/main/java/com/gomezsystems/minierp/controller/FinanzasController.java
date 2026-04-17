@@ -1,7 +1,6 @@
 package com.gomezsystems.minierp.controller;
 
 import com.gomezsystems.minierp.model.Gasto;
-import com.gomezsystems.minierp.model.Venta;
 import com.gomezsystems.minierp.repository.GastoRepository;
 import com.gomezsystems.minierp.repository.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,33 +23,11 @@ public class FinanzasController {
 
     @GetMapping("/indicadores/{sucursal}")
     public Map<String, Object> obetenerIndicadores(@PathVariable String sucursal) {
-        List<Venta> ventas = ventaRepository.findAll();
-        List<Gasto> gastos = gastoRepository.findBySucursal(sucursal);
-
-        double totalIngresos = 0;
-        double ingresosEfectivo = 0;
-        double ingresosBanco = 0; // Tarjeta, Nequi, Transferencia...
         
-        // Ventas no archivadas de la sucursal
-        for (Venta v : ventas) {
-            if (!v.isArchivada() && sucursal.equalsIgnoreCase(v.getPais())) {
-                double t = v.getTotal() != null ? v.getTotal() : 0;
-                totalIngresos += t;
-                if ("Efectivo".equalsIgnoreCase(v.getMedioPago())) {
-                    ingresosEfectivo += t;
-                } else {
-                    ingresosBanco += t;
-                }
-            }
-        }
-
-        double totalGastos = 0;
-        for (Gasto g : gastos) {
-            if (!g.isArchivada()) {
-                totalGastos += (g.getMonto() != null ? g.getMonto() : 0);
-            }
-        }
-
+        double totalIngresos = ventaRepository.sumTotalBySucursalActiva(sucursal);
+        double ingresosEfectivo = ventaRepository.sumTotalEfectivoBySucursalActiva(sucursal);
+        double ingresosBanco = ventaRepository.sumTotalBancoBySucursalActiva(sucursal);
+        double totalGastos = gastoRepository.sumGastosActivosBySucursal(sucursal);
         double utilidad = totalIngresos - totalGastos;
 
         Map<String, Object> resp = new HashMap<>();
@@ -88,24 +65,8 @@ public class FinanzasController {
 
     @PutMapping("/cierre/{sucursal}")
     public ResponseEntity<String> cerrarCajaDiaria(@PathVariable String sucursal) {
-        // Archivamos Ventas
-        List<Venta> ventas = ventaRepository.findAll();
-        for (Venta v : ventas) {
-            if (!v.isArchivada() && sucursal.equalsIgnoreCase(v.getPais())) {
-                v.setArchivada(true);
-                ventaRepository.save(v);
-            }
-        }
-
-        // Archivamos Gastos
-        List<Gasto> gastos = gastoRepository.findBySucursal(sucursal);
-        for (Gasto g : gastos) {
-            if (!g.isArchivada()) {
-                g.setArchivada(true);
-                gastoRepository.save(g);
-            }
-        }
-
+        ventaRepository.archivarVentasPorSucursal(sucursal);
+        gastoRepository.archivarGastosPorSucursal(sucursal);
         return ResponseEntity.ok("Cierre de caja exitoso. Contadores a $0.00.");
     }
 }

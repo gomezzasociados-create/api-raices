@@ -580,7 +580,9 @@
                 if (resMp.ok) {
                     const linkMercadoPago = await resMp.text();
                     await fetch(`/api/ventas?metodo=MercadoPago`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    carrito.forEach(item => fetch(`/api/inventario/vender?idProducto=${item.id}&cantidad=1`, { method: 'POST' }));
+                    // NOTA: El descuento de inventario ya se hace de forma segura en el Backend cuando el pago es confirmado
+                    // carrito.forEach(item => fetch(`/api/inventario/vender?idProducto=${item.id}&cantidad=1`, { method: 'POST' }));
+                    
                     carrito = []; actualizarCarrito(); modalCarritoCliente.hide(); window.location.href = linkMercadoPago;
                 } else { throw new Error("Fallo en servidor MP"); }
             }

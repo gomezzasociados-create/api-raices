@@ -1,7 +1,9 @@
 package com.gomezsystems.minierp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,22 +17,29 @@ public class Venta {
     private LocalDateTime fecha;
     private Double total;
     private String origen; // WEB o POS
-    private String pais;
+    private String pais;   // Actúa como sucursal principal
     private String estado;
-
-    // ¡NUEVO CAMPO PARA EL CUADRE DE CAJA!
     private String medioPago;
+
+    // Nuevo campo: Relación al cliente (Opcional por ahora)
+    private String nombreCliente;
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean archivada = false;
 
-    @ManyToMany
-    @JoinTable(
-            name = "venta_producto",
-            joinColumns = @JoinColumn(name = "venta_id"),
-            inverseJoinColumns = @JoinColumn(name = "producto_id")
-    )
-    private List<Producto> productos;
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetalleVenta> detalles = new ArrayList<>();
+
+    // Propiedad transitoria (no se guarda en DB) para mantener compatibilidad 
+    // con el JSON del frontend o devoluciones REST antiguas si fuera necesario.
+    @Transient
+    @JsonIgnoreProperties
+    private List<Producto> productosCompatibles;
+
+    public void addDetalle(DetalleVenta detalle) {
+        detalles.add(detalle);
+        detalle.setVenta(this);
+    }
 
     // Getters y Setters
     public Long getId() { return id; }
@@ -54,9 +63,15 @@ public class Venta {
     public String getMedioPago() { return medioPago; }
     public void setMedioPago(String medioPago) { this.medioPago = medioPago; }
 
-    public List<Producto> getProductos() { return productos; }
-    public void setProductos(List<Producto> productos) { this.productos = productos; }
+    public String getNombreCliente() { return nombreCliente; }
+    public void setNombreCliente(String nombreCliente) { this.nombreCliente = nombreCliente; }
+
+    public List<DetalleVenta> getDetalles() { return detalles; }
+    public void setDetalles(List<DetalleVenta> detalles) { this.detalles = detalles; }
 
     public boolean isArchivada() { return archivada; }
     public void setArchivada(boolean archivada) { this.archivada = archivada; }
+
+    public List<Producto> getProductosCompatibles() { return productosCompatibles; }
+    public void setProductosCompatibles(List<Producto> productosCompatibles) { this.productosCompatibles = productosCompatibles; }
 }
