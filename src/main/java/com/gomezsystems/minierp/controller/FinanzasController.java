@@ -68,6 +68,11 @@ public class FinanzasController {
         return gastoRepository.findBySucursal(sucursal).stream().filter(g -> !g.isArchivada()).toList();
     }
 
+    @GetMapping("/gastos/todos/{sucursal}")
+    public List<Gasto> listarTodosLosGastos(@PathVariable String sucursal) {
+        return gastoRepository.findBySucursal(sucursal);
+    }
+
     @PostMapping("/gastos")
     public Gasto agregarGasto(@RequestBody Gasto gasto) {
         gasto.setFecha(LocalDateTime.now(ZoneId.of("America/Santiago")));

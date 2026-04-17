@@ -21,9 +21,15 @@ public class Insumo {
     // --- NUEVO: CLASIFICACIÓN DE BODEGA ---
     private String categoria;
 
+    @Transient
+    private String actorAdmin; // Para registrar KARDEX desde Front-End
+
     // Getters y Setters
     public Long getIdInsumo() { return idInsumo; }
     public void setIdInsumo(Long idInsumo) { this.idInsumo = idInsumo; }
+
+    public String getActorAdmin() { return actorAdmin; }
+    public void setActorAdmin(String actorAdmin) { this.actorAdmin = actorAdmin; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }

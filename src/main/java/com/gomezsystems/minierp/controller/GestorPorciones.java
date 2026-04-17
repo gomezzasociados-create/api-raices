@@ -2,8 +2,10 @@ package com.gomezsystems.minierp.controller;
 
 import com.gomezsystems.minierp.model.Insumo;
 import com.gomezsystems.minierp.model.Producto;
+import com.gomezsystems.minierp.model.MovimientoKardex;
 import com.gomezsystems.minierp.repository.InsumoRepository;
 import com.gomezsystems.minierp.repository.ProductoRepository;
+import com.gomezsystems.minierp.repository.KardexRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +32,7 @@ public class GestorPorciones {
 
     @Autowired private InsumoRepository insumoRepository;
     @Autowired private ProductoRepository productoRepository;
+    @Autowired private KardexRepository kardexRepository;
 
     @GetMapping("/todos")
     public List<Insumo> listarTodos() {
@@ -46,17 +50,41 @@ public class GestorPorciones {
             Optional<Insumo> existenteOpt = insumoRepository.findById(insumo.getIdInsumo());
             if (existenteOpt.isPresent()) {
                 Insumo existente = existenteOpt.get();
+                
+                if(!existente.getUnidadActual().equals(insumo.getUnidadActual())) {
+                    MovimientoKardex mk = new MovimientoKardex();
+                    mk.setNombreInsumo(insumo.getNombre());
+                    mk.setCategoria(insumo.getCategoria());
+                    mk.setSucursal(insumo.getSucursal());
+                    mk.setFechaHora(LocalDateTime.now());
+                    mk.setTipoMovimiento("Edición Manual");
+                    mk.setVariacion(insumo.getUnidadActual() - existente.getUnidadActual());
+                    mk.setActor(insumo.getActorAdmin() != null ? insumo.getActorAdmin() : "Desconocido");
+                    kardexRepository.save(mk);
+                }
+
                 existente.setNombre(insumo.getNombre());
                 existente.setUnidadActual(insumo.getUnidadActual());
-                existente.setCantidadPorcion(insumo.getCantidadPorcion()); // Respeta tu campo original
+                existente.setCantidadPorcion(insumo.getCantidadPorcion()); 
                 existente.setMedida(insumo.getMedida());
                 existente.setSucursal(insumo.getSucursal());
-                existente.setCategoria(insumo.getCategoria()); // Guarda la categoría (Pulpas, Vasos, etc)
+                existente.setCategoria(insumo.getCategoria()); 
                 insumoRepository.save(existente);
                 return ResponseEntity.ok("Insumo actualizado");
             }
         }
         insumoRepository.save(insumo);
+        if(insumo.getUnidadActual() != null && insumo.getUnidadActual() > 0) {
+            MovimientoKardex mk = new MovimientoKardex();
+            mk.setNombreInsumo(insumo.getNombre());
+            mk.setCategoria(insumo.getCategoria());
+            mk.setSucursal(insumo.getSucursal());
+            mk.setFechaHora(LocalDateTime.now());
+            mk.setTipoMovimiento("Ingreso Inicial");
+            mk.setVariacion(insumo.getUnidadActual());
+            mk.setActor(insumo.getActorAdmin() != null ? insumo.getActorAdmin() : "Desconocido");
+            kardexRepository.save(mk);
+        }
         return ResponseEntity.ok("Insumo creado");
     }
 

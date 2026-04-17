@@ -211,9 +211,26 @@
             50% { transform: scale(1.15); }
             100% { transform: scale(1); }
         }
+
+        @media print {
+            body { background: #fff !important; color: #000 !important; }
+            body * { visibility: hidden; }
+            #app-dashboard, .hex-grid, .spores, .navbar-raices, .scanlines, #login-screen, .btn-mic-flotante, .processing-overlay { display: none !important; }
+            #impresion-zona, #impresion-zona * { visibility: visible; }
+            #impresion-zona { position: absolute; left: 0; top: 0; width: 100%; color: #000 !important; background: #fff !important; text-shadow: none !important; font-family: 'Rajdhani', sans-serif; padding: 10px; }
+            .ticket-print { max-width: 300px; margin: 0 auto; text-align: center; border-bottom: 2px dashed #000; padding-bottom: 20px;}
+            .libro-print { max-width: 100%; }
+            table { width: 100%; border-collapse: collapse; margin-top:15px; color:#000 !important; background: #fff !important;}
+            th, td { border: 1px solid #999; padding: 8px; text-shadow: none !important; color:#000 !important; background: #fff !important; font-size: 14px;}
+            th { border-bottom: 2px solid #000 !important; font-weight: bold; background: #eee !important; -webkit-print-color-adjust: exact; }
+            .header-print { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+            h1, h2, h3, h4, h5, h6, p, span, div { color: #000 !important; text-shadow: none !important; box-shadow: none !important; }
+        }
     </style>
 </head>
 <body onclick="initAudio()" onkeydown="initAudio()">
+<div id="impresion-zona"></div>
+
 
 <div class="hex-grid"></div>
 <div class="spores"></div>
@@ -275,7 +292,7 @@
                     <div class="row g-3 align-items-end position-relative" style="z-index: 1;">
                         <div class="col-md-2">
                             <label class="form-label-neon">NODO BASE</label>
-                            <select id="prod-sucursal" class="form-select auth-select" onchange="cargarProductosSelect(); playSound('click')">
+                            <select id="prod-sucursal" class="form-select auth-select" onchange="cargarProduccion(); playSound('click')">
                                 <option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option>
                             </select>
                         </div>
@@ -357,7 +374,9 @@
                         </div>
                     </div>
 
-                    <div class="text-end mb-4">
+                    <div class="text-end mb-4 d-flex justify-content-end gap-2 flex-wrap">
+                        <button class="btn btn-outline-info font-orbitron fw-bold" onclick="abrirLibroContable()"><i class="bi bi-journal-text me-2"></i> LIBRO CONTABLE Y MAYOR</button>
+                        <button class="btn btn-outline-light font-orbitron fw-bold" onclick="imprimirCierreCaja()"><i class="bi bi-printer me-2"></i> IMPRIMIR BALANCE ACTUAL</button>
                         <button class="btn" style="background:var(--p-warning); color:#000; font-family:'Orbitron'; font-weight:bold;" onclick="ejecutarCierreAdmin()"><i class="bi bi-safe me-2"></i> EJECUTAR CIERRE ADMIN (RESET)</button>
                     </div>
                 </div>
@@ -396,19 +415,24 @@
             <div class="tab-pane fade" id="tab-crm" role="tabpanel">
                 <div class="table-container mb-4" style="border-top: 3px solid var(--p-magenta);">
                     <h5 class="mb-4 fw-bold font-orbitron" style="color: var(--p-magenta); text-shadow: var(--magenta-glow);"><i class="bi bi-person-plus"></i> REGISTRO DE NUEVO CLIENTE VIP</h5>
-                    <div class="row g-3">
+                    <div class="row g-2">
                         <input type="hidden" id="crm-id">
-                        <div class="col-md-3"><label class="form-label-neon">Identificación</label><input type="text" id="crm-nombre" class="form-control" placeholder="Nombre completo"></div>
-                        <div class="col-md-3"><label class="form-label-neon">Enlace (Teléfono)</label><input type="text" id="crm-tel" class="form-control" placeholder="WhatsApp"></div>
-                        <div class="col-md-3"><label class="form-label-neon">Coordenadas</label><input type="text" id="crm-dir" class="form-control" placeholder="Dirección de envío"></div>
-                        <div class="col-md-2"><label class="form-label-neon">Nodo Base</label><select id="crm-nodo" class="form-select"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
-                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" onclick="guardarCliente()"><i class="bi bi-hdd-network fs-4"></i></button></div>
+                        <div class="col-md-2"><label class="form-label-neon">Identificación</label><input type="text" id="crm-nombre" class="form-control" placeholder="Nombre completo"></div>
+                        <div class="col-md-2"><label class="form-label-neon">Teléfono</label><input type="text" id="crm-tel" class="form-control" placeholder="WhatsApp"></div>
+                        <div class="col-md-2"><label class="form-label-neon">Dirección</label><input type="text" id="crm-dir" class="form-control" placeholder="Envío"></div>
+                        <div class="col-md-2"><label class="form-label-neon">Correo (Opc)</label><input type="email" id="crm-correo" class="form-control" placeholder="@"></div>
+                        <div class="col-md-2"><label class="form-label-neon">F Nacimiento</label><input type="date" id="crm-cumple" class="form-control"></div>
+                        <div class="col-md-1"><label class="form-label-neon text-warning">Pts</label><input type="number" id="crm-puntos" class="form-control border-warning bg-dark fw-bold text-warning text-center" placeholder="0"></div>
+                        <div class="col-md-1">
+                            <label class="form-label-neon">Nodo</label><select id="crm-nodo" class="form-select auth-select"><option value="Colombia">Col</option><option value="Chile">Chi</option><option value="España">Esp</option></select>
+                        </div>
+                        <div class="col-md-12 mt-2"><button class="btn btn-bio w-100 py-2 fs-5" onclick="guardarCliente()"><i class="bi bi-person-fill-up me-2"></i> REGISTRAR O ACTUALIZAR CLIENTE (BD)</button></div>
                     </div>
                 </div>
                 <div class="table-container p-0 border-0 bg-transparent box-shadow-none">
                     <div class="table-responsive">
-                        <table class="table text-center align-middle m-0">
-                            <thead class="table-dark"><tr><th>IDENTIFICACIÓN</th><th>ENLACE COMUNICACIÓN</th><th>COORDENADAS</th><th>NODO_BASE</th><th>ADMINISTRAR</th></tr></thead>
+                        <table class="table text-center align-middle m-0 text-nowrap">
+                            <thead class="table-dark"><tr><th>CLIENTE</th><th>CONTACTO</th><th>CORREO / UBICACIÓN</th><th>MARKETING</th><th>NODO_BASE</th><th>ADMIN</th></tr></thead>
                             <tbody id="tabla-crm"></tbody>
                         </table>
                     </div>
@@ -416,39 +440,68 @@
             </div>
 
             <div class="tab-pane fade" id="tab-inventario" role="tabpanel">
-                <div class="table-container mb-4" style="border-top: 3px solid var(--p-bio-green);">
-                    <h5 class="text-money-green mb-4 fw-bold font-orbitron"><i class="bi bi-tree"></i> REGISTRO BOTÁNICO: MATERIA PRIMA (PULPAS)</h5>
-                    <div class="row g-3">
-                        <input type="hidden" id="ins-id">
-                        <div class="col-md-4"><label class="form-label-neon" style="color:var(--p-bio-green)">Cód. Botánico</label><input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Pulpa de Mango"></div>
-
-                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Métrica</label><select id="ins-unidad" class="form-select"><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
-                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control"></div>
-                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
-                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background:var(--p-bio-green); color:#000;" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg fs-4"></i></button></div>
-                    </div>
+                <div class="d-flex justify-content-end mb-3">
+                    <button class="btn btn-outline-warning font-orbitron fw-bold px-4" onclick="abrirModalKardex()"><i class="bi bi-clock-history me-2"></i> VER KARDEX / AUDITORÍA</button>
                 </div>
 
-                <div class="table-container mb-4" style="border-top: 3px solid var(--p-cyan);">
-                    <h5 style="color: var(--p-cyan); text-shadow: var(--border-glow);" class="mb-4 fw-bold font-orbitron"><i class="bi bi-cup-straw"></i> SUMINISTROS FÍSICOS: VASOS Y PACKAGING</h5>
-                    <div class="row g-3">
-                        <input type="hidden" id="vaso-id">
-                        <div class="col-md-4"><label class="form-label-neon">Elemento</label><input type="text" id="vaso-nombre" class="form-control"></div>
+                <div class="accordion" id="accordionInventario">
 
-                        <div class="col-md-2"><label class="form-label-neon">Métrica</label><select id="vaso-unidad" class="form-select"><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
-                        <div class="col-md-2"><label class="form-label-neon">Volumen</label><input type="number" id="vaso-stock" class="form-control"></div>
-                        <div class="col-md-3"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
-                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-cyan); color: #000;" onclick="guardarInsumo('vasos')"><i class="bi bi-plus-lg fs-4"></i></button></div>
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingPulpas">
+                            <button class="accordion-button font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePulpas" aria-expanded="true" aria-controls="collapsePulpas" style="background: rgba(0,255,0,0.05); border: 1px solid var(--p-bio-green); color: var(--p-bio-green); box-shadow: 0 0 10px rgba(0,255,0,0.2);">
+                                <i class="bi bi-tree me-2"></i> REGISTRO BOTÁNICO: MATERIA PRIMA (PULPAS)
+                            </button>
+                        </h2>
+                        <div id="collapsePulpas" class="accordion-collapse collapse show" aria-labelledby="headingPulpas" data-bs-parent="#accordionInventario">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-bio-green);">
+                                    <div class="row g-3 mb-4 mt-1">
+                                        <input type="hidden" id="ins-id">
+                                        <div class="col-md-4"><label class="form-label-neon" style="color:var(--p-bio-green)">Cód. Botánico</label><input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Pulpa de Mango"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Métrica</label><select id="ins-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control"></div>
+                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
+                                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background:var(--p-bio-green); color:#000;" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg fs-4"></i></button></div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table text-center align-middle m-0">
+                                            <thead class="table-dark"><tr><th>BIOLOGÍA_PULPA</th><th>ETIQUETA</th><th>NODO_BASE</th><th>VOLUMEN_ACTUAL</th><th>ACCIONES</th></tr></thead>
+                                            <tbody id="tabla-pulpas"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="table-container p-0 border-0 bg-transparent box-shadow-none">
-                    <div class="table-responsive">
-                        <table class="table text-center align-middle m-0">
-                            <thead class="table-dark"><tr><th>ELEMENTO_ID</th><th>FAMILIA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>RECICLAR</th></tr></thead>
-                            <tbody id="tabla-insumos"></tbody>
-                        </table>
+                    <div class="accordion-item bg-transparent border-0">
+                        <h2 class="accordion-header" id="headingVasos">
+                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVasos" aria-expanded="false" aria-controls="collapseVasos" style="background: rgba(0,255,255,0.05); border: 1px solid var(--p-cyan); color: var(--p-cyan); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
+                                <i class="bi bi-cup-straw me-2"></i> SUMINISTROS FÍSICOS: VASOS Y PACKAGING
+                            </button>
+                        </h2>
+                        <div id="collapseVasos" class="accordion-collapse collapse" aria-labelledby="headingVasos" data-bs-parent="#accordionInventario">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-cyan);">
+                                    <div class="row g-3 mb-4 mt-1">
+                                        <input type="hidden" id="vaso-id">
+                                        <div class="col-md-4"><label class="form-label-neon">Elemento Físico</label><input type="text" id="vaso-nombre" class="form-control"></div>
+                                        <div class="col-md-2"><label class="form-label-neon">Métrica</label><select id="vaso-unidad" class="form-select"><option value="und">Unidades</option><option value="mls">Mililitros</option><option value="gr">Gramos</option></select></div>
+                                        <div class="col-md-2"><label class="form-label-neon">Volumen</label><input type="number" id="vaso-stock" class="form-control"></div>
+                                        <div class="col-md-3"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
+                                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-cyan); color: #000;" onclick="guardarInsumo('vasos')"><i class="bi bi-plus-lg fs-4"></i></button></div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table text-center align-middle m-0">
+                                            <thead class="table-dark"><tr><th>ELEMENTO_FÍSICO</th><th>FAMILIA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>RECICLAR</th></tr></thead>
+                                            <tbody id="tabla-vasos"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
 
@@ -577,7 +630,7 @@
     let produccionGlobal = [];
 
     // --- LÓGICA DE USUARIOS ---
-    let rolUsuario = null; let sucursalAdmin = null; let baseCRM = JSON.parse(localStorage.getItem('raices_crm')) || [];
+    let rolUsuario = null; let sucursalAdmin = null;
 
     window.addEventListener('DOMContentLoaded', () => {
         const inputFecha = document.getElementById('prod-fecha');
@@ -703,7 +756,13 @@
             catalogoGlobal = await res.json();
             const select = document.getElementById('prod-item');
             select.innerHTML = '<option value="">-- Seleccione Genética --</option>';
-            catalogoGlobal.forEach(p => { if(p.sucursal === suc) { select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`; } });
+            catalogoGlobal.forEach(p => {
+                const nNorm = normalizarStr(p.nombre || '');
+                const cNorm = normalizarStr(p.categoria || '');
+                if(p.sucursal === suc && (nNorm.includes('pulpa') || cNorm.includes('pulpa'))) {
+                    select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+                }
+            });
         } catch(e) {}
     }
 
@@ -711,14 +770,25 @@
         await cargarProductosSelect();
         try {
             const res = await fetch('/api/productos');
-            const data = await res.json();
+            let data = await res.json();
+
+            // Filar solo pulpas para el Génesis de Producción
+            data = data.filter(p => {
+                const nNorm = normalizarStr(p.nombre || '');
+                const cNorm = normalizarStr(p.categoria || '');
+                return nNorm.includes('pulpa') || cNorm.includes('pulpa');
+            });
+
             produccionGlobal = data; // Guardamos para el asistente
             const tb = document.getElementById('tabla-produccion'); tb.innerHTML='';
+            const sucSeleccionada = document.getElementById('prod-sucursal').value;
 
             data.forEach(p => {
                 const sucProd = normalizarStr(p.sucursal);
-                const sucAdmin = normalizarStr(sucursalAdmin);
-                if (rolUsuario !== 'SUPREMO' && !sucProd.includes(sucAdmin)) return;
+                const sucFiltro = normalizarStr(sucSeleccionada);
+
+                // Siempre guiarse por el combo de la interfaz (limitado por seguridad o manejable por el supremo)
+                if (!sucProd.includes(sucFiltro)) return;
 
                 let stock = p.stock || 0;
                 let lote = lotesProduccion[p.id];
@@ -842,7 +912,7 @@
             document.getElementById('prod-fecha').value = lotesProduccion[id].elaboracion;
         }
         window.scrollTo({top:0, behavior:'smooth'});
-        
+
         // Reemplazar la funcionalidad de Procesar ADN temporalmente para usar la ruta "ajustar-stock" rápida
         const btnFn = document.querySelector('button[onclick="procesarEnsamblaje()"]');
         if (btnFn) {
@@ -876,7 +946,7 @@
         await fetch(`/api/productos/${id}/ajustar-stock?cantidad=${cant}`, {method:'PUT'});
 
         document.getElementById('prod-cantidad').value = '';
-        
+
         const btnFn = document.querySelector('button[onclick="guardarEdicionProduccion()"]');
         if (btnFn) {
             btnFn.setAttribute('onclick', 'procesarEnsamblaje()');
@@ -907,7 +977,7 @@
             // INDICADORES
             const resInd = await fetch(`/api/finanzas/indicadores/${paisVenta}`);
             const dataInd = await resInd.json();
-            
+
             document.getElementById('tesoreria-efectivo').innerText = `${smb}${dataInd.ingresosEfectivo.toLocaleString('es-ES')}`;
             document.getElementById('tesoreria-bancos').innerText = `${smb}${dataInd.ingresosBanco.toLocaleString('es-ES')}`;
             document.getElementById('tesoreria-gastos').innerText = `${smb}${dataInd.gastos.toLocaleString('es-ES')}`;
@@ -917,7 +987,7 @@
             const resVentas = await fetch('/api/ventas');
             const dataVentas = await resVentas.json();
             const tbVentas = document.getElementById('tabla-historico-ventas'); tbVentas.innerHTML='';
-            
+
             dataVentas.forEach(v => {
                 if (v.pais !== paisVenta || v.archivada) return;
                 let badgeEstado = v.estado === 'Pagado' ? `<span style="color:var(--p-bio-green); font-weight:900;"><i class="bi bi-shield-check"></i> PAGADO</span>` : `<span style="color:#ffdd00; font-weight:900;"><i class="bi bi-clock-history"></i> PENDIENTE</span>`;
@@ -926,7 +996,7 @@
                     <td>${v.origen}</td>
                     <td style="color:var(--p-cyan)">${v.medioPago || 'Por Definir'}</td>
                     <td class="text-money-green fw-bold">${smb}${v.total.toLocaleString('es-ES')}</td>
-                    <td>${badgeEstado}</td>
+                    <td>${badgeEstado} <button class="btn btn-sm btn-outline-info ms-2 border-0" onclick="imprimirTicket(${v.id})" title="Imprimir Recibo"><i class="bi bi-printer fs-5"></i></button></td>
                 </tr>`;
             });
 
@@ -934,7 +1004,7 @@
             const resGastos = await fetch(`/api/finanzas/gastos/${paisVenta}`);
             const dataGastos = await resGastos.json();
             const tbGastos = document.getElementById('tabla-historico-gastos'); tbGastos.innerHTML='';
-            
+
             dataGastos.forEach(g => {
                 tbGastos.innerHTML += `<tr>
                     <td class="text-white">${g.concepto}</td>
@@ -958,7 +1028,7 @@
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({concepto, monto, sucursal, archivada: false})
         });
-        
+
         document.getElementById('gasto-concepto').value = '';
         document.getElementById('gasto-monto').value = '';
         cargarTesoreria();
@@ -977,35 +1047,289 @@
             playSound('error');
             const pais = document.getElementById('tesoreria-sucursal').value;
             await fetch(`/api/finanzas/cierre/${pais}`, { method: 'PUT' });
-            alert("Contadores reseteados.");
+            alert("Contadores reseteados y archivados correctamente.");
             cargarTesoreria();
         }
     }
 
-    // --- CRM ---
-    function cargarCRM() {
-        const tb = document.getElementById('tabla-crm'); tb.innerHTML='';
-        baseCRM.forEach(c => {
-            const nodoCrm = normalizarStr(c.nodo);
-            const sucAdmin = normalizarStr(sucursalAdmin);
-
-            if (rolUsuario !== 'SUPREMO' && !nodoCrm.includes(sucAdmin)) return;
-
-            tb.innerHTML += `<tr><td class="fw-bold fs-5 text-white">${c.nombre}</td><td class="text-white fs-5">${c.tel}</td><td class="text-white-50 fs-6">${c.dir}</td><td><span class="badge border border-info text-info fs-6 px-3 py-2 bg-dark">${c.nodo}</span></td><td><button class="btn btn-sm text-info border-0 me-2" onclick="editarCliente(${c.id})"><i class="bi bi-pencil-square fs-3"></i></button><button class="btn btn-sm text-danger border-0" onclick="eliminarCliente(${c.id})"><i class="bi bi-trash3 fs-3"></i></button></td></tr>`;
-        });
+    // --- MÓDULO PROFESIONAL DE IMPRESIÓN Y CAJA ---
+    function formatMoney(amount, nodo) {
+        return (nodo.includes('España') ? '€' : '$') + amount.toLocaleString('es-ES');
     }
 
-    function guardarCliente() { playSound('click'); const id = document.getElementById('crm-id').value; const nombre = document.getElementById('crm-nombre').value; const tel = document.getElementById('crm-tel').value; const dir = document.getElementById('crm-dir').value; const nodo = document.getElementById('crm-nodo').value; if(!nombre) return alert("Falta identificación."); if(id) { let cli = baseCRM.find(c => c.id == id); if(cli) { cli.nombre = nombre; cli.tel = tel; cli.dir = dir; cli.nodo = nodo; } } else { let nuevoId = baseCRM.length > 0 ? Math.max(...baseCRM.map(c=>c.id)) + 1 : 1; baseCRM.push({ id: nuevoId, nombre, tel, dir, nodo }); } document.getElementById('crm-id').value = ''; document.getElementById('crm-nombre').value = ''; document.getElementById('crm-tel').value = ''; document.getElementById('crm-dir').value = ''; localStorage.setItem('raices_crm', JSON.stringify(baseCRM)); cargarCRM(); }
-    function editarCliente(id) { playSound('click'); let cli = baseCRM.find(c => c.id === id); if(cli) { document.getElementById('crm-id').value = cli.id; document.getElementById('crm-nombre').value = cli.nombre; document.getElementById('crm-tel').value = cli.tel; document.getElementById('crm-dir').value = cli.dir; document.getElementById('crm-nodo').value = cli.nodo; } }
-    function eliminarCliente(id) { playSound('error'); if(confirm("¿Eliminar registro?")) { baseCRM = baseCRM.filter(c => c.id !== id); localStorage.setItem('raices_crm', JSON.stringify(baseCRM)); cargarCRM(); } }
+    async function imprimirTicket(idVenta) {
+        playSound('magic');
+        try {
+            const res = await fetch('/api/ventas');
+            const ventas = await res.json();
+            const v = ventas.find(x => x.id === idVenta);
+            if(!v) return alert('Operación no encontrada.');
+
+            let itemsHtml = '';
+            v.productos.forEach(p => {
+                itemsHtml += `<tr>
+                    <td style="text-align:left; border:none; border-bottom:1px solid #ccc; padding:4px 0;">${p.nombre}</td>
+                    <td style="text-align:right; border:none; border-bottom:1px solid #ccc; padding:4px 0;">${formatMoney(p.precio, v.pais)}</td>
+                </tr>`;
+            });
+
+            const zona = document.getElementById('impresion-zona');
+            zona.innerHTML = `
+                <div class="ticket-print font-orbitron">
+                    <h2 style="font-weight:900; margin-bottom:0;">BATIDOS RAÍCES</h2>
+                    <p style="font-size:12px; margin-top:2px;">SISTEMA ERP · NODO ${v.pais.toUpperCase()}</p>
+                    <p style="font-size:12px; border-bottom:1px solid #000; padding-bottom:5px;">
+                        TICKET ORIGINAL CLIENTE
+                    </p>
+                    <div style="text-align:left; margin-bottom:10px; font-size:13px;">
+                        <b>FECHA:</b> ${v.fecha ? new Date(v.fecha).toLocaleString() : new Date().toLocaleString()}<br>
+                        <b>ORDEN:</b> #OP-${v.id}<br>
+                        <b>ORIGEN:</b> ${v.origen.toUpperCase()}<br>
+                        <b>PAGO:</b> ${v.medioPago ? v.medioPago.toUpperCase() : 'PENDIENTE'}
+                    </div>
+
+                    <table style="width:100%; font-size:13px; margin-bottom:10px; border:none;">
+                        <thead>
+                            <tr>
+                                <th style="text-align:left; border:none; border-bottom:2px solid #000;">PRODUCTO</th>
+                                <th style="text-align:right; border:none; border-bottom:2px solid #000;">IMPORTE</th>
+                            </tr>
+                        </thead>
+                        <tbody>${itemsHtml}</tbody>
+                    </table>
+
+                    <div style="text-align:right; font-size:16px; font-weight:bold; margin-top:10px;">
+                        TOTAL BRUTO: ${formatMoney(v.total, v.pais)}
+                    </div>
+                    <div style="text-align:right; font-size:12px; margin-top:5px; color:#555 !important;">
+                        (IVA Incluido / Base Legal Exenta)
+                    </div>
+
+                    <p style="font-size:12px; margin-top:20px; font-weight:bold;">
+                        ¡GRACIAS POR PREFERIR BATIDOS RAÍCES!
+                    </p>
+                </div>
+            `;
+            window.print();
+        } catch(e) { console.error(e); }
+    }
+
+    async function imprimirCierreCaja() {
+        playSound('magic');
+        const nodo = document.getElementById('tesoreria-sucursal').value;
+        const efe = document.getElementById('tesoreria-efectivo').innerText;
+        const ban = document.getElementById('tesoreria-bancos').innerText;
+        const gas = document.getElementById('tesoreria-gastos').innerText;
+        const uti = document.getElementById('tesoreria-utilidad').innerText;
+
+        const fechaStr = new Date().toLocaleString() + ' - OPERADOR: ' + (rolUsuario || 'ADMIN');
+
+        const zona = document.getElementById('impresion-zona');
+        zona.innerHTML = `
+            <div class="libro-print" style="max-width:400px; margin: 0 auto;">
+                <div class="header-print font-orbitron">
+                    <h2>REPORTE DE CIERRE DE TURNO</h2>
+                    <h4>NODO: ${nodo.toUpperCase()}</h4>
+                    <p style="font-size:14px; margin-top:5px;">FECHA Y HORA: ${fechaStr}</p>
+                </div>
+
+                <table style="width:100%; border:2px solid #000; font-size:15px; margin-bottom:30px;">
+                    <tr><td style="font-weight:bold;">INGRESOS EN EFECTIVO (CAJA BASE)</td><td style="text-align:right;">${efe}</td></tr>
+                    <tr><td style="font-weight:bold;">INGRESOS VÍA BANCOS / DIGITALES</td><td style="text-align:right;">${ban}</td></tr>
+                    <tr><td style="font-weight:bold; color:red !important;">TOTAL EGRESOS Y GASTOS (DEBE)</td><td style="text-align:right; color:red !important;">${gas}</td></tr>
+                    <tr><td style="font-weight:bold; background:#eee !important;">UTILIDAD NETA DEL TURNO (HABER)</td><td style="text-align:right; font-weight:bold; background:#eee !important;">${uti}</td></tr>
+                </table>
+
+                <div style="margin-top: 50px; text-align:center;">
+                    <p>____________________________________</p>
+                    <p style="font-size:14px; font-weight:bold;">FIRMA RESPONSABLE (OPERADOR CAJA)</p>
+                </div>
+            </div>
+        `;
+        window.print();
+    }
+
+    async function abrirLibroContable() {
+        playSound('magic');
+        const nodo = document.getElementById('tesoreria-sucursal').value;
+        const zona = document.getElementById('impresion-zona');
+        zona.innerHTML = `<h2 class="text-center" style="margin-top:50px;">Generando Libro Mayor Histórico para ${nodo}... Espera.</h2>`;
+
+        try {
+            const resVentas = await fetch('/api/ventas');
+            const dataVentas = await resVentas.json();
+
+            const resGastos = await fetch(`/api/finanzas/gastos/todos/${nodo}`);
+            const dataGastos = await resGastos.json();
+
+            // Unificar todos los movimientos en un array historico
+            let movimientos = [];
+
+            dataVentas.forEach(v => {
+                if (v.pais !== nodo) return;
+                movimientos.push({
+                    fecha: new Date(v.fecha || new Date()),
+                    tipo: 'INGRESO VENTA',
+                    concepto: 'OP#' + v.id + ' (' + v.medioPago + ')',
+                    entrada: v.total,
+                    salida: 0
+                });
+            });
+
+            dataGastos.forEach(g => {
+                movimientos.push({
+                    fecha: new Date(g.fecha || new Date()),
+                    tipo: 'EGRESO OPERATIVO',
+                    concepto: g.concepto,
+                    entrada: 0,
+                    salida: g.monto
+                });
+            });
+
+            movimientos.sort((a,b) => a.fecha - b.fecha);
+
+            let htmlMovs = '';
+            let balance = 0;
+            movimientos.forEach(m => {
+                balance += (m.entrada - m.salida);
+                htmlMovs += `<tr>
+                    <td>${m.fecha.toLocaleDateString()} ${m.fecha.toLocaleTimeString()}</td>
+                    <td><b>${m.tipo}</b></td>
+                    <td>${m.concepto}</td>
+                    <td style="text-align:right; color:green !important;">${m.entrada > 0 ? formatMoney(m.entrada, nodo) : '-'}</td>
+                    <td style="text-align:right; color:red !important;">${m.salida > 0 ? formatMoney(m.salida, nodo) : '-'}</td>
+                    <td style="text-align:right; font-weight:bold;">${formatMoney(balance, nodo)}</td>
+                </tr>`;
+            });
+
+            zona.innerHTML = `
+                <div class="libro-print w-100 p-4">
+                    <div class="header-print">
+                        <h1 style="margin:0;">LIBRO CONTABLE Y MAYOR EMPRESARIAL</h1>
+                        <h3 style="margin:5px 0;">SISTEMA RAÍCES ERP - NODO ${nodo.toUpperCase()}</h3>
+                        <p>Impreso el: ${new Date().toLocaleString()}</p>
+                    </div>
+
+                    <table style="width:100%; border-collapse:collapse; margin-top:20px;">
+                        <thead>
+                            <tr>
+                                <th style="text-align:left;">FECHA</th>
+                                <th style="text-align:left;">TIPO ORIGEN</th>
+                                <th style="text-align:left;">DETALLE DE LA OPERACIÓN</th>
+                                <th style="text-align:right;">DEBE (INGRESO)</th>
+                                <th style="text-align:right;">HABER (EGRESO)</th>
+                                <th style="text-align:right;">BALANCE (SALDO)</th>
+                            </tr>
+                        </thead>
+                        <tbody>${htmlMovs}</tbody>
+                    </table>
+
+                    <div style="margin-top:40px; text-align:right;">
+                        <h3 style="display:inline-block; border-top:2px solid #000; padding-top:10px;">BALANCE PATRIMONIAL TOTAL: ${formatMoney(balance, nodo)}</h3>
+                    </div>
+                </div>
+            `;
+            window.print();
+        } catch(e) {
+            alert('Error generando libro contable: ' + e);
+        }
+    }
+
+    // --- CRM ---
+    let baseCRM = [];
+
+    async function cargarCRM() {
+        const tb = document.getElementById('tabla-crm'); tb.innerHTML='';
+        try {
+            const res = await fetch('/api/clientes');
+            if (res.ok) {
+                baseCRM = await res.json();
+                baseCRM.forEach(c => {
+                    const nodoCrm = normalizarStr(c.nodo || '');
+                    const sucAdmin = normalizarStr(sucursalAdmin);
+
+                    if (rolUsuario !== 'SUPREMO' && !nodoCrm.includes(sucAdmin)) return;
+
+                    let cCumple = c.cumpleanos ? c.cumpleanos : 'N/A';
+                    let cPts = c.puntosFidelizacion || 0;
+
+                    tb.innerHTML += `<tr>
+                        <td class="fw-bold fs-5 text-white">${c.nombre || ''}</td>
+                        <td class="text-white fs-5">${c.telefono || ''}</td>
+                        <td class="text-white-50"><span class="d-block text-info">${c.correo || '-'}</span><small>${c.direccion || ''}</small></td>
+                        <td>
+                            <span class="badge bg-dark border border-warning text-warning fs-6"><i class="bi bi-star-fill"></i> ${cPts} Pts</span>
+                            <div class="text-muted fs-6 mt-1"><i class="bi bi-calendar2-heart"></i> ${cCumple}</div>
+                        </td>
+                        <td><span class="badge border border-info text-info fs-6 px-3 py-2 bg-dark">${c.nodo || ''}</span></td>
+                        <td>
+                            <button class="btn btn-sm text-info border-0 me-2" onclick="editarCliente(${c.id})"><i class="bi bi-pencil-square fs-3"></i></button>
+                            <button class="btn btn-sm text-danger border-0" onclick="eliminarCliente(${c.id})"><i class="bi bi-trash3 fs-3"></i></button>
+                        </td>
+                    </tr>`;
+                });
+            }
+        } catch(e) { console.error('Error cargando CRM', e); }
+    }
+
+    async function guardarCliente() {
+        playSound('click');
+        const id = document.getElementById('crm-id').value;
+        const nombre = document.getElementById('crm-nombre').value;
+        if(!nombre) return alert("Falta identificación.");
+
+        const payload = {
+            nombre: nombre,
+            telefono: document.getElementById('crm-tel').value,
+            direccion: document.getElementById('crm-dir').value,
+            correo: document.getElementById('crm-correo').value,
+            cumpleanos: document.getElementById('crm-cumple').value || null,
+            puntosFidelizacion: parseInt(document.getElementById('crm-puntos').value) || 0,
+            nodo: document.getElementById('crm-nodo').value
+        };
+
+        if(id) {
+            await fetch(`/api/clientes/${id}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+        } else {
+            await fetch('/api/clientes', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
+        }
+
+        document.getElementById('crm-id').value = ''; document.getElementById('crm-nombre').value = ''; document.getElementById('crm-tel').value = ''; document.getElementById('crm-dir').value = ''; document.getElementById('crm-correo').value = ''; document.getElementById('crm-cumple').value = ''; document.getElementById('crm-puntos').value = '';
+        cargarCRM();
+    }
+
+    function editarCliente(id) {
+        playSound('click'); const cli = baseCRM.find(c => c.id === id);
+        if(cli) {
+            document.getElementById('crm-id').value = cli.id;
+            document.getElementById('crm-nombre').value = cli.nombre;
+            document.getElementById('crm-tel').value = cli.telefono;
+            document.getElementById('crm-dir').value = cli.direccion;
+            document.getElementById('crm-nodo').value = cli.nodo;
+            document.getElementById('crm-correo').value = cli.correo || '';
+            document.getElementById('crm-cumple').value = cli.cumpleanos || '';
+            document.getElementById('crm-puntos').value = cli.puntosFidelizacion || 0;
+            switchTab('crm');
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
+    }
+
+    async function eliminarCliente(id) {
+        playSound('error');
+        if(confirm("¿Eliminar registro DB?")) {
+            await fetch(`/api/clientes/${id}`, { method: 'DELETE' });
+            cargarCRM();
+        }
+    }
 
     // --- INSUMOS ---
     async function cargarInsumos() {
         try {
             const res = await fetch('/api/insumos/todos');
             const data = await res.json();
-            insMem = data; // Guardamos globalmente
-            const tb = document.getElementById('tabla-insumos'); tb.innerHTML='';
+            insMem = data;
+            const tbPulpas = document.getElementById('tabla-pulpas'); if(tbPulpas) tbPulpas.innerHTML='';
+            const tbVasos = document.getElementById('tabla-vasos'); if(tbVasos) tbVasos.innerHTML='';
 
             data.sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).forEach(i => {
                 const sucIns = normalizarStr(i.sucursal);
@@ -1013,14 +1337,90 @@
                 if (rolUsuario !== 'SUPREMO' && !sucIns.includes(sucAdmin)) return;
 
                 const isVaso = i.categoria && i.categoria.includes('Vaso');
-                tb.innerHTML += `<tr><td class="fw-bold text-white fs-5">${i.nombre}</td><td><span class="badge-categoria" style="${isVaso?'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan)':''}">${(i.categoria||'Pulpas').toUpperCase()}</span></td><td class="text-white">${i.sucursal}</td><td class="text-warning fw-bold fs-4" style="text-shadow:0 0 10px #ffdd00;">${i.unidadActual} <span class="fs-6 text-white-50">${i.medida}</span></td><td><button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})"><i class="bi bi-pencil-square fs-3"></i></button><button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})"><i class="bi bi-trash3-fill fs-3"></i></button></td></tr>`;
+
+                const selectFiltroId = isVaso ? 'vaso-sucursal' : 'ins-sucursal';
+                const selectDestino = document.getElementById(selectFiltroId);
+                if (selectDestino) {
+                    const sucFiltro = normalizarStr(selectDestino.value);
+                    if (!sucIns.includes(sucFiltro)) return;
+                }
+
+                let stockHTML = `<span class="text-warning fw-bold fs-4" style="text-shadow:0 0 10px #ffdd00;">${i.unidadActual} <span class="fs-6 text-white-50">${i.medida}</span></span>`;
+                if ((!isVaso && i.unidadActual < 500) || (isVaso && i.unidadActual < 50)) {
+                    stockHTML = `<span class="text-danger fw-bold fs-4" style="text-shadow:0 0 15px red;"><i class="bi bi-exclamation-triangle-fill me-1"></i>${i.unidadActual} <span class="fs-6 text-danger">${i.medida}</span></span>`;
+                }
+
+                const row = `<tr><td class="fw-bold text-white fs-5">${i.nombre}</td><td><span class="badge-categoria" style="${isVaso?'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan)':''}">${(i.categoria||'Pulpas').toUpperCase()}</span></td><td class="text-white">${i.sucursal}</td><td>${stockHTML}</td><td><button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})"><i class="bi bi-pencil-square fs-3"></i></button><button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})"><i class="bi bi-trash3-fill fs-3"></i></button></td></tr>`;
+
+                if (isVaso && tbVasos) tbVasos.innerHTML += row;
+                else if (tbPulpas) tbPulpas.innerHTML += row;
             });
         } catch(e) {}
     }
 
-    function editarInsumo(id) { let ins = insMem.find(i => i.idInsumo === id); if(ins) { if(ins.categoria && ins.categoria.includes('Vaso')) { document.getElementById('vaso-id').value = ins.idInsumo; document.getElementById('vaso-nombre').value = ins.nombre; document.getElementById('vaso-unidad').value = ins.medida; document.getElementById('vaso-stock').value = ins.unidadActual; document.getElementById('vaso-sucursal').value = ins.sucursal; } else { document.getElementById('ins-id').value = ins.idInsumo; document.getElementById('ins-nombre').value = ins.nombre; document.getElementById('ins-unidad').value = ins.medida; document.getElementById('ins-stock').value = ins.unidadActual; document.getElementById('ins-sucursal').value = ins.sucursal; } window.scrollTo({top:0, behavior:'smooth'}); } }
-    function guardarInsumo(tipo) { let id, nombre, cat, uni, stock, suc; if(tipo==='pulpas'){ id = document.getElementById('ins-id').value; nombre = document.getElementById('ins-nombre').value; cat='Pulpas'; uni=document.getElementById('ins-unidad').value; stock=document.getElementById('ins-stock').value; suc=document.getElementById('ins-sucursal').value; } else { id = document.getElementById('vaso-id').value; nombre = document.getElementById('vaso-nombre').value; cat='Insumos Vaso'; uni=document.getElementById('vaso-unidad').value; stock=document.getElementById('vaso-stock').value; suc=document.getElementById('vaso-sucursal').value; } if(!nombre) return; let payload = {nombre, categoria:cat, medida:uni, unidadActual:parseInt(stock)||0, sucursal:suc}; if(id) { payload.idInsumo = parseInt(id); } fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(()=>{ document.getElementById('ins-id').value=''; document.getElementById('vaso-id').value=''; document.getElementById('ins-nombre').value=''; document.getElementById('ins-stock').value=''; document.getElementById('vaso-nombre').value=''; document.getElementById('vaso-stock').value=''; cargarInsumos(); playSound('click'); }); }
+    function editarInsumo(id) {
+        let ins = insMem.find(i => i.idInsumo === id);
+        if(ins) {
+            if(ins.categoria && ins.categoria.includes('Vaso')) {
+                document.getElementById('vaso-id').value = ins.idInsumo;
+                document.getElementById('vaso-nombre').value = ins.nombre;
+                document.getElementById('vaso-unidad').value = ins.medida || 'und';
+                document.getElementById('vaso-stock').value = ins.unidadActual;
+                document.getElementById('vaso-sucursal').value = ins.sucursal;
+            } else {
+                document.getElementById('ins-id').value = ins.idInsumo;
+                document.getElementById('ins-nombre').value = ins.nombre;
+                document.getElementById('ins-unidad').value = ins.medida || 'mls';
+                document.getElementById('ins-stock').value = ins.unidadActual;
+                document.getElementById('ins-sucursal').value = ins.sucursal;
+            }
+            window.scrollTo({top:0, behavior:'smooth'});
+        }
+    }
+
+    function guardarInsumo(tipo) {
+        let id, nombre, cat, uni, stock, suc;
+        if(tipo==='pulpas'){ id = document.getElementById('ins-id').value; nombre = document.getElementById('ins-nombre').value; cat='Pulpas'; uni=document.getElementById('ins-unidad').value; stock=document.getElementById('ins-stock').value; suc=document.getElementById('ins-sucursal').value; }
+        else { id = document.getElementById('vaso-id').value; nombre = document.getElementById('vaso-nombre').value; cat='Insumos Vaso'; uni=document.getElementById('vaso-unidad').value; stock=document.getElementById('vaso-stock').value; suc=document.getElementById('vaso-sucursal').value; }
+        if(!nombre) return;
+
+        let payload = {nombre, categoria:cat, medida:uni, unidadActual:parseInt(stock)||0, sucursal:suc, actorAdmin: rolUsuario==='SUPREMO' ? 'SUPREMO' : ('Admin ' + sucursalAdmin)};
+        if(id) { payload.idInsumo = parseInt(id); }
+
+        fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(()=>{
+            document.getElementById('ins-id').value=''; document.getElementById('vaso-id').value='';
+            document.getElementById('ins-nombre').value=''; document.getElementById('ins-stock').value='';
+            document.getElementById('vaso-nombre').value=''; document.getElementById('vaso-stock').value='';
+            cargarInsumos(); playSound('click');
+        });
+    }
+
     function eliminarInsumo(id) { if(confirm("¿Reciclar material?")) fetch(`/api/insumos/${id}`,{method:'DELETE'}).then(()=>cargarInsumos()); }
+
+    async function abrirModalKardex() {
+        playSound('hover');
+        let param = (rolUsuario === 'SUPREMO') ? document.getElementById('ins-sucursal').value : sucursalAdmin;
+        try {
+            const res = await fetch('/api/kardex/sucursal/' + normalizarStr(param));
+            const data = await res.json();
+            let htmlKardex = `<div class="modal fade" id="modalKardex" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content" style="background:#0a0502; border: 2px solid var(--p-warning);"><div class="modal-header border-0"><h5 class="modal-title font-orbitron" style="color:var(--p-warning)"><i class="bi bi-clock-history"></i> AUDITORÍA KARDEX: NODO ${param.toUpperCase()}</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div><div class="modal-body p-0"><div class="table-responsive" style="max-height: 400px; overflow-y: auto;"><table class="table text-center align-middle m-0"><thead class="table-dark" style="position: sticky; top: 0; z-index: 10;"><tr><th>FECHA_HORA</th><th>ADMINISTRADOR</th><th>BIOLOGÍA</th><th>ACCIÓN</th><th>VARIACIÓN</th></tr></thead><tbody>`;
+
+            data.forEach(k => {
+                let colorVar = k.variacion > 0 ? 'text-success' : 'text-danger';
+                let signo = k.variacion > 0 ? '+' : '';
+                htmlKardex += `<tr><td class="text-white-50"><small>${new Date(k.fechaHora).toLocaleString()}</small></td><td class="text-white"><b>${k.actor}</b></td><td class="text-info">${k.nombreInsumo}</td><td class="text-warning">${k.tipoMovimiento}</td><td class="${colorVar} fs-5 fw-bold" style="text-shadow: 0 0 10px currentColor">${signo}${k.variacion}</td></tr>`;
+            });
+            if(data.length === 0) htmlKardex += `<tr><td colspan="5" class="text-white-50 py-4">Sistema Kardex sin registros anómalos.</td></tr>`;
+
+            htmlKardex += `</tbody></table></div></div></div></div></div>`;
+            const divContenedor = document.createElement('div');
+            divContenedor.innerHTML = htmlKardex;
+            document.body.appendChild(divContenedor);
+            const bsModal = new bootstrap.Modal(document.getElementById('modalKardex'));
+            bsModal.show();
+            document.getElementById('modalKardex').addEventListener('hidden.bs.modal', function () { document.body.removeChild(divContenedor); });
+        } catch(e) {}
+    }
 
     // --- RECETAS ---
     async function prepararRecetas() { try { const [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]); const productos = await rP.json(); const insumos = await rI.json(); const suc = document.getElementById('filtro-sucursal-recetas').value; document.getElementById('rec-producto').innerHTML = productos.filter(p=>p.sucursal===suc).map(p=>`<option value="${p.id}">${p.nombre}</option>`).join(''); document.getElementById('rec-insumo').innerHTML = insumos.filter(i=>i.sucursal===suc).map(i=>`<option value="${i.nombre}">${i.nombre} (${i.medida})</option>`).join(''); cargarTablaReceta(); } catch(e) {} }
