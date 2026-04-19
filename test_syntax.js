@@ -679,8 +679,8 @@
             insMem = data; // Guardamos globalmente
             const tb = document.getElementById('tabla-insumos'); tb.innerHTML='';
 
-            data.sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).forEach(i => {
-                const sucIns = normalizarStr(i.sucursal);
+            data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).forEach(i => {
+                const sucIns = normalizarStr(i.sucursal || '');
                 const sucAdmin = normalizarStr(sucursalAdmin);
                 if (rolUsuario !== 'SUPREMO' && !sucIns.includes(sucAdmin)) return;
 

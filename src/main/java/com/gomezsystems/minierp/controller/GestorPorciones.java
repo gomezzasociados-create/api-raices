@@ -51,14 +51,16 @@ public class GestorPorciones {
             if (existenteOpt.isPresent()) {
                 Insumo existente = existenteOpt.get();
                 
-                if(!existente.getUnidadActual().equals(insumo.getUnidadActual())) {
+                Integer uaExist = existente.getUnidadActual() != null ? existente.getUnidadActual() : 0;
+                Integer uaNuevo = insumo.getUnidadActual() != null ? insumo.getUnidadActual() : 0;
+                if(!uaExist.equals(uaNuevo)) {
                     MovimientoKardex mk = new MovimientoKardex();
                     mk.setNombreInsumo(insumo.getNombre());
                     mk.setCategoria(insumo.getCategoria());
                     mk.setSucursal(insumo.getSucursal());
                     mk.setFechaHora(LocalDateTime.now());
                     mk.setTipoMovimiento("Edición Manual");
-                    mk.setVariacion(insumo.getUnidadActual() - existente.getUnidadActual());
+                    mk.setVariacion(uaNuevo - uaExist);
                     mk.setActor(insumo.getActorAdmin() != null ? insumo.getActorAdmin() : "Desconocido");
                     kardexRepository.save(mk);
                 }

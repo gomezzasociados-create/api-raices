@@ -1331,8 +1331,8 @@
             const tbPulpas = document.getElementById('tabla-pulpas'); if(tbPulpas) tbPulpas.innerHTML='';
             const tbVasos = document.getElementById('tabla-vasos'); if(tbVasos) tbVasos.innerHTML='';
 
-            data.sort((a,b)=>a.sucursal.localeCompare(b.sucursal)).forEach(i => {
-                const sucIns = normalizarStr(i.sucursal);
+            data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).forEach(i => {
+                const sucIns = normalizarStr(i.sucursal || '');
                 const sucAdmin = normalizarStr(sucursalAdmin);
                 if (rolUsuario !== 'SUPREMO' && !sucIns.includes(sucAdmin)) return;
 
