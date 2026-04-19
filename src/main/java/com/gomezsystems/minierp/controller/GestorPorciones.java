@@ -46,48 +46,54 @@ public class GestorPorciones {
 
     @PostMapping("/guardar")
     public ResponseEntity<String> guardarInsumo(@RequestBody Insumo insumo) {
-        if (insumo.getIdInsumo() != null) {
-            Optional<Insumo> existenteOpt = insumoRepository.findById(insumo.getIdInsumo());
-            if (existenteOpt.isPresent()) {
-                Insumo existente = existenteOpt.get();
-                
-                Integer uaExist = existente.getUnidadActual() != null ? existente.getUnidadActual() : 0;
-                Integer uaNuevo = insumo.getUnidadActual() != null ? insumo.getUnidadActual() : 0;
-                if(!uaExist.equals(uaNuevo)) {
-                    MovimientoKardex mk = new MovimientoKardex();
-                    mk.setNombreInsumo(insumo.getNombre());
-                    mk.setCategoria(insumo.getCategoria());
-                    mk.setSucursal(insumo.getSucursal());
-                    mk.setFechaHora(LocalDateTime.now());
-                    mk.setTipoMovimiento("Edición Manual");
-                    mk.setVariacion(uaNuevo - uaExist);
-                    mk.setActor(insumo.getActorAdmin() != null ? insumo.getActorAdmin() : "Desconocido");
-                    kardexRepository.save(mk);
-                }
+        try {
+            if (insumo.getIdInsumo() != null) {
+                Optional<Insumo> existenteOpt = insumoRepository.findById(insumo.getIdInsumo());
+                if (existenteOpt.isPresent()) {
+                    Insumo existente = existenteOpt.get();
+                    
+                    Integer uaExist = existente.getUnidadActual() != null ? existente.getUnidadActual() : 0;
+                    Integer uaNuevo = insumo.getUnidadActual() != null ? insumo.getUnidadActual() : 0;
+                    if(!uaExist.equals(uaNuevo)) {
+                        MovimientoKardex mk = new MovimientoKardex();
+                        mk.setNombreInsumo(insumo.getNombre());
+                        mk.setCategoria(insumo.getCategoria());
+                        mk.setSucursal(insumo.getSucursal());
+                        mk.setFechaHora(LocalDateTime.now());
+                        mk.setTipoMovimiento("Edición Manual");
+                        mk.setVariacion(uaNuevo - uaExist);
+                        mk.setActor(insumo.getActorAdmin() != null ? insumo.getActorAdmin() : "Desconocido");
+                        kardexRepository.save(mk);
+                    }
 
-                existente.setNombre(insumo.getNombre());
-                existente.setUnidadActual(insumo.getUnidadActual());
-                existente.setCantidadPorcion(insumo.getCantidadPorcion()); 
-                existente.setMedida(insumo.getMedida());
-                existente.setSucursal(insumo.getSucursal());
-                existente.setCategoria(insumo.getCategoria()); 
-                insumoRepository.save(existente);
-                return ResponseEntity.ok("Insumo actualizado");
+                    existente.setNombre(insumo.getNombre());
+                    existente.setUnidadActual(insumo.getUnidadActual());
+                    existente.setCantidadPorcion(insumo.getCantidadPorcion()); 
+                    existente.setMedida(insumo.getMedida());
+                    existente.setSucursal(insumo.getSucursal());
+                    existente.setCategoria(insumo.getCategoria()); 
+                    insumoRepository.save(existente);
+                    return ResponseEntity.ok("Insumo actualizado");
+                }
             }
+            insumoRepository.save(insumo);
+            if(insumo.getUnidadActual() != null && insumo.getUnidadActual() > 0) {
+                MovimientoKardex mk = new MovimientoKardex();
+                mk.setNombreInsumo(insumo.getNombre());
+                mk.setCategoria(insumo.getCategoria());
+                mk.setSucursal(insumo.getSucursal());
+                mk.setFechaHora(LocalDateTime.now());
+                mk.setTipoMovimiento("Ingreso Inicial");
+                mk.setVariacion(insumo.getUnidadActual());
+                mk.setActor(insumo.getActorAdmin() != null ? insumo.getActorAdmin() : "Desconocido");
+                kardexRepository.save(mk);
+            }
+            return ResponseEntity.ok("Insumo creado");
+        } catch (Exception e) {
+            System.err.println("GÓMEZ SYSTEMS - ERROR GRAVE BODEGA: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error BD Bodega: " + e.getMessage());
         }
-        insumoRepository.save(insumo);
-        if(insumo.getUnidadActual() != null && insumo.getUnidadActual() > 0) {
-            MovimientoKardex mk = new MovimientoKardex();
-            mk.setNombreInsumo(insumo.getNombre());
-            mk.setCategoria(insumo.getCategoria());
-            mk.setSucursal(insumo.getSucursal());
-            mk.setFechaHora(LocalDateTime.now());
-            mk.setTipoMovimiento("Ingreso Inicial");
-            mk.setVariacion(insumo.getUnidadActual());
-            mk.setActor(insumo.getActorAdmin() != null ? insumo.getActorAdmin() : "Desconocido");
-            kardexRepository.save(mk);
-        }
-        return ResponseEntity.ok("Insumo creado");
     }
 
     @DeleteMapping("/{id}")
