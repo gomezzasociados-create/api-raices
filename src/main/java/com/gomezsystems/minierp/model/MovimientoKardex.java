@@ -16,7 +16,7 @@ public class MovimientoKardex {
     private String sucursal;
     private LocalDateTime fechaHora;
     private String tipoMovimiento; // "Ingreso Manual", "Venta Sistema", "Merma"
-    private Integer variacion; // ej: +1000, -50
+    private Double variacion; // ej: +1000, -50
     private String actor; // ej: "SUPREMO" o Administrador de Nodo
 
     // Getters
@@ -26,7 +26,7 @@ public class MovimientoKardex {
     public String getSucursal() { return sucursal; }
     public LocalDateTime getFechaHora() { return fechaHora; }
     public String getTipoMovimiento() { return tipoMovimiento; }
-    public Integer getVariacion() { return variacion; }
+    public Double getVariacion() { return variacion; }
     public String getActor() { return actor; }
 
     // Setters
@@ -36,6 +36,6 @@ public class MovimientoKardex {
     public void setSucursal(String sucursal) { this.sucursal = sucursal; }
     public void setFechaHora(LocalDateTime fechaHora) { this.fechaHora = fechaHora; }
     public void setTipoMovimiento(String tipoMovimiento) { this.tipoMovimiento = tipoMovimiento; }
-    public void setVariacion(Integer variacion) { this.variacion = variacion; }
+    public void setVariacion(Double variacion) { this.variacion = variacion; }
     public void setActor(String actor) { this.actor = actor; }
 }

@@ -11,7 +11,7 @@ public class Insumo {
     private Long idInsumo;
 
     private String nombre;
-    private Integer unidadActual;
+    private Double unidadActual;
     private Integer cantidadPorcion;
     private String medida;
 
@@ -20,6 +20,8 @@ public class Insumo {
 
     // --- NUEVO: CLASIFICACIÓN DE BODEGA ---
     private String categoria;
+
+    private Double precio; // <--- RESTAURADO: PRECIO POR KILO/UNIDAD
 
     @Transient
     private String actorAdmin; // Para registrar KARDEX desde Front-End
@@ -34,8 +36,8 @@ public class Insumo {
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public Integer getUnidadActual() { return unidadActual; }
-    public void setUnidadActual(Integer unidadActual) { this.unidadActual = unidadActual; }
+    public Double getUnidadActual() { return unidadActual; }
+    public void setUnidadActual(Double unidadActual) { this.unidadActual = unidadActual; }
 
     public Integer getCantidadPorcion() { return cantidadPorcion; }
     public void setCantidadPorcion(Integer cantidadPorcion) { this.cantidadPorcion = cantidadPorcion; }
@@ -48,4 +50,7 @@ public class Insumo {
 
     public String getCategoria() { return categoria; }
     public void setCategoria(String categoria) { this.categoria = categoria; }
+
+    public Double getPrecio() { return precio; }
+    public void setPrecio(Double precio) { this.precio = precio; }
 }

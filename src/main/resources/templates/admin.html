@@ -274,6 +274,19 @@
         </p>
     </div>
 
+    <!-- BANNER DE MIGRACIÓN -->
+    <div id="banner-migracion" class="container-fluid mt-3" style="display: none;">
+        <div class="alert alert-warning border-warning bg-dark text-warning d-flex justify-content-between align-items-center p-4" style="box-shadow: 0 0 20px rgba(255,193,7,0.2);">
+            <div>
+                <h4 class="font-orbitron fw-bold mb-1"><i class="bi bi-exclamation-octagon-fill me-2"></i> DETECTADA MEMORIA RESIDUAL</h4>
+                <p class="mb-0 font-rajdhani fs-5">Se han encontrado registros de producción en este navegador que no están en la nube. Haz clic para sincronizarlos.</p>
+            </div>
+            <button class="btn btn-warning fw-bold font-orbitron px-4 py-2" onclick="migrarDatosAlServidor()">
+                <i class="bi bi-cloud-upload-fill me-2"></i> SINCRONIZAR AHORA
+            </button>
+        </div>
+    </div>
+
     <div class="container-fluid px-4 pb-5 mt-4">
         <ul class="nav nav-pills nav-fill mb-4 table-container p-3" id="pills-tab" role="tablist">
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-produccion" type="button" onclick="cargarProduccion(); playSound('click')"><i class="bi bi-droplet-half me-1"></i> GÉNESIS (PRODUCCIÓN)</button></li>
@@ -323,11 +336,13 @@
                         <table class="table text-center align-middle" style="min-width: 900px;">
                             <thead class="table-dark">
                             <tr>
-                                <th style="width: 25%;">ELIXIR NATURAL</th>
+                                <th style="width: 20%;">ELIXIR NATURAL</th>
                                 <th style="width: 10%;">STOCK</th>
-                                <th style="width: 15%;">GÉNESIS (ELAB)</th>
-                                <th style="width: 15%;">COLAPSO (VENC)</th>
-                                <th style="width: 35%;">BIOMARCADOR (ESTADO)</th>
+                                <th style="width: 10%;">VALOR</th>
+                                <th style="width: 10%;">GÉNESIS</th>
+                                <th style="width: 10%;">COLAPSO</th>
+                                <th style="width: 30%;">BIOMARCADOR</th>
+                                <th style="width: 10%;">ACCIONES</th>
                             </tr>
                             </thead>
                             <tbody id="tabla-produccion"></tbody>
@@ -440,7 +455,10 @@
             </div>
 
             <div class="tab-pane fade" id="tab-inventario" role="tabpanel">
-                <div class="d-flex justify-content-end mb-3">
+                <div class="d-flex justify-content-end mb-3 gap-2">
+                    <button class="btn btn-outline-info font-orbitron fw-bold" onclick="exportarBodegaJSON()"><i class="bi bi-download me-2"></i> EXPORTAR BACKUP</button>
+                    <label class="btn btn-outline-success font-orbitron fw-bold m-0" for="importar-bodega-file"><i class="bi bi-upload me-2"></i> IMPORTAR</label>
+                    <input type="file" id="importar-bodega-file" accept=".json" class="d-none" onchange="importarBodegaJSON(event)">
                     <button class="btn btn-outline-warning font-orbitron fw-bold px-4" onclick="abrirModalKardex()"><i class="bi bi-clock-history me-2"></i> VER KARDEX / AUDITORÍA</button>
                 </div>
 
@@ -455,17 +473,24 @@
                         <div id="collapsePulpas" class="accordion-collapse collapse show" aria-labelledby="headingPulpas" data-bs-parent="#accordionInventario">
                             <div class="accordion-body p-0 pt-3">
                                 <div class="table-container mb-0" style="border-top: 3px solid var(--p-bio-green);">
+                                    <div class="d-flex justify-content-end mb-1 mt-2">
+                                        <div class="p-2 border rounded" style="border-color: var(--p-bio-green) !important; background: rgba(0,255,0,0.1); box-shadow: 0 0 10px rgba(0,255,0,0.2);">
+                                            <span style="color:var(--p-bio-green); font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
+                                            <span class="fw-bold text-white fs-4" id="total-valor-pulpas" style="text-shadow: 0 0 10px rgba(0,255,0,0.5);">$0</span>
+                                        </div>
+                                    </div>
                                     <div class="row g-3 mb-4 mt-1">
                                         <input type="hidden" id="ins-id">
-                                        <div class="col-md-4"><label class="form-label-neon" style="color:var(--p-bio-green)">Cód. Botánico</label><input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Pulpa de Mango"></div>
+                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Cód. Botánico</label><input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Pulpa de Mango"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Métrica</label><select id="ins-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/KG</label><input type="number" id="ins-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="0.00"></div>
                                         <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
                                         <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background:var(--p-bio-green); color:#000;" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg fs-4"></i></button></div>
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table text-center align-middle m-0">
-                                            <thead class="table-dark"><tr><th>BIOLOGÍA_PULPA</th><th>ETIQUETA</th><th>NODO_BASE</th><th>VOLUMEN_ACTUAL</th><th>ACCIONES</th></tr></thead>
+                                            <thead class="table-dark"><tr><th>BIOLOGÍA_PULPA</th><th>ETIQUETA</th><th>NODO_BASE</th><th>VOLUMEN_ACTUAL</th><th>VALOR/KG</th><th>VALOR_TOTAL</th><th>ACCIONES</th></tr></thead>
                                             <tbody id="tabla-pulpas"></tbody>
                                         </table>
                                     </div>
@@ -483,17 +508,24 @@
                         <div id="collapseVasos" class="accordion-collapse collapse" aria-labelledby="headingVasos" data-bs-parent="#accordionInventario">
                             <div class="accordion-body p-0 pt-3">
                                 <div class="table-container mb-0" style="border-top: 3px solid var(--p-cyan);">
+                                    <div class="d-flex justify-content-end mb-1 mt-2">
+                                        <div class="p-2 border rounded" style="border-color: var(--p-cyan) !important; background: rgba(0,255,255,0.1); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
+                                            <span style="color:var(--p-cyan); font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
+                                            <span class="fw-bold text-white fs-4" id="total-valor-vasos" style="text-shadow: 0 0 10px rgba(0,255,255,0.5);">$0</span>
+                                        </div>
+                                    </div>
                                     <div class="row g-3 mb-4 mt-1">
                                         <input type="hidden" id="vaso-id">
-                                        <div class="col-md-4"><label class="form-label-neon">Elemento Físico</label><input type="text" id="vaso-nombre" class="form-control"></div>
+                                        <div class="col-md-3"><label class="form-label-neon">Elemento Físico</label><input type="text" id="vaso-nombre" class="form-control"></div>
                                         <div class="col-md-2"><label class="form-label-neon">Métrica</label><select id="vaso-unidad" class="form-select"><option value="und">Unidades</option><option value="mls">Mililitros</option><option value="gr">Gramos</option></select></div>
                                         <div class="col-md-2"><label class="form-label-neon">Volumen</label><input type="number" id="vaso-stock" class="form-control"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UND</label><input type="number" id="vaso-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="0.00"></div>
                                         <div class="col-md-3"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
                                         <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-cyan); color: #000;" onclick="guardarInsumo('vasos')"><i class="bi bi-plus-lg fs-4"></i></button></div>
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table text-center align-middle m-0">
-                                            <thead class="table-dark"><tr><th>ELEMENTO_FÍSICO</th><th>FAMILIA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>RECICLAR</th></tr></thead>
+                                            <thead class="table-dark"><tr><th>ELEMENTO_FÍSICO</th><th>FAMILIA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>VALOR/UND</th><th>VALOR_TOTAL</th><th>RECICLAR</th></tr></thead>
                                             <tbody id="tabla-vasos"></tbody>
                                         </table>
                                     </div>
@@ -525,7 +557,7 @@
                 </div>
                 <div class="table-container p-4">
                     <h6 class="form-label-neon mb-4 fs-5 text-center text-white">BIOLOGÍA DE LA FÓRMULA ACTIVA</h6>
-                    <table class="table text-center align-middle"><thead class="table-dark"><tr><th>EXTRACTO / MATERIAL</th><th>DOSIS_REQUERIDA</th><th>SEPARAR</th></tr></thead><tbody id="tabla-vista-formula"></tbody></table>
+                    <table class="table text-center align-middle"><thead class="table-dark"><tr><th>EXTRACTO / MATERIAL</th><th>DOSIS_REQUERIDA</th><th>COSTO PROYECTADO</th><th>SEPARAR</th></tr></thead><tbody id="tabla-vista-formula"></tbody></table>
                 </div>
             </div>
 
@@ -624,7 +656,7 @@
     }
 
     // --- VARIABLES GLOBALES PARA EL ASISTENTE DE VOZ ---
-    let lotesProduccion = JSON.parse(localStorage.getItem('raices_lotes_adn')) || {};
+    let lotesProduccion = {}; // Ahora se carga desde la DB
     let catalogoGlobal = [];
     let insMem = [];
     let produccionGlobal = [];
@@ -694,6 +726,7 @@
             cargarProduccion();
             cargarTesoreria(); // Para tener data lista para el asistente
             cargarInsumos(); // Para tener data lista para el asistente
+            verificarMigracionNecesaria();
         }, 800);
     }
 
@@ -769,6 +802,15 @@
     async function cargarProduccion() {
         await cargarProductosSelect();
         try {
+            const sucSeleccionada = document.getElementById('prod-sucursal').value;
+            
+            // 1. Cargar lotes desde la DB
+            const resLotes = await fetch(`/api/produccion/lotes/${sucSeleccionada}`);
+            const listaLotes = await resLotes.json();
+            lotesProduccion = {};
+            listaLotes.forEach(l => { lotesProduccion[l.idProducto] = l; });
+
+            // 2. Cargar productos
             const res = await fetch('/api/productos');
             let data = await res.json();
 
@@ -781,7 +823,6 @@
 
             produccionGlobal = data; // Guardamos para el asistente
             const tb = document.getElementById('tabla-produccion'); tb.innerHTML='';
-            const sucSeleccionada = document.getElementById('prod-sucursal').value;
 
             data.forEach(p => {
                 const sucProd = normalizarStr(p.sucursal);
@@ -840,6 +881,7 @@
                 <tr>
                     <td class="fw-bold text-white fs-5 text-start ps-3">${p.nombre}</td>
                     <td class="text-money-green fs-3 fw-bold">${stock}</td>
+                    <td class="text-warning fw-bold fs-5">${formatMoney(p.precio || 0, p.sucursal)}</td>
                     <td>${fElabHtml}</td>
                     <td>${fVencHtml}</td>
                     <td class="pe-4">${barraHtml}</td>
@@ -877,20 +919,26 @@
         let dateVencObj = new Date(dateElabObj);
         dateVencObj.setDate(dateElabObj.getDate() + diasVidaPura);
 
-        lotesProduccion[id] = {
+        const loteData = {
+            idProducto: id,
             elaboracion: fechaElab,
             vencimiento: dateVencObj.toISOString().split('T')[0],
             vidaTotalDias: diasVidaPura
         };
-        localStorage.setItem('raices_lotes_adn', JSON.stringify(lotesProduccion));
 
         setTimeout(async () => {
             try {
-                // LLAMADA REPARADA: Usa ProduccionController para descontar matriz de botánica
+                // LLAMADA REPARADA: Envía stock + fechas al servidor
                 await fetch(`/api/produccion/fabricar`, {
                     method:'POST',
                     headers:{'Content-Type':'application/json'},
-                    body:JSON.stringify({idProducto: id, cantidad: cant})
+                    body:JSON.stringify({
+                        idProducto: id, 
+                        cantidad: cant,
+                        elaboracion: loteData.elaboracion,
+                        vencimiento: loteData.vencimiento,
+                        vidaTotalDias: loteData.vidaTotalDias
+                    })
                 });
                 document.getElementById('prod-cantidad').value = '';
                 await cargarProduccion();
@@ -929,18 +977,31 @@
 
         if(!id || cant == '') return;
 
-        // Repara localstorage
-        if(fechaElab) {
-            const prod = catalogoGlobal.find(p => p.id == id);
-            let diasVidaPura = lotesProduccion[id] ? lotesProduccion[id].vidaTotalDias : 5;
-            if(prod && prod.categoria && !lotesProduccion[id]) {
-                let cat = normalizarStr(prod.categoria);
-                if(cat.includes('500')) diasVidaPura = 3; else if(cat.includes('pack')) diasVidaPura = 7; else if(cat.includes('pulpa')) diasVidaPura = 30;
-            }
-            let dateElabObj = new Date(fechaElab + 'T12:00:00'); let dateVencObj = new Date(dateElabObj); dateVencObj.setDate(dateElabObj.getDate() + diasVidaPura);
-            lotesProduccion[id] = { elaboracion: fechaElab, vencimiento: dateVencObj.toISOString().split('T')[0], vidaTotalDias: diasVidaPura };
-            localStorage.setItem('raices_lotes_adn', JSON.stringify(lotesProduccion));
+        const prod = catalogoGlobal.find(p => p.id == id);
+        let diasVidaPura = 5;
+        if(prod && prod.categoria) {
+            let cat = normalizarStr(prod.categoria);
+            if(cat.includes('500')) diasVidaPura = 3;
+            else if(cat.includes('pack')) diasVidaPura = 7;
+            else if(cat.includes('pulpa')) diasVidaPura = 30;
         }
+
+        let dateElabObj = new Date(fechaElab + 'T12:00:00'); 
+        let dateVencObj = new Date(dateElabObj); 
+        dateVencObj.setDate(dateElabObj.getDate() + diasVidaPura);
+        
+        // Actualización en DB mediante la misma ruta de fabricar pero con cantidad 0 o específica
+        await fetch(`/api/produccion/fabricar`, {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+                idProducto: id, 
+                cantidad: 0, // No suma stock, solo actualiza fechas
+                elaboracion: fechaElab,
+                vencimiento: dateVencObj.toISOString().split('T')[0],
+                vidaTotalDias: diasVidaPura
+            })
+        });
 
         // Envia ajuste al servidor sin fabricar/descontar matriz
         await fetch(`/api/productos/${id}/ajustar-stock?cantidad=${cant}`, {method:'PUT'});
@@ -960,11 +1021,51 @@
 
     async function resetearProduccion(id) {
         if(confirm("¿Estás seguro de ELIMINAR el stock y reseter la biología local de este producto?")) {
-            delete lotesProduccion[id];
-            localStorage.setItem('raices_lotes_adn', JSON.stringify(lotesProduccion));
+            await fetch(`/api/produccion/lotes/${id}`, {method:'DELETE'});
             await fetch(`/api/productos/${id}/ajustar-stock?cantidad=0`, {method:'PUT'});
             cargarProduccion();
             playSound('error');
+        }
+    }
+
+    // --- SISTEMA DE MIGRACIÓN ---
+    function verificarMigracionNecesaria() {
+        const local = localStorage.getItem('raices_lotes_adn');
+        if (local && local !== '{}') {
+            document.getElementById('banner-migracion').style.display = 'block';
+        }
+    }
+
+    async function migrarDatosAlServidor() {
+        const local = JSON.parse(localStorage.getItem('raices_lotes_adn') || '{}');
+        const listaMigracion = [];
+        
+        for (const id in local) {
+            const prod = catalogoGlobal.find(p => p.id == id);
+            if (prod) {
+                listaMigracion.push({
+                    idProducto: id,
+                    elaboracion: local[id].elaboracion,
+                    vencimiento: local[id].vencimiento,
+                    vidaTotalDias: local[id].vidaTotalDias,
+                    sucursal: prod.sucursal
+                });
+            }
+        }
+
+        if (listaMigracion.length > 0) {
+            const res = await fetch('/api/produccion/lotes/migrar', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(listaMigracion)
+            });
+            if (res.ok) {
+                localStorage.removeItem('raices_lotes_adn');
+                document.getElementById('banner-migracion').style.display = 'none';
+                alert("¡DATOS SINCRONIZADOS! Ahora puedes ver tu producción en cualquier dispositivo.");
+                cargarProduccion();
+                playSound('success');
+            }
         }
     }
 
@@ -1331,6 +1432,9 @@
             const tbPulpas = document.getElementById('tabla-pulpas'); if(tbPulpas) tbPulpas.innerHTML='';
             const tbVasos = document.getElementById('tabla-vasos'); if(tbVasos) tbVasos.innerHTML='';
 
+            let totalPulpas = 0;
+            let totalVasos = 0;
+
             data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).forEach(i => {
                 const sucIns = normalizarStr(i.sucursal || '');
                 const sucAdmin = normalizarStr(sucursalAdmin);
@@ -1345,16 +1449,39 @@
                     if (!sucIns.includes(sucFiltro)) return;
                 }
 
-                let stockHTML = `<span class="text-warning fw-bold fs-4" style="text-shadow:0 0 10px #ffdd00;">${i.unidadActual} <span class="fs-6 text-white-50">${i.medida}</span></span>`;
+                let valorInsumo = 0;
+                let stockTotal = parseFloat(i.unidadActual) || 0;
+                let precioUnitario = parseFloat(i.precio) || 0;
+                
+                if (i.medida === 'gr' || i.medida === 'mls') {
+                    valorInsumo = (stockTotal / 1000) * precioUnitario;
+                } else {
+                    valorInsumo = stockTotal * precioUnitario;
+                }
+                
+                if (isVaso) { totalVasos += valorInsumo; }
+                else { totalPulpas += valorInsumo; }
+
+                let stockDisplay = i.unidadActual.toFixed(2);
+                let stockHTML = `<span class="text-warning fw-bold fs-4" style="text-shadow:0 0 10px #ffdd00;">${stockDisplay} <span class="fs-6 text-white-50">${i.medida}</span></span>`;
                 if ((!isVaso && i.unidadActual < 500) || (isVaso && i.unidadActual < 50)) {
-                    stockHTML = `<span class="text-danger fw-bold fs-4" style="text-shadow:0 0 15px red;"><i class="bi bi-exclamation-triangle-fill me-1"></i>${i.unidadActual} <span class="fs-6 text-danger">${i.medida}</span></span>`;
+                    stockHTML = `<span class="text-danger fw-bold fs-4" style="text-shadow:0 0 15px red;"><i class="bi bi-exclamation-triangle-fill me-1"></i>${stockDisplay} <span class="fs-6 text-danger">${i.medida}</span></span>`;
                 }
 
-                const row = `<tr><td class="fw-bold text-white fs-5">${i.nombre}</td><td><span class="badge-categoria" style="${isVaso?'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan)':''}">${(i.categoria||'Pulpas').toUpperCase()}</span></td><td class="text-white">${i.sucursal}</td><td>${stockHTML}</td><td><button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})"><i class="bi bi-pencil-square fs-3"></i></button><button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})"><i class="bi bi-trash3-fill fs-3"></i></button></td></tr>`;
+                const row = `<tr><td class="fw-bold text-white fs-5">${i.nombre}</td><td><span class="badge-categoria" style="${isVaso?'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan)':''}">${(i.categoria||'Pulpas').toUpperCase()}</span></td><td class="text-white">${i.sucursal}</td><td>${stockHTML}</td><td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td><td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td><td><button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})"><i class="bi bi-pencil-square fs-3"></i></button><button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})"><i class="bi bi-trash3-fill fs-3"></i></button></td></tr>`;
 
                 if (isVaso && tbVasos) tbVasos.innerHTML += row;
                 else if (tbPulpas) tbPulpas.innerHTML += row;
             });
+            
+            const sucMuestraPulpas = document.getElementById('ins-sucursal') ? document.getElementById('ins-sucursal').value : 'Colombia';
+            const tbVPulpas = document.getElementById('total-valor-pulpas');
+            if (tbVPulpas) tbVPulpas.innerText = formatMoney(totalPulpas, sucMuestraPulpas);
+            
+            const sucMuestraVasos = document.getElementById('vaso-sucursal') ? document.getElementById('vaso-sucursal').value : 'Colombia';
+            const tbVVasos = document.getElementById('total-valor-vasos');
+            if (tbVVasos) tbVVasos.innerText = formatMoney(totalVasos, sucMuestraVasos);
+            
         } catch(e) {}
     }
 
@@ -1367,12 +1494,14 @@
                 document.getElementById('vaso-unidad').value = ins.medida || 'und';
                 document.getElementById('vaso-stock').value = ins.unidadActual;
                 document.getElementById('vaso-sucursal').value = ins.sucursal;
+                document.getElementById('vaso-precio').value = ins.precio || 0;
             } else {
                 document.getElementById('ins-id').value = ins.idInsumo;
                 document.getElementById('ins-nombre').value = ins.nombre;
                 document.getElementById('ins-unidad').value = ins.medida || 'mls';
                 document.getElementById('ins-stock').value = ins.unidadActual;
                 document.getElementById('ins-sucursal').value = ins.sucursal;
+                document.getElementById('ins-precio').value = ins.precio || 0;
             }
             window.scrollTo({top:0, behavior:'smooth'});
         }
@@ -1384,7 +1513,7 @@
         else { id = document.getElementById('vaso-id').value; nombre = document.getElementById('vaso-nombre').value; cat='Insumos Vaso'; uni=document.getElementById('vaso-unidad').value; stock=document.getElementById('vaso-stock').value; suc=document.getElementById('vaso-sucursal').value; }
         if(!nombre) return;
 
-        let payload = {nombre, categoria:cat, medida:uni, unidadActual:parseInt(stock)||0, sucursal:suc, actorAdmin: rolUsuario==='SUPREMO' ? 'SUPREMO' : ('Admin ' + sucursalAdmin)};
+        let payload = {nombre, categoria:cat, medida:uni, unidadActual:parseFloat(stock)||0, precio: parseFloat(document.getElementById(tipo==='pulpas' ? 'ins-precio' : 'vaso-precio').value)||0, sucursal:suc, actorAdmin: rolUsuario==='SUPREMO' ? 'SUPREMO' : ('Admin ' + sucursalAdmin)};
         if(id) { payload.idInsumo = parseInt(id); }
 
         fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(()=>{
@@ -1423,10 +1552,71 @@
     }
 
     // --- RECETAS ---
-    async function prepararRecetas() { try { const [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]); const productos = await rP.json(); const insumos = await rI.json(); const suc = document.getElementById('filtro-sucursal-recetas').value; document.getElementById('rec-producto').innerHTML = productos.filter(p=>p.sucursal===suc).map(p=>`<option value="${p.id}">${p.nombre}</option>`).join(''); document.getElementById('rec-insumo').innerHTML = insumos.filter(i=>i.sucursal===suc).map(i=>`<option value="${i.nombre}">${i.nombre} (${i.medida})</option>`).join(''); cargarTablaReceta(); } catch(e) {} }
+    async function prepararRecetas() { 
+        try { 
+            const [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]); 
+            const productos = await rP.json(); 
+            const insumos = await rI.json(); 
+            insMem = insumos; // <-- CRUCIAL PARA CALCULAR PRECIO
+            const suc = document.getElementById('filtro-sucursal-recetas').value; 
+            document.getElementById('rec-producto').innerHTML = productos.filter(p=>p.sucursal===suc).map(p=>`<option value="${p.id}">${p.nombre}</option>`).join(''); 
+            document.getElementById('rec-insumo').innerHTML = insumos.filter(i=>i.sucursal===suc).map(i=>`<option value="${i.nombre}">${i.nombre} (${i.medida})</option>`).join(''); 
+            cargarTablaReceta(); 
+        } catch(e) {} 
+    }
     async function guardarReceta() { const id = document.getElementById('rec-producto').value; const ing = document.getElementById('rec-insumo').value; const cant = document.getElementById('rec-cantidad').value; await fetch(`/api/insumos/${id}/vincular-ingrediente`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ingrediente:ing, gasto:cant})}); cargarTablaReceta(); playSound('click'); }
     async function desvincularIngrediente(nombreIngrediente) { const id = document.getElementById('rec-producto').value; if(confirm(`¿Desvincular ${nombreIngrediente} de la fórmula?`)){ await fetch(`/api/insumos/${id}/desvincular/${encodeURIComponent(nombreIngrediente)}`, {method:'DELETE'}); cargarTablaReceta(); playSound('error'); } }
-    async function cargarTablaReceta() { const id = document.getElementById('rec-producto').value; if(!id) return; try { const res = await fetch(`/api/insumos/${id}/receta`); const txt = await res.text(); const tb = document.getElementById('tabla-vista-formula'); tb.innerHTML=''; txt.split('\n').forEach(l=>{ if(l.includes(':')) tb.innerHTML+=`<tr><td class="text-white fw-bold fs-4">${l.split(':')[0]}</td><td class="fs-4" style="color:var(--p-bio-green); text-shadow:var(--green-glow);">${l.split(':')[1]}</td><td><i class="bi bi-scissors text-danger fs-3" style="cursor:pointer;" onclick="desvincularIngrediente('${l.split(':')[0]}')"></i></td></tr>`; }); } catch(e) {} }
+    async function cargarTablaReceta() { 
+        const id = document.getElementById('rec-producto').value; 
+        if(!id) return; 
+        try { 
+            const res = await fetch(`/api/insumos/${id}/receta`); 
+            const txt = await res.text(); 
+            const tb = document.getElementById('tabla-vista-formula'); 
+            tb.innerHTML=''; 
+            
+            let costoTotal = 0;
+            const suc = document.getElementById('filtro-sucursal-recetas').value;
+
+            txt.split('\n').forEach(l=>{ 
+                if(l.includes(':')) {
+                    const nombre = l.split(':')[0].trim();
+                    const gasto = parseFloat(l.split(':')[1].trim()) || 0;
+                    
+                    // Buscar precio del insumo
+                    const insumo = insMem.find(i => normalizarStr(i.nombre) === normalizarStr(nombre) && i.sucursal === suc);
+                    let costoHtml = '<span class="text-muted">N/A</span>';
+                    
+                    if(insumo) {
+                        let precio = insumo.precio || 0;
+                        let costoIngrediente = 0;
+                        if(insumo.medida === 'gr' || insumo.medida === 'mls') {
+                            costoIngrediente = (gasto / 1000) * precio;
+                        } else {
+                            costoIngrediente = gasto * precio;
+                        }
+                        costoTotal += costoIngrediente;
+                        costoHtml = `<span class="text-warning fw-bold">${formatMoney(costoIngrediente, suc)}</span>`;
+                    }
+
+                    tb.innerHTML+=`<tr>
+                        <td class="text-white fw-bold fs-4">${nombre}</td>
+                        <td class="fs-4" style="color:var(--p-bio-green); text-shadow:var(--green-glow);">${gasto}</td>
+                        <td class="fs-4">${costoHtml}</td>
+                        <td><i class="bi bi-scissors text-danger fs-3" style="cursor:pointer;" onclick="desvincularIngrediente('${nombre}')"></i></td>
+                    </tr>`; 
+                }
+            }); 
+            
+            if (costoTotal > 0) {
+                tb.innerHTML += `<tr style="border-top: 2px solid var(--p-magenta);">
+                    <td colspan="2" class="text-end fw-bold fs-3" style="color:var(--p-magenta)">COSTO TOTAL FÓRMULA:</td>
+                    <td class="fw-bold fs-3" style="color:var(--p-magenta); text-shadow: var(--magenta-glow);">${formatMoney(costoTotal, suc)}</td>
+                    <td></td>
+                </tr>`;
+            }
+        } catch(e) {} 
+    }
 
     // --- CATÁLOGO ---
     async function cargarCatalogo() {
@@ -1491,7 +1681,7 @@
                 body: JSON.stringify({
                     nombre: nuevoNombre,
                     categoria: nuevaCategoria,
-                    precio: parseInt(nuevoPrecio),
+                    precio: parseFloat(nuevoPrecio),
                     imagen: nuevaImagen,
                     descripcion: nuevaDesc
                 })
@@ -1750,6 +1940,53 @@
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Error:', err));
         });
+    }
+
+    // ==========================================
+    // BACKUP Y MIGRACIÓN DE BODEGA
+    // ==========================================
+    function exportarBodegaJSON() {
+        if(insMem.length === 0) return alert("Bodega vacía. Nada que exportar.");
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(insMem));
+        const dlAnchorElem = document.createElement('a');
+        dlAnchorElem.setAttribute("href", dataStr);
+        dlAnchorElem.setAttribute("download", "backup_bodega_raices.json");
+        dlAnchorElem.click();
+        playSound('success');
+    }
+
+    function importarBodegaJSON(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const insumosImportados = JSON.parse(e.target.result);
+                if(!Array.isArray(insumosImportados)) throw new Error("Formato inválido.");
+                
+                if(confirm(`Se detectaron ${insumosImportados.length} insumos en el archivo. ¿Deseas inyectarlos en la base de datos de este servidor?`)) {
+                    document.getElementById('overlay-ensamblaje').style.display = 'flex';
+                    for(let ins of insumosImportados) {
+                        // Limpiamos IDs para que PostgreSQL los asigne como nuevos registros
+                        delete ins.idInsumo;
+                        ins.actorAdmin = rolUsuario === 'SUPREMO' ? 'SUPREMO (MIGRACIÓN)' : 'ADMIN (MIGRACIÓN)';
+                        await fetch('/api/insumos/guardar', {
+                            method:'POST',
+                            headers:{'Content-Type':'application/json'},
+                            body:JSON.stringify(ins)
+                        });
+                    }
+                    document.getElementById('overlay-ensamblaje').style.display = 'none';
+                    cargarInsumos();
+                    alert("¡Migración completada con éxito!");
+                    playSound('success');
+                }
+            } catch(error) {
+                alert("Error al leer el archivo de backup.");
+            }
+            event.target.value = ""; // Resetear input
+        };
+        reader.readAsText(file);
     }
 
 </script>

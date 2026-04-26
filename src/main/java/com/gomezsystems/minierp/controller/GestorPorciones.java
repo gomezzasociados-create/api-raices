@@ -52,8 +52,8 @@ public class GestorPorciones {
                 if (existenteOpt.isPresent()) {
                     Insumo existente = existenteOpt.get();
                     
-                    Integer uaExist = existente.getUnidadActual() != null ? existente.getUnidadActual() : 0;
-                    Integer uaNuevo = insumo.getUnidadActual() != null ? insumo.getUnidadActual() : 0;
+                    Double uaExist = existente.getUnidadActual() != null ? existente.getUnidadActual() : 0.0;
+                    Double uaNuevo = insumo.getUnidadActual() != null ? insumo.getUnidadActual() : 0.0;
                     if(!uaExist.equals(uaNuevo)) {
                         MovimientoKardex mk = new MovimientoKardex();
                         mk.setNombreInsumo(insumo.getNombre());
@@ -71,7 +71,8 @@ public class GestorPorciones {
                     existente.setCantidadPorcion(insumo.getCantidadPorcion()); 
                     existente.setMedida(insumo.getMedida());
                     existente.setSucursal(insumo.getSucursal());
-                    existente.setCategoria(insumo.getCategoria()); 
+                    existente.setCategoria(insumo.getCategoria());
+                    existente.setPrecio(insumo.getPrecio());
                     insumoRepository.save(existente);
                     return ResponseEntity.ok("Insumo actualizado");
                 }
@@ -128,12 +129,23 @@ public class GestorPorciones {
                     if (record.isMapped("CATEGORIA")) i.setCategoria(record.get("CATEGORIA"));
                     else i.setCategoria("Materia Prima");
 
-                    // Extrae los números del STOCK y los convierte estrictamente a Integer
+                    // Extrae los números del STOCK y los convierte estrictamente a Double
                     if (record.isMapped("STOCK")) {
                         String stockLimpio = record.get("STOCK").replaceAll("[^0-9.]", "");
-                        i.setUnidadActual(stockLimpio.isEmpty() ? 0 : (int) Math.round(Double.parseDouble(stockLimpio)));
+                        i.setUnidadActual(stockLimpio.isEmpty() ? 0.0 : Double.parseDouble(stockLimpio));
                     } else {
-                        i.setUnidadActual(0);
+                        i.setUnidadActual(0.0);
+                    }
+
+                    // --- NUEVO: CARGAR PRECIO DESDE CSV ---
+                    if (record.isMapped("PRECIO")) {
+                        String precioLimpio = record.get("PRECIO").replaceAll("[^0-9.]", "");
+                        i.setPrecio(precioLimpio.isEmpty() ? 0.0 : Double.parseDouble(precioLimpio));
+                    } else if (record.isMapped("VALOR")) {
+                        String precioLimpio = record.get("VALOR").replaceAll("[^0-9.]", "");
+                        i.setPrecio(precioLimpio.isEmpty() ? 0.0 : Double.parseDouble(precioLimpio));
+                    } else {
+                        i.setPrecio(0.0);
                     }
 
                     // Inicializamos cantidadPorcion en 1 por defecto para evitar nulos
