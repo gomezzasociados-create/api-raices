@@ -1966,20 +1966,31 @@
                 
                 if(confirm(`Se detectaron ${insumosImportados.length} insumos en el archivo. ¿Deseas inyectarlos en la base de datos de este servidor?`)) {
                     document.getElementById('overlay-ensamblaje').style.display = 'flex';
+                    let errores = 0;
+                    let ultimoError = "";
                     for(let ins of insumosImportados) {
                         // Limpiamos IDs para que PostgreSQL los asigne como nuevos registros
                         delete ins.idInsumo;
                         ins.actorAdmin = rolUsuario === 'SUPREMO' ? 'SUPREMO (MIGRACIÓN)' : 'ADMIN (MIGRACIÓN)';
-                        await fetch('/api/insumos/guardar', {
+                        const res = await fetch('/api/insumos/guardar', {
                             method:'POST',
                             headers:{'Content-Type':'application/json'},
                             body:JSON.stringify(ins)
                         });
+                        if (!res.ok) {
+                            errores++;
+                            ultimoError = await res.text();
+                        }
                     }
                     document.getElementById('overlay-ensamblaje').style.display = 'none';
                     cargarInsumos();
-                    alert("¡Migración completada con éxito!");
-                    playSound('success');
+                    
+                    if (errores > 0) {
+                        alert(`❌ ALERTA: Hubo ${errores} errores al guardar en la base de datos PostgreSQL.\nÚltimo error del servidor: ${ultimoError}`);
+                    } else {
+                        alert("¡Migración completada con éxito!");
+                        playSound('success');
+                    }
                 }
             } catch(error) {
                 alert("Error al leer el archivo de backup.");
