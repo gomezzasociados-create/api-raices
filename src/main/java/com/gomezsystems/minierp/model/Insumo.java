@@ -30,6 +30,9 @@ public class Insumo {
     @Column(name = "stock_actual")
     private Double stockActualDummy = 0.0;
 
+    @Column(name = "unidad_medida")
+    private String unidadMedidaDummy = "N/A";
+
     @Transient
     private String actorAdmin; // Para registrar KARDEX desde Front-End
 
