@@ -23,6 +23,10 @@ public class Insumo {
 
     private Double precio; // <--- RESTAURADO: PRECIO POR KILO/UNIDAD
 
+    // --- PARCHE DE COMPATIBILIDAD CON BD ANTIGUA ---
+    @Column(name = "id_sucursal")
+    private Long idSucursal = 1L;
+
     @Transient
     private String actorAdmin; // Para registrar KARDEX desde Front-End
 

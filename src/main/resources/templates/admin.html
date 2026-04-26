@@ -455,10 +455,7 @@
             </div>
 
             <div class="tab-pane fade" id="tab-inventario" role="tabpanel">
-                <div class="d-flex justify-content-end mb-3 gap-2">
-                    <button class="btn btn-outline-info font-orbitron fw-bold" onclick="exportarBodegaJSON()"><i class="bi bi-download me-2"></i> EXPORTAR BACKUP</button>
-                    <label class="btn btn-outline-success font-orbitron fw-bold m-0" for="importar-bodega-file"><i class="bi bi-upload me-2"></i> IMPORTAR</label>
-                    <input type="file" id="importar-bodega-file" accept=".json" class="d-none" onchange="importarBodegaJSON(event)">
+                <div class="d-flex justify-content-end mb-3">
                     <button class="btn btn-outline-warning font-orbitron fw-bold px-4" onclick="abrirModalKardex()"><i class="bi bi-clock-history me-2"></i> VER KARDEX / AUDITORÍA</button>
                 </div>
 
@@ -1940,64 +1937,6 @@
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Error:', err));
         });
-    }
-
-    // ==========================================
-    // BACKUP Y MIGRACIÓN DE BODEGA
-    // ==========================================
-    function exportarBodegaJSON() {
-        if(insMem.length === 0) return alert("Bodega vacía. Nada que exportar.");
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(insMem));
-        const dlAnchorElem = document.createElement('a');
-        dlAnchorElem.setAttribute("href", dataStr);
-        dlAnchorElem.setAttribute("download", "backup_bodega_raices.json");
-        dlAnchorElem.click();
-        playSound('success');
-    }
-
-    function importarBodegaJSON(event) {
-        const file = event.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            try {
-                const insumosImportados = JSON.parse(e.target.result);
-                if(!Array.isArray(insumosImportados)) throw new Error("Formato inválido.");
-                
-                if(confirm(`Se detectaron ${insumosImportados.length} insumos en el archivo. ¿Deseas inyectarlos en la base de datos de este servidor?`)) {
-                    document.getElementById('overlay-ensamblaje').style.display = 'flex';
-                    let errores = 0;
-                    let ultimoError = "";
-                    for(let ins of insumosImportados) {
-                        // Limpiamos IDs para que PostgreSQL los asigne como nuevos registros
-                        delete ins.idInsumo;
-                        ins.actorAdmin = rolUsuario === 'SUPREMO' ? 'SUPREMO (MIGRACIÓN)' : 'ADMIN (MIGRACIÓN)';
-                        const res = await fetch('/api/insumos/guardar', {
-                            method:'POST',
-                            headers:{'Content-Type':'application/json'},
-                            body:JSON.stringify(ins)
-                        });
-                        if (!res.ok) {
-                            errores++;
-                            ultimoError = await res.text();
-                        }
-                    }
-                    document.getElementById('overlay-ensamblaje').style.display = 'none';
-                    cargarInsumos();
-                    
-                    if (errores > 0) {
-                        alert(`❌ ALERTA: Hubo ${errores} errores al guardar en la base de datos PostgreSQL.\nÚltimo error del servidor: ${ultimoError}`);
-                    } else {
-                        alert("¡Migración completada con éxito!");
-                        playSound('success');
-                    }
-                }
-            } catch(error) {
-                alert("Error al leer el archivo de backup.");
-            }
-            event.target.value = ""; // Resetear input
-        };
-        reader.readAsText(file);
     }
 
 </script>

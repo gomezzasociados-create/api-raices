@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.springframework.jdbc.core.JdbcTemplate;
-import jakarta.annotation.PostConstruct;
 
 @RestController
 @RequestMapping("/api/insumos")
@@ -35,18 +33,6 @@ public class GestorPorciones {
     @Autowired private InsumoRepository insumoRepository;
     @Autowired private ProductoRepository productoRepository;
     @Autowired private KardexRepository kardexRepository;
-    @Autowired private JdbcTemplate jdbcTemplate;
-
-    @PostConstruct
-    public void limpiarRestriccionesAntiguas() {
-        try {
-            // Elimina la restricción NOT NULL de la columna antigua id_sucursal si existe
-            jdbcTemplate.execute("ALTER TABLE insumos ALTER COLUMN id_sucursal DROP NOT NULL");
-            System.out.println("GÓMEZ SYSTEMS - Parche de BD: id_sucursal liberado de NOT NULL");
-        } catch (Exception e) {
-            System.out.println("GÓMEZ SYSTEMS - Parche de BD (Ignorar si no existe): " + e.getMessage());
-        }
-    }
 
     @GetMapping("/todos")
     public List<Insumo> listarTodos() {
