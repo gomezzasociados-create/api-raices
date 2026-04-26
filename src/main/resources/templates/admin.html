@@ -1513,11 +1513,20 @@
         let payload = {nombre, categoria:cat, medida:uni, unidadActual:parseFloat(stock)||0, precio: parseFloat(document.getElementById(tipo==='pulpas' ? 'ins-precio' : 'vaso-precio').value)||0, sucursal:suc, actorAdmin: rolUsuario==='SUPREMO' ? 'SUPREMO' : ('Admin ' + sucursalAdmin)};
         if(id) { payload.idInsumo = parseInt(id); }
 
-        fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(()=>{
+        fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+        .then(async (res) => {
+            if(!res.ok) {
+                const errTxt = await res.text();
+                alert("❌ ERROR AL GUARDAR: " + errTxt);
+                throw new Error(errTxt);
+            }
             document.getElementById('ins-id').value=''; document.getElementById('vaso-id').value='';
             document.getElementById('ins-nombre').value=''; document.getElementById('ins-stock').value='';
             document.getElementById('vaso-nombre').value=''; document.getElementById('vaso-stock').value='';
             cargarInsumos(); playSound('click');
+        }).catch(err => {
+            console.error("Error guardando insumo:", err);
+            playSound('error');
         });
     }
 
