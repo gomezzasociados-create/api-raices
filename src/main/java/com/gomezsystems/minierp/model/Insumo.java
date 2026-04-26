@@ -27,6 +27,9 @@ public class Insumo {
     @Column(name = "id_sucursal")
     private Long idSucursal = 1L;
 
+    @Column(name = "stock_actual")
+    private Double stockActualDummy = 0.0;
+
     @Transient
     private String actorAdmin; // Para registrar KARDEX desde Front-End
 
