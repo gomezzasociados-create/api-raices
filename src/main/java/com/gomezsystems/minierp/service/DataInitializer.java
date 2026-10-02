@@ -5,13 +5,17 @@ import com.gomezsystems.minierp.repository.ProductoRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import com.gomezsystems.minierp.repository.InsumoRepository;
+
 @Component
 public class DataInitializer implements CommandLineRunner {
 
     private final ProductoRepository repository;
+    private final InsumoRepository insumoRepository;
 
-    public DataInitializer(ProductoRepository repository) {
+    public DataInitializer(ProductoRepository repository, InsumoRepository insumoRepository) {
         this.repository = repository;
+        this.insumoRepository = insumoRepository;
     }
 
     @Override
@@ -161,14 +165,78 @@ public class DataInitializer implements CommandLineRunner {
                 p14.setCategoria("Packs");
                 p14.setSucursal(sede);
                 p14.setImagen("https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/AbxpIdqJveajud3o919w/pub/dXqark4Swgtdyyuk9Gca.png");
-                p14.setDescripcion("🍏 Pulpas Quelantes 🌿✨\nLas pulpas Quelantes están diseñadas para apoyar la eliminación de metales pesados y toxinas del organismo mediante ingredientes ricos en clorofila, antioxidantes y compuestos depurativos. Su mezcla verde y fresca favorece la limpieza interna, la energía celular y el equilibrio metabólico.\n\n🌱 Ingredientes y beneficios:\n• Espirulina: Superalga rica en clorofila, proteínas y antioxidantes. Conocida por su capacidad quelante natural, ayuda a capturar y eliminar metales pesados mientras aporta energía y vitalidad.\n• Cilantro: Potente depurador natural que apoya la eliminación de toxinas y metales pesados. Favorece la digestión y aporta un perfil antioxidante elevado.\n• Manzana verde: Rica en fibra y antioxidantes, mejora la digestión, regula el tránsito intestinal y aporta un sabor fresco y equilibrado.\n• Limón: Alto en vitamina C, apoya la desintoxicación hepática, mejora la digestión y potencia la acción depurativa del batido.\n• Acelga: Fuente de clorofila, fibra y minerales esenciales. Ayuda a oxigenar la sangre, mejorar la digestión y apoyar la limpieza interna.\n• Stevia: Endulzante natural sin calorías que realza el sabor sin afectar el equilibrio metabólico.\n\n🌟 Ideal para:\n• 🔄 Depuración profunda\n• 🧲 Eliminación de metales pesados\n• ⚡ Energía celular\n• 🌱 Bienestar digestivo");
+                p14.setDescripcion("🍏 Pulpas Quelantes 🌿✨\nLas pulpas Quelantes están diseñadas para apoyar la eliminación de metales pesados y toxinas del organismo mediante ingredientes ricos en clorofila, antioxidantes y compuestos depurativos. Su mezcla verde y fresca favorece la limpieza interna, la energía celular y el equilibrio metabólico.\n\n🌟 Ideal para:\n• 🔄 Depuración profunda\n• 🧲 Eliminación de metales pesados\n• ⚡ Energía celular\n• 🌱 Bienestar digestivo");
                 repository.save(p14);
+
+                // ==========================================
+                // 🐾 3. BOTÁNICO ANIMAL
+                // ==========================================
+                double precioBotanico = 0.0;
+                if (sede.equals("Colombia")) { precioBotanico = 18000.0; }
+                else if (sede.equals("Chile")) { precioBotanico = 12000.0; }
+                else if (sede.equals("España")) { precioBotanico = 15.0; }
+
+                Producto p15 = new Producto();
+                p15.setNombre("Botánico Animal Vitality");
+                p15.setPrecio(precioBotanico);
+                p15.setCategoria("Botánico Animal");
+                p15.setSucursal(sede);
+                p15.setImagen("https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/vfleIZ0C3qCqps6UZvJi/pub/XhijMbEh1XqgPLr7zRhs.jpg");
+                p15.setDescripcion("🐾 Botánico Animal Vitality 🌱✨\nFórmula botánica natural especialmente desarrollada para promover la salud digestiva, articular y metabólica en mascotas. Elaborado con ingredientes 100% naturales, ricos en fitonutrientes, omega vegetales y antioxidantes bioactivos.\n\n🐕 Beneficios:\n• Refuerza el sistema inmunológico animal.\n• Digestión ligera y absorción óptima.\n• Vitalidad y articulaciones fuertes.");
+                p15.setRecetaDetalle("Espinaca:30\nApio:20\nZanahoria:30");
+                repository.save(p15);
+
+                Producto p16 = new Producto();
+                p16.setNombre("Botánico Animal Pelaje & Piel");
+                p16.setPrecio(precioBotanico * 1.15);
+                p16.setCategoria("Botánico Animal");
+                p16.setSucursal(sede);
+                p16.setImagen("https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/AbxpIdqJveajud3o919w/pub/jZW2MAqB50DKyaoo9yBR.png");
+                p16.setDescripcion("🐶 Botánico Animal Pelaje & Piel 🌿\nSuplemento natural rico en antioxidantes, ácido láurico y superalimentos. Protege la barrera cutánea de las mascotas, reduciendo la inflamación y manteniendo un pelaje suave, fuerte y brillante.\n\n✨ Beneficios:\n• Brillo y fuerza en pelaje.\n• Acción antiinflamatoria natural.\n• Salud de la piel y vitalidad.");
+                p16.setRecetaDetalle("Zanahoria:40\nAceite de Coco:10\nAloe Vera:20");
+                repository.save(p16);
 
             }
 
-            System.out.println(">> GÓMEZ SYSTEMS: ¡Base de datos iniciada con todos los batidos clonados para Tuluá, Antofa y Mallorca!");
+            System.out.println(">> GÓMEZ SYSTEMS: ¡Base de datos iniciada con todos los batidos y Botánico Animal clonados!");
         } else {
             System.out.println(">> GÓMEZ SYSTEMS: Los productos ya existen, saltando inicialización para proteger tus ventas.");
         }
+
+        // INICIALIZACIÓN DE INSUMOS DE MUESTRA PARA CADA SEDE SI ESTÁ VACÍO
+        if (insumoRepository.count() == 0) {
+            String[] sucursales = {"Colombia", "Chile", "España"};
+            for (String sede : sucursales) {
+                double factorMoneda = sede.equals("Colombia") ? 100.0 : (sede.equals("Chile") ? 50.0 : 0.1);
+
+                crearInsumoSiNoExiste("Espinaca", 10000.0, 50, "gr", sede, "Pulpas", 15.0 * factorMoneda);
+                crearInsumoSiNoExiste("Apio", 8000.0, 50, "gr", sede, "Pulpas", 12.0 * factorMoneda);
+                crearInsumoSiNoExiste("Piña", 12000.0, 50, "gr", sede, "Pulpas", 18.0 * factorMoneda);
+                crearInsumoSiNoExiste("Aloe Vera", 5000.0, 30, "mls", sede, "Pulpas", 20.0 * factorMoneda);
+                crearInsumoSiNoExiste("Chía", 3000.0, 15, "gr", sede, "Pulpas", 25.0 * factorMoneda);
+                crearInsumoSiNoExiste("Zanahoria", 10000.0, 50, "gr", sede, "Pulpas", 10.0 * factorMoneda);
+                crearInsumoSiNoExiste("Aceite de Coco", 4000.0, 15, "mls", sede, "Pulpas", 40.0 * factorMoneda);
+                crearInsumoSiNoExiste("Betarraga", 8000.0, 50, "gr", sede, "Pulpas", 14.0 * factorMoneda);
+                crearInsumoSiNoExiste("Manzana", 10000.0, 50, "gr", sede, "Pulpas", 16.0 * factorMoneda);
+                crearInsumoSiNoExiste("Limón", 5000.0, 20, "mls", sede, "Pulpas", 10.0 * factorMoneda);
+                crearInsumoSiNoExiste("Mandioca", 7000.0, 40, "gr", sede, "Pulpas", 15.0 * factorMoneda);
+                crearInsumoSiNoExiste("Maca", 2000.0, 10, "gr", sede, "Pulpas", 50.0 * factorMoneda);
+                crearInsumoSiNoExiste("Espirulina", 2000.0, 10, "gr", sede, "Pulpas", 60.0 * factorMoneda);
+                crearInsumoSiNoExiste("Botánico Pelaje Base", 5000.0, 30, "gr", sede, "Botánico Animal", 30.0 * factorMoneda);
+            }
+            System.out.println(">> GÓMEZ SYSTEMS: Insumos de Bodega inicializados correctamente.");
+        }
+    }
+
+    private void crearInsumoSiNoExiste(String nombre, Double stock, Integer porcion, String medida, String sucursal, String cat, Double precio) {
+        com.gomezsystems.minierp.model.Insumo ins = new com.gomezsystems.minierp.model.Insumo();
+        ins.setNombre(nombre);
+        ins.setUnidadActual(stock);
+        ins.setCantidadPorcion(porcion);
+        ins.setMedida(medida);
+        ins.setSucursal(sucursal);
+        ins.setCategoria(cat);
+        ins.setPrecio(precio);
+        insumoRepository.save(ins);
     }
 }

@@ -841,7 +841,8 @@
 
     function construirFiltros(productos) {
         const contenedorFiltros = document.getElementById('contenedor-filtros');
-        const categoriasUnicas = ["Todos"];
+        const categoriasBase = ["Todos", "500 mls", "Packs", "Arma tu Batido", "Botánico Animal"];
+        const categoriasUnicas = [...categoriasBase];
         productos.forEach(p => {
             const cat = p.categoria ? p.categoria.trim() : "Genérico";
             if(cat && !categoriasUnicas.includes(cat)) { categoriasUnicas.push(cat); }

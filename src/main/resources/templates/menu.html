@@ -259,6 +259,8 @@
     <input type="hidden" id="sucursal-activa" value="Chile"> <div class="contenedor-categorias">
     <button class="categoria-badge active" onclick="filtrar('500 mls', this)">Elíxires</button>
     <button class="categoria-badge" onclick="filtrar('Packs', this)">Packs</button>
+    <button class="categoria-badge" onclick="filtrar('Arma tu Batido', this)">Arma tu Batido</button>
+    <button class="categoria-badge" onclick="filtrar('Botánico Animal', this)">Botánico Animal</button>
 </div>
 
     <div class="container px-2">
@@ -465,18 +467,33 @@
         } catch (e) { productosRaw = []; renderizar(); }
     }
 
+    let porcionesArmado = {};
+    let insumosInfoMap = {};
+
     function renderizar() {
         const grid = document.getElementById('grid-menu'); grid.innerHTML = '';
         const nodo = document.getElementById('sucursal-activa').value; simboloActual = (nodo === "España") ? '€' : '$';
 
+        const normalizarStr = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : '';
+
+        if (filtroActual === 'Arma tu Batido') {
+            renderizarArmaTuBatido(nodo);
+            return;
+        }
+
         let lista = productosRaw.filter(p => {
             if (!p.categoria) return false;
-            const cat = p.categoria.toLowerCase(); const f = filtroActual.toLowerCase();
-            return f === 'packs' ? (cat.includes('pack') || cat.includes('16')) : (cat.includes('500') || cat.includes('vaso'));
+            const cat = normalizarStr(p.categoria);
+            const f = normalizarStr(filtroActual);
+            
+            if (f.includes('pack')) return cat.includes('pack') || cat.includes('16');
+            if (f.includes('botanico') || f.includes('animal')) return cat.includes('botanico') || cat.includes('animal');
+            return cat.includes('500') || cat.includes('vaso') || cat.includes('elixir');
         });
 
         if (lista.length === 0) {
-            lista = [{ id: 'test', nombre: 'ELÍXIR DE PRUEBA', precio: 15000, descripcion: '¡Sistema PWA de descarga a celular activado!', imagen: 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png' }];
+            grid.innerHTML = `<div class="col-12 text-center text-white-50 py-5 fs-4 font-orbitron">No se encontraron productos disponibles en la categoría ${filtroActual.toUpperCase()} para el NODO ${nodo.toUpperCase()}.</div>`;
+            return;
         }
 
         lista.forEach(p => {
@@ -501,6 +518,155 @@
                     </div>
                 </div>`;
         });
+    }
+
+    async function renderizarArmaTuBatido(nodo) {
+        const grid = document.getElementById('grid-menu');
+        grid.innerHTML = '<div class="col-12 text-center text-white py-5 font-orbitron"><span class="spinner-border text-warning me-2"></span>Cargando catálogo de ingredientes por porción...</div>';
+
+        let insumos = [];
+        try {
+            const res = await fetch('/api/insumos/sucursal/' + nodo);
+            if (res.ok) insumos = await res.json();
+        } catch(e) {}
+
+        // Filtrar insumos que corresponden a ingredientes de batido
+        insumos = insumos.filter(i => {
+            const cat = (i.categoria || '').toLowerCase();
+            return !cat.includes('vaso') && !cat.includes('packaging');
+        });
+
+        if (insumos.length === 0) {
+            grid.innerHTML = '<div class="col-12 text-center text-white-50 py-5 fs-5 font-orbitron">No se encontraron ingredientes configurados en Bodega para este Nodo.</div>';
+            return;
+        }
+
+        let htmlBuilder = `
+            <div class="col-12 mb-4">
+                <div class="p-4 rounded-3 text-center" style="background: rgba(10, 20, 15, 0.9); border: 2px solid var(--bio-oro); box-shadow: 0 0 25px rgba(255,215,0,0.3); backdrop-filter: blur(10px);">
+                    <h3 class="font-orbitron fw-bold text-warning mb-2" style="letter-spacing:2px;"><i class="bi bi-sliders me-2"></i> ARMA TU BATIDO PERSONALIZADO</h3>
+                    <p class="text-white fs-6 mb-3 font-rajdhani">Selecciona la cantidad de porciones de cada ingrediente para armar tu batido a medida.</p>
+
+                    <div class="p-3 rounded-3 mb-2" style="background: rgba(0,0,0,0.6); border: 1px dashed var(--bio-aqua);">
+                        <div class="fs-6 fw-bold text-info font-orbitron mb-1">INGREDIENTES SELECCIONADOS:</div>
+                        <div id="resumen-ingredientes-custom" class="fs-6 text-white fw-bold mb-2">Ningún ingrediente seleccionado aún</div>
+                        <div class="fs-3 font-orbitron text-warning fw-bold mb-3" id="precio-total-custom">${simboloActual}0</div>
+                        
+                        <button id="btn-agregar-custom" class="btn-extraer py-3 fs-5" style="max-width: 400px; margin: 0 auto; display: block;" onclick="agregarBatidoCustomAlCarrito()">
+                            <i class="bi bi-cart-plus-fill me-2"></i> INCLUIR BATIDO ARMADO AL CARRITO
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mb-3">
+                <h4 class="font-orbitron text-center text-white fw-bold mb-3" style="letter-spacing:1px;"><i class="bi bi-grid-3x3-gap-fill text-warning me-2"></i> CATÁLOGO DE INGREDIENTES DISPONIBLES</h4>
+            </div>
+        `;
+
+        insumos.forEach(ins => {
+            let cantPorc = porcionesArmado[ins.idInsumo] || 0;
+            let precioPorc = ins.precio || 0;
+            let porcTexto = ins.cantidadPorcion ? `${ins.cantidadPorcion} ${ins.medida || 'gr'}` : `1 ${ins.medida || 'porción'}`;
+
+            let nombreEscape = (ins.nombre || '').replace(/'/g, "\\'");
+
+            htmlBuilder += `
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="p-3 rounded-3 text-center h-100 d-flex flex-column justify-content-between" style="background: rgba(10, 5, 2, 0.85); border: 1px solid rgba(255,215,0,0.4); box-shadow: 0 5px 15px rgba(0,0,0,0.8); backdrop-filter: blur(5px);">
+                        <div>
+                            <i class="bi bi-droplet-half fs-1 text-warning mb-2 d-block"></i>
+                            <h5 class="fw-bold text-white fs-6 text-uppercase mb-1 font-rajdhani">${ins.nombre}</h5>
+                            <div class="text-info fs-7 mb-2 font-orbitron">Porción: ${porcTexto}</div>
+                            <div class="text-warning fw-bold fs-5 mb-3 font-orbitron">${simboloActual}${precioPorc.toLocaleString('es-ES')}</div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center gap-2 mt-2">
+                            <button class="btn btn-outline-warning fw-bold px-3 py-1" style="border-radius: 8px;" onclick="modificarPorcionInsumo(${ins.idInsumo}, -1, ${precioPorc}, '${nombreEscape}')">-</button>
+                            <span id="cant-porc-${ins.idInsumo}" class="fw-bold fs-4 text-white font-orbitron px-2">${cantPorc}</span>
+                            <button class="btn btn-warning text-dark fw-bold px-3 py-1" style="border-radius: 8px;" onclick="modificarPorcionInsumo(${ins.idInsumo}, 1, ${precioPorc}, '${nombreEscape}')">+</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        grid.innerHTML = htmlBuilder;
+        actualizarResumenCustom();
+    }
+
+    function modificarPorcionInsumo(idInsumo, delta, precio, nombre) {
+        if (!porcionesArmado[idInsumo]) porcionesArmado[idInsumo] = 0;
+        porcionesArmado[idInsumo] = Math.max(0, porcionesArmado[idInsumo] + delta);
+        
+        insumosInfoMap[idInsumo] = { nombre: nombre, precio: precio, cantidad: porcionesArmado[idInsumo] };
+        
+        const spanCant = document.getElementById(`cant-porc-${idInsumo}`);
+        if (spanCant) spanCant.innerText = porcionesArmado[idInsumo];
+        
+        actualizarResumenCustom();
+    }
+
+    function actualizarResumenCustom() {
+        let resumenDiv = document.getElementById('resumen-ingredientes-custom');
+        let precioTotalSpan = document.getElementById('precio-total-custom');
+        if (!resumenDiv || !precioTotalSpan) return;
+
+        let lista = [];
+        let total = 0;
+
+        for (let id in porcionesArmado) {
+            let cant = porcionesArmado[id];
+            if (cant > 0 && insumosInfoMap[id]) {
+                let info = insumosInfoMap[id];
+                lista.push(`${cant}x ${info.nombre}`);
+                total += (cant * info.precio);
+            }
+        }
+
+        if (lista.length === 0) {
+            resumenDiv.innerText = "Ningún ingrediente seleccionado aún";
+            precioTotalSpan.innerText = simboloActual + "0";
+        } else {
+            resumenDiv.innerText = lista.join(", ");
+            precioTotalSpan.innerText = simboloActual + total.toLocaleString('es-ES');
+        }
+    }
+
+    function agregarBatidoCustomAlCarrito() {
+        let lista = [];
+        let lineasReceta = [];
+        let total = 0;
+
+        for (let id in porcionesArmado) {
+            let cant = porcionesArmado[id];
+            if (cant > 0 && insumosInfoMap[id]) {
+                let info = insumosInfoMap[id];
+                lista.push(`${cant}x ${info.nombre}`);
+                lineasReceta.push(`${info.nombre}:${cant}`);
+                total += (cant * info.precio);
+            }
+        }
+
+        if (lista.length === 0 || total === 0) {
+            alert("Por favor selecciona al menos una porción de ingrediente para armar tu batido.");
+            return;
+        }
+
+        let itemCustom = {
+            id: 'custom_' + Date.now(),
+            nombre: 'Batido Armado: ' + lista.join(', '),
+            precio: total,
+            recetaDetalle: lineasReceta.join('\n'),
+            esCustom: true
+        };
+
+        carrito.push(itemCustom);
+        actualizarCarrito();
+        playCashSound();
+
+        // Resetear selección
+        porcionesArmado = {};
+        insumosInfoMap = {};
+        renderizar();
     }
 
     function flip(id) { document.getElementById(`card-${id}`).classList.toggle('flipped'); }

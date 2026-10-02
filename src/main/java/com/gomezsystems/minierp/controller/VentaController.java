@@ -58,24 +58,55 @@ public class VentaController {
 
         if (items != null) {
             for (Map<String, Object> itemReq : items) {
-                Long pId = Long.parseLong(itemReq.get("id").toString());
-                double pPrecio = Double.parseDouble(itemReq.get("precio").toString());
-                
-                Optional<Producto> prodOpt = productoRepository.findById(pId);
-                if (prodOpt.isPresent()) {
-                    if (detailsMap.containsKey(pId)) {
-                        DetalleVenta det = detailsMap.get(pId);
-                        det.setCantidad(det.getCantidad() + 1);
-                        det.setSubtotal(det.getCantidad() * pPrecio);
-                    } else {
-                        DetalleVenta det = new DetalleVenta();
-                        det.setProducto(prodOpt.get());
-                        det.setCantidad(1);
-                        det.setSubtotal(pPrecio);
-                        detailsMap.put(pId, det);
+                Long pId = null;
+                if (itemReq.get("id") != null) {
+                    try {
+                        pId = Long.parseLong(itemReq.get("id").toString());
+                    } catch (Exception e) {
+                        pId = null;
                     }
-                    sumTotal += pPrecio;
                 }
+                double pPrecio = 0.0;
+                if (itemReq.get("precio") != null) {
+                    try { pPrecio = Double.parseDouble(itemReq.get("precio").toString()); } catch (Exception e) {}
+                }
+
+                Producto prodReal = null;
+                if (pId != null) {
+                    Optional<Producto> prodOpt = productoRepository.findById(pId);
+                    if (prodOpt.isPresent()) {
+                        prodReal = prodOpt.get();
+                    }
+                }
+
+                // Si es un batido personalizado de "Arma tu Batido" sin ID existente o con receta personalizada
+                if (prodReal == null) {
+                    prodReal = new Producto();
+                    String nombreBatido = itemReq.get("nombre") != null ? itemReq.get("nombre").toString() : "Batido Personalizado";
+                    prodReal.setNombre(nombreBatido);
+                    prodReal.setCategoria("Arma tu Batido");
+                    prodReal.setPrecio(pPrecio);
+                    prodReal.setSucursal(v.getPais());
+                    if (itemReq.get("recetaDetalle") != null) {
+                        prodReal.setRecetaDetalle(itemReq.get("recetaDetalle").toString());
+                    }
+                    prodReal.setStock(0);
+                    prodReal = productoRepository.save(prodReal);
+                }
+
+                Long realId = prodReal.getId();
+                if (detailsMap.containsKey(realId)) {
+                    DetalleVenta det = detailsMap.get(realId);
+                    det.setCantidad(det.getCantidad() + 1);
+                    det.setSubtotal(det.getCantidad() * pPrecio);
+                } else {
+                    DetalleVenta det = new DetalleVenta();
+                    det.setProducto(prodReal);
+                    det.setCantidad(1);
+                    det.setSubtotal(pPrecio);
+                    detailsMap.put(realId, det);
+                }
+                sumTotal += pPrecio;
             }
         }
 
