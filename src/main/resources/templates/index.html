@@ -235,9 +235,7 @@
                 <i class="bi bi-cloud-arrow-down-fill me-1"></i> APP
             </button>
             <select id="sucursal-activa" class="selector-sucursal" onchange="cambiarSucursal()" onmouseenter="playSound('hover')">
-                <option value="Colombia">🇨🇴 NODO COLOMBIA (COP)</option>
-                <option value="Chile">🇨🇱 NODO CHILE (CLP)</option>
-                <option value="España">🇪🇸 NODO ESPAÑA (EUR)</option>
+                <option value="Antofagasta">🇨🇱 NODO ANTOFAGASTA (CLP)</option>
             </select>
 
             <button id="btn-mic" class="btn btn-outline-warning px-3 py-2 border-0" onclick="iniciarReconocimientoVoz()" onmouseenter="playSound('hover')" title="Sistema de Comandos (Click para hablar)"><i class="bi bi-mic fs-4"></i></button>
@@ -542,27 +540,19 @@
             document.getElementById('crm-telefono').value = comando.replace(/\s/g, '');
 
             const paisActual = document.getElementById('sucursal-activa').value;
-            let opcionesMetodo = "Efectivo, Tarjeta, Transferencia o Enlace Web";
-            if(paisActual === 'España') opcionesMetodo = "Efectivo, Tarjeta, Bizum o Transferencia";
-            if(paisActual === 'Colombia') opcionesMetodo = "Efectivo, Tarjeta, Nequi o Daviplata";
-            if(paisActual === 'Chile') opcionesMetodo = "Efectivo, Tarjeta, Mercado Pago o Transferencia";
+            let opcionesMetodo = "Efectivo, Tarjeta, Mercado Pago o Transferencia";
 
             hablarYEscuchar(`Enlace asegurado. Para finalizar, dictame el canal: ${opcionesMetodo}.`, 'ESPERANDO_METODO');
         }
 
         // --- ESTADO 4: PROCESANDO EL MÉTODO SEGÚN EL PAÍS ---
         else if (estadoInteraccionVoz === 'ESPERANDO_METODO') {
-            const paisActual = document.getElementById('sucursal-activa').value;
             let metodoObj = 'Efectivo';
 
             if(comando.includes("tarjeta") || comando.includes("datafono")) metodoObj = 'Tarjeta';
             else if(comando.includes("transferencia") || comando.includes("qr")) metodoObj = 'Transferencia';
             else if(comando.includes("enlace") || comando.includes("web")) metodoObj = 'EnlaceWeb';
-
-            if(paisActual === 'España' && comando.includes("bizum")) metodoObj = 'Bizum';
-            if(paisActual === 'Colombia' && (comando.includes("nequi") || comando.includes("neki"))) metodoObj = 'Nequi';
-            if(paisActual === 'Colombia' && comando.includes("daviplata")) metodoObj = 'Daviplata';
-            if(paisActual === 'Chile' && (comando.includes("mercado pago") || comando.includes("mercadopago"))) metodoObj = 'MercadoPago';
+            else if(comando.includes("mercado pago") || comando.includes("mercadopago")) metodoObj = 'MercadoPago';
 
             seleccionarMetodo(metodoObj);
             estadoInteraccionVoz = 'LIBRE';
@@ -635,19 +625,19 @@
 
         if (userNorm === 'admin' && pass === '1786') {
             loginExitoso = true; mensajeVoz = "Bienvenido Maestro al Sistema Raíces. Autoridad Máxima reconocida.";
-            selectorSucursal.disabled = false; selectorSucursal.value = 'Chile';
+            selectorSucursal.disabled = false; selectorSucursal.value = 'Antofagasta';
         } else if (userNorm === 'administrador juan' && pass === '1807') {
-            loginExitoso = true; mensajeVoz = "Bienvenido, Administrador Juan. Enlace de España habilitado.";
-            selectorSucursal.disabled = false; selectorSucursal.value = 'España';
+            loginExitoso = true; mensajeVoz = "Bienvenido, Administrador Juan. Enlace Antofagasta habilitado.";
+            selectorSucursal.disabled = false; selectorSucursal.value = 'Antofagasta';
         } else if (userNorm === 'hermana' && pass === '1306') {
             loginExitoso = true; mensajeVoz = "Bienvenida, Hermana. Que el sistema fluya contigo hoy.";
-            selectorSucursal.value = 'España'; selectorSucursal.disabled = true;
+            selectorSucursal.value = 'Antofagasta'; selectorSucursal.disabled = true;
         } else if (userNorm === 'carolina' && pass === '2907') {
-            loginExitoso = true; mensajeVoz = "Bienvenida, Carolina. Nodo Mallorca activado y listo para brillar.";
-            selectorSucursal.value = 'España'; selectorSucursal.disabled = true;
+            loginExitoso = true; mensajeVoz = "Bienvenida, Carolina. Nodo Antofagasta activado y listo para brillar.";
+            selectorSucursal.value = 'Antofagasta'; selectorSucursal.disabled = true;
         } else if (userNorm === 'linda mama spa' && pass === '3002') {
-            loginExitoso = true; mensajeVoz = "Bienvenida. Nodo Chile para Linda Mamá Spa activado.";
-            selectorSucursal.value = 'Chile'; selectorSucursal.disabled = true;
+            loginExitoso = true; mensajeVoz = "Bienvenida. Nodo Antofagasta activado.";
+            selectorSucursal.value = 'Antofagasta'; selectorSucursal.disabled = true;
         }
 
         if(loginExitoso) {
@@ -754,36 +744,15 @@
         }
     }
 
-    // EL CEREBRO QUE DIBUJA LOS BOTONES DE PAGO SEGÚN EL PAÍS
     function renderizarMetodosPago() {
-        const pais = document.getElementById('sucursal-activa').value;
         const contenedor = document.getElementById('contenedor-metodos-pago');
-        let html = '';
-
         const btnEfectivo = `<div class="col-4"><div class="btn-opcion-pago active" id="pago-Efectivo" onclick="seleccionarMetodo('Efectivo')" onmouseenter="playSound('hover')"><i class="bi bi-cash-stack fs-2 d-block mb-2"></i> FÍSICO</div></div>`;
         const btnTarjeta = `<div class="col-4"><div class="btn-opcion-pago" id="pago-Tarjeta" onclick="seleccionarMetodo('Tarjeta')" onmouseenter="playSound('hover')"><i class="bi bi-credit-card fs-2 d-block mb-2"></i> DATÁFONO</div></div>`;
+        const btnMp = `<div class="col-4"><div class="btn-opcion-pago" id="pago-MercadoPago" onclick="seleccionarMetodo('MercadoPago')" onmouseenter="playSound('hover')"><i class="bi bi-credit-card-2-front fs-2 d-block mb-1"></i> MERCADO PAGO<br><span style="font-size:0.55rem; opacity:0.8;">(Ingreso Tarjeta)</span></div></div>`;
         const btnTransf = `<div class="col-6"><div class="btn-opcion-pago" id="pago-Transferencia" onclick="seleccionarMetodo('Transferencia')" onmouseenter="playSound('hover')"><i class="bi bi-qr-code-scan fs-2 d-block mb-2"></i> TRANSFERENCIA</div></div>`;
         const btnEnlace = `<div class="col-6"><div class="btn-opcion-pago" id="pago-EnlaceWeb" onclick="seleccionarMetodo('EnlaceWeb')" onmouseenter="playSound('hover')"><i class="bi bi-link-45deg fs-2 d-block mb-2"></i> ENLACE WEB</div></div>`;
 
-        if (pais === 'España') {
-            html = btnEfectivo + btnTarjeta +
-                   `<div class="col-4"><div class="btn-opcion-pago" id="pago-Bizum" onclick="seleccionarMetodo('Bizum')" onmouseenter="playSound('hover')"><i class="bi bi-phone-vibrate fs-2 d-block mb-2"></i> BIZUM</div></div>` +
-                   btnTransf + btnEnlace;
-        } else if (pais === 'Colombia') {
-            html = btnEfectivo + btnTarjeta +
-                   `<div class="col-4"><div class="btn-opcion-pago" id="pago-Nequi" onclick="seleccionarMetodo('Nequi')" onmouseenter="playSound('hover')"><i class="bi bi-phone fs-2 d-block mb-2"></i> NEQUI</div></div>` +
-                   `<div class="col-6"><div class="btn-opcion-pago" id="pago-Daviplata" onclick="seleccionarMetodo('Daviplata')" onmouseenter="playSound('hover')"><i class="bi bi-bank fs-2 d-block mb-2"></i> DAVIPLATA</div></div>` +
-                   btnTransf;
-        } else if (pais === 'Chile') {
-            // AQUÍ ESTÁ EL BOTÓN DE MERCADO PAGO COMO GUEST CHECKOUT (SIN CUENTA)
-            html = btnEfectivo + btnTarjeta +
-                   `<div class="col-4"><div class="btn-opcion-pago" id="pago-MercadoPago" onclick="seleccionarMetodo('MercadoPago')" onmouseenter="playSound('hover')"><i class="bi bi-credit-card-2-front fs-2 d-block mb-1"></i> MERCADO PAGO<br><span style="font-size:0.55rem; opacity:0.8;">(Ingreso Tarjeta)</span></div></div>` +
-                   btnTransf + btnEnlace;
-        } else {
-            html = btnEfectivo + btnTarjeta + btnTransf + btnEnlace;
-        }
-
-        contenedor.innerHTML = html;
+        contenedor.innerHTML = btnEfectivo + btnTarjeta + btnMp + btnTransf + btnEnlace;
         document.getElementById('metodo-seleccionado').value = 'Efectivo';
     }
 
@@ -820,7 +789,7 @@
                 carrito = []; renderizarTicket();
             } else { return; }
         }
-        simboloActual = document.getElementById('sucursal-activa').value === 'España' ? '€' : '$';
+        simboloActual = '$';
         filtroActualActivo = 'Todos';
         cargarProductos(false);
         renderizarMetodosPago(); // Al cambiar sucursal, los botones cambian de inmediato

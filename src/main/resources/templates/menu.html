@@ -229,14 +229,8 @@
         <p style="color: var(--bio-aqua); font-family: 'Orbitron'; letter-spacing: 2px; margin-bottom: 20px; font-size: 0.95rem; text-shadow: 0 0 10px rgba(0,240,255,0.5);">SELECCIONA TU CÁPSULA VITAL</p>
 
         <div class="d-flex flex-column gap-3 w-100" style="max-width: 320px;">
-            <button class="btn-nodo" onclick="iniciarExperiencia('Chile')">
+            <button class="btn-nodo" onclick="iniciarExperiencia('Antofagasta')">
                 <span style="font-size: 1.5rem;">🇨🇱</span> NODO ANTOFAGASTA
-            </button>
-            <button class="btn-nodo" onclick="iniciarExperiencia('Colombia')">
-                <span style="font-size: 1.5rem;">🇨🇴</span> NODO TULUÁ
-            </button>
-            <button class="btn-nodo" onclick="iniciarExperiencia('España')">
-                <span style="font-size: 1.5rem;">🇪🇸</span> NODO MALLORCA
             </button>
         </div>
     </div>
@@ -256,7 +250,7 @@
     <h1 class="titulo-raices">RAÍCES</h1>
 
     <div id="display-nodo-actual" class="badge-nodo-actual">🇨🇱 NODO ANTOFAGASTA</div>
-    <input type="hidden" id="sucursal-activa" value="Chile"> <div class="contenedor-categorias">
+    <input type="hidden" id="sucursal-activa" value="Antofagasta"> <div class="contenedor-categorias">
     <button class="categoria-badge active" onclick="filtrar('500 mls', this)">Elíxires</button>
     <button class="categoria-badge" onclick="filtrar('Packs', this)">Packs</button>
     <button class="categoria-badge" onclick="filtrar('Arma tu Batido', this)">Arma tu Batido</button>
@@ -373,14 +367,10 @@
         }
     }
 
-    function iniciarExperiencia(paisSeleccionado) {
+    function iniciarExperiencia(paisSeleccionado = 'Antofagasta') {
         // Guardar selección
-        document.getElementById('sucursal-activa').value = paisSeleccionado;
-        let displayBadge = '';
-        if(paisSeleccionado === 'Chile') displayBadge = '🇨🇱 NODO ANTOFAGASTA';
-        if(paisSeleccionado === 'Colombia') displayBadge = '🇨🇴 NODO TULUÁ';
-        if(paisSeleccionado === 'España') displayBadge = '🇪🇸 NODO MALLORCA';
-        document.getElementById('display-nodo-actual').innerText = displayBadge;
+        document.getElementById('sucursal-activa').value = 'Antofagasta';
+        document.getElementById('display-nodo-actual').innerText = '🇨🇱 NODO ANTOFAGASTA';
 
         // Efectos visuales
         const puerta = document.getElementById('fondo-puerta');
@@ -472,7 +462,7 @@
 
     function renderizar() {
         const grid = document.getElementById('grid-menu'); grid.innerHTML = '';
-        const nodo = document.getElementById('sucursal-activa').value; simboloActual = (nodo === "España") ? '€' : '$';
+        const nodo = document.getElementById('sucursal-activa').value; simboloActual = '$';
 
         const normalizarStr = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : '';
 
@@ -700,25 +690,10 @@
     }
 
     function renderizarBotonesPagoModal() {
-        const pais = document.getElementById('sucursal-activa').value;
         const container = document.getElementById('contenedor-botones-pago');
-        let html = '';
-
-        if (pais === 'Chile') {
-            html = `<button type="button" class="btn-extraer w-100 py-3 mb-2" onclick="confirmarPedido('MercadoPago')">
-                        PAGAR CON WEBPAY / TARJETAS <i class="bi bi-credit-card ms-1"></i>
-                    </button>`;
-        } else if (pais === 'Colombia') {
-            html = `<button type="button" class="btn-disabled-pago mb-2" disabled>
-                        PAGO COLOMBIA (PRÓXIMAMENTE) <i class="bi bi-lock ms-1"></i>
-                    </button>`;
-        } else if (pais === 'España') {
-            html = `<button type="button" class="btn-disabled-pago mb-2" disabled>
-                        PAGO ESPAÑA (PRÓXIMAMENTE) <i class="bi bi-lock ms-1"></i>
-                    </button>`;
-        }
-
-        container.innerHTML = html;
+        container.innerHTML = `<button type="button" class="btn-extraer w-100 py-3 mb-2" onclick="confirmarPedido('MercadoPago')">
+                    PAGAR CON WEBPAY / TARJETAS <i class="bi bi-credit-card ms-1"></i>
+                </button>`;
     }
 
     function eliminar(idx, e) { e.stopPropagation(); carrito.splice(idx, 1); actualizarCarrito(); if(carrito.length > 0) { abrirModalCarrito(); } else { modalCarritoCliente.hide(); } }

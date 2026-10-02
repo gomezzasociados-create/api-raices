@@ -23,18 +23,13 @@ public class DataInitializer implements CommandLineRunner {
 
         if (repository.count() == 0) {
 
-            // ¡EL CLONADOR MULTI-SUCURSAL!
-            String[] sucursales = {"Colombia", "Chile", "España"};
+            // SUCURSAL ÚNICA: ANTOFAGASTA
+            String[] sucursales = {"Antofagasta"};
 
             for (String sede : sucursales) {
 
-                // Ajustamos la moneda automáticamente según la sede
-                double precioBatido = 0.0;
-                double precioPulpa = 0.0;
-
-                if (sede.equals("Colombia")) { precioBatido = 4500.0; precioPulpa = 25000.0; }
-                else if (sede.equals("Chile")) { precioBatido = 3500.0; precioPulpa = 22000.0; }
-                else if (sede.equals("España")) { precioBatido = 5.5; precioPulpa = 25.0; }
+                double precioBatido = 3500.0;
+                double precioPulpa = 22000.0;
 
                 // ==========================================
                 // 🥤 1. BATIDOS ORIGINALES (500 mls)
@@ -171,10 +166,7 @@ public class DataInitializer implements CommandLineRunner {
                 // ==========================================
                 // 🐾 3. BOTÁNICO ANIMAL
                 // ==========================================
-                double precioBotanico = 0.0;
-                if (sede.equals("Colombia")) { precioBotanico = 18000.0; }
-                else if (sede.equals("Chile")) { precioBotanico = 12000.0; }
-                else if (sede.equals("España")) { precioBotanico = 15.0; }
+                double precioBotanico = 12000.0;
 
                 Producto p15 = new Producto();
                 p15.setNombre("Botánico Animal Vitality");
@@ -198,16 +190,16 @@ public class DataInitializer implements CommandLineRunner {
 
             }
 
-            System.out.println(">> GÓMEZ SYSTEMS: ¡Base de datos iniciada con todos los batidos y Botánico Animal clonados!");
+            System.out.println(">> GÓMEZ SYSTEMS: ¡Base de datos iniciada con todos los batidos y Botánico Animal para Antofagasta!");
         } else {
             System.out.println(">> GÓMEZ SYSTEMS: Los productos ya existen, saltando inicialización para proteger tus ventas.");
         }
 
-        // INICIALIZACIÓN DE INSUMOS DE MUESTRA PARA CADA SEDE SI ESTÁ VACÍO
+        // INICIALIZACIÓN DE INSUMOS DE MUESTRA PARA ANTOFAGASTA SI ESTÁ VACÍO
         if (insumoRepository.count() == 0) {
-            String[] sucursales = {"Colombia", "Chile", "España"};
+            String[] sucursales = {"Antofagasta"};
             for (String sede : sucursales) {
-                double factorMoneda = sede.equals("Colombia") ? 100.0 : (sede.equals("Chile") ? 50.0 : 0.1);
+                double factorMoneda = 50.0;
 
                 crearInsumoSiNoExiste("Espinaca", 10000.0, 50, "gr", sede, "Pulpas", 15.0 * factorMoneda);
                 crearInsumoSiNoExiste("Apio", 8000.0, 50, "gr", sede, "Pulpas", 12.0 * factorMoneda);
@@ -224,7 +216,7 @@ public class DataInitializer implements CommandLineRunner {
                 crearInsumoSiNoExiste("Espirulina", 2000.0, 10, "gr", sede, "Pulpas", 60.0 * factorMoneda);
                 crearInsumoSiNoExiste("Botánico Pelaje Base", 5000.0, 30, "gr", sede, "Botánico Animal", 30.0 * factorMoneda);
             }
-            System.out.println(">> GÓMEZ SYSTEMS: Insumos de Bodega inicializados correctamente.");
+            System.out.println(">> GÓMEZ SYSTEMS: Insumos de Bodega inicializados correctamente para Antofagasta.");
         }
     }
 

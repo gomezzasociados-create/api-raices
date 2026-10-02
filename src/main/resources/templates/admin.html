@@ -306,7 +306,7 @@
                         <div class="col-md-2">
                             <label class="form-label-neon">NODO BASE</label>
                             <select id="prod-sucursal" class="form-select auth-select" onchange="cargarProduccion(); playSound('click')">
-                                <option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option>
+                                <option value="Antofagasta">Antofagasta</option>
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -356,9 +356,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="fw-bold font-orbitron" style="color: var(--p-warning);"><i class="bi bi-cash-stack"></i> MOTOR CONTABLE Y FLUJO DE CAPITAL</h5>
                         <select id="tesoreria-sucursal" class="form-select auth-select w-auto" onchange="cargarTesoreria(); playSound('click')">
-                            <option value="Colombia">Nodo Colombia</option>
-                            <option value="Chile">Nodo Chile</option>
-                            <option value="España">Nodo España</option>
+                            <option value="Antofagasta">Nodo Antofagasta</option>
                         </select>
                     </div>
 
@@ -439,7 +437,7 @@
                         <div class="col-md-2"><label class="form-label-neon">F Nacimiento</label><input type="date" id="crm-cumple" class="form-control"></div>
                         <div class="col-md-1"><label class="form-label-neon text-warning">Pts</label><input type="number" id="crm-puntos" class="form-control border-warning bg-dark fw-bold text-warning text-center" placeholder="0"></div>
                         <div class="col-md-1">
-                            <label class="form-label-neon">Nodo</label><select id="crm-nodo" class="form-select auth-select"><option value="Colombia">Col</option><option value="Chile">Chi</option><option value="España">Esp</option></select>
+                            <label class="form-label-neon">Nodo</label><select id="crm-nodo" class="form-select auth-select"><option value="Antofagasta">Antofagasta</option></select>
                         </div>
                         <div class="col-md-12 mt-2"><button class="btn btn-bio w-100 py-2 fs-5" onclick="guardarCliente()"><i class="bi bi-person-fill-up me-2"></i> REGISTRAR O ACTUALIZAR CLIENTE (BD)</button></div>
                     </div>
@@ -482,7 +480,7 @@
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Métrica</label><select id="ins-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/KG</label><input type="number" id="ins-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="0.00"></div>
-                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
+                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
                                         <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background:var(--p-bio-green); color:#000;" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg fs-4"></i></button></div>
                                     </div>
                                     <div class="table-responsive">
@@ -517,7 +515,7 @@
                                         <div class="col-md-2"><label class="form-label-neon">Métrica</label><select id="vaso-unidad" class="form-select"><option value="und">Unidades</option><option value="mls">Mililitros</option><option value="gr">Gramos</option></select></div>
                                         <div class="col-md-2"><label class="form-label-neon">Volumen</label><input type="number" id="vaso-stock" class="form-control"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UND</label><input type="number" id="vaso-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="0.00"></div>
-                                        <div class="col-md-3"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
+                                        <div class="col-md-3"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
                                         <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-cyan); color: #000;" onclick="guardarInsumo('vasos')"><i class="bi bi-plus-lg fs-4"></i></button></div>
                                     </div>
                                     <div class="table-responsive">
@@ -541,7 +539,7 @@
                         <div class="col-md-4">
                             <label class="form-label-neon text-white">NODO ESPECÍFICO</label>
                             <select id="filtro-sucursal-recetas" class="form-select auth-select border-white" onchange="prepararRecetas()">
-                                <option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option>
+                                <option value="Antofagasta">Antofagasta</option>
                             </select>
                         </div>
                         <div class="col-md-4"><label class="form-label-neon text-white">ELIXIR FINAL (output)</label><select id="rec-producto" class="form-select border-white" onchange="cargarTablaReceta()"></select></div>
@@ -563,7 +561,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="fw-bold font-orbitron m-0 fs-3" style="color:var(--p-magenta); text-shadow: var(--magenta-glow);"><i class="bi bi-hdd-network"></i> MATRIZ DE CONTROL TOTAL</h5>
                         <select id="filtro-sucursal-catalogo" class="form-select auth-select w-auto fw-bold fs-5" style="color:var(--p-cyan) !important; border: 2px solid var(--p-cyan);" onchange="cargarCatalogo()">
-                            <option value="Colombia">NODO COLOMBIA</option><option value="Chile">NODO CHILE</option><option value="España">NODO ESPAÑA</option>
+                            <option value="Antofagasta">NODO ANTOFAGASTA</option>
                         </select>
                     </div>
 
@@ -677,23 +675,23 @@
         let rol = null, etiqueta = null, sucursalBase = null, msgVoz = "";
 
         if(userNorm === 'admin' && pass === '1234') {
-            rol = 'SUPREMO'; etiqueta = 'COMANDANTE SUPREMO';
+            rol = 'SUPREMO'; etiqueta = 'COMANDANTE SUPREMO'; sucursalBase = 'Antofagasta';
             msgVoz = "Bienvenido Comandante Supremo. Todos los módulos habilitados y enlace neuronal estable.";
         }
         else if(userNorm === 'linda mama spa' && pass === '3002') {
-            rol = 'ADMIN'; etiqueta = 'ADMIN CHILE'; sucursalBase = 'Chile';
+            rol = 'ADMIN'; etiqueta = 'ADMIN ANTOFAGASTA'; sucursalBase = 'Antofagasta';
             msgVoz = "Linda mamá spa y raíces, la combinación perfecta.";
         }
         else if(userNorm === 'administrador juan' && pass === '1807') {
-            rol = 'ADMIN'; etiqueta = 'ADMIN ESPAÑA'; sucursalBase = 'España';
+            rol = 'ADMIN'; etiqueta = 'ADMIN ANTOFAGASTA'; sucursalBase = 'Antofagasta';
             msgVoz = "Juan eres el mejor, nunca lo olvides, y todo lo que el ser humano se proponga, lo puede lograr.";
         }
         else if(userNorm === 'carolina' && pass === '2907') {
-            rol = 'ADMIN'; etiqueta = 'ADMIN ESPAÑA'; sucursalBase = 'España';
+            rol = 'ADMIN'; etiqueta = 'ADMIN ANTOFAGASTA'; sucursalBase = 'Antofagasta';
             msgVoz = "Bienvenida Carolina, que tengas un excelente turno operando en Raíces.";
         }
         else if(userNorm === 'hermana' && pass === '1307') {
-            rol = 'ADMIN'; etiqueta = 'ADMIN ESPAÑA'; sucursalBase = 'España';
+            rol = 'ADMIN'; etiqueta = 'ADMIN ANTOFAGASTA'; sucursalBase = 'Antofagasta';
             msgVoz = "Hola Hermana, lista para iniciar la operación con la mejor energía.";
         }
         else { playSound('error'); document.getElementById('error-login').style.display='block'; return; }
@@ -761,19 +759,7 @@
             }
         });
 
-        if (!esSupremo) {
-            const pCol = document.getElementById('panel-stat-col');
-            const pChi = document.getElementById('panel-stat-chi');
-            const pEsp = document.getElementById('panel-stat-esp');
-
-            if (sucursalAdmin !== 'Colombia' && pCol) pCol.style.display = 'none';
-            if (sucursalAdmin !== 'Chile' && pChi) pChi.style.display = 'none';
-            if (sucursalAdmin !== 'España' && pEsp) pEsp.style.display = 'none';
-        } else {
-            let p1 = document.getElementById('panel-stat-col'); if(p1) p1.style.display = 'block';
-            let p2 = document.getElementById('panel-stat-chi'); if(p2) p2.style.display = 'block';
-            let p3 = document.getElementById('panel-stat-esp'); if(p3) p3.style.display = 'block';
-        }
+        // Nodo unico: Antofagasta
     }
 
     // =======================================================
@@ -1069,7 +1055,7 @@
     // --- TESORERÍA Y FINANZAS ---
     async function cargarTesoreria() {
         const paisVenta = document.getElementById('tesoreria-sucursal').value;
-        const smb = paisVenta.includes('España') ? '€' : '$';
+        const smb = '$';
 
         try {
             // INDICADORES
@@ -1172,7 +1158,7 @@
 
     // --- MÓDULO PROFESIONAL DE IMPRESIÓN Y CAJA ---
     function formatMoney(amount, nodo) {
-        return (nodo.includes('España') ? '€' : '$') + amount.toLocaleString('es-ES');
+        return '$' + (amount || 0).toLocaleString('es-CL');
     }
 
     async function imprimirTicket(idVenta) {
@@ -1491,11 +1477,11 @@
                 else if (tbPulpas) tbPulpas.innerHTML += row;
             });
             
-            const sucMuestraPulpas = document.getElementById('ins-sucursal') ? document.getElementById('ins-sucursal').value : 'Colombia';
+            const sucMuestraPulpas = document.getElementById('ins-sucursal') ? document.getElementById('ins-sucursal').value : 'Antofagasta';
             const tbVPulpas = document.getElementById('total-valor-pulpas');
             if (tbVPulpas) tbVPulpas.innerText = formatMoney(totalPulpas, sucMuestraPulpas);
             
-            const sucMuestraVasos = document.getElementById('vaso-sucursal') ? document.getElementById('vaso-sucursal').value : 'Colombia';
+            const sucMuestraVasos = document.getElementById('vaso-sucursal') ? document.getElementById('vaso-sucursal').value : 'Antofagasta';
             const tbVVasos = document.getElementById('total-valor-vasos');
             if (tbVVasos) tbVVasos.innerText = formatMoney(totalVasos, sucMuestraVasos);
             
@@ -1848,18 +1834,8 @@
     }
 
     function generarReporteVentas() {
-        let col = document.getElementById('caja-col').innerText || "0";
-        let chi = document.getElementById('caja-chi').innerText || "0";
-        let esp = document.getElementById('caja-esp').innerText || "0";
-
-        if (rolUsuario === 'SUPREMO') {
-            return `En tesorería general tenemos: Nodo Colombia con ${col} pesos. Nodo Chile con ${chi} pesos. Y Nodo España con ${esp} euros. `;
-        } else {
-            if(sucursalAdmin === 'Colombia') return `La tesorería del Nodo Colombia registra ${col} pesos. `;
-            if(sucursalAdmin === 'Chile') return `La tesorería del Nodo Chile registra ${chi} pesos. `;
-            if(sucursalAdmin === 'España') return `La tesorería del Nodo España registra ${esp} euros. `;
-        }
-        return "No hay datos de ventas disponibles. ";
+        let ant = document.getElementById('tesoreria-efectivo') ? document.getElementById('tesoreria-efectivo').innerText : "$0";
+        return `La tesorería del Nodo Antofagasta registra ${ant}. `;
     }
 
     function generarReporteProduccion() {
