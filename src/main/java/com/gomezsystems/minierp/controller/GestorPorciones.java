@@ -41,7 +41,11 @@ public class GestorPorciones {
 
     @GetMapping("/sucursal/{sucursal}")
     public List<Insumo> listarPorSucursal(@PathVariable String sucursal) {
-        return insumoRepository.findBySucursal(sucursal);
+        List<Insumo> lista = insumoRepository.findBySucursal(sucursal);
+        if (lista.isEmpty()) {
+            lista = insumoRepository.findAll();
+        }
+        return lista;
     }
 
     @PostMapping("/guardar")

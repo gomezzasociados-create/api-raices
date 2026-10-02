@@ -30,7 +30,11 @@ public class ProductoController {
 
     @GetMapping("/sucursal/{nombreSucursal}")
     public List<Producto> listarPorSucursal(@PathVariable String nombreSucursal) {
-        return productoRepository.findBySucursal(nombreSucursal);
+        List<Producto> lista = productoRepository.findBySucursal(nombreSucursal);
+        if (lista.isEmpty()) {
+            lista = productoRepository.findAll();
+        }
+        return lista;
     }
 
     @PostMapping

@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 
 import com.gomezsystems.minierp.repository.InsumoRepository;
 
+import com.gomezsystems.minierp.model.Insumo;
+import java.util.List;
+
 @Component
 public class DataInitializer implements CommandLineRunner {
 
@@ -21,7 +24,18 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        if (repository.count() == 0) {
+        // MIGRAR PRODUCTOS EXISTENTES A ANTOFAGASTA SI TIENEN OTRA SUCURSAL O NULL
+        if (repository.count() > 0) {
+            List<Producto> existentes = repository.findAll();
+            for (Producto p : existentes) {
+                if (p.getSucursal() == null || p.getSucursal().isEmpty() || !p.getSucursal().equals("Antofagasta")) {
+                    p.setSucursal("Antofagasta");
+                    repository.save(p);
+                }
+            }
+        }
+
+        if (repository.count() == 0 || repository.findBySucursal("Antofagasta").isEmpty()) {
 
             // SUCURSAL ÚNICA: ANTOFAGASTA
             String[] sucursales = {"Antofagasta"};
@@ -195,8 +209,19 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println(">> GÓMEZ SYSTEMS: Los productos ya existen, saltando inicialización para proteger tus ventas.");
         }
 
+        // MIGRAR INSUMOS EXISTENTES A ANTOFAGASTA SI TIENEN OTRA SUCURSAL O NULL
+        if (insumoRepository.count() > 0) {
+            List<Insumo> existentesInsumos = insumoRepository.findAll();
+            for (Insumo ins : existentesInsumos) {
+                if (ins.getSucursal() == null || ins.getSucursal().isEmpty() || !ins.getSucursal().equals("Antofagasta")) {
+                    ins.setSucursal("Antofagasta");
+                    insumoRepository.save(ins);
+                }
+            }
+        }
+
         // INICIALIZACIÓN DE INSUMOS DE MUESTRA PARA ANTOFAGASTA SI ESTÁ VACÍO
-        if (insumoRepository.count() == 0) {
+        if (insumoRepository.count() == 0 || insumoRepository.findBySucursal("Antofagasta").isEmpty()) {
             String[] sucursales = {"Antofagasta"};
             for (String sede : sucursales) {
                 double factorMoneda = 50.0;

@@ -765,11 +765,16 @@
         }
 
         try {
-            const res = await fetch(`${API_PRODUCTOS}/sucursal/${encodeURIComponent(pais)}`);
+            let res = await fetch(`${API_PRODUCTOS}/sucursal/${encodeURIComponent(pais)}`);
             if(!res.ok) throw new Error("Fallo API");
             catalogoGlobal = await res.json();
 
-            if(catalogoGlobal.length === 0 && !silencioso) {
+            if(!catalogoGlobal || catalogoGlobal.length === 0) {
+                let resBackup = await fetch(API_PRODUCTOS);
+                if(resBackup.ok) catalogoGlobal = await resBackup.json();
+            }
+
+            if((!catalogoGlobal || catalogoGlobal.length === 0) && !silencioso) {
                 contenedor.innerHTML = '<div class="col-12 text-center mt-5 text-white-50"><i class="bi bi-x-octagon fs-1 d-block mb-3"></i> NODO VACÍO. Inyecte datos en Control Central.</div>';
                 return;
             }

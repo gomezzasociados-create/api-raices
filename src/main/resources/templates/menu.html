@@ -451,8 +451,12 @@
         const grid = document.getElementById('grid-menu'); const nodo = document.getElementById('sucursal-activa').value;
         grid.innerHTML = '<div class="col-12 text-center text-white py-5">Sincronizando con el Núcleo...</div>';
         try {
-            const res = await fetch('/api/productos/sucursal/' + nodo);
+            let res = await fetch('/api/productos/sucursal/' + nodo);
             if(res.ok) { productosRaw = await res.json(); } else { productosRaw = []; }
+            if(!productosRaw || productosRaw.length === 0) {
+                res = await fetch('/api/productos');
+                if(res.ok) { productosRaw = await res.json(); }
+            }
             renderizar();
         } catch (e) { productosRaw = []; renderizar(); }
     }
@@ -516,8 +520,12 @@
 
         let insumos = [];
         try {
-            const res = await fetch('/api/insumos/sucursal/' + nodo);
+            let res = await fetch('/api/insumos/sucursal/' + nodo);
             if (res.ok) insumos = await res.json();
+            if (!insumos || insumos.length === 0) {
+                res = await fetch('/api/insumos/todos');
+                if (res.ok) insumos = await res.json();
+            }
         } catch(e) {}
 
         // Filtrar insumos que corresponden a ingredientes de batido
