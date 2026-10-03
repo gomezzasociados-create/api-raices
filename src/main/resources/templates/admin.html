@@ -580,6 +580,44 @@
                     </div>
                 </div>
 
+                <div class="table-container mb-4" style="border-top: 3px solid var(--p-magenta);">
+                    <h5 class="mb-4 fw-bold font-orbitron" style="color: var(--p-magenta); text-shadow: var(--magenta-glow);">
+                        <i class="bi bi-plus-circle-fill"></i> REGISTRO DE NUEVO PRODUCTO (ALTA EN MATRIZ)
+                    </h5>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label-neon">Nombre / Elíxir</label>
+                            <input type="text" id="nuevo-prod-nombre" class="form-control" placeholder="Ej: Shot Ginger Detox">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon">Categoría</label>
+                            <select id="nuevo-prod-categoria" class="form-select auth-select">
+                                <option value="500 mls">Elíxires (500 mls)</option>
+                                <option value="Packs">Packs</option>
+                                <option value="Shots">Shots</option>
+                                <option value="Arma tu Batido">Arma tu Batido</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon text-warning">Precio ($)</label>
+                            <input type="number" id="nuevo-prod-precio" class="form-control text-warning fw-bold" placeholder="3500">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label-neon">URL Imagen (Opcional)</label>
+                            <input type="text" id="nuevo-prod-imagen" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-bio w-100 py-2 fw-bold" style="background:var(--p-magenta); color:#fff;" onclick="guardarNuevoProducto()">
+                                <i class="bi bi-plus-lg me-1"></i> GUARDAR PRODUCTO
+                            </button>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label-neon">Descripción / Bio-Análisis</label>
+                            <textarea id="nuevo-prod-descripcion" class="form-control" rows="2" placeholder="Escribe los beneficios e indicaciones del producto..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="table-container p-0 border-0 bg-transparent box-shadow-none">
                     <div class="table-responsive">
                         <table class="table text-center align-middle m-0" style="min-width: 1100px;">
@@ -1649,6 +1687,17 @@
                 const classInput = esSupremo ? 'input-matriz' : 'input-matriz border-0 text-white-50 pointer-events-none';
                 const classPrecio = esSupremo ? 'input-matriz text-money-green' : 'input-matriz border-0 text-money-green pointer-events-none';
 
+                const catActual = p.categoria || '500 mls';
+                let optionsCat = `
+                    <option value="500 mls" ${catActual==='500 mls'?'selected':''}>Elíxires (500 mls)</option>
+                    <option value="Packs" ${catActual==='Packs'?'selected':''}>Packs</option>
+                    <option value="Shots" ${catActual==='Shots'?'selected':''}>Shots</option>
+                    <option value="Arma tu Batido" ${catActual==='Arma tu Batido'?'selected':''}>Arma tu Batido</option>
+                `;
+                if (catActual && !['500 mls', 'Packs', 'Shots', 'Arma tu Batido'].includes(catActual)) {
+                    optionsCat += `<option value="${catActual}" selected>${catActual}</option>`;
+                }
+
                 const colComandos = esSupremo ? `
                     <button class="btn btn-bio px-3 py-2 me-1 mb-1" onclick="actualizarProducto(${p.id})" title="Sobreescribir Matriz"><i class="bi bi-cloud-check-fill fs-5"></i></button>
                     <button class="btn btn-outline-danger px-3 py-2 border-0 mb-1" onclick="eliminarProducto(${p.id})" title="Purgar"><i class="bi bi-trash3-fill fs-5"></i></button>
@@ -1663,7 +1712,9 @@
                         <input type="text" id="nombre-prod-${p.id}" value="${p.nombre}" class="${classInput} w-100 fw-bold fs-5 text-center" ${attrReadonly}>
                     </td>
                     <td class="align-middle">
-                        <input type="text" id="cat-prod-${p.id}" value="${p.categoria || 'Batidos'}" class="${classInput} w-100 text-warning fs-6 text-center" placeholder="Categoría" ${attrReadonly}>
+                        <select id="cat-prod-${p.id}" class="form-select bg-dark text-warning border-warning fw-bold fs-6 text-center" ${esSupremo ? '' : 'disabled'}>
+                            ${optionsCat}
+                        </select>
                     </td>
                     <td class="align-middle">
                         <textarea id="desc-prod-${p.id}" class="${classInput} w-100" style="font-size: 0.9rem; min-width: 250px; height: 65px;" placeholder="Escribe la biología del producto aquí..." ${attrReadonly}>${p.descripcion || ''}</textarea>
@@ -1678,6 +1729,44 @@
                 </tr>`;
             });
         } catch(e) { console.error("Error al cargar el catálogo:", e); }
+    }
+
+    async function guardarNuevoProducto() {
+        playSound('click');
+        const nombre = document.getElementById('nuevo-prod-nombre').value;
+        const categoria = document.getElementById('nuevo-prod-categoria').value;
+        const precio = parseFloat(document.getElementById('nuevo-prod-precio').value) || 0;
+        const imagen = document.getElementById('nuevo-prod-imagen').value;
+        const descripcion = document.getElementById('nuevo-prod-descripcion').value;
+        const sucursal = document.getElementById('filtro-sucursal-catalogo').value || 'Antofagasta';
+
+        if (!nombre || !precio) {
+            alert("Complete al menos el nombre y precio del producto.");
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/productos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, categoria, precio, imagen, descripcion, sucursal })
+            });
+
+            if (res.ok) {
+                alert("¡Producto registrado exitosamente en la Matriz!");
+                document.getElementById('nuevo-prod-nombre').value = '';
+                document.getElementById('nuevo-prod-precio').value = '';
+                document.getElementById('nuevo-prod-imagen').value = '';
+                document.getElementById('nuevo-prod-descripcion').value = '';
+                cargarCatalogo();
+                playSound('success');
+            } else {
+                const err = await res.text();
+                alert("Error al guardar el producto: " + err);
+            }
+        } catch(e) {
+            alert("Fallo de conexión al servidor.");
+        }
     }
 
     async function actualizarProducto(id) {
