@@ -616,7 +616,7 @@
                 : `<div class="badge bg-danger text-white font-orbitron mb-2" style="font-size: 0.75rem;"><i class="bi bi-x-circle me-1"></i>AGOTADO (0 PORC)</div>`;
 
             let btnPlus = porcionesDisponibles > 0
-                ? `<button class="btn btn-warning text-dark fw-bold px-3 py-1" style="border-radius: 8px;" onclick="modificarPorcionInsumo(${ins.idInsumo}, 1, ${precioPorc}, '${nombreEscape}', ${porcionesDisponibles})">+</button>`
+                ? `<button class="btn btn-warning text-dark fw-bold px-3 py-1" style="border-radius: 8px;" onclick="modificarPorcionInsumo(${ins.idInsumo}, 1, ${precioPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">+</button>`
                 : `<button class="btn btn-secondary text-white-50 fw-bold px-3 py-1" style="border-radius: 8px;" disabled>+</button>`;
 
             htmlBuilder += `
@@ -630,7 +630,7 @@
                             <div class="text-warning fw-bold fs-5 mb-2 font-orbitron">${simboloActual}${precioPorc.toLocaleString('es-CL')}</div>
                         </div>
                         <div class="d-flex align-items-center justify-content-center gap-2 mt-2">
-                            <button class="btn btn-outline-warning fw-bold px-3 py-1" style="border-radius: 8px;" onclick="modificarPorcionInsumo(${ins.idInsumo}, -1, ${precioPorc}, '${nombreEscape}', ${porcionesDisponibles})">-</button>
+                            <button class="btn btn-outline-warning fw-bold px-3 py-1" style="border-radius: 8px;" onclick="modificarPorcionInsumo(${ins.idInsumo}, -1, ${precioPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">-</button>
                             <span id="cant-porc-${ins.idInsumo}" class="fw-bold fs-4 text-white font-orbitron px-2">${cantPorc}</span>
                             ${btnPlus}
                         </div>
@@ -643,7 +643,7 @@
         actualizarResumenCustom();
     }
 
-    function modificarPorcionInsumo(idInsumo, delta, precio, nombre, maxPorciones) {
+    function modificarPorcionInsumo(idInsumo, delta, precio, nombre, maxPorciones, sizePorcion = 1) {
         if (!porcionesArmado[idInsumo]) porcionesArmado[idInsumo] = 0;
         let actual = porcionesArmado[idInsumo];
         if (delta > 0 && actual >= maxPorciones) {
@@ -652,7 +652,7 @@
         }
         porcionesArmado[idInsumo] = Math.max(0, actual + delta);
         
-        insumosInfoMap[idInsumo] = { nombre: nombre, precio: precio, cantidad: porcionesArmado[idInsumo] };
+        insumosInfoMap[idInsumo] = { nombre: nombre, precio: precio, cantidad: porcionesArmado[idInsumo], sizePorcion: sizePorcion };
         
         const spanCant = document.getElementById(`cant-porc-${idInsumo}`);
         if (spanCant) spanCant.innerText = porcionesArmado[idInsumo];
@@ -695,8 +695,9 @@
             let cant = porcionesArmado[id];
             if (cant > 0 && insumosInfoMap[id]) {
                 let info = insumosInfoMap[id];
+                let gastoReal = cant * (info.sizePorcion || 1);
                 lista.push(`${cant}x ${info.nombre}`);
-                lineasReceta.push(`${info.nombre}:${cant}`);
+                lineasReceta.push(`${info.nombre}:${gastoReal}`);
                 total += (cant * info.precio);
             }
         }

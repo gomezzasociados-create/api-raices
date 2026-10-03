@@ -40,10 +40,12 @@ public class InventarioService {
             
             if (prodOpt.isPresent()) {
                 com.gomezsystems.minierp.model.Producto producto = prodOpt.get();
-                
                 if (producto.getRecetaDetalle() != null && !producto.getRecetaDetalle().trim().isEmpty()) {
                     String[] lineas = producto.getRecetaDetalle().split("\\n");
                     List<Insumo> insumosSucursal = insumoRepository.findBySucursal(producto.getSucursal());
+                    if (insumosSucursal == null || insumosSucursal.isEmpty()) {
+                        insumosSucursal = insumoRepository.findAll();
+                    }
                     
                     for (String linea : lineas) {
                         String[] partes = linea.split(":");

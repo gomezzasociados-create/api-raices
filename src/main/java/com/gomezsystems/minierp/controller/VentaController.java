@@ -43,8 +43,11 @@ public class VentaController {
         if (payload.containsKey("origen")) v.setOrigen(payload.get("origen").toString());
         else v.setOrigen("Caja POS");
         
-        if (payload.containsKey("pais")) v.setPais(payload.get("pais").toString());
-        else v.setPais("Colombia");
+        if (payload.containsKey("pais") && payload.get("pais") != null && !payload.get("pais").toString().trim().isEmpty()) {
+            v.setPais(payload.get("pais").toString());
+        } else {
+            v.setPais("Antofagasta");
+        }
 
         if (payload.containsKey("cliente")) {
             Map<String, String> clienteData = (Map<String, String>) payload.get("cliente");
