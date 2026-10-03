@@ -294,6 +294,7 @@
             <li class="nav-item" id="nav-crm" style="display:block;"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-crm" type="button" onclick="cargarCRM(); playSound('click')"><i class="bi bi-people-fill me-1"></i> RED CLIENTES</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-inventario" type="button" onclick="cargarInsumos(); playSound('click')"><i class="bi bi-boxes me-1"></i> BODEGA BOTÁNICA</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-recetas" type="button" onclick="prepararRecetas(); playSound('click')"><i class="bi bi-flask me-1"></i> FÓRMULAS</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pdf" type="button" onclick="cargarDocumentosPdf(); playSound('click')"><i class="bi bi-file-earmark-pdf-fill me-1"></i> CENTRO PDF & RECETAS</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-precios" type="button" onclick="cargarCatalogo(); playSound('click')"><i class="bi bi-hdd-network me-1"></i> MATRIZ TOTAL</button></li>
         </ul>
 
@@ -635,6 +636,99 @@
                             </thead>
                             <tbody id="tabla-catalogo"></tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-pdf" role="tabpanel">
+                <div class="row g-4">
+                    <!-- COLUMNA IZQUIERDA: FORMULARIO Y LISTADO DE DOCUMENTOS -->
+                    <div class="col-lg-5">
+                        <div class="table-container mb-4" style="border-top: 3px solid var(--p-cyan);">
+                            <h5 class="mb-3 fw-bold font-orbitron" style="color: var(--p-cyan); text-shadow: var(--border-glow);">
+                                <i class="bi bi-cloud-arrow-up-fill me-2"></i> ALMACENAR RECETA / LISTA EN POSTGRESQL
+                            </h5>
+                            <form id="form-subir-pdf" onsubmit="subirDocumentoPdf(event)">
+                                <div class="mb-3">
+                                    <label class="form-label-neon">Seleccionar Archivo PDF (.pdf)</label>
+                                    <input type="file" id="pdf-file-input" accept=".pdf" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-neon">Título / Nombre del Documento</label>
+                                    <input type="text" id="pdf-nombre-input" class="form-control" placeholder="Ej: Lista de Precios Antofagasta 2026.pdf">
+                                </div>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label-neon">Categoría</label>
+                                        <select id="pdf-categoria-select" class="form-select auth-select">
+                                            <option value="Recetas">Fórmulas y Recetas</option>
+                                            <option value="Listas de Precios">Listas de Precios</option>
+                                            <option value="Manuales">Manuales Producción</option>
+                                            <option value="Otros">Otros Documentos</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label-neon">Nodo Base</label>
+                                        <select id="pdf-sucursal-select" class="form-select auth-select">
+                                            <option value="Antofagasta">Antofagasta</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" id="btn-subir-pdf" class="btn btn-bio w-100 py-3 font-orbitron fw-bold">
+                                    <i class="bi bi-database-add me-2"></i> GUARDAR EN POSTGRESQL
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="table-container p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold font-orbitron m-0" style="color: var(--p-bio-green); text-shadow: var(--green-glow);">
+                                    <i class="bi bi-folder-symlink-fill me-2"></i> BIBLIOTECA DE DOCUMENTOS
+                                </h5>
+                                <button class="btn btn-sm btn-outline-info" onclick="cargarDocumentosPdf()">
+                                    <i class="bi bi-arrow-clockwise me-1"></i> ACTUALIZAR
+                                </button>
+                            </div>
+                            <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+                                <table class="table text-center align-middle m-0">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>CAT</th>
+                                            <th>DOCUMENTO</th>
+                                            <th>ACCIONES</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabla-documentos-pdf"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUMNA DERECHA: REPRODUCTOR PDF INTERACTIVO -->
+                    <div class="col-lg-7">
+                        <div class="table-container p-4 h-100" style="border-top: 3px solid var(--p-magenta);">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold font-orbitron m-0 text-truncate" style="color: var(--p-magenta); text-shadow: var(--magenta-glow);" id="pdf-player-title">
+                                    <i class="bi bi-play-circle-fill me-2"></i> REPRODUCTOR PDF INTERACTIVO
+                                </h5>
+                                <div id="pdf-player-actions" style="display: none;">
+                                    <a id="btn-download-active-pdf" href="#" target="_blank" class="btn btn-sm btn-outline-warning me-2 font-orbitron">
+                                        <i class="bi bi-download me-1"></i> DESCARGAR
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-info font-orbitron" onclick="toggleFullscreenPdf()">
+                                        <i class="bi bi-arrows-fullscreen"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="pdf-viewer-container" class="w-100 rounded-3 d-flex flex-column justify-content-center align-items-center" style="min-height: 650px; background: rgba(0,0,0,0.8); border: 2px dashed rgba(0,229,255,0.3); position: relative;">
+                                <div id="pdf-viewer-placeholder" class="text-center p-5">
+                                    <i class="bi bi-file-earmark-pdf fs-1 d-block mb-3" style="color: var(--p-cyan); opacity: 0.5;"></i>
+                                    <h4 class="font-orbitron text-white opacity-75">REPRODUCTOR DE DOCUMENTOS PDF</h4>
+                                    <p class="text-white-50 font-rajdhani fs-5">Selecciona o haz clic en <b>"VER"</b> en cualquier documento de la lista para reproducir y consultar recetas en vivo desde PostgreSQL.</p>
+                                </div>
+                                <iframe id="pdf-frame-player" src="" width="100%" height="680px" style="display:none; border: 1px solid var(--p-cyan); border-radius: 10px; background: #fff;"></iframe>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1999,6 +2093,158 @@
         }
         else {
             hablarAdmin("Comando no reconocido. Por favor, solicite información sobre ventas, producción, bodega o pida un informe general.");
+        }
+    }
+
+    // ==========================================
+    // CENTRO DE DOCUMENTOS Y REPRODUCTOR PDF (POSTGRESQL)
+    // ==========================================
+    async function cargarDocumentosPdf() {
+        const sucursal = document.getElementById('prod-sucursal') ? document.getElementById('prod-sucursal').value : 'Antofagasta';
+        const tbody = document.getElementById('tabla-documentos-pdf');
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center text-info py-4 font-orbitron"><span class="spinner-border spinner-border-sm me-2"></span>Cargando biblioteca de PDFs desde PostgreSQL...</td></tr>';
+        
+        try {
+            const res = await fetch('/api/documentos/sucursal/' + sucursal);
+            if (!res.ok) throw new Error("Fallo API");
+            const docs = await res.json();
+            
+            if (!docs || docs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center text-white-50 py-4 font-orbitron">No hay documentos PDF registrados aún en esta sucursal.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            docs.forEach(d => {
+                const mb = d.tamanoBytes ? (d.tamanoBytes / (1024 * 1024)).toFixed(2) : '0.00';
+                const catClass = d.categoria === 'Recetas' ? 'bg-primary' : (d.categoria === 'Listas de Precios' ? 'bg-warning text-dark' : 'bg-secondary');
+                const nombreEsc = (d.nombre || '').replace(/'/g, "\\'");
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="align-middle">
+                            <span class="badge ${catClass} font-orbitron">${d.categoria || 'PDF'}</span>
+                        </td>
+                        <td class="align-middle text-start">
+                            <div class="fw-bold text-white font-rajdhani text-truncate" style="max-width: 200px;" title="${d.nombre}">${d.nombre}</div>
+                            <small class="text-white-50" style="font-size: 0.75rem;">${mb} MB</small>
+                        </td>
+                        <td class="align-middle">
+                            <button class="btn btn-sm btn-bio px-2 py-1 me-1" style="background:var(--p-cyan); color:#000;" onclick="reproducirPdf(${d.id}, '${nombreEsc}')" title="Ver en Reproductor">
+                                <i class="bi bi-play-fill fs-6"></i> VER
+                            </button>
+                            <a class="btn btn-sm btn-outline-warning px-2 py-1 me-1" href="/api/documentos/${d.id}/descargar" target="_blank" title="Descargar PDF">
+                                <i class="bi bi-download fs-6"></i>
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger px-2 py-1" onclick="eliminarPdf(${d.id}, '${nombreEsc}')" title="Eliminar de PostgreSQL">
+                                <i class="bi bi-trash3-fill fs-6"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch(e) {
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger py-4 font-orbitron"><i class="bi bi-exclamation-triangle me-2"></i>Error conectando con PostgreSQL.</td></tr>';
+        }
+    }
+
+    async function subirDocumentoPdf(event) {
+        event.preventDefault();
+        playSound('click');
+        const fileInput = document.getElementById('pdf-file-input');
+        const nombreInput = document.getElementById('pdf-nombre-input');
+        const catSelect = document.getElementById('pdf-categoria-select');
+        const sucSelect = document.getElementById('pdf-sucursal-select');
+        const btnSubir = document.getElementById('btn-subir-pdf');
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert("Por favor selecciona un archivo PDF.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        formData.append("nombre", nombreInput.value.trim());
+        formData.append("categoria", catSelect.value);
+        formData.append("sucursal", sucSelect.value);
+
+        const textoOriginal = btnSubir.innerHTML;
+        btnSubir.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>SUBIENDO A POSTGRESQL...';
+        btnSubir.disabled = true;
+
+        try {
+            const res = await fetch('/api/documentos/subir', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (res.ok) {
+                const msg = await res.text();
+                alert("¡Éxito! " + msg);
+                playSound('success');
+                fileInput.value = '';
+                nombreInput.value = '';
+                cargarDocumentosPdf();
+            } else {
+                const err = await res.text();
+                alert("Error al subir el archivo: " + err);
+                playSound('error');
+            }
+        } catch(e) {
+            alert("Fallo de conexión al servidor al subir el archivo PDF.");
+            playSound('error');
+        } finally {
+            btnSubir.innerHTML = textoOriginal;
+            btnSubir.disabled = false;
+        }
+    }
+
+    function reproducirPdf(id, nombre) {
+        playSound('magic');
+        const titleEl = document.getElementById('pdf-player-title');
+        const actionsEl = document.getElementById('pdf-player-actions');
+        const placeholder = document.getElementById('pdf-viewer-placeholder');
+        const iframe = document.getElementById('pdf-frame-player');
+        const btnDownload = document.getElementById('btn-download-active-pdf');
+
+        titleEl.innerHTML = `<i class="bi bi-file-earmark-pdf-fill me-2"></i> ${nombre}`;
+        btnDownload.href = `/api/documentos/${id}/descargar`;
+        actionsEl.style.display = 'block';
+
+        placeholder.style.display = 'none';
+        iframe.style.display = 'block';
+        iframe.src = `/api/documentos/${id}/ver#toolbar=1&navpanes=1&scrollbar=1`;
+    }
+
+    function toggleFullscreenPdf() {
+        const iframe = document.getElementById('pdf-frame-player');
+        if (iframe && iframe.src) {
+            window.open(iframe.src, '_blank');
+        }
+    }
+
+    async function eliminarPdf(id, nombre) {
+        if (!confirm(`¿Estás seguro de eliminar permanentemente el documento "${nombre}" de PostgreSQL?`)) return;
+        playSound('error');
+        try {
+            const res = await fetch(`/api/documentos/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                alert("Documento eliminado correctamente.");
+                cargarDocumentosPdf();
+                const iframe = document.getElementById('pdf-frame-player');
+                if (iframe && iframe.src.includes(`/api/documentos/${id}/`)) {
+                    iframe.style.display = 'none';
+                    iframe.src = '';
+                    document.getElementById('pdf-viewer-placeholder').style.display = 'block';
+                    document.getElementById('pdf-player-title').innerHTML = '<i class="bi bi-play-circle-fill me-2"></i> REPRODUCTOR PDF INTERACTIVO';
+                    document.getElementById('pdf-player-actions').style.display = 'none';
+                }
+            } else {
+                alert("Error al eliminar el documento.");
+            }
+        } catch(e) {
+            alert("Fallo de conexión al eliminar.");
         }
     }
 
