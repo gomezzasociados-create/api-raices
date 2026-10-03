@@ -1,5 +1,7 @@
 package com.gomezsystems.minierp.model;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -18,7 +20,7 @@ public class DocumentoPdf {
     private String tipoContenido;
     private Long tamanoBytes;
 
-    @Lob
+    @JdbcTypeCode(SqlTypes.VARBINARY)
     @Column(name = "datos", columnDefinition = "BYTEA")
     private byte[] datos;
 
