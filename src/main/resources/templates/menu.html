@@ -254,7 +254,7 @@
     <button class="categoria-badge active" onclick="filtrar('500 mls', this)">Elíxires</button>
     <button class="categoria-badge" onclick="filtrar('Packs', this)">Packs</button>
     <button class="categoria-badge" onclick="filtrar('Arma tu Batido', this)">Arma tu Batido</button>
-    <button class="categoria-badge" onclick="filtrar('Botánico Animal', this)">Botánico Animal</button>
+    <button class="categoria-badge" onclick="filtrar('Shots', this)">Shots</button>
 </div>
 
     <div class="container px-2">
@@ -481,7 +481,7 @@
             const f = normalizarStr(filtroActual);
             
             if (f.includes('pack')) return cat.includes('pack') || cat.includes('16');
-            if (f.includes('botanico') || f.includes('animal')) return cat.includes('botanico') || cat.includes('animal');
+            if (f.includes('shot')) return cat.includes('shot');
             return cat.includes('500') || cat.includes('vaso') || cat.includes('elixir');
         });
 

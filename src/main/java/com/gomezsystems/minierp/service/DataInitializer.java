@@ -24,14 +24,20 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        // MIGRAR PRODUCTOS EXISTENTES A ANTOFAGASTA SI TIENEN OTRA SUCURSAL O NULL
+        // MIGRAR PRODUCTOS EXISTENTES A ANTOFAGASTA Y CONVERTIR BOTÁNICO ANIMAL A SHOTS
         if (repository.count() > 0) {
             List<Producto> existentes = repository.findAll();
             for (Producto p : existentes) {
+                boolean mod = false;
                 if (p.getSucursal() == null || p.getSucursal().isEmpty() || !p.getSucursal().equals("Antofagasta")) {
                     p.setSucursal("Antofagasta");
-                    repository.save(p);
+                    mod = true;
                 }
+                if (p.getCategoria() != null && (p.getCategoria().toLowerCase().contains("botanico") || p.getCategoria().toLowerCase().contains("animal"))) {
+                    p.setCategoria("Shots");
+                    mod = true;
+                }
+                if (mod) repository.save(p);
             }
         }
 
@@ -178,33 +184,43 @@ public class DataInitializer implements CommandLineRunner {
                 repository.save(p14);
 
                 // ==========================================
-                // 🐾 3. BOTÁNICO ANIMAL
+                // ⚡ 3. SHOTS
                 // ==========================================
-                double precioBotanico = 12000.0;
+                double precioShot = 2500.0;
 
                 Producto p15 = new Producto();
-                p15.setNombre("Botánico Animal Vitality");
-                p15.setPrecio(precioBotanico);
-                p15.setCategoria("Botánico Animal");
+                p15.setNombre("Shot Ginger Detox");
+                p15.setPrecio(precioShot);
+                p15.setCategoria("Shots");
                 p15.setSucursal(sede);
-                p15.setImagen("https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/vfleIZ0C3qCqps6UZvJi/pub/XhijMbEh1XqgPLr7zRhs.jpg");
-                p15.setDescripcion("🐾 Botánico Animal Vitality 🌱✨\nFórmula botánica natural especialmente desarrollada para promover la salud digestiva, articular y metabólica en mascotas. Elaborado con ingredientes 100% naturales, ricos en fitonutrientes, omega vegetales y antioxidantes bioactivos.\n\n🐕 Beneficios:\n• Refuerza el sistema inmunológico animal.\n• Digestión ligera y absorción óptima.\n• Vitalidad y articulaciones fuertes.");
-                p15.setRecetaDetalle("Espinaca:30\nApio:20\nZanahoria:30");
+                p15.setImagen("https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/vfleIZ0C3qCqps6UZvJi/pub/SUajizyFozHkVBp5Omh3.jpg");
+                p15.setDescripcion("⚡ Shot Ginger Detox 🍋🔥\nConcentrado funcional de Jengibre, Limón y Pimienta Cayena para activar el metabolismo, desinflamar y subir las defensas al instante.\n\n🌟 Beneficios:\n• Impulso energético inmediato.\n• Estimula la digestión y quema calórica.\n• Potente antiinflamatorio.");
+                p15.setRecetaDetalle("Limón:20\nAceite de Coco:10");
                 repository.save(p15);
 
                 Producto p16 = new Producto();
-                p16.setNombre("Botánico Animal Pelaje & Piel");
-                p16.setPrecio(precioBotanico * 1.15);
-                p16.setCategoria("Botánico Animal");
+                p16.setNombre("Shot Cúrcuma & Inmunidad");
+                p16.setPrecio(precioShot);
+                p16.setCategoria("Shots");
                 p16.setSucursal(sede);
-                p16.setImagen("https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/AbxpIdqJveajud3o919w/pub/jZW2MAqB50DKyaoo9yBR.png");
-                p16.setDescripcion("🐶 Botánico Animal Pelaje & Piel 🌿\nSuplemento natural rico en antioxidantes, ácido láurico y superalimentos. Protege la barrera cutánea de las mascotas, reduciendo la inflamación y manteniendo un pelaje suave, fuerte y brillante.\n\n✨ Beneficios:\n• Brillo y fuerza en pelaje.\n• Acción antiinflamatoria natural.\n• Salud de la piel y vitalidad.");
-                p16.setRecetaDetalle("Zanahoria:40\nAceite de Coco:10\nAloe Vera:20");
+                p16.setImagen("https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/vfleIZ0C3qCqps6UZvJi/pub/XhijMbEh1XqgPLr7zRhs.jpg");
+                p16.setDescripcion("🛡️ Shot Cúrcuma & Inmunidad 💥✨\nExtracto concentrado de Cúrcuma orgánica, Naranja, Pimienta Negra y Aceite de Coco. Diseñado para reforzar el sistema inmune y combatir radicales libres.\n\n🌟 Beneficios:\n• Escudo antioxidante celular.\n• Apoyo articular e inmunológico.\n• Absorción maximizada con piperina.");
+                p16.setRecetaDetalle("Limón:20\nAceite de Coco:10");
                 repository.save(p16);
+
+                Producto p17 = new Producto();
+                p17.setNombre("Shot Antiox Berries");
+                p17.setPrecio(precioShot);
+                p17.setCategoria("Shots");
+                p17.setSucursal(sede);
+                p17.setImagen("https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/AbxpIdqJveajud3o919w/pub/jZW2MAqB50DKyaoo9yBR.png");
+                p17.setDescripcion("🍇 Shot Antiox Berries 💜⚡\nShot concentrado de Maqui, Arándanos, Granada y Vitamina C para rejuvenecer las células y activar la mente.\n\n🌟 Beneficios:\n• Alto en polifenoles y antocianinas.\n• Protección antiedad.\n• Sabor ácido y revitalizante.");
+                p17.setRecetaDetalle("Betarraga:30\nLimón:10");
+                repository.save(p17);
 
             }
 
-            System.out.println(">> GÓMEZ SYSTEMS: ¡Base de datos iniciada con todos los batidos y Botánico Animal para Antofagasta!");
+            System.out.println(">> GÓMEZ SYSTEMS: ¡Base de datos iniciada con todos los batidos y Shots para Antofagasta!");
         } else {
             System.out.println(">> GÓMEZ SYSTEMS: Los productos ya existen, saltando inicialización para proteger tus ventas.");
         }
