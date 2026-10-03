@@ -514,6 +514,27 @@
         });
     }
 
+    let subcategoriaFiltroActual = 'Todas';
+
+    function obtenerSubcategoriaInsumo(i) {
+        if (i.subcategoria && i.subcategoria.trim() !== '') return i.subcategoria;
+        const nom = (i.nombre || '').toLowerCase();
+        const cat = (i.categoria || '').toLowerCase();
+        if (cat.includes('base') || nom.includes('leche') || nom.includes('agua') || nom.includes('aloe') || nom.includes('base') || nom.includes('yogur')) return 'Base';
+        if (cat.includes('semilla') || nom.includes('chía') || nom.includes('chia') || nom.includes('linaza') || nom.includes('sésamo') || nom.includes('sesamo')) return 'Semillas';
+        if (cat.includes('fruta') || nom.includes('piña') || nom.includes('pina') || nom.includes('manzana') || nom.includes('limón') || nom.includes('limon') || nom.includes('betarraga') || nom.includes('frut') || nom.includes('mango') || nom.includes('platano') || nom.includes('plátano')) return 'Frutas';
+        if (cat.includes('vegetal') || cat.includes('verdura') || nom.includes('espinaca') || nom.includes('apio') || nom.includes('zanahoria') || nom.includes('acelga') || nom.includes('pepino')) return 'Vegetales';
+        if (cat.includes('suplemento') || nom.includes('espirulina') || nom.includes('maca') || nom.includes('aceite') || nom.includes('proteína') || nom.includes('proteina') || nom.includes('colágeno') || nom.includes('clavo')) return 'Suplementos';
+        if (cat.includes('seco') || nom.includes('maní') || nom.includes('mani') || nom.includes('nuez') || nom.includes('nueces') || nom.includes('almendra') || nom.includes('mandioca')) return 'Frutos Secos';
+        return 'Vegetales';
+    }
+
+    function filtrarSubcategoriaArmaTuBatido(subcat) {
+        subcategoriaFiltroActual = subcat;
+        const nodo = document.getElementById('sucursal-activa').value;
+        renderizarArmaTuBatido(nodo);
+    }
+
     async function renderizarArmaTuBatido(nodo) {
         const grid = document.getElementById('grid-menu');
         grid.innerHTML = '<div class="col-12 text-center text-white py-5 font-orbitron"><span class="spinner-border text-warning me-2"></span>Cargando catálogo de ingredientes por porción...</div>';
@@ -558,21 +579,40 @@
             </div>
             <div class="col-12 mb-3">
                 <h4 class="font-orbitron text-center text-white fw-bold mb-3" style="letter-spacing:1px;"><i class="bi bi-grid-3x3-gap-fill text-warning me-2"></i> CATÁLOGO DE INGREDIENTES DISPONIBLES</h4>
+                <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Todas'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Todas')">✨ TODAS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Base'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Base')">🥛 BASE</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Semillas'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Semillas')">🌱 SEMILLAS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Frutas'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Frutas')">🍓 FRUTAS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Vegetales'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Vegetales')">🥬 VEGETALES</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Suplementos'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Suplementos')">⚡ SUPLEMENTOS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Frutos Secos'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Frutos Secos')">🥜 FRUTOS SECOS</button>
+                </div>
             </div>
         `;
 
-        insumos.forEach(ins => {
+        let insumosFiltrados = insumos;
+        if (subcategoriaFiltroActual !== 'Todas') {
+            insumosFiltrados = insumos.filter(i => obtenerSubcategoriaInsumo(i).toLowerCase() === subcategoriaFiltroActual.toLowerCase());
+        }
+
+        if (insumosFiltrados.length === 0) {
+            htmlBuilder += `<div class="col-12 text-center text-white-50 py-5 fs-6 font-orbitron">No hay ingredientes disponibles en la subcategoría <b>${subcategoriaFiltroActual.toUpperCase()}</b>.</div>`;
+        }
+
+        insumosFiltrados.forEach(ins => {
             let cantPorc = porcionesArmado[ins.idInsumo] || 0;
             let precioPorc = ins.precio || 0;
             let porcTexto = ins.cantidadPorcion ? `${ins.cantidadPorcion} ${ins.medida || 'gr'}` : `1 ${ins.medida || 'porción'}`;
+            let subcatLabel = obtenerSubcategoriaInsumo(ins).toUpperCase();
 
             let nombreEscape = (ins.nombre || '').replace(/'/g, "\\'");
 
             htmlBuilder += `
-                <div class="col-6 col-md-4 col-lg-3">
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
                     <div class="p-3 rounded-3 text-center h-100 d-flex flex-column justify-content-between" style="background: rgba(10, 5, 2, 0.85); border: 1px solid rgba(255,215,0,0.4); box-shadow: 0 5px 15px rgba(0,0,0,0.8); backdrop-filter: blur(5px);">
                         <div>
-                            <i class="bi bi-droplet-half fs-1 text-warning mb-2 d-block"></i>
+                            <span class="badge bg-warning text-dark font-orbitron mb-2" style="font-size: 0.7rem; letter-spacing: 1px;">${subcatLabel}</span>
                             <h5 class="fw-bold text-white fs-6 text-uppercase mb-1 font-rajdhani">${ins.nombre}</h5>
                             <div class="text-info fs-7 mb-2 font-orbitron">Porción: ${porcTexto}</div>
                             <div class="text-warning fw-bold fs-5 mb-3 font-orbitron">${simboloActual}${precioPorc.toLocaleString('es-ES')}</div>

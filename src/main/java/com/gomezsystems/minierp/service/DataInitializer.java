@@ -209,14 +209,27 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println(">> GÓMEZ SYSTEMS: Los productos ya existen, saltando inicialización para proteger tus ventas.");
         }
 
-        // MIGRAR INSUMOS EXISTENTES A ANTOFAGASTA SI TIENEN OTRA SUCURSAL O NULL
+        // MIGRAR INSUMOS EXISTENTES A ANTOFAGASTA Y ASIGNAR SUBCATEGORÍAS
         if (insumoRepository.count() > 0) {
             List<Insumo> existentesInsumos = insumoRepository.findAll();
             for (Insumo ins : existentesInsumos) {
+                boolean mod = false;
                 if (ins.getSucursal() == null || ins.getSucursal().isEmpty() || !ins.getSucursal().equals("Antofagasta")) {
                     ins.setSucursal("Antofagasta");
-                    insumoRepository.save(ins);
+                    mod = true;
                 }
+                if (ins.getSubcategoria() == null || ins.getSubcategoria().isEmpty()) {
+                    String nom = ins.getNombre() != null ? ins.getNombre().toLowerCase() : "";
+                    if (nom.contains("leche") || nom.contains("agua") || nom.contains("aloe") || nom.contains("base")) ins.setSubcategoria("Base");
+                    else if (nom.contains("chía") || nom.contains("chia") || nom.contains("linaza") || nom.contains("semilla")) ins.setSubcategoria("Semillas");
+                    else if (nom.contains("piña") || nom.contains("pina") || nom.contains("manzana") || nom.contains("limón") || nom.contains("limon") || nom.contains("betarraga") || nom.contains("frut")) ins.setSubcategoria("Frutas");
+                    else if (nom.contains("espinaca") || nom.contains("apio") || nom.contains("zanahoria") || nom.contains("acelga") || nom.contains("pepino")) ins.setSubcategoria("Vegetales");
+                    else if (nom.contains("espirulina") || nom.contains("maca") || nom.contains("aceite") || nom.contains("proteína") || nom.contains("proteina") || nom.contains("colágeno")) ins.setSubcategoria("Suplementos");
+                    else if (nom.contains("maní") || nom.contains("mani") || nom.contains("nuez") || nom.contains("nueces") || nom.contains("almendra") || nom.contains("mandioca")) ins.setSubcategoria("Frutos Secos");
+                    else ins.setSubcategoria("Vegetales");
+                    mod = true;
+                }
+                if (mod) insumoRepository.save(ins);
             }
         }
 
@@ -226,26 +239,43 @@ public class DataInitializer implements CommandLineRunner {
             for (String sede : sucursales) {
                 double factorMoneda = 50.0;
 
-                crearInsumoSiNoExiste("Espinaca", 10000.0, 50, "gr", sede, "Pulpas", 15.0 * factorMoneda);
-                crearInsumoSiNoExiste("Apio", 8000.0, 50, "gr", sede, "Pulpas", 12.0 * factorMoneda);
-                crearInsumoSiNoExiste("Piña", 12000.0, 50, "gr", sede, "Pulpas", 18.0 * factorMoneda);
-                crearInsumoSiNoExiste("Aloe Vera", 5000.0, 30, "mls", sede, "Pulpas", 20.0 * factorMoneda);
-                crearInsumoSiNoExiste("Chía", 3000.0, 15, "gr", sede, "Pulpas", 25.0 * factorMoneda);
-                crearInsumoSiNoExiste("Zanahoria", 10000.0, 50, "gr", sede, "Pulpas", 10.0 * factorMoneda);
-                crearInsumoSiNoExiste("Aceite de Coco", 4000.0, 15, "mls", sede, "Pulpas", 40.0 * factorMoneda);
-                crearInsumoSiNoExiste("Betarraga", 8000.0, 50, "gr", sede, "Pulpas", 14.0 * factorMoneda);
-                crearInsumoSiNoExiste("Manzana", 10000.0, 50, "gr", sede, "Pulpas", 16.0 * factorMoneda);
-                crearInsumoSiNoExiste("Limón", 5000.0, 20, "mls", sede, "Pulpas", 10.0 * factorMoneda);
-                crearInsumoSiNoExiste("Mandioca", 7000.0, 40, "gr", sede, "Pulpas", 15.0 * factorMoneda);
-                crearInsumoSiNoExiste("Maca", 2000.0, 10, "gr", sede, "Pulpas", 50.0 * factorMoneda);
-                crearInsumoSiNoExiste("Espirulina", 2000.0, 10, "gr", sede, "Pulpas", 60.0 * factorMoneda);
-                crearInsumoSiNoExiste("Botánico Pelaje Base", 5000.0, 30, "gr", sede, "Botánico Animal", 30.0 * factorMoneda);
+                // 1. BASE
+                crearInsumoSiNoExiste("Agua de Coco", 5000.0, 100, "mls", sede, "Pulpas", "Base", 10.0 * factorMoneda);
+                crearInsumoSiNoExiste("Leche de Almendras", 5000.0, 100, "mls", sede, "Pulpas", "Base", 12.0 * factorMoneda);
+                crearInsumoSiNoExiste("Base Aloe Vera", 5000.0, 30, "mls", sede, "Pulpas", "Base", 20.0 * factorMoneda);
+
+                // 2. SEMILLAS
+                crearInsumoSiNoExiste("Semillas de Chía", 3000.0, 15, "gr", sede, "Pulpas", "Semillas", 25.0 * factorMoneda);
+                crearInsumoSiNoExiste("Semillas de Linaza", 3000.0, 15, "gr", sede, "Pulpas", "Semillas", 22.0 * factorMoneda);
+
+                // 3. FRUTAS
+                crearInsumoSiNoExiste("Piña", 12000.0, 50, "gr", sede, "Pulpas", "Frutas", 18.0 * factorMoneda);
+                crearInsumoSiNoExiste("Manzana", 10000.0, 50, "gr", sede, "Pulpas", "Frutas", 16.0 * factorMoneda);
+                crearInsumoSiNoExiste("Limón", 5000.0, 20, "mls", sede, "Pulpas", "Frutas", 10.0 * factorMoneda);
+                crearInsumoSiNoExiste("Betarraga", 8000.0, 50, "gr", sede, "Pulpas", "Frutas", 14.0 * factorMoneda);
+
+                // 4. VEGETALES
+                crearInsumoSiNoExiste("Espinaca", 10000.0, 50, "gr", sede, "Pulpas", "Vegetales", 15.0 * factorMoneda);
+                crearInsumoSiNoExiste("Apio", 8000.0, 50, "gr", sede, "Pulpas", "Vegetales", 12.0 * factorMoneda);
+                crearInsumoSiNoExiste("Zanahoria", 10000.0, 50, "gr", sede, "Pulpas", "Vegetales", 10.0 * factorMoneda);
+
+                // 5. SUPLEMENTOS
+                crearInsumoSiNoExiste("Aceite de Coco", 4000.0, 15, "mls", sede, "Pulpas", "Suplementos", 40.0 * factorMoneda);
+                crearInsumoSiNoExiste("Maca", 2000.0, 10, "gr", sede, "Pulpas", "Suplementos", 50.0 * factorMoneda);
+                crearInsumoSiNoExiste("Espirulina", 2000.0, 10, "gr", sede, "Pulpas", "Suplementos", 60.0 * factorMoneda);
+
+                // 6. FRUTOS SECOS
+                crearInsumoSiNoExiste("Mantequilla de Maní", 4000.0, 20, "gr", sede, "Pulpas", "Frutos Secos", 35.0 * factorMoneda);
+                crearInsumoSiNoExiste("Nueces", 3000.0, 15, "gr", sede, "Pulpas", "Frutos Secos", 45.0 * factorMoneda);
+                crearInsumoSiNoExiste("Mandioca", 7000.0, 40, "gr", sede, "Pulpas", "Frutos Secos", 15.0 * factorMoneda);
+
+                crearInsumoSiNoExiste("Botánico Pelaje Base", 5000.0, 30, "gr", sede, "Botánico Animal", "Suplementos", 30.0 * factorMoneda);
             }
-            System.out.println(">> GÓMEZ SYSTEMS: Insumos de Bodega inicializados correctamente para Antofagasta.");
+            System.out.println(">> GÓMEZ SYSTEMS: Insumos de Bodega inicializados con subcategorías correctamente para Antofagasta.");
         }
     }
 
-    private void crearInsumoSiNoExiste(String nombre, Double stock, Integer porcion, String medida, String sucursal, String cat, Double precio) {
+    private void crearInsumoSiNoExiste(String nombre, Double stock, Integer porcion, String medida, String sucursal, String cat, String subcat, Double precio) {
         com.gomezsystems.minierp.model.Insumo ins = new com.gomezsystems.minierp.model.Insumo();
         ins.setNombre(nombre);
         ins.setUnidadActual(stock);
@@ -253,6 +283,7 @@ public class DataInitializer implements CommandLineRunner {
         ins.setMedida(medida);
         ins.setSucursal(sucursal);
         ins.setCategoria(cat);
+        ins.setSubcategoria(subcat);
         ins.setPrecio(precio);
         insumoRepository.save(ins);
     }

@@ -477,10 +477,11 @@
                                     <div class="row g-3 mb-4 mt-1">
                                         <input type="hidden" id="ins-id">
                                         <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Cód. Botánico</label><input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Pulpa de Mango"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Subcategoría</label><select id="ins-subcategoria" class="form-select"><option value="Base">Base</option><option value="Semillas">Semillas</option><option value="Frutas">Frutas</option><option value="Vegetales">Vegetales</option><option value="Suplementos">Suplementos</option><option value="Frutos Secos">Frutos Secos</option></select></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Métrica</label><select id="ins-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
-                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control"></div>
+                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/KG</label><input type="number" id="ins-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="0.00"></div>
-                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
                                         <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background:var(--p-bio-green); color:#000;" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg fs-4"></i></button></div>
                                     </div>
                                     <div class="table-responsive">
@@ -1501,6 +1502,7 @@
             } else {
                 document.getElementById('ins-id').value = ins.idInsumo;
                 document.getElementById('ins-nombre').value = ins.nombre;
+                if (ins.subcategoria && document.getElementById('ins-subcategoria')) document.getElementById('ins-subcategoria').value = ins.subcategoria;
                 document.getElementById('ins-unidad').value = ins.medida || 'mls';
                 document.getElementById('ins-stock').value = ins.unidadActual;
                 document.getElementById('ins-sucursal').value = ins.sucursal;
@@ -1511,12 +1513,12 @@
     }
 
     function guardarInsumo(tipo) {
-        let id, nombre, cat, uni, stock, suc;
-        if(tipo==='pulpas'){ id = document.getElementById('ins-id').value; nombre = document.getElementById('ins-nombre').value; cat='Pulpas'; uni=document.getElementById('ins-unidad').value; stock=document.getElementById('ins-stock').value; suc=document.getElementById('ins-sucursal').value; }
-        else { id = document.getElementById('vaso-id').value; nombre = document.getElementById('vaso-nombre').value; cat='Insumos Vaso'; uni=document.getElementById('vaso-unidad').value; stock=document.getElementById('vaso-stock').value; suc=document.getElementById('vaso-sucursal').value; }
+        let id, nombre, cat, subcat, uni, stock, suc;
+        if(tipo==='pulpas'){ id = document.getElementById('ins-id').value; nombre = document.getElementById('ins-nombre').value; cat='Pulpas'; subcat=document.getElementById('ins-subcategoria')?document.getElementById('ins-subcategoria').value:'Vegetales'; uni=document.getElementById('ins-unidad').value; stock=document.getElementById('ins-stock').value; suc=document.getElementById('ins-sucursal').value; }
+        else { id = document.getElementById('vaso-id').value; nombre = document.getElementById('vaso-nombre').value; cat='Insumos Vaso'; subcat=' Packaging'; uni=document.getElementById('vaso-unidad').value; stock=document.getElementById('vaso-stock').value; suc=document.getElementById('vaso-sucursal').value; }
         if(!nombre) return;
 
-        let payload = {nombre, categoria:cat, medida:uni, unidadActual:parseFloat(stock)||0, precio: parseFloat(document.getElementById(tipo==='pulpas' ? 'ins-precio' : 'vaso-precio').value)||0, sucursal:suc, actorAdmin: rolUsuario==='SUPREMO' ? 'SUPREMO' : ('Admin ' + sucursalAdmin)};
+        let payload = {nombre, categoria:cat, subcategoria:subcat, medida:uni, unidadActual:parseFloat(stock)||0, precio: parseFloat(document.getElementById(tipo==='pulpas' ? 'ins-precio' : 'vaso-precio').value)||0, sucursal:suc, actorAdmin: rolUsuario==='SUPREMO' ? 'SUPREMO' : ('Admin ' + sucursalAdmin)};
         if(id) { payload.idInsumo = parseInt(id); }
 
         fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})

@@ -76,6 +76,7 @@ public class GestorPorciones {
                     existente.setMedida(insumo.getMedida());
                     existente.setSucursal(insumo.getSucursal());
                     existente.setCategoria(insumo.getCategoria());
+                    existente.setSubcategoria(insumo.getSubcategoria());
                     existente.setPrecio(insumo.getPrecio());
                     insumoRepository.save(existente);
                     return ResponseEntity.ok("Insumo actualizado");
