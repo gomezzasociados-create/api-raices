@@ -234,6 +234,14 @@ public class DataInitializer implements CommandLineRunner {
                     ins.setSucursal("Antofagasta");
                     mod = true;
                 }
+                if (ins.getCantidadPorcion() == null || ins.getCantidadPorcion() <= 0) {
+                    ins.setCantidadPorcion("und".equalsIgnoreCase(ins.getMedida()) ? 1 : 50);
+                    mod = true;
+                }
+                if (ins.getUnidadActual() == null) {
+                    ins.setUnidadActual(1000.0);
+                    mod = true;
+                }
                 if (ins.getSubcategoria() == null || ins.getSubcategoria().isEmpty()) {
                     String nom = ins.getNombre() != null ? ins.getNombre().toLowerCase() : "";
                     if (nom.contains("leche") || nom.contains("agua") || nom.contains("aloe") || nom.contains("base")) ins.setSubcategoria("Base");
