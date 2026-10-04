@@ -847,6 +847,16 @@
             });
         }
 
+        // Deduplicar productos por nombre normalizado en POS
+        const vistosPos = new Set();
+        lista = lista.filter(p => {
+            if (!p || !p.nombre) return false;
+            const key = p.nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+            if (vistosPos.has(key)) return false;
+            vistosPos.add(key);
+            return true;
+        });
+
         let htmlTemporal = '';
         if(lista.length === 0) { htmlTemporal = `<div class="col-12 text-center text-white-50 mt-4 font-orbitron">SIN REGISTROS GENÉTICOS.</div>`; }
 

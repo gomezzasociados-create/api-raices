@@ -24,7 +24,7 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        // MIGRAR PRODUCTOS EXISTENTES A ANTOFAGASTA Y CONVERTIR BOTÁNICO ANIMAL A SHOTS
+        // 1. MIGRAR PRODUCTOS EXISTENTES A ANTOFAGASTA Y CONVERTIR BOTÁNICO ANIMAL A SHOTS
         if (repository.count() > 0) {
             List<Producto> existentes = repository.findAll();
             for (Producto p : existentes) {
@@ -38,6 +38,25 @@ public class DataInitializer implements CommandLineRunner {
                     mod = true;
                 }
                 if (mod) repository.save(p);
+            }
+        }
+
+        // 2. PURGAR AUTOMÁTICAMENTE PRODUCTOS DUPLICADOS DE LA BASE DE DATOS
+        if (repository.count() > 0) {
+            List<Producto> todos = repository.findAll();
+            java.util.Map<String, Producto> unicos = new java.util.HashMap<>();
+            java.util.List<Producto> paraBorrar = new java.util.ArrayList<>();
+            for (Producto p : todos) {
+                String key = (p.getNombre() != null ? p.getNombre().toLowerCase().trim() : "") + "_" + (p.getSucursal() != null ? p.getSucursal().toLowerCase().trim() : "");
+                if (unicos.containsKey(key)) {
+                    paraBorrar.add(p);
+                } else {
+                    unicos.put(key, p);
+                }
+            }
+            if (!paraBorrar.isEmpty()) {
+                repository.deleteAll(paraBorrar);
+                System.out.println(">> GÓMEZ SYSTEMS: Purga exitosa. Se eliminaron " + paraBorrar.size() + " productos duplicados de la base de datos.");
             }
         }
 

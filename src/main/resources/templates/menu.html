@@ -485,6 +485,16 @@
             return cat.includes('500') || cat.includes('vaso') || cat.includes('elixir');
         });
 
+        // Deduplicar por nombre normalizado en Frontend
+        const vistosMenu = new Set();
+        lista = lista.filter(p => {
+            if (!p || !p.nombre) return false;
+            const key = normalizarStr(p.nombre);
+            if (vistosMenu.has(key)) return false;
+            vistosMenu.add(key);
+            return true;
+        });
+
         if (lista.length === 0) {
             grid.innerHTML = `<div class="col-12 text-center text-white-50 py-5 fs-4 font-orbitron">No se encontraron productos disponibles en la categoría ${filtroActual.toUpperCase()} para el NODO ${nodo.toUpperCase()}.</div>`;
             return;

@@ -1991,8 +1991,8 @@
     function deduplicarProductos(lista) {
         const vistos = new Set();
         return lista.filter(p => {
-            if (!p || !p.id) return false;
-            const clave = p.id;
+            if (!p || !p.nombre) return false;
+            const clave = normalizarStr(p.nombre);
             if (vistos.has(clave)) return false;
             vistos.add(clave);
             return true;
@@ -2253,7 +2253,8 @@
 
         try {
             const res = await fetch('/api/productos/sucursal/' + suc);
-            const data = await res.json();
+            let data = await res.json();
+            data = deduplicarProductos(data);
             const tb = document.getElementById('tabla-catalogo'); tb.innerHTML='';
 
             data.forEach(p => {
