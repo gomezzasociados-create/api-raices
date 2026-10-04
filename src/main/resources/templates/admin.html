@@ -1119,6 +1119,13 @@
     // =======================================================
     // SINTETIZADOR GENÉTICO (PRODUCCIÓN CON FECHAS)
     // =======================================================
+    function esPulpaOPack(p) {
+        if (!p) return false;
+        const n = normalizarStr(p.nombre || '');
+        const c = normalizarStr(p.categoria || '');
+        return c.includes('pack') || c.includes('pulpa') || n.includes('pulpa') || n.includes('pack') || (!c.includes('shot') && !c.includes('caldo') && !c.includes('500') && !c.includes('elixir'));
+    }
+
     async function cargarProductosSelect() {
         try {
             const suc = document.getElementById('prod-sucursal').value;
@@ -1127,11 +1134,7 @@
             const select = document.getElementById('prod-item');
             select.innerHTML = '<option value="">-- Seleccione Genética --</option>';
             select.innerHTML += '<option value="__NUEVO__" style="color:var(--p-bio-green); font-weight:bold;">➕ [ ESCRIBIR NUEVO PACK / ELÍXIR ]</option>';
-            const prodsPulpasSelect = deduplicarProductos(catalogoGlobal.filter(p => {
-                const nNorm = normalizarStr(p.nombre || '');
-                const cNorm = normalizarStr(p.categoria || '');
-                return p.sucursal === suc && (nNorm.includes('pulpa') || cNorm.includes('pulpa'));
-            }));
+            const prodsPulpasSelect = deduplicarProductos(catalogoGlobal.filter(p => p.sucursal === suc && esPulpaOPack(p)));
             prodsPulpasSelect.forEach(p => {
                 select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
             });
@@ -1167,13 +1170,8 @@
             const res = await fetch('/api/productos');
             let data = await res.json();
 
-            // Filtrar solo pulpas para el Génesis de Producción y deduplicar por nombre
-            data = data.filter(p => {
-                const nNorm = normalizarStr(p.nombre || '');
-                const cNorm = normalizarStr(p.categoria || '');
-                return nNorm.includes('pulpa') || cNorm.includes('pulpa');
-            });
-            data = deduplicarProductos(data);
+            // Filtrar solo pulpas/packs para el Génesis de Producción y deduplicar por nombre
+            data = deduplicarProductos(data.filter(p => esPulpaOPack(p)));
 
             produccionGlobal = data; // Guardamos para el asistente
             const tb = document.getElementById('tabla-produccion'); tb.innerHTML='';
@@ -1282,6 +1280,7 @@
                 if (resNuevo.ok) {
                     const prodCreado = await resNuevo.json();
                     id = prodCreado.id;
+                    catalogoGlobal.push(prodCreado);
                 } else {
                     playSound('error');
                     alert("Error al registrar el nuevo producto en la base de datos.");
