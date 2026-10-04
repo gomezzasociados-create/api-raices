@@ -545,11 +545,26 @@
                             </select>
                         </div>
                         <div class="col-md-4"><label class="form-label-neon text-white">ELIXIR FINAL (output)</label><select id="rec-producto" class="form-select border-white" onchange="cargarTablaReceta()"></select></div>
-                        <div class="col-md-4"><label class="form-label-neon text-white">COMPONENTE A INTEGRAR (input)</label><select id="rec-insumo" class="form-select border-white"></select></div>
+                        <div class="col-md-4"><label class="form-label-neon text-white">COMPONENTE A INTEGRAR (input)</label><select id="rec-insumo" class="form-select border-white" onchange="actualizarUnidadDefaultInsumo()"></select></div>
                     </div>
                     <div class="row g-3 mt-2 align-items-end">
-                        <div class="col-md-8"><label class="form-label-neon text-white">DOSIS POR UNIDAD (gr/und)</label><input type="number" id="rec-cantidad" class="form-control border-white fs-4" placeholder="0.00"></div>
-                        <div class="col-md-4"><button class="btn btn-bio w-100 py-3 bg-white text-black" onclick="guardarReceta()"><i class="bi bi-link-45deg fs-4"></i> FUSIONAR COMPONENTE</button></div>
+                        <div class="col-md-5">
+                            <label class="form-label-neon text-white">DOSIS REQUERIDA POR PRODUCTO</label>
+                            <input type="number" id="rec-cantidad" class="form-control border-white fs-4" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
+                            <select id="rec-unidad" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;">
+                                <option value="gr">🌾 Gramos (gr)</option>
+                                <option value="mls">💧 Mililitros (mls)</option>
+                                <option value="und">🍏 Unidades (und)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-bio w-100 py-3 bg-white text-black fw-bold" onclick="guardarReceta()">
+                                <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR COMPONENTE
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="table-container p-4">
@@ -1706,12 +1721,61 @@
             insMem = insumos; // <-- CRUCIAL PARA CALCULAR PRECIO
             const suc = document.getElementById('filtro-sucursal-recetas').value; 
             document.getElementById('rec-producto').innerHTML = productos.filter(p=>p.sucursal===suc).map(p=>`<option value="${p.id}">${p.nombre}</option>`).join(''); 
-            document.getElementById('rec-insumo').innerHTML = insumos.filter(i=>i.sucursal===suc).map(i=>`<option value="${i.nombre}">${i.nombre} (${i.medida})</option>`).join(''); 
+            
+            const insSelect = document.getElementById('rec-insumo');
+            insSelect.innerHTML = insumos.filter(i=>i.sucursal===suc).map(i=>`<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join(''); 
+            
+            actualizarUnidadDefaultInsumo();
             cargarTablaReceta(); 
         } catch(e) {} 
     }
-    async function guardarReceta() { const id = document.getElementById('rec-producto').value; const ing = document.getElementById('rec-insumo').value; const cant = document.getElementById('rec-cantidad').value; await fetch(`/api/insumos/${id}/vincular-ingrediente`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ingrediente:ing, gasto:cant})}); cargarTablaReceta(); playSound('click'); }
-    async function desvincularIngrediente(nombreIngrediente) { const id = document.getElementById('rec-producto').value; if(confirm(`¿Desvincular ${nombreIngrediente} de la fórmula?`)){ await fetch(`/api/insumos/${id}/desvincular/${encodeURIComponent(nombreIngrediente)}`, {method:'DELETE'}); cargarTablaReceta(); playSound('error'); } }
+
+    function actualizarUnidadDefaultInsumo() {
+        const insSelect = document.getElementById('rec-insumo');
+        const uniSelect = document.getElementById('rec-unidad');
+        if (!insSelect || !uniSelect) return;
+        const selectedOpt = insSelect.options[insSelect.selectedIndex];
+        if (selectedOpt && selectedOpt.dataset && selectedOpt.dataset.medida) {
+            const med = selectedOpt.dataset.medida.toLowerCase();
+            if (['gr', 'mls', 'und'].includes(med)) {
+                uniSelect.value = med;
+            }
+        }
+    }
+
+    async function guardarReceta() { 
+        const id = document.getElementById('rec-producto').value; 
+        const ing = document.getElementById('rec-insumo').value; 
+        const cant = document.getElementById('rec-cantidad').value; 
+        const uni = document.getElementById('rec-unidad').value; 
+
+        if (!cant || parseFloat(cant) <= 0) {
+            alert("Por favor ingresa una dosis válida mayor a 0.");
+            return;
+        }
+
+        const gastoConUnidad = cant + ' ' + uni;
+
+        await fetch(`/api/insumos/${id}/vincular-ingrediente`, {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({ingrediente: ing, gasto: gastoConUnidad})
+        }); 
+
+        document.getElementById('rec-cantidad').value = '';
+        cargarTablaReceta(); 
+        playSound('click'); 
+    }
+
+    async function desvincularIngrediente(nombreIngrediente) { 
+        const id = document.getElementById('rec-producto').value; 
+        if(confirm(`¿Desvincular ${nombreIngrediente} de la fórmula?`)){ 
+            await fetch(`/api/insumos/${id}/desvincular/${encodeURIComponent(nombreIngrediente)}`, {method:'DELETE'}); 
+            cargarTablaReceta(); 
+            playSound('error'); 
+        } 
+    }
+
     async function cargarTablaReceta() { 
         const id = document.getElementById('rec-producto').value; 
         if(!id) return; 
@@ -1727,8 +1791,16 @@
             txt.split('\n').forEach(l=>{ 
                 if(l.includes(':')) {
                     const nombre = l.split(':')[0].trim();
-                    const gasto = parseFloat(l.split(':')[1].trim()) || 0;
+                    const rawGasto = l.split(':')[1].trim();
                     
+                    const numClean = rawGasto.replace(/[^0-9.]/g, '');
+                    const gastoVal = parseFloat(numClean) || 0;
+                    
+                    let unidadTxt = 'gr';
+                    if (rawGasto.toLowerCase().includes('mls')) unidadTxt = 'mls';
+                    else if (rawGasto.toLowerCase().includes('und')) unidadTxt = 'und';
+                    else if (rawGasto.toLowerCase().includes('gr')) unidadTxt = 'gr';
+
                     // Buscar precio del insumo
                     const insumo = insMem.find(i => normalizarStr(i.nombre) === normalizarStr(nombre) && i.sucursal === suc);
                     let costoHtml = '<span class="text-muted">N/A</span>';
@@ -1736,18 +1808,19 @@
                     if(insumo) {
                         let precio = insumo.precio || 0;
                         let costoIngrediente = 0;
-                        if(insumo.medida === 'gr' || insumo.medida === 'mls') {
-                            costoIngrediente = (gasto / 1000) * precio;
+                        if(unidadTxt === 'gr' || unidadTxt === 'mls' || insumo.medida === 'gr' || insumo.medida === 'mls') {
+                            costoIngrediente = (gastoVal / 1000) * precio;
                         } else {
-                            costoIngrediente = gasto * precio;
+                            costoIngrediente = gastoVal * precio;
                         }
                         costoTotal += costoIngrediente;
                         costoHtml = `<span class="text-warning fw-bold">${formatMoney(costoIngrediente, suc)}</span>`;
+                        if (insumo.medida && (!unidadTxt || unidadTxt === 'gr')) unidadTxt = insumo.medida;
                     }
 
                     tb.innerHTML+=`<tr>
                         <td class="text-white fw-bold fs-4">${nombre}</td>
-                        <td class="fs-4" style="color:var(--p-bio-green); text-shadow:var(--green-glow);">${gasto}</td>
+                        <td class="fs-4" style="color:var(--p-bio-green); text-shadow:var(--green-glow);">${gastoVal} <span class="fs-6 text-white-50">${unidadTxt}</span></td>
                         <td class="fs-4">${costoHtml}</td>
                         <td><i class="bi bi-scissors text-danger fs-3" style="cursor:pointer;" onclick="desvincularIngrediente('${nombre}')"></i></td>
                     </tr>`; 

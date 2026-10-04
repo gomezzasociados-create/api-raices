@@ -42,7 +42,10 @@ public class ProduccionController {
                         
                         String nombreLimpio = partes[0].trim().toLowerCase();
                         double gastoPorUnidad = 0.0;
-                        try { gastoPorUnidad = Double.parseDouble(partes[1].trim()); } catch(Exception e) { continue; }
+                        try { 
+                            String cantClean = partes[1].replaceAll("[^0-9.]", "").trim();
+                            gastoPorUnidad = Double.parseDouble(cantClean); 
+                        } catch(Exception e) { continue; }
 
                         if (nombreLimpio.isEmpty()) continue;
 
