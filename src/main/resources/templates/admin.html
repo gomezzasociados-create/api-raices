@@ -322,11 +322,18 @@
                             <label class="form-label-neon">LOTE (UNIDADES)</label>
                             <input type="number" id="prod-cantidad" class="form-control text-center text-white fw-bold fs-4" placeholder="0">
                         </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-bio w-100 h-100 py-2 d-flex flex-column align-items-center justify-content-center" onclick="procesarEnsamblaje()">
-                                <i class="bi bi-fingerprint fs-2 mb-1"></i>
-                                <span style="font-size: 0.9rem; font-weight: 900;">PROCESAR ADN</span>
-                            </button>
+                        <div class="col-md-3">
+                            <label class="form-label-neon">ACCIONES DE SÍNTESIS</label>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-bio w-100 py-2 d-flex flex-column align-items-center justify-content-center" onclick="procesarEnsamblaje()">
+                                    <i class="bi bi-fingerprint fs-3 mb-1"></i>
+                                    <span style="font-size: 0.85rem; font-weight: 900;">PROCESAR / AUMENTAR</span>
+                                </button>
+                                <button class="btn btn-outline-danger py-2 d-flex flex-column align-items-center justify-content-center px-3" onclick="borrarStockSeleccionadoForm()" title="Borrar Stock del Elíxir Seleccionado">
+                                    <i class="bi bi-trash3-fill fs-3 mb-1"></i>
+                                    <span style="font-size: 0.75rem; font-weight: 900;">BORRAR</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -342,8 +349,8 @@
                                 <th style="width: 10%;">VALOR</th>
                                 <th style="width: 10%;">GÉNESIS</th>
                                 <th style="width: 10%;">COLAPSO</th>
-                                <th style="width: 30%;">BIOMARCADOR</th>
-                                <th style="width: 10%;">ACCIONES</th>
+                                <th style="width: 25%;">BIOMARCADOR</th>
+                                <th style="width: 15%;">ACCIONES</th>
                             </tr>
                             </thead>
                             <tbody id="tabla-produccion"></tbody>
@@ -1216,9 +1223,10 @@
                     <td>${fElabHtml}</td>
                     <td>${fVencHtml}</td>
                     <td class="pe-4">${barraHtml}</td>
-                    <td>
-                        <button class="btn btn-sm text-info border-0 me-1" onclick="cargarEditorProduccion(${p.id})"><i class="bi bi-pencil-square fs-3"></i></button>
-                        <button class="btn btn-sm text-danger border-0" onclick="resetearProduccion(${p.id})"><i class="bi bi-scissors fs-3"></i></button>
+                    <td class="text-nowrap">
+                        <button class="btn btn-sm btn-outline-success font-orbitron fw-bold me-1" onclick="aumentarStockRapido(${p.id})" title="Aumentar Stock"><i class="bi bi-plus-circle-fill me-1"></i>AUMENTAR</button>
+                        <button class="btn btn-sm btn-outline-info font-orbitron fw-bold me-1" onclick="cargarEditorProduccion(${p.id})" title="Editar"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-sm btn-outline-danger font-orbitron fw-bold" onclick="borrarStockElixir(${p.id})" title="Borrar Stock"><i class="bi bi-trash3-fill"></i> BORRAR</button>
                     </td>
                 </tr>`;
             });
@@ -1350,13 +1358,45 @@
         playSound('success');
     }
 
-    async function resetearProduccion(id) {
-        if(confirm("¿Estás seguro de ELIMINAR el stock y reseter la biología local de este producto?")) {
-            await fetch(`/api/produccion/lotes/${id}`, {method:'DELETE'});
-            await fetch(`/api/productos/${id}/ajustar-stock?cantidad=0`, {method:'PUT'});
-            cargarProduccion();
-            playSound('error');
+    async function aumentarStockRapido(id) {
+        const prod = catalogoGlobal.find(p => p.id == id);
+        if (!prod) return;
+        const cantInput = prompt(`¿Cuántas unidades deseas AUMENTAR al stock de "${prod.nombre}"?`, "1");
+        if (cantInput === null) return;
+        const numAdd = parseInt(cantInput);
+        if (isNaN(numAdd) || numAdd <= 0) {
+            alert("Ingresa un número entero positivo mayor a 0.");
+            return;
         }
+        playSound('add');
+        const nuevoStock = (prod.stock || 0) + numAdd;
+        await fetch(`/api/productos/${id}/ajustar-stock?cantidad=${nuevoStock}`, { method: 'PUT' });
+        cargarProduccion();
+        playSound('success');
+    }
+
+    async function borrarStockElixir(id) {
+        const prod = catalogoGlobal.find(p => p.id == id);
+        const nombre = prod ? prod.nombre : 'este elixir';
+        if (confirm(`⚠️ ¿Estás seguro de BORRAR el stock de "${nombre}" (fijarlo en 0 y eliminar su lote de producción)?`)) {
+            playSound('error');
+            await fetch(`/api/produccion/lotes/${id}`, { method: 'DELETE' });
+            await fetch(`/api/productos/${id}/ajustar-stock?cantidad=0`, { method: 'PUT' });
+            cargarProduccion();
+        }
+    }
+
+    async function borrarStockSeleccionadoForm() {
+        const id = document.getElementById('prod-item').value;
+        if (!id) {
+            alert("Por favor selecciona un Elíxir en la lista desplegable.");
+            return;
+        }
+        borrarStockElixir(id);
+    }
+
+    async function resetearProduccion(id) {
+        borrarStockElixir(id);
     }
 
     // --- SISTEMA DE MIGRACIÓN ---
