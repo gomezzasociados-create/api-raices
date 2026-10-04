@@ -316,7 +316,7 @@
                             <div id="contenedor-nuevo-prod" class="mt-2" style="display:none;">
                                 <input type="text" id="prod-nombre-nuevo" class="form-control mb-1 border-success text-white fw-bold" placeholder="✏️ Escribe el nombre del nuevo Pack / Elíxir...">
                                 <div class="input-group">
-                                    <span class="input-group-text bg-dark text-success border-success fw-bold">$</span>
+                                    <span class="input-group-text bg-dark text-success border-success fw-bold">PRECIO $</span>
                                     <input type="number" id="prod-precio-nuevo" class="form-control border-success text-white fw-bold" placeholder="Precio (ej. 22000)" value="22000">
                                 </div>
                             </div>
@@ -1142,27 +1142,43 @@
             select.innerHTML += '<option value="__NUEVO__" style="color:var(--p-bio-green); font-weight:bold;">➕ [ ESCRIBIR NUEVO PACK / ELÍXIR ]</option>';
             const prodsPulpasSelect = deduplicarProductos(catalogoGlobal.filter(p => p.sucursal === suc && esPulpaOPack(p)));
             prodsPulpasSelect.forEach(p => {
-                select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
+                const precioTxt = formatMoney(p.precio || 0, p.sucursal);
+                select.innerHTML += `<option value="${p.id}">${p.nombre} — ${precioTxt}</option>`;
             });
-            const contenedorNuevo = document.getElementById('contenedor-nuevo-prod');
-            if (contenedorNuevo) { contenedorNuevo.style.display = 'none'; }
-            const inputNuevo = document.getElementById('prod-nombre-nuevo');
-            if (inputNuevo) { inputNuevo.value = ''; }
-            const precioNuevo = document.getElementById('prod-precio-nuevo');
-            if (precioNuevo) { precioNuevo.value = '22000'; }
+            evaluarSeleccionNuevoProd(select);
         } catch(e) {}
     }
 
     function evaluarSeleccionNuevoProd(selectEl) {
         const contenedorNuevo = document.getElementById('contenedor-nuevo-prod');
-        const inputNuevo = document.getElementById('prod-nombre-nuevo');
+        const inputNombre = document.getElementById('prod-nombre-nuevo');
+        const inputPrecio = document.getElementById('prod-precio-nuevo');
         if (!contenedorNuevo) return;
-        if (selectEl.value === '__NUEVO__') {
+        
+        const val = selectEl ? selectEl.value : '';
+        if (val === '__NUEVO__') {
             contenedorNuevo.style.display = 'block';
-            if (inputNuevo) inputNuevo.focus();
+            if (inputNombre) {
+                inputNombre.style.display = 'block';
+                inputNombre.value = '';
+                inputNombre.focus();
+            }
+            if (inputPrecio) {
+                inputPrecio.value = '22000';
+            }
+        } else if (val) {
+            contenedorNuevo.style.display = 'block';
+            if (inputNombre) {
+                inputNombre.style.display = 'none';
+                inputNombre.value = '';
+            }
+            const prod = catalogoGlobal.find(p => p.id == val);
+            if (prod && inputPrecio) {
+                inputPrecio.value = prod.precio || 22000;
+            }
         } else {
             contenedorNuevo.style.display = 'none';
-            if (inputNuevo) inputNuevo.value = '';
+            if (inputNombre) { inputNombre.value = ''; inputNombre.style.display = 'none'; }
         }
     }
 
@@ -1346,11 +1362,8 @@
                         vidaTotalDias: loteData.vidaTotalDias
                     })
                 });
+                await actualizarPrecioProductoSiCambio(id);
                 document.getElementById('prod-cantidad').value = '';
-                if (document.getElementById('prod-nombre-nuevo')) {
-                    document.getElementById('prod-nombre-nuevo').value = '';
-                    document.getElementById('prod-nombre-nuevo').style.display = 'none';
-                }
                 await cargarProduccion();
                 overlay.style.display = 'none';
                 playSound('success');
@@ -1360,11 +1373,34 @@
         }, 2800);
     }
 
+    async function actualizarPrecioProductoSiCambio(id) {
+        if (!id || id === '__NUEVO__') return;
+        const prod = catalogoGlobal.find(p => p.id == id);
+        const precioInput = document.getElementById('prod-precio-nuevo');
+        if (prod && precioInput && precioInput.value) {
+            const nuevoPrecio = parseFloat(precioInput.value);
+            if (!isNaN(nuevoPrecio) && nuevoPrecio > 0 && Math.abs(nuevoPrecio - (prod.precio || 0)) > 0.01) {
+                prod.precio = nuevoPrecio;
+                try {
+                    await fetch(`/api/productos/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(prod)
+                    });
+                } catch(e) {}
+            }
+        }
+    }
+
     // --- EDICIÓN Y RESETEO DE PRODUCCIÓN (GÉNESIS) ---
     function cargarEditorProduccion(id) {
         const prod = catalogoGlobal.find(p => p.id === id);
         if(!prod) return;
-        document.getElementById('prod-item').value = prod.id;
+        const select = document.getElementById('prod-item');
+        if (select) {
+            select.value = prod.id;
+            evaluarSeleccionNuevoProd(select);
+        }
         document.getElementById('prod-cantidad').value = prod.stock || 0;
         if(lotesProduccion[id]) {
             document.getElementById('prod-fecha').value = lotesProduccion[id].elaboracion;
@@ -1415,6 +1451,7 @@
 
         // Envia ajuste al servidor sin fabricar/descontar matriz
         await fetch(`/api/productos/${id}/ajustar-stock?cantidad=${cant}`, {method:'PUT'});
+        await actualizarPrecioProductoSiCambio(id);
 
         document.getElementById('prod-cantidad').value = '';
 
@@ -1425,7 +1462,7 @@
             btnFn.classList.replace('btn-warning', 'btn-bio');
         }
 
-        cargarProduccion();
+        await cargarProduccion();
         playSound('success');
     }
 
