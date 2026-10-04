@@ -543,26 +543,102 @@
 
     async function renderizarArmaTuBatido(nodo) {
         const grid = document.getElementById('grid-menu');
-        grid.innerHTML = '<div class="col-12 text-center text-white py-5 font-orbitron"><span class="spinner-border text-warning me-2"></span>Cargando catálogo de ingredientes por porción...</div>';
+        grid.innerHTML = '<div class="col-12 text-center text-white py-5 font-orbitron"><span class="spinner-border text-warning me-2"></span>Cargando catálogo de ingredientes de Batidos de 500 mls...</div>';
 
-        let insumos = [];
+        let insumosBase = [];
+        let productos500 = [];
+        let mapaFormulas500 = {}; // { "espinaca": { nombre: "Espinaca", dosis: 30, medida: "gr" } }
+
         try {
-            let res = await fetch('/api/insumos/sucursal/' + nodo);
-            if (res.ok) insumos = await res.json();
-            if (!insumos || insumos.length === 0) {
-                res = await fetch('/api/insumos/todos');
-                if (res.ok) insumos = await res.json();
-            }
-        } catch(e) {}
+            const [resP, resI] = await Promise.all([
+                fetch('/api/productos/sucursal/' + nodo),
+                fetch('/api/insumos/sucursal/' + nodo)
+            ]);
 
-        // Filtrar insumos que corresponden a ingredientes de batido (excluyendo vasos, packaging, shots y caldos)
-        insumos = insumos.filter(i => {
-            const cat = (i.categoria || '').toLowerCase();
-            return !cat.includes('vaso') && !cat.includes('packaging') && !cat.includes('shot') && !cat.includes('caldo');
+            if (resP.ok) {
+                const prods = await resP.json();
+                productos500 = prods.filter(p => p.categoria && (p.categoria.toLowerCase().includes('500') || p.categoria.toLowerCase().includes('elixir')));
+            }
+
+            if (resI.ok) {
+                insumosBase = await resI.json();
+            } else {
+                const resIAll = await fetch('/api/insumos/todos');
+                if (resIAll.ok) insumosBase = await resIAll.json();
+            }
+        } catch(e) { console.error("Error al obtener datos para Arma tu Batido:", e); }
+
+        // Extraer ingredientes y dosis desde las Fórmulas de Batidos de 500 mls
+        productos500.forEach(p => {
+            if (p.recetaDetalle && p.recetaDetalle.trim() !== '') {
+                const lineas = p.recetaDetalle.split('\n');
+                lineas.forEach(l => {
+                    if (l.includes(':')) {
+                        const partes = l.split(':');
+                        const nombreIng = partes[0].trim();
+                        const rawGasto = partes[1].trim();
+
+                        const numClean = rawGasto.replace(/[^0-9.]/g, '');
+                        const gastoVal = parseFloat(numClean) || 1;
+
+                        let unidadTxt = 'gr';
+                        if (rawGasto.toLowerCase().includes('mls')) unidadTxt = 'mls';
+                        else if (rawGasto.toLowerCase().includes('und')) unidadTxt = 'und';
+                        else if (rawGasto.toLowerCase().includes('gr')) unidadTxt = 'gr';
+
+                        const key = normalizarStr(nombreIng);
+                        if (!mapaFormulas500[key]) {
+                            mapaFormulas500[key] = {
+                                nombre: nombreIng,
+                                dosis: gastoVal,
+                                medida: unidadTxt
+                            };
+                        }
+                    }
+                });
+            }
         });
 
-        if (insumos.length === 0) {
-            grid.innerHTML = '<div class="col-12 text-center text-white-50 py-5 fs-5 font-orbitron">No se encontraron ingredientes configurados en Bodega para este Nodo.</div>';
+        // Filtrar insumos pertenecientes a la Bodega de 500 mls O presentes en Fórmulas de 500 mls
+        // EXCLUIR los insumos que son puramente de "Pulpas" (16 unidades), Vasos/Packaging, Shots o Caldos
+        let insumosArmado = [];
+
+        insumosBase.forEach(ins => {
+            const cat = (ins.categoria || '').toLowerCase();
+            const keyIns = normalizarStr(ins.nombre);
+
+            const esFormulado500 = mapaFormulas500[keyIns] !== undefined;
+            const esBodega500 = cat.includes('500') || cat.includes('batido 500') || cat.includes('vaso 500');
+
+            if (esFormulado500 || esBodega500) {
+                let sizePorcion = (ins.cantidadPorcion && ins.cantidadPorcion > 0) ? ins.cantidadPorcion : 1;
+                let medidaPorcion = ins.medida || 'gr';
+
+                if (esFormulado500) {
+                    sizePorcion = mapaFormulas500[keyIns].dosis;
+                    medidaPorcion = mapaFormulas500[keyIns].medida;
+                }
+
+                insumosArmado.push({
+                    idInsumo: ins.idInsumo,
+                    nombre: ins.nombre,
+                    subcategoria: ins.subcategoria,
+                    categoria: ins.categoria,
+                    precio: ins.precio || 0,
+                    unidadActual: ins.unidadActual || 0,
+                    sizePorcion: sizePorcion,
+                    medida: medidaPorcion
+                });
+            }
+        });
+
+        if (insumosArmado.length === 0) {
+            grid.innerHTML = `
+                <div class="col-12 text-center text-white-50 py-5 font-orbitron">
+                    <i class="bi bi-info-circle fs-1 text-warning d-block mb-3"></i>
+                    <h4 class="text-warning mb-2">SIN INGREDIENTES EN BATIDOS DE 500 MLS</h4>
+                    <p class="fs-6 font-rajdhani text-white-50 max-w-600 mx-auto">No hay ingredientes ni porciones configuradas aún en las Fórmulas de Batidos de 500 mls ni en la Bodega de 500 mls para el NODO ${nodo.toUpperCase()}.</p>
+                </div>`;
             return;
         }
 
@@ -603,9 +679,9 @@
             </div>
         `;
 
-        let insumosFiltrados = insumos;
+        let insumosFiltrados = insumosArmado;
         if (subcategoriaFiltroActual !== 'Todas') {
-            insumosFiltrados = insumos.filter(i => obtenerSubcategoriaInsumo(i).toLowerCase() === subcategoriaFiltroActual.toLowerCase());
+            insumosFiltrados = insumosArmado.filter(i => obtenerSubcategoriaInsumo(i).toLowerCase() === subcategoriaFiltroActual.toLowerCase());
         }
 
         if (insumosFiltrados.length === 0) {
@@ -615,11 +691,11 @@
         insumosFiltrados.forEach(ins => {
             let cantPorc = porcionesArmado[ins.idInsumo] || 0;
             let precioPorc = ins.precio || 0;
-            let sizePorcion = (ins.cantidadPorcion && ins.cantidadPorcion > 0) ? ins.cantidadPorcion : 1;
+            let sizePorcion = ins.sizePorcion || 1;
             let stockUnidades = ins.unidadActual || 0;
             let porcionesDisponibles = Math.floor(stockUnidades / sizePorcion);
 
-            let porcTexto = ins.cantidadPorcion ? `${ins.cantidadPorcion} ${ins.medida || 'gr'}` : `1 ${ins.medida || 'porción'}`;
+            let porcTexto = `${sizePorcion} ${ins.medida || 'gr'}`;
             let subcatLabel = obtenerSubcategoriaInsumo(ins).toUpperCase();
             let nombreEscape = (ins.nombre || '').replace(/'/g, "\\'");
 
