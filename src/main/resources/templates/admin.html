@@ -1484,13 +1484,32 @@
     }
 
     async function borrarStockElixir(id) {
+        if (!id || id === '__NUEVO__') {
+            alert("Por favor selecciona un Elíxir existente para borrar.");
+            return;
+        }
         const prod = catalogoGlobal.find(p => p.id == id);
         const nombre = prod ? prod.nombre : 'este elixir';
-        if (confirm(`⚠️ ¿Estás seguro de BORRAR el stock de "${nombre}" (fijarlo en 0 y eliminar su lote de producción)?`)) {
+        const normNombre = prod ? normalizarStr(prod.nombre) : '';
+
+        if (confirm(`⚠️ ¿Estás seguro de ELIMINAR PERMANENTEMENTE "${nombre}" del catálogo y del listado de producción?`)) {
             playSound('error');
-            await fetch(`/api/produccion/lotes/${id}`, { method: 'DELETE' });
-            await fetch(`/api/productos/${id}/ajustar-stock?cantidad=0`, { method: 'PUT' });
-            cargarProduccion();
+            const duplicados = normNombre ? catalogoGlobal.filter(p => normalizarStr(p.nombre) === normNombre) : [{id: id}];
+            for (const dup of duplicados) {
+                try {
+                    await fetch(`/api/produccion/lotes/${dup.id}`, { method: 'DELETE' });
+                } catch(e) {}
+                try {
+                    await fetch(`/api/productos/${dup.id}`, { method: 'DELETE' });
+                } catch(e) {}
+            }
+
+            const selectEl = document.getElementById('prod-item');
+            if (selectEl) selectEl.value = '';
+            evaluarSeleccionNuevoProd(selectEl);
+
+            await cargarProduccion();
+            playSound('success');
         }
     }
 
@@ -2533,11 +2552,20 @@
     }
 
     async function eliminarProducto(id) {
+        const prod = catalogoGlobal.find(p => p.id == id);
+        const normNombre = prod ? normalizarStr(prod.nombre) : '';
         playSound('error');
         if(confirm("ALERTA: ¿Deseas purgar este elixir de la base de datos de manera irreversible?")) {
             try {
-                const res = await fetch(`/api/productos/${id}`, { method: 'DELETE' });
-                if(res.ok) { document.getElementById(`fila-prod-${id}`).remove(); }
+                const duplicados = normNombre ? catalogoGlobal.filter(p => normalizarStr(p.nombre) === normNombre) : [{id: id}];
+                for (const dup of duplicados) {
+                    try { await fetch(`/api/produccion/lotes/${dup.id}`, { method: 'DELETE' }); } catch(e) {}
+                    try { await fetch(`/api/productos/${dup.id}`, { method: 'DELETE' }); } catch(e) {}
+                }
+                const fila = document.getElementById(`fila-prod-${id}`);
+                if (fila) fila.remove();
+                await cargarProduccion();
+                playSound('success');
             } catch(e) { console.error("Error al purgar", e); }
         }
     }
