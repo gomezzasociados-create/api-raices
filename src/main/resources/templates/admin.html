@@ -312,7 +312,8 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label-neon">ELIXIR A SINTETIZAR</label>
-                            <select id="prod-item" class="form-select"></select>
+                            <select id="prod-item" class="form-select" onchange="evaluarSeleccionNuevoProd(this)"></select>
+                            <input type="text" id="prod-nombre-nuevo" class="form-control mt-2 border-success text-white fw-bold" placeholder="✏️ Escribe el nombre del nuevo Pack / Elíxir..." style="display:none;">
                         </div>
                         <div class="col-md-2">
                             <label class="form-label-neon text-magenta" style="color: var(--p-magenta);">CICLO DE GÉNESIS (ELAB)</label>
@@ -1125,6 +1126,7 @@
             catalogoGlobal = await res.json();
             const select = document.getElementById('prod-item');
             select.innerHTML = '<option value="">-- Seleccione Genética --</option>';
+            select.innerHTML += '<option value="__NUEVO__" style="color:var(--p-bio-green); font-weight:bold;">➕ [ ESCRIBIR NUEVO PACK / ELÍXIR ]</option>';
             const prodsPulpasSelect = deduplicarProductos(catalogoGlobal.filter(p => {
                 const nNorm = normalizarStr(p.nombre || '');
                 const cNorm = normalizarStr(p.categoria || '');
@@ -1133,7 +1135,21 @@
             prodsPulpasSelect.forEach(p => {
                 select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
             });
+            const inputNuevo = document.getElementById('prod-nombre-nuevo');
+            if (inputNuevo) { inputNuevo.style.display = 'none'; inputNuevo.value = ''; }
         } catch(e) {}
+    }
+
+    function evaluarSeleccionNuevoProd(selectEl) {
+        const inputNuevo = document.getElementById('prod-nombre-nuevo');
+        if (!inputNuevo) return;
+        if (selectEl.value === '__NUEVO__') {
+            inputNuevo.style.display = 'block';
+            inputNuevo.focus();
+        } else {
+            inputNuevo.style.display = 'none';
+            inputNuevo.value = '';
+        }
     }
 
     async function cargarProduccion() {
@@ -1233,10 +1249,50 @@
         } catch(e) {}
     }
 
-    function procesarEnsamblaje() {
-        const id = document.getElementById('prod-item').value;
+    async function procesarEnsamblaje() {
+        let id = document.getElementById('prod-item').value;
+        const nombreNuevoInput = document.getElementById('prod-nombre-nuevo') ? document.getElementById('prod-nombre-nuevo').value.trim() : '';
         const cant = document.getElementById('prod-cantidad').value;
         const fechaElab = document.getElementById('prod-fecha').value;
+
+        if (!id) {
+            playSound('error');
+            alert("ALERTA: Selecciona un elíxir o la opción de escribir nuevo nombre.");
+            return;
+        }
+
+        if (id === '__NUEVO__') {
+            if (!nombreNuevoInput) {
+                playSound('error');
+                alert("ALERTA: Por favor escribe el nombre del nuevo Pack o Elíxir.");
+                return;
+            }
+            try {
+                const resNuevo = await fetch('/api/productos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nombre: nombreNuevoInput,
+                        categoria: 'Packs',
+                        precio: 22000.0,
+                        sucursal: document.getElementById('prod-sucursal').value || 'Antofagasta',
+                        descripcion: 'Pack / Elíxir de pulpas registrado en Génesis de Producción.'
+                    })
+                });
+                if (resNuevo.ok) {
+                    const prodCreado = await resNuevo.json();
+                    id = prodCreado.id;
+                } else {
+                    playSound('error');
+                    alert("Error al registrar el nuevo producto en la base de datos.");
+                    return;
+                }
+            } catch (e) {
+                playSound('error');
+                alert("Error de conexión al servidor.");
+                return;
+            }
+        }
 
         if(!id || !cant || cant <= 0 || !fechaElab) { playSound('error'); alert("ALERTA: Faltan parámetros genéticos para la síntesis."); return; }
 
@@ -1267,7 +1323,6 @@
 
         setTimeout(async () => {
             try {
-                // LLAMADA REPARADA: Envía stock + fechas al servidor
                 await fetch(`/api/produccion/fabricar`, {
                     method:'POST',
                     headers:{'Content-Type':'application/json'},
@@ -1280,6 +1335,10 @@
                     })
                 });
                 document.getElementById('prod-cantidad').value = '';
+                if (document.getElementById('prod-nombre-nuevo')) {
+                    document.getElementById('prod-nombre-nuevo').value = '';
+                    document.getElementById('prod-nombre-nuevo').style.display = 'none';
+                }
                 await cargarProduccion();
                 overlay.style.display = 'none';
                 playSound('success');
