@@ -248,8 +248,14 @@ public class DataInitializer implements CommandLineRunner {
                     else if (nom.contains("chía") || nom.contains("chia") || nom.contains("linaza") || nom.contains("semilla")) ins.setSubcategoria("Semillas");
                     else if (nom.contains("piña") || nom.contains("pina") || nom.contains("manzana") || nom.contains("limón") || nom.contains("limon") || nom.contains("betarraga") || nom.contains("frut")) ins.setSubcategoria("Frutas");
                     else if (nom.contains("espinaca") || nom.contains("apio") || nom.contains("zanahoria") || nom.contains("acelga") || nom.contains("pepino")) ins.setSubcategoria("Vegetales");
-                    else if (nom.contains("espirulina") || nom.contains("maca") || nom.contains("aceite") || nom.contains("proteína") || nom.contains("proteina") || nom.contains("colágeno")) ins.setSubcategoria("Suplementos");
-                    else if (nom.contains("maní") || nom.contains("mani") || nom.contains("nuez") || nom.contains("nueces") || nom.contains("almendra") || nom.contains("mandioca")) ins.setSubcategoria("Frutos Secos");
+                    else if (nom.contains("canela") || nom.contains("jengibre") || nom.contains("cúrcuma") || nom.contains("curcuma") || nom.contains("pimienta") || nom.contains("clavo")) ins.setSubcategoria("Especias");
+                    else if (nom.contains("stevia") || nom.contains("estevia") || nom.contains("miel") || nom.contains("agave") || nom.contains("azúcar") || nom.contains("azucar")) ins.setSubcategoria("Endulzantes");
+                    else if (nom.contains("goma") || nom.contains("xantana") || nom.contains("pectina") || nom.contains("agar")) ins.setSubcategoria("Estabilizantes");
+                    else if (nom.contains("palta") || nom.contains("mantequilla") || nom.contains("cacao")) ins.setSubcategoria("Grasas");
+                    else if (nom.contains("whey") || nom.contains("proteina") || nom.contains("proteína")) ins.setSubcategoria("Proteínas");
+                    else if (nom.contains("avena") || nom.contains("quinoa") || nom.contains("quinua") || nom.contains("arroz") || nom.contains("mandioca")) ins.setSubcategoria("Cereales");
+                    else if (nom.contains("espirulina") || nom.contains("maca") || nom.contains("aceite") || nom.contains("colágeno")) ins.setSubcategoria("Suplementos");
+                    else if (nom.contains("maní") || nom.contains("mani") || nom.contains("nuez") || nom.contains("nueces") || nom.contains("almendra")) ins.setSubcategoria("Frutos Secos");
                     else ins.setSubcategoria("Vegetales");
                     mod = true;
                 }
@@ -291,9 +297,29 @@ public class DataInitializer implements CommandLineRunner {
                 // 6. FRUTOS SECOS
                 crearInsumoSiNoExiste("Mantequilla de Maní", 4000.0, 20, "gr", sede, "Pulpas", "Frutos Secos", 35.0 * factorMoneda);
                 crearInsumoSiNoExiste("Nueces", 3000.0, 15, "gr", sede, "Pulpas", "Frutos Secos", 45.0 * factorMoneda);
-                crearInsumoSiNoExiste("Mandioca", 7000.0, 40, "gr", sede, "Pulpas", "Frutos Secos", 15.0 * factorMoneda);
 
-                crearInsumoSiNoExiste("Botánico Pelaje Base", 5000.0, 30, "gr", sede, "Botánico Animal", "Suplementos", 30.0 * factorMoneda);
+                // 7. ESPECIAS
+                crearInsumoSiNoExiste("Canela en Polvo", 2000.0, 5, "gr", sede, "Pulpas", "Especias", 15.0 * factorMoneda);
+                crearInsumoSiNoExiste("Jengibre Orgánico", 3000.0, 10, "gr", sede, "Pulpas", "Especias", 20.0 * factorMoneda);
+                crearInsumoSiNoExiste("Cúrcuma Orgánica", 2000.0, 5, "gr", sede, "Pulpas", "Especias", 25.0 * factorMoneda);
+
+                // 8. ENDULZANTES
+                crearInsumoSiNoExiste("Stevia Natural", 1000.0, 2, "gr", sede, "Pulpas", "Endulzantes", 10.0 * factorMoneda);
+                crearInsumoSiNoExiste("Miel Orgánica", 3000.0, 15, "mls", sede, "Pulpas", "Endulzantes", 30.0 * factorMoneda);
+
+                // 9. ESTABILIZANTES
+                crearInsumoSiNoExiste("Goma Xantana", 1000.0, 2, "gr", sede, "Pulpas", "Estabilizantes", 15.0 * factorMoneda);
+
+                // 10. GRASAS
+                crearInsumoSiNoExiste("Palta Hass", 5000.0, 30, "gr", sede, "Pulpas", "Grasas", 30.0 * factorMoneda);
+
+                // 11. PROTEÍNAS
+                crearInsumoSiNoExiste("Proteína Aislada Whey", 3000.0, 30, "gr", sede, "Pulpas", "Proteínas", 60.0 * factorMoneda);
+                crearInsumoSiNoExiste("Proteína Vegana", 3000.0, 30, "gr", sede, "Pulpas", "Proteínas", 55.0 * factorMoneda);
+
+                // 12. CEREALES
+                crearInsumoSiNoExiste("Avena Integral", 5000.0, 40, "gr", sede, "Pulpas", "Cereales", 15.0 * factorMoneda);
+                crearInsumoSiNoExiste("Quinua Inflada", 3000.0, 20, "gr", sede, "Pulpas", "Cereales", 20.0 * factorMoneda);
             }
             System.out.println(">> GÓMEZ SYSTEMS: Insumos de Bodega inicializados con subcategorías correctamente para Antofagasta.");
         }

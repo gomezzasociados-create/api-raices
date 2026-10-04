@@ -524,8 +524,14 @@
         if (cat.includes('semilla') || nom.includes('chía') || nom.includes('chia') || nom.includes('linaza') || nom.includes('sésamo') || nom.includes('sesamo')) return 'Semillas';
         if (cat.includes('fruta') || nom.includes('piña') || nom.includes('pina') || nom.includes('manzana') || nom.includes('limón') || nom.includes('limon') || nom.includes('betarraga') || nom.includes('frut') || nom.includes('mango') || nom.includes('platano') || nom.includes('plátano')) return 'Frutas';
         if (cat.includes('vegetal') || cat.includes('verdura') || nom.includes('espinaca') || nom.includes('apio') || nom.includes('zanahoria') || nom.includes('acelga') || nom.includes('pepino')) return 'Vegetales';
-        if (cat.includes('suplemento') || nom.includes('espirulina') || nom.includes('maca') || nom.includes('aceite') || nom.includes('proteína') || nom.includes('proteina') || nom.includes('colágeno') || nom.includes('clavo')) return 'Suplementos';
-        if (cat.includes('seco') || nom.includes('maní') || nom.includes('mani') || nom.includes('nuez') || nom.includes('nueces') || nom.includes('almendra') || nom.includes('mandioca')) return 'Frutos Secos';
+        if (cat.includes('especia') || nom.includes('canela') || nom.includes('jengibre') || nom.includes('cúrcuma') || nom.includes('curcuma') || nom.includes('pimienta') || nom.includes('clavo')) return 'Especias';
+        if (cat.includes('endulzante') || cat.includes('miel') || nom.includes('stevia') || nom.includes('estevia') || nom.includes('miel') || nom.includes('agave') || nom.includes('azúcar') || nom.includes('azucar')) return 'Endulzantes';
+        if (cat.includes('estabilizante') || nom.includes('goma') || nom.includes('xantana') || nom.includes('pectina') || nom.includes('agar')) return 'Estabilizantes';
+        if (cat.includes('grasa') || nom.includes('palta') || nom.includes('mantequilla') || nom.includes('cacao')) return 'Grasas';
+        if (cat.includes('proteína') || cat.includes('proteina') || nom.includes('whey') || nom.includes('proteina') || nom.includes('proteína')) return 'Proteínas';
+        if (cat.includes('cereal') || nom.includes('avena') || nom.includes('quinoa') || nom.includes('quinua') || nom.includes('arroz') || nom.includes('mandioca')) return 'Cereales';
+        if (cat.includes('suplemento') || nom.includes('espirulina') || nom.includes('maca') || nom.includes('aceite') || nom.includes('colágeno')) return 'Suplementos';
+        if (cat.includes('seco') || nom.includes('maní') || nom.includes('mani') || nom.includes('nuez') || nom.includes('nueces') || nom.includes('almendra')) return 'Frutos Secos';
         return 'Vegetales';
     }
 
@@ -587,6 +593,12 @@
                     <button class="btn btn-sm ${subcategoriaFiltroActual==='Vegetales'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Vegetales')">🥬 VEGETALES</button>
                     <button class="btn btn-sm ${subcategoriaFiltroActual==='Suplementos'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Suplementos')">⚡ SUPLEMENTOS</button>
                     <button class="btn btn-sm ${subcategoriaFiltroActual==='Frutos Secos'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Frutos Secos')">🥜 FRUTOS SECOS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Especias'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Especias')">🌶️ ESPECIAS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Endulzantes'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Endulzantes')">🍯 ENDULZANTES</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Estabilizantes'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Estabilizantes')">🧪 ESTABILIZANTES</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Grasas'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Grasas')">🥑 GRASAS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Proteínas'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Proteínas')">💪 PROTEÍNAS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Cereales'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Cereales')">🌾 CEREALES</button>
                 </div>
             </div>
         `;
