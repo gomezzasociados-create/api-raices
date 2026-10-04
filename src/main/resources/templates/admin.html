@@ -1118,12 +1118,13 @@
             catalogoGlobal = await res.json();
             const select = document.getElementById('prod-item');
             select.innerHTML = '<option value="">-- Seleccione Genética --</option>';
-            catalogoGlobal.forEach(p => {
+            const prodsPulpasSelect = deduplicarProductos(catalogoGlobal.filter(p => {
                 const nNorm = normalizarStr(p.nombre || '');
                 const cNorm = normalizarStr(p.categoria || '');
-                if(p.sucursal === suc && (nNorm.includes('pulpa') || cNorm.includes('pulpa'))) {
-                    select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
-                }
+                return p.sucursal === suc && (nNorm.includes('pulpa') || cNorm.includes('pulpa'));
+            }));
+            prodsPulpasSelect.forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
             });
         } catch(e) {}
     }
@@ -1143,12 +1144,13 @@
             const res = await fetch('/api/productos');
             let data = await res.json();
 
-            // Filar solo pulpas para el Génesis de Producción
+            // Filtrar solo pulpas para el Génesis de Producción y deduplicar por nombre
             data = data.filter(p => {
                 const nNorm = normalizarStr(p.nombre || '');
                 const cNorm = normalizarStr(p.categoria || '');
                 return nNorm.includes('pulpa') || cNorm.includes('pulpa');
             });
+            data = deduplicarProductos(data);
 
             produccionGlobal = data; // Guardamos para el asistente
             const tb = document.getElementById('tabla-produccion'); tb.innerHTML='';
