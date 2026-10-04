@@ -535,41 +535,142 @@
             </div>
 
             <div class="tab-pane fade" id="tab-recetas" role="tabpanel">
-                <div class="table-container mb-4" style="border-top: 3px solid #fff;">
-                    <h5 class="text-white mb-4 fw-bold font-orbitron" style="text-shadow: 0 0 10px #fff;"><i class="bi bi-flower3"></i> ESTRUCTURADOR DE FÓRMULAS NATURALES</h5>
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label-neon text-white">NODO ESPECÍFICO</label>
-                            <select id="filtro-sucursal-recetas" class="form-select auth-select border-white" onchange="prepararRecetas()">
+                <div class="table-container mb-4" style="border-top: 3px solid var(--p-magenta);">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <h5 class="fw-bold font-orbitron m-0 fs-3" style="color: var(--p-magenta); text-shadow: var(--magenta-glow);">
+                            <i class="bi bi-flower3 me-2"></i> ESTRUCTURADORES DE FÓRMULAS NATURALES
+                        </h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <label class="form-label-neon m-0 text-white me-2">NODO ESPECÍFICO:</label>
+                            <select id="filtro-sucursal-recetas" class="form-select auth-select border-warning text-warning fw-bold w-auto" onchange="prepararRecetas()">
                                 <option value="Antofagasta">Antofagasta</option>
                             </select>
                         </div>
-                        <div class="col-md-4"><label class="form-label-neon text-white">ELIXIR FINAL (output)</label><select id="rec-producto" class="form-select border-white" onchange="cargarTablaReceta()"></select></div>
-                        <div class="col-md-4"><label class="form-label-neon text-white">COMPONENTE A INTEGRAR (input)</label><select id="rec-insumo" class="form-select border-white" onchange="actualizarUnidadDefaultInsumo()"></select></div>
-                    </div>
-                    <div class="row g-3 mt-2 align-items-end">
-                        <div class="col-md-5">
-                            <label class="form-label-neon text-white">DOSIS REQUERIDA POR PRODUCTO</label>
-                            <input type="number" id="rec-cantidad" class="form-control border-white fs-4" placeholder="0.00" step="0.01">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
-                            <select id="rec-unidad" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;">
-                                <option value="gr">🌾 Gramos (gr)</option>
-                                <option value="mls">💧 Mililitros (mls)</option>
-                                <option value="und">🍏 Unidades (und)</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-bio w-100 py-3 bg-white text-black fw-bold" onclick="guardarReceta()">
-                                <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR COMPONENTE
-                            </button>
-                        </div>
                     </div>
                 </div>
-                <div class="table-container p-4">
-                    <h6 class="form-label-neon mb-4 fs-5 text-center text-white">BIOLOGÍA DE LA FÓRMULA ACTIVA</h6>
-                    <table class="table text-center align-middle"><thead class="table-dark"><tr><th>EXTRACTO / MATERIAL</th><th>DOSIS_REQUERIDA</th><th>COSTO PROYECTADO</th><th>SEPARAR</th></tr></thead><tbody id="tabla-vista-formula"></tbody></table>
+
+                <div class="accordion" id="accordionRecetas">
+
+                    <!-- 1. ESTRUCTURADOR DE FÓRMULAS DE PULPAS (PACKS / PRODUCCIÓN) -->
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingRecetasPulpas">
+                            <button class="accordion-button font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasPulpas" aria-expanded="true" aria-controls="collapseRecetasPulpas" style="background: rgba(0,255,0,0.05); border: 1px solid var(--p-bio-green); color: var(--p-bio-green); box-shadow: 0 0 10px rgba(0,255,0,0.2);">
+                                <i class="bi bi-tree me-2"></i> ESTRUCTURADOR DE FÓRMULAS DE PULPAS (PACKS / PRODUCCIÓN)
+                            </button>
+                        </h2>
+                        <div id="collapseRecetasPulpas" class="accordion-collapse collapse show" aria-labelledby="headingRecetasPulpas" data-bs-parent="#accordionRecetas">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-bio-green);">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon" style="color: var(--p-bio-green);">PULPA EN PACK / PRODUCCIÓN (OUTPUT)</label>
+                                            <select id="rec-producto-pulpas" class="form-select border-success text-white" onchange="cargarTablaReceta('pulpas')"></select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon" style="color: var(--p-bio-green);">MATERIA PRIMA / BOTÁNICA (INPUT)</label>
+                                            <select id="rec-insumo-pulpas" class="form-select border-success text-white" onchange="actualizarUnidadDefaultInsumo('pulpas')"></select>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mt-2 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="form-label-neon" style="color: var(--p-bio-green);">DOSIS REQUERIDA POR PULPA</label>
+                                            <input type="number" id="rec-cantidad-pulpas" class="form-control border-success text-white fs-4" placeholder="0.00" step="0.01">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
+                                            <select id="rec-unidad-pulpas" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;">
+                                                <option value="gr">🌾 Gramos (gr)</option>
+                                                <option value="mls">💧 Mililitros (mls)</option>
+                                                <option value="und">🍏 Unidades (und)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button class="btn btn-bio w-100 py-3 fw-bold" style="background: var(--p-bio-green); color: #000;" onclick="guardarReceta('pulpas')">
+                                                <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR A FÓRMULA DE PULPA
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 p-3 rounded-3" style="background: rgba(0,0,0,0.6); border: 1px dashed var(--p-bio-green);">
+                                        <h6 class="form-label-neon mb-3 fs-6 text-center" style="color: var(--p-bio-green);">BIOLOGÍA DE LA FÓRMULA ACTIVA (PULPA)</h6>
+                                        <div class="table-responsive">
+                                            <table class="table text-center align-middle m-0">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>EXTRACTO / MATERIAL</th>
+                                                        <th>DOSIS_REQUERIDA</th>
+                                                        <th>COSTO PROYECTADO</th>
+                                                        <th>SEPARAR</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tabla-vista-formula-pulpas"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. ESTRUCTURADOR DE FÓRMULAS DE VASOS DE 500 MLS (ELÍXIRES Y SHOTS) -->
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingRecetasVasos">
+                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasVasos" aria-expanded="false" aria-controls="collapseRecetasVasos" style="background: rgba(0,255,255,0.05); border: 1px solid var(--p-cyan); color: var(--p-cyan); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
+                                <i class="bi bi-cup-straw me-2"></i> ESTRUCTURADOR DE FÓRMULAS DE VASOS DE 500 MLS (ELÍXIRES Y SHOTS)
+                            </button>
+                        </h2>
+                        <div id="collapseRecetasVasos" class="accordion-collapse collapse" aria-labelledby="headingRecetasVasos" data-bs-parent="#accordionRecetas">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-cyan);">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon text-info">BATIDO EN VASO / SHOT (OUTPUT)</label>
+                                            <select id="rec-producto-vasos" class="form-select border-info text-white" onchange="cargarTablaReceta('vasos')"></select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon text-info">INGREDIENTE / VASO / PACKAGING (INPUT)</label>
+                                            <select id="rec-insumo-vasos" class="form-select border-info text-white" onchange="actualizarUnidadDefaultInsumo('vasos')"></select>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mt-2 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="form-label-neon text-info">DOSIS REQUERIDA POR VASO DE 500 MLS</label>
+                                            <input type="number" id="rec-cantidad-vasos" class="form-control border-info text-white fs-4" placeholder="0.00" step="0.01">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
+                                            <select id="rec-unidad-vasos" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;">
+                                                <option value="gr">🌾 Gramos (gr)</option>
+                                                <option value="mls">💧 Mililitros (mls)</option>
+                                                <option value="und">🍏 Unidades (und)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button class="btn btn-bio w-100 py-3 fw-bold" style="background: var(--p-cyan); color: #000;" onclick="guardarReceta('vasos')">
+                                                <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR A FÓRMULA DE VASO
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 p-3 rounded-3" style="background: rgba(0,0,0,0.6); border: 1px dashed var(--p-cyan);">
+                                        <h6 class="form-label-neon mb-3 fs-6 text-center text-info">BIOLOGÍA DE LA FÓRMULA ACTIVA (VASO 500 MLS / SHOT)</h6>
+                                        <div class="table-responsive">
+                                            <table class="table text-center align-middle m-0">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>EXTRACTO / MATERIAL / PACKAGING</th>
+                                                        <th>DOSIS_REQUERIDA</th>
+                                                        <th>COSTO PROYECTADO</th>
+                                                        <th>SEPARAR</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tabla-vista-formula-vasos"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -1712,27 +1813,57 @@
         } catch(e) {}
     }
 
-    // --- RECETAS ---
+    // --- RECETAS DE PULPAS Y VASOS ---
     async function prepararRecetas() { 
         try { 
             const [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]); 
             const productos = await rP.json(); 
             const insumos = await rI.json(); 
             insMem = insumos; // <-- CRUCIAL PARA CALCULAR PRECIO
-            const suc = document.getElementById('filtro-sucursal-recetas').value; 
-            document.getElementById('rec-producto').innerHTML = productos.filter(p=>p.sucursal===suc).map(p=>`<option value="${p.id}">${p.nombre}</option>`).join(''); 
+            const suc = document.getElementById('filtro-sucursal-recetas') ? document.getElementById('filtro-sucursal-recetas').value : 'Antofagasta'; 
             
-            const insSelect = document.getElementById('rec-insumo');
-            insSelect.innerHTML = insumos.filter(i=>i.sucursal===suc).map(i=>`<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join(''); 
-            
-            actualizarUnidadDefaultInsumo();
-            cargarTablaReceta(); 
-        } catch(e) {} 
+            const prodsNodo = productos.filter(p => p.sucursal === suc);
+            const insNodo = insumos.filter(i => i.sucursal === suc);
+
+            // 1. PRODUCTOS Y INSUMOS PARA PULPAS (PACKS / PRODUCCIÓN)
+            let prodsPulpas = prodsNodo.filter(p => p.categoria && (p.categoria.toLowerCase().includes('pack') || p.categoria.toLowerCase().includes('pulpa')));
+            if (prodsPulpas.length === 0) prodsPulpas = prodsNodo;
+            const selectProdPulpas = document.getElementById('rec-producto-pulpas');
+            if (selectProdPulpas) {
+                selectProdPulpas.innerHTML = prodsPulpas.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || 'Packs'})</option>`).join('');
+            }
+
+            const insPulpas = insNodo.filter(i => !i.categoria || !i.categoria.includes('Vaso'));
+            const selectInsPulpas = document.getElementById('rec-insumo-pulpas');
+            if (selectInsPulpas) {
+                selectInsPulpas.innerHTML = insPulpas.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+            }
+
+            // 2. PRODUCTOS Y INSUMOS PARA VASOS DE 500 MLS (ELÍXIRES Y SHOTS)
+            let prodsVasos = prodsNodo.filter(p => !p.categoria || !p.categoria.toLowerCase().includes('pack'));
+            if (prodsVasos.length === 0) prodsVasos = prodsNodo;
+            const selectProdVasos = document.getElementById('rec-producto-vasos');
+            if (selectProdVasos) {
+                selectProdVasos.innerHTML = prodsVasos.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || '500 mls'})</option>`).join('');
+            }
+
+            const selectInsVasos = document.getElementById('rec-insumo-vasos');
+            if (selectInsVasos) {
+                selectInsVasos.innerHTML = insNodo.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+            }
+
+            actualizarUnidadDefaultInsumo('pulpas');
+            actualizarUnidadDefaultInsumo('vasos');
+            cargarTablaReceta('pulpas'); 
+            cargarTablaReceta('vasos'); 
+        } catch(e) { console.error('Error preparando recetas:', e); } 
     }
 
-    function actualizarUnidadDefaultInsumo() {
-        const insSelect = document.getElementById('rec-insumo');
-        const uniSelect = document.getElementById('rec-unidad');
+    function actualizarUnidadDefaultInsumo(tipo = 'pulpas') {
+        const idIns = tipo === 'vasos' ? 'rec-insumo-vasos' : 'rec-insumo-pulpas';
+        const idUni = tipo === 'vasos' ? 'rec-unidad-vasos' : 'rec-unidad-pulpas';
+        const insSelect = document.getElementById(idIns);
+        const uniSelect = document.getElementById(idUni);
         if (!insSelect || !uniSelect) return;
         const selectedOpt = insSelect.options[insSelect.selectedIndex];
         if (selectedOpt && selectedOpt.dataset && selectedOpt.dataset.medida) {
@@ -1743,14 +1874,19 @@
         }
     }
 
-    async function guardarReceta() { 
-        const id = document.getElementById('rec-producto').value; 
-        const ing = document.getElementById('rec-insumo').value; 
-        const cant = document.getElementById('rec-cantidad').value; 
-        const uni = document.getElementById('rec-unidad').value; 
+    async function guardarReceta(tipo = 'pulpas') { 
+        const idProdSelect = tipo === 'vasos' ? 'rec-producto-vasos' : 'rec-producto-pulpas';
+        const idInsSelect = tipo === 'vasos' ? 'rec-insumo-vasos' : 'rec-insumo-pulpas';
+        const idCantInput = tipo === 'vasos' ? 'rec-cantidad-vasos' : 'rec-cantidad-pulpas';
+        const idUniSelect = tipo === 'vasos' ? 'rec-unidad-vasos' : 'rec-unidad-pulpas';
 
-        if (!cant || parseFloat(cant) <= 0) {
-            alert("Por favor ingresa una dosis válida mayor a 0.");
+        const id = document.getElementById(idProdSelect) ? document.getElementById(idProdSelect).value : null; 
+        const ing = document.getElementById(idInsSelect) ? document.getElementById(idInsSelect).value : null; 
+        const cant = document.getElementById(idCantInput) ? document.getElementById(idCantInput).value : null; 
+        const uni = document.getElementById(idUniSelect) ? document.getElementById(idUniSelect).value : 'gr'; 
+
+        if (!id || !ing || !cant || parseFloat(cant) <= 0) {
+            alert("Por favor selecciona un producto, un ingrediente e ingresa una dosis válida mayor a 0.");
             return;
         }
 
@@ -1762,31 +1898,36 @@
             body:JSON.stringify({ingrediente: ing, gasto: gastoConUnidad})
         }); 
 
-        document.getElementById('rec-cantidad').value = '';
-        cargarTablaReceta(); 
+        if (document.getElementById(idCantInput)) document.getElementById(idCantInput).value = '';
+        cargarTablaReceta(tipo); 
         playSound('click'); 
     }
 
-    async function desvincularIngrediente(nombreIngrediente) { 
-        const id = document.getElementById('rec-producto').value; 
+    async function desvincularIngrediente(nombreIngrediente, tipo = 'pulpas') { 
+        const idProdSelect = tipo === 'vasos' ? 'rec-producto-vasos' : 'rec-producto-pulpas';
+        const id = document.getElementById(idProdSelect) ? document.getElementById(idProdSelect).value : null; 
+        if(!id) return;
         if(confirm(`¿Desvincular ${nombreIngrediente} de la fórmula?`)){ 
             await fetch(`/api/insumos/${id}/desvincular/${encodeURIComponent(nombreIngrediente)}`, {method:'DELETE'}); 
-            cargarTablaReceta(); 
+            cargarTablaReceta(tipo); 
             playSound('error'); 
         } 
     }
 
-    async function cargarTablaReceta() { 
-        const id = document.getElementById('rec-producto').value; 
+    async function cargarTablaReceta(tipo = 'pulpas') { 
+        const idProdSelect = tipo === 'vasos' ? 'rec-producto-vasos' : 'rec-producto-pulpas';
+        const idTabla = tipo === 'vasos' ? 'tabla-vista-formula-vasos' : 'tabla-vista-formula-pulpas';
+        const id = document.getElementById(idProdSelect) ? document.getElementById(idProdSelect).value : null; 
+        const tb = document.getElementById(idTabla); 
+        if(!tb) return;
+        tb.innerHTML=''; 
         if(!id) return; 
         try { 
             const res = await fetch(`/api/insumos/${id}/receta`); 
             const txt = await res.text(); 
-            const tb = document.getElementById('tabla-vista-formula'); 
-            tb.innerHTML=''; 
             
             let costoTotal = 0;
-            const suc = document.getElementById('filtro-sucursal-recetas').value;
+            const suc = document.getElementById('filtro-sucursal-recetas') ? document.getElementById('filtro-sucursal-recetas').value : 'Antofagasta';
 
             txt.split('\n').forEach(l=>{ 
                 if(l.includes(':')) {
@@ -1820,9 +1961,9 @@
 
                     tb.innerHTML+=`<tr>
                         <td class="text-white fw-bold fs-4">${nombre}</td>
-                        <td class="fs-4" style="color:var(--p-bio-green); text-shadow:var(--green-glow);">${gastoVal} <span class="fs-6 text-white-50">${unidadTxt}</span></td>
+                        <td class="fs-4" style="color:${tipo==='vasos'?'var(--p-cyan)':'var(--p-bio-green)'}; text-shadow:0 0 10px currentColor;">${gastoVal} <span class="fs-6 text-white-50">${unidadTxt}</span></td>
                         <td class="fs-4">${costoHtml}</td>
-                        <td><i class="bi bi-scissors text-danger fs-3" style="cursor:pointer;" onclick="desvincularIngrediente('${nombre}')"></i></td>
+                        <td><i class="bi bi-scissors text-danger fs-3" style="cursor:pointer;" onclick="desvincularIngrediente('${nombre}', '${tipo}')"></i></td>
                     </tr>`; 
                 }
             }); 
