@@ -555,10 +555,10 @@
             }
         } catch(e) {}
 
-        // Filtrar insumos que corresponden a ingredientes de batido
+        // Filtrar insumos que corresponden a ingredientes de batido (excluyendo vasos, packaging, shots y caldos)
         insumos = insumos.filter(i => {
             const cat = (i.categoria || '').toLowerCase();
-            return !cat.includes('vaso') && !cat.includes('packaging');
+            return !cat.includes('vaso') && !cat.includes('packaging') && !cat.includes('shot') && !cat.includes('caldo');
         });
 
         if (insumos.length === 0) {

@@ -320,6 +320,11 @@ public class DataInitializer implements CommandLineRunner {
                 // 12. CEREALES
                 crearInsumoSiNoExiste("Avena Integral", 5000.0, 40, "gr", sede, "Pulpas", "Cereales", 15.0 * factorMoneda);
                 crearInsumoSiNoExiste("Quinua Inflada", 3000.0, 20, "gr", sede, "Pulpas", "Cereales", 20.0 * factorMoneda);
+
+                // 13. SHOTS Y CALDOS DE HUESO
+                crearInsumoSiNoExiste("Concentrado de Jengibre Shot", 3000.0, 30, "mls", sede, "Shots y Caldos", "Suplementos", 25.0 * factorMoneda);
+                crearInsumoSiNoExiste("Extracto de Cúrcuma & Pimienta", 2000.0, 20, "mls", sede, "Shots y Caldos", "Especias", 30.0 * factorMoneda);
+                crearInsumoSiNoExiste("Base Caldo de Huesos Orgánico", 5000.0, 100, "mls", sede, "Shots y Caldos", "Base", 35.0 * factorMoneda);
             }
             System.out.println(">> GÓMEZ SYSTEMS: Insumos de Bodega inicializados con subcategorías correctamente para Antofagasta.");
         }

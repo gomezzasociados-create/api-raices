@@ -496,7 +496,7 @@
                         </div>
                     </div>
 
-                    <div class="accordion-item bg-transparent border-0">
+                    <div class="accordion-item bg-transparent border-0 mb-4">
                         <h2 class="accordion-header" id="headingVasos">
                             <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVasos" aria-expanded="false" aria-controls="collapseVasos" style="background: rgba(0,255,255,0.05); border: 1px solid var(--p-cyan); color: var(--p-cyan); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
                                 <i class="bi bi-cup-straw me-2"></i> SUMINISTROS FÍSICOS: VASOS Y PACKAGING
@@ -531,6 +531,43 @@
                         </div>
                     </div>
 
+                    <!-- 3. SUMINISTROS Y MATERIA PRIMA: SHOTS Y CALDOS DE HUESO -->
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingShots">
+                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseShots" aria-expanded="false" aria-controls="collapseShots" style="background: rgba(255,0,234,0.05); border: 1px solid var(--p-magenta); color: var(--p-magenta); box-shadow: 0 0 10px rgba(255,0,234,0.2);">
+                                <i class="bi bi-lightning-charge me-2"></i> SUMINISTROS Y MATERIA PRIMA: SHOTS Y CALDOS DE HUESO
+                            </button>
+                        </h2>
+                        <div id="collapseShots" class="accordion-collapse collapse" aria-labelledby="headingShots" data-bs-parent="#accordionInventario">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-magenta);">
+                                    <div class="d-flex justify-content-end mb-1 mt-2">
+                                        <div class="p-2 border rounded" style="border-color: var(--p-magenta) !important; background: rgba(255,0,234,0.1); box-shadow: 0 0 10px rgba(255,0,234,0.2);">
+                                            <span style="color:var(--p-magenta); font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
+                                            <span class="fw-bold text-white fs-4" id="total-valor-shots" style="text-shadow: 0 0 10px rgba(255,0,234,0.5);">$0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-4 mt-1">
+                                        <input type="hidden" id="shot-id">
+                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-magenta)">Elemento / Extracto</label><input type="text" id="shot-nombre" class="form-control"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Subcategoría</label><select id="shot-subcategoria" class="form-select"><option value="Suplementos">Suplementos</option><option value="Base">Base</option><option value="Especias">Especias</option><option value="Frutas">Frutas</option><option value="Vegetales">Vegetales</option><option value="Endulzantes">Endulzantes</option></select></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Métrica</label><select id="shot-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
+                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-magenta)">Volumen</label><input type="number" id="shot-stock" class="form-control"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UNIT</label><input type="number" id="shot-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="0.00"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Nodo Destino</label><select id="shot-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
+                                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-magenta); color: #fff;" onclick="guardarInsumo('shots')"><i class="bi bi-plus-lg fs-4"></i></button></div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table text-center align-middle m-0">
+                                            <thead class="table-dark"><tr><th>ELEMENTO_SHOT_CALDO</th><th>ETIQUETA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>VALOR/UNIT</th><th>VALOR_TOTAL</th><th>ACCIONES</th></tr></thead>
+                                            <tbody id="tabla-shots"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -555,7 +592,7 @@
                     <div class="accordion-item bg-transparent border-0 mb-4">
                         <h2 class="accordion-header" id="headingRecetasPulpas">
                             <button class="accordion-button font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasPulpas" aria-expanded="true" aria-controls="collapseRecetasPulpas" style="background: rgba(0,255,0,0.05); border: 1px solid var(--p-bio-green); color: var(--p-bio-green); box-shadow: 0 0 10px rgba(0,255,0,0.2);">
-                                <i class="bi bi-tree me-2"></i> ESTRUCTURADOR DE FÓRMULAS DE PULPAS (PACKS / PRODUCCIÓN)
+                                <i class="bi bi-tree me-2"></i> 1. ESTRUCTURADOR DE FÓRMULAS DE PULPAS (PACKS / PRODUCCIÓN)
                             </button>
                         </h2>
                         <div id="collapseRecetasPulpas" class="accordion-collapse collapse show" aria-labelledby="headingRecetasPulpas" data-bs-parent="#accordionRecetas">
@@ -611,11 +648,11 @@
                         </div>
                     </div>
 
-                    <!-- 2. ESTRUCTURADOR DE FÓRMULAS DE VASOS DE 500 MLS (ELÍXIRES Y SHOTS) -->
+                    <!-- 2. ESTRUCTURADOR DE FÓRMULAS DE VASOS DE 500 MLS (ELÍXIRES) -->
                     <div class="accordion-item bg-transparent border-0 mb-4">
                         <h2 class="accordion-header" id="headingRecetasVasos">
                             <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasVasos" aria-expanded="false" aria-controls="collapseRecetasVasos" style="background: rgba(0,255,255,0.05); border: 1px solid var(--p-cyan); color: var(--p-cyan); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
-                                <i class="bi bi-cup-straw me-2"></i> ESTRUCTURADOR DE FÓRMULAS DE VASOS DE 500 MLS (ELÍXIRES Y SHOTS)
+                                <i class="bi bi-cup-straw me-2"></i> 2. ESTRUCTURADOR DE FÓRMULAS DE VASOS DE 500 MLS (ELÍXIRES)
                             </button>
                         </h2>
                         <div id="collapseRecetasVasos" class="accordion-collapse collapse" aria-labelledby="headingRecetasVasos" data-bs-parent="#accordionRecetas">
@@ -623,7 +660,7 @@
                                 <div class="table-container mb-0" style="border-top: 3px solid var(--p-cyan);">
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <label class="form-label-neon text-info">BATIDO EN VASO / SHOT (OUTPUT)</label>
+                                            <label class="form-label-neon text-info">BATIDO EN VASO 500 MLS (OUTPUT)</label>
                                             <select id="rec-producto-vasos" class="form-select border-info text-white" onchange="cargarTablaReceta('vasos')"></select>
                                         </div>
                                         <div class="col-md-6">
@@ -651,7 +688,7 @@
                                         </div>
                                     </div>
                                     <div class="mt-4 p-3 rounded-3" style="background: rgba(0,0,0,0.6); border: 1px dashed var(--p-cyan);">
-                                        <h6 class="form-label-neon mb-3 fs-6 text-center text-info">BIOLOGÍA DE LA FÓRMULA ACTIVA (VASO 500 MLS / SHOT)</h6>
+                                        <h6 class="form-label-neon mb-3 fs-6 text-center text-info">BIOLOGÍA DE LA FÓRMULA ACTIVA (VASO 500 MLS)</h6>
                                         <div class="table-responsive">
                                             <table class="table text-center align-middle m-0">
                                                 <thead class="table-dark">
@@ -663,6 +700,66 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="tabla-vista-formula-vasos"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. ESTRUCTURADOR DE FÓRMULAS DE SHOTS Y CALDOS DE HUESO -->
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingRecetasShots">
+                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasShots" aria-expanded="false" aria-controls="collapseRecetasShots" style="background: rgba(255,0,234,0.05); border: 1px solid var(--p-magenta); color: var(--p-magenta); box-shadow: 0 0 10px rgba(255,0,234,0.2);">
+                                <i class="bi bi-lightning-charge me-2"></i> 3. ESTRUCTURADOR DE FÓRMULAS DE SHOTS Y CALDOS DE HUESO
+                            </button>
+                        </h2>
+                        <div id="collapseRecetasShots" class="accordion-collapse collapse" aria-labelledby="headingRecetasShots" data-bs-parent="#accordionRecetas">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-magenta);">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon" style="color:var(--p-magenta);">SHOT O CALDO DE HUESO (OUTPUT)</label>
+                                            <select id="rec-producto-shots" class="form-select text-white" style="border-color:var(--p-magenta);" onchange="cargarTablaReceta('shots')"></select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon" style="color:var(--p-magenta);">EXTRACTO / INGREDIENTE ESPECÍFICO (INPUT)</label>
+                                            <select id="rec-insumo-shots" class="form-select text-white" style="border-color:var(--p-magenta);" onchange="actualizarUnidadDefaultInsumo('shots')"></select>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mt-2 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="form-label-neon" style="color:var(--p-magenta);">DOSIS REQUERIDA POR SHOT / CALDO</label>
+                                            <input type="number" id="rec-cantidad-shots" class="form-control text-white fs-4" style="border-color:var(--p-magenta);" placeholder="0.00" step="0.01">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
+                                            <select id="rec-unidad-shots" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;">
+                                                <option value="gr">🌾 Gramos (gr)</option>
+                                                <option value="mls">💧 Mililitros (mls)</option>
+                                                <option value="und">🍏 Unidades (und)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button class="btn btn-bio w-100 py-3 fw-bold" style="background: var(--p-magenta); color: #fff;" onclick="guardarReceta('shots')">
+                                                <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR A FÓRMULA DE SHOT/CALDO
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 p-3 rounded-3" style="background: rgba(0,0,0,0.6); border: 1px dashed var(--p-magenta);">
+                                        <h6 class="form-label-neon mb-3 fs-6 text-center" style="color:var(--p-magenta);">BIOLOGÍA DE LA FÓRMULA ACTIVA (SHOT / CALDO DE HUESO)</h6>
+                                        <div class="table-responsive">
+                                            <table class="table text-center align-middle m-0">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>EXTRACTO / MATERIAL / BASE</th>
+                                                        <th>DOSIS_REQUERIDA</th>
+                                                        <th>COSTO PROYECTADO</th>
+                                                        <th>SEPARAR</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tabla-vista-formula-shots"></tbody>
                                             </table>
                                         </div>
                                     </div>
@@ -1675,7 +1772,7 @@
         }
     }
 
-    // --- INSUMOS ---
+    // --- INSUMOS (BODEGAS: PULPAS, VASOS, SHOTS/CALDOS) ---
     async function cargarInsumos() {
         try {
             const res = await fetch('/api/insumos/todos');
@@ -1683,18 +1780,25 @@
             insMem = data;
             const tbPulpas = document.getElementById('tabla-pulpas'); if(tbPulpas) tbPulpas.innerHTML='';
             const tbVasos = document.getElementById('tabla-vasos'); if(tbVasos) tbVasos.innerHTML='';
+            const tbShots = document.getElementById('tabla-shots'); if(tbShots) tbShots.innerHTML='';
 
             let totalPulpas = 0;
             let totalVasos = 0;
+            let totalShots = 0;
 
             data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).forEach(i => {
                 const sucIns = normalizarStr(i.sucursal || '');
                 const sucAdmin = normalizarStr(sucursalAdmin);
                 if (rolUsuario !== 'SUPREMO' && !sucIns.includes(sucAdmin)) return;
 
-                const isVaso = i.categoria && i.categoria.includes('Vaso');
+                const cat = (i.categoria || '').toLowerCase();
+                const isVaso = cat.includes('vaso') || cat.includes('packaging');
+                const isShot = cat.includes('shot') || cat.includes('caldo');
 
-                const selectFiltroId = isVaso ? 'vaso-sucursal' : 'ins-sucursal';
+                let selectFiltroId = 'ins-sucursal';
+                if (isVaso) selectFiltroId = 'vaso-sucursal';
+                else if (isShot) selectFiltroId = 'shot-sucursal';
+
                 const selectDestino = document.getElementById(selectFiltroId);
                 if (selectDestino) {
                     const sucFiltro = normalizarStr(selectDestino.value);
@@ -1712,17 +1816,34 @@
                 }
                 
                 if (isVaso) { totalVasos += valorInsumo; }
+                else if (isShot) { totalShots += valorInsumo; }
                 else { totalPulpas += valorInsumo; }
 
-                let stockDisplay = i.unidadActual.toFixed(2);
-                let stockHTML = `<span class="text-warning fw-bold fs-4" style="text-shadow:0 0 10px #ffdd00;">${stockDisplay} <span class="fs-6 text-white-50">${i.medida}</span></span>`;
+                let stockDisplay = (i.unidadActual || 0).toFixed(2);
+                let stockHTML = `<span class="text-warning fw-bold fs-4" style="text-shadow:0 0 10px #ffdd00;">${stockDisplay} <span class="fs-6 text-white-50">${i.medida || 'gr'}</span></span>`;
                 if ((!isVaso && i.unidadActual < 500) || (isVaso && i.unidadActual < 50)) {
-                    stockHTML = `<span class="text-danger fw-bold fs-4" style="text-shadow:0 0 15px red;"><i class="bi bi-exclamation-triangle-fill me-1"></i>${stockDisplay} <span class="fs-6 text-danger">${i.medida}</span></span>`;
+                    stockHTML = `<span class="text-danger fw-bold fs-4" style="text-shadow:0 0 15px red;"><i class="bi bi-exclamation-triangle-fill me-1"></i>${stockDisplay} <span class="fs-6 text-danger">${i.medida || 'gr'}</span></span>`;
                 }
 
-                const row = `<tr><td class="fw-bold text-white fs-5">${i.nombre}</td><td><span class="badge-categoria" style="${isVaso?'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan)':''}">${(i.categoria||'Pulpas').toUpperCase()}</span></td><td class="text-white">${i.sucursal}</td><td>${stockHTML}</td><td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td><td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td><td><button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})"><i class="bi bi-pencil-square fs-3"></i></button><button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})"><i class="bi bi-trash3-fill fs-3"></i></button></td></tr>`;
+                let colorBadge = 'color:var(--p-bio-green); border-color:var(--p-bio-green); box-shadow:0 0 10px var(--p-bio-green);';
+                if (isVaso) colorBadge = 'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan);';
+                else if (isShot) colorBadge = 'color:var(--p-magenta); border-color:var(--p-magenta); box-shadow:0 0 10px var(--p-magenta);';
+
+                const row = `<tr>
+                    <td class="fw-bold text-white fs-5">${i.nombre}</td>
+                    <td><span class="badge-categoria" style="${colorBadge}">${(i.categoria||'Pulpas').toUpperCase()}</span></td>
+                    <td class="text-white">${i.sucursal}</td>
+                    <td>${stockHTML}</td>
+                    <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
+                    <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
+                    <td>
+                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})"><i class="bi bi-pencil-square fs-3"></i></button>
+                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})"><i class="bi bi-trash3-fill fs-3"></i></button>
+                    </td>
+                </tr>`;
 
                 if (isVaso && tbVasos) tbVasos.innerHTML += row;
+                else if (isShot && tbShots) tbShots.innerHTML += row;
                 else if (tbPulpas) tbPulpas.innerHTML += row;
             });
             
@@ -1734,19 +1855,32 @@
             const tbVVasos = document.getElementById('total-valor-vasos');
             if (tbVVasos) tbVVasos.innerText = formatMoney(totalVasos, sucMuestraVasos);
             
-        } catch(e) {}
+            const sucMuestraShots = document.getElementById('shot-sucursal') ? document.getElementById('shot-sucursal').value : 'Antofagasta';
+            const tbVShots = document.getElementById('total-valor-shots');
+            if (tbVShots) tbVShots.innerText = formatMoney(totalShots, sucMuestraShots);
+
+        } catch(e) { console.error('Error cargando insumos:', e); }
     }
 
     function editarInsumo(id) {
         let ins = insMem.find(i => i.idInsumo === id);
         if(ins) {
-            if(ins.categoria && ins.categoria.includes('Vaso')) {
+            const cat = (ins.categoria || '').toLowerCase();
+            if(cat.includes('vaso') || cat.includes('packaging')) {
                 document.getElementById('vaso-id').value = ins.idInsumo;
                 document.getElementById('vaso-nombre').value = ins.nombre;
                 document.getElementById('vaso-unidad').value = ins.medida || 'und';
                 document.getElementById('vaso-stock').value = ins.unidadActual;
                 document.getElementById('vaso-sucursal').value = ins.sucursal;
                 document.getElementById('vaso-precio').value = ins.precio || 0;
+            } else if(cat.includes('shot') || cat.includes('caldo')) {
+                document.getElementById('shot-id').value = ins.idInsumo;
+                document.getElementById('shot-nombre').value = ins.nombre;
+                if (ins.subcategoria && document.getElementById('shot-subcategoria')) document.getElementById('shot-subcategoria').value = ins.subcategoria;
+                document.getElementById('shot-unidad').value = ins.medida || 'mls';
+                document.getElementById('shot-stock').value = ins.unidadActual;
+                document.getElementById('shot-sucursal').value = ins.sucursal;
+                document.getElementById('shot-precio').value = ins.precio || 0;
             } else {
                 document.getElementById('ins-id').value = ins.idInsumo;
                 document.getElementById('ins-nombre').value = ins.nombre;
@@ -1761,12 +1895,47 @@
     }
 
     function guardarInsumo(tipo) {
-        let id, nombre, cat, subcat, uni, stock, suc;
-        if(tipo==='pulpas'){ id = document.getElementById('ins-id').value; nombre = document.getElementById('ins-nombre').value; cat='Pulpas'; subcat=document.getElementById('ins-subcategoria')?document.getElementById('ins-subcategoria').value:'Vegetales'; uni=document.getElementById('ins-unidad').value; stock=document.getElementById('ins-stock').value; suc=document.getElementById('ins-sucursal').value; }
-        else { id = document.getElementById('vaso-id').value; nombre = document.getElementById('vaso-nombre').value; cat='Insumos Vaso'; subcat=' Packaging'; uni=document.getElementById('vaso-unidad').value; stock=document.getElementById('vaso-stock').value; suc=document.getElementById('vaso-sucursal').value; }
-        if(!nombre) return;
+        let id, nombre, cat, subcat, uni, stock, suc, precioVal;
+        if(tipo==='pulpas'){ 
+            id = document.getElementById('ins-id').value; 
+            nombre = document.getElementById('ins-nombre').value; 
+            cat='Pulpas'; 
+            subcat=document.getElementById('ins-subcategoria')?document.getElementById('ins-subcategoria').value:'Vegetales'; 
+            uni=document.getElementById('ins-unidad').value; 
+            stock=document.getElementById('ins-stock').value; 
+            suc=document.getElementById('ins-sucursal').value;
+            precioVal = parseFloat(document.getElementById('ins-precio').value) || 0;
+        } else if(tipo==='vasos') { 
+            id = document.getElementById('vaso-id').value; 
+            nombre = document.getElementById('vaso-nombre').value; 
+            cat='Insumos Vaso'; 
+            subcat='Packaging'; 
+            uni=document.getElementById('vaso-unidad').value; 
+            stock=document.getElementById('vaso-stock').value; 
+            suc=document.getElementById('vaso-sucursal').value;
+            precioVal = parseFloat(document.getElementById('vaso-precio').value) || 0;
+        } else if(tipo==='shots') {
+            id = document.getElementById('shot-id').value; 
+            nombre = document.getElementById('shot-nombre').value; 
+            cat='Shots y Caldos'; 
+            subcat=document.getElementById('shot-subcategoria')?document.getElementById('shot-subcategoria').value:'Suplementos'; 
+            uni=document.getElementById('shot-unidad').value; 
+            stock=document.getElementById('shot-stock').value; 
+            suc=document.getElementById('shot-sucursal').value;
+            precioVal = parseFloat(document.getElementById('shot-precio').value) || 0;
+        }
+        if(!nombre) return alert("Ingresa al menos el nombre del insumo.");
 
-        let payload = {nombre, categoria:cat, subcategoria:subcat, medida:uni, unidadActual:parseFloat(stock)||0, precio: parseFloat(document.getElementById(tipo==='pulpas' ? 'ins-precio' : 'vaso-precio').value)||0, sucursal:suc, actorAdmin: rolUsuario==='SUPREMO' ? 'SUPREMO' : ('Admin ' + sucursalAdmin)};
+        let payload = {
+            nombre, 
+            categoria: cat, 
+            subcategoria: subcat, 
+            medida: uni, 
+            unidadActual: parseFloat(stock)||0, 
+            precio: precioVal, 
+            sucursal: suc, 
+            actorAdmin: rolUsuario==='SUPREMO' ? 'SUPREMO' : ('Admin ' + sucursalAdmin)
+        };
         if(id) { payload.idInsumo = parseInt(id); }
 
         fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
@@ -1776,9 +1945,15 @@
                 alert("❌ ERROR AL GUARDAR: " + errTxt);
                 throw new Error(errTxt);
             }
-            document.getElementById('ins-id').value=''; document.getElementById('vaso-id').value='';
-            document.getElementById('ins-nombre').value=''; document.getElementById('ins-stock').value='';
-            document.getElementById('vaso-nombre').value=''; document.getElementById('vaso-stock').value='';
+            if (document.getElementById('ins-id')) document.getElementById('ins-id').value=''; 
+            if (document.getElementById('vaso-id')) document.getElementById('vaso-id').value='';
+            if (document.getElementById('shot-id')) document.getElementById('shot-id').value='';
+            if (document.getElementById('ins-nombre')) document.getElementById('ins-nombre').value=''; 
+            if (document.getElementById('ins-stock')) document.getElementById('ins-stock').value='';
+            if (document.getElementById('vaso-nombre')) document.getElementById('vaso-nombre').value=''; 
+            if (document.getElementById('vaso-stock')) document.getElementById('vaso-stock').value='';
+            if (document.getElementById('shot-nombre')) document.getElementById('shot-nombre').value=''; 
+            if (document.getElementById('shot-stock')) document.getElementById('shot-stock').value='';
             cargarInsumos(); playSound('click');
         }).catch(err => {
             console.error("Error guardando insumo:", err);
@@ -1813,7 +1988,18 @@
         } catch(e) {}
     }
 
-    // --- RECETAS DE PULPAS Y VASOS ---
+    function deduplicarProductos(lista) {
+        const vistos = new Set();
+        return lista.filter(p => {
+            if (!p || !p.id) return false;
+            const clave = p.id;
+            if (vistos.has(clave)) return false;
+            vistos.add(clave);
+            return true;
+        });
+    }
+
+    // --- RECETAS DE PULPAS, VASOS Y SHOTS/CALDOS ---
     async function prepararRecetas() { 
         try { 
             const [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]); 
@@ -1826,42 +2012,83 @@
             const insNodo = insumos.filter(i => i.sucursal === suc);
 
             // 1. PRODUCTOS Y INSUMOS PARA PULPAS (PACKS / PRODUCCIÓN)
-            let prodsPulpas = prodsNodo.filter(p => p.categoria && (p.categoria.toLowerCase().includes('pack') || p.categoria.toLowerCase().includes('pulpa')));
-            if (prodsPulpas.length === 0) prodsPulpas = prodsNodo;
+            let prodsPulpas = prodsNodo.filter(p => {
+                const cat = (p.categoria || '').toLowerCase();
+                const nom = (p.nombre || '').toLowerCase();
+                return (cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa')) && !cat.includes('shot') && !cat.includes('caldo');
+            });
+            prodsPulpas = deduplicarProductos(prodsPulpas);
             const selectProdPulpas = document.getElementById('rec-producto-pulpas');
             if (selectProdPulpas) {
                 selectProdPulpas.innerHTML = prodsPulpas.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || 'Packs'})</option>`).join('');
             }
 
-            const insPulpas = insNodo.filter(i => !i.categoria || !i.categoria.includes('Vaso'));
+            const insPulpas = insNodo.filter(i => {
+                const cat = (i.categoria || '').toLowerCase();
+                return !cat.includes('vaso') && !cat.includes('packaging') && !cat.includes('shot') && !cat.includes('caldo');
+            });
             const selectInsPulpas = document.getElementById('rec-insumo-pulpas');
             if (selectInsPulpas) {
                 selectInsPulpas.innerHTML = insPulpas.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
             }
 
-            // 2. PRODUCTOS Y INSUMOS PARA VASOS DE 500 MLS (ELÍXIRES Y SHOTS)
-            let prodsVasos = prodsNodo.filter(p => !p.categoria || !p.categoria.toLowerCase().includes('pack'));
-            if (prodsVasos.length === 0) prodsVasos = prodsNodo;
+            // 2. PRODUCTOS Y INSUMOS PARA VASOS DE 500 MLS (ELÍXIRES)
+            let prodsVasos = prodsNodo.filter(p => {
+                const cat = (p.categoria || '').toLowerCase();
+                return (cat.includes('500') || cat.includes('elixir') || cat.includes('vaso')) && !cat.includes('pack') && !cat.includes('pulpa') && !cat.includes('shot') && !cat.includes('caldo');
+            });
+            if (prodsVasos.length === 0) prodsVasos = prodsNodo.filter(p => !p.categoria || (!p.categoria.toLowerCase().includes('pack') && !p.categoria.toLowerCase().includes('shot')));
+            prodsVasos = deduplicarProductos(prodsVasos);
             const selectProdVasos = document.getElementById('rec-producto-vasos');
             if (selectProdVasos) {
                 selectProdVasos.innerHTML = prodsVasos.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || '500 mls'})</option>`).join('');
             }
 
+            const insVasos = insNodo.filter(i => {
+                const cat = (i.categoria || '').toLowerCase();
+                return !cat.includes('shot') && !cat.includes('caldo');
+            });
             const selectInsVasos = document.getElementById('rec-insumo-vasos');
             if (selectInsVasos) {
-                selectInsVasos.innerHTML = insNodo.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+                selectInsVasos.innerHTML = insVasos.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+            }
+
+            // 3. PRODUCTOS Y INSUMOS PARA SHOTS Y CALDOS DE HUESO
+            let prodsShots = prodsNodo.filter(p => {
+                const cat = (p.categoria || '').toLowerCase();
+                const nom = (p.nombre || '').toLowerCase();
+                return cat.includes('shot') || cat.includes('caldo') || nom.includes('shot') || nom.includes('caldo');
+            });
+            prodsShots = deduplicarProductos(prodsShots);
+            const selectProdShots = document.getElementById('rec-producto-shots');
+            if (selectProdShots) {
+                selectProdShots.innerHTML = prodsShots.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || 'Shots'})</option>`).join('');
+            }
+
+            const insShots = insNodo.filter(i => {
+                const cat = (i.categoria || '').toLowerCase();
+                return cat.includes('shot') || cat.includes('caldo') || (!cat.includes('vaso') && !cat.includes('packaging'));
+            });
+            const selectInsShots = document.getElementById('rec-insumo-shots');
+            if (selectInsShots) {
+                selectInsShots.innerHTML = insShots.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
             }
 
             actualizarUnidadDefaultInsumo('pulpas');
             actualizarUnidadDefaultInsumo('vasos');
+            actualizarUnidadDefaultInsumo('shots');
             cargarTablaReceta('pulpas'); 
             cargarTablaReceta('vasos'); 
+            cargarTablaReceta('shots'); 
         } catch(e) { console.error('Error preparando recetas:', e); } 
     }
 
     function actualizarUnidadDefaultInsumo(tipo = 'pulpas') {
-        const idIns = tipo === 'vasos' ? 'rec-insumo-vasos' : 'rec-insumo-pulpas';
-        const idUni = tipo === 'vasos' ? 'rec-unidad-vasos' : 'rec-unidad-pulpas';
+        let idIns = 'rec-insumo-pulpas';
+        let idUni = 'rec-unidad-pulpas';
+        if (tipo === 'vasos') { idIns = 'rec-insumo-vasos'; idUni = 'rec-unidad-vasos'; }
+        else if (tipo === 'shots') { idIns = 'rec-insumo-shots'; idUni = 'rec-unidad-shots'; }
+
         const insSelect = document.getElementById(idIns);
         const uniSelect = document.getElementById(idUni);
         if (!insSelect || !uniSelect) return;
@@ -1875,10 +2102,16 @@
     }
 
     async function guardarReceta(tipo = 'pulpas') { 
-        const idProdSelect = tipo === 'vasos' ? 'rec-producto-vasos' : 'rec-producto-pulpas';
-        const idInsSelect = tipo === 'vasos' ? 'rec-insumo-vasos' : 'rec-insumo-pulpas';
-        const idCantInput = tipo === 'vasos' ? 'rec-cantidad-vasos' : 'rec-cantidad-pulpas';
-        const idUniSelect = tipo === 'vasos' ? 'rec-unidad-vasos' : 'rec-unidad-pulpas';
+        let idProdSelect = 'rec-producto-pulpas';
+        let idInsSelect = 'rec-insumo-pulpas';
+        let idCantInput = 'rec-cantidad-pulpas';
+        let idUniSelect = 'rec-unidad-pulpas';
+
+        if (tipo === 'vasos') {
+            idProdSelect = 'rec-producto-vasos'; idInsSelect = 'rec-insumo-vasos'; idCantInput = 'rec-cantidad-vasos'; idUniSelect = 'rec-unidad-vasos';
+        } else if (tipo === 'shots') {
+            idProdSelect = 'rec-producto-shots'; idInsSelect = 'rec-insumo-shots'; idCantInput = 'rec-cantidad-shots'; idUniSelect = 'rec-unidad-shots';
+        }
 
         const id = document.getElementById(idProdSelect) ? document.getElementById(idProdSelect).value : null; 
         const ing = document.getElementById(idInsSelect) ? document.getElementById(idInsSelect).value : null; 
@@ -1904,7 +2137,10 @@
     }
 
     async function desvincularIngrediente(nombreIngrediente, tipo = 'pulpas') { 
-        const idProdSelect = tipo === 'vasos' ? 'rec-producto-vasos' : 'rec-producto-pulpas';
+        let idProdSelect = 'rec-producto-pulpas';
+        if (tipo === 'vasos') idProdSelect = 'rec-producto-vasos';
+        else if (tipo === 'shots') idProdSelect = 'rec-producto-shots';
+
         const id = document.getElementById(idProdSelect) ? document.getElementById(idProdSelect).value : null; 
         if(!id) return;
         if(confirm(`¿Desvincular ${nombreIngrediente} de la fórmula?`)){ 
@@ -1915,8 +2151,16 @@
     }
 
     async function cargarTablaReceta(tipo = 'pulpas') { 
-        const idProdSelect = tipo === 'vasos' ? 'rec-producto-vasos' : 'rec-producto-pulpas';
-        const idTabla = tipo === 'vasos' ? 'tabla-vista-formula-vasos' : 'tabla-vista-formula-pulpas';
+        let idProdSelect = 'rec-producto-pulpas';
+        let idTabla = 'tabla-vista-formula-pulpas';
+        let colorTipo = 'var(--p-bio-green)';
+
+        if (tipo === 'vasos') {
+            idProdSelect = 'rec-producto-vasos'; idTabla = 'tabla-vista-formula-vasos'; colorTipo = 'var(--p-cyan)';
+        } else if (tipo === 'shots') {
+            idProdSelect = 'rec-producto-shots'; idTabla = 'tabla-vista-formula-shots'; colorTipo = 'var(--p-magenta)';
+        }
+
         const id = document.getElementById(idProdSelect) ? document.getElementById(idProdSelect).value : null; 
         const tb = document.getElementById(idTabla); 
         if(!tb) return;
@@ -1961,7 +2205,7 @@
 
                     tb.innerHTML+=`<tr>
                         <td class="text-white fw-bold fs-4">${nombre}</td>
-                        <td class="fs-4" style="color:${tipo==='vasos'?'var(--p-cyan)':'var(--p-bio-green)'}; text-shadow:0 0 10px currentColor;">${gastoVal} <span class="fs-6 text-white-50">${unidadTxt}</span></td>
+                        <td class="fs-4" style="color:${colorTipo}; text-shadow:0 0 10px currentColor;">${gastoVal} <span class="fs-6 text-white-50">${unidadTxt}</span></td>
                         <td class="fs-4">${costoHtml}</td>
                         <td><i class="bi bi-scissors text-danger fs-3" style="cursor:pointer;" onclick="desvincularIngrediente('${nombre}', '${tipo}')"></i></td>
                     </tr>`; 
