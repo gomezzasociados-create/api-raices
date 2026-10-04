@@ -2020,16 +2020,24 @@
             prodsPulpas = deduplicarProductos(prodsPulpas);
             const selectProdPulpas = document.getElementById('rec-producto-pulpas');
             if (selectProdPulpas) {
-                selectProdPulpas.innerHTML = prodsPulpas.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || 'Packs'})</option>`).join('');
+                if (prodsPulpas.length === 0) {
+                    selectProdPulpas.innerHTML = '<option value="">(Sin productos de Pulpas registrados)</option>';
+                } else {
+                    selectProdPulpas.innerHTML = prodsPulpas.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || 'Packs'})</option>`).join('');
+                }
             }
 
             const insPulpas = insNodo.filter(i => {
                 const cat = (i.categoria || '').toLowerCase();
-                return !cat.includes('vaso') && !cat.includes('packaging') && !cat.includes('shot') && !cat.includes('caldo');
+                return cat.includes('pulpa') || (!cat.includes('vaso') && !cat.includes('packaging') && !cat.includes('shot') && !cat.includes('caldo'));
             });
             const selectInsPulpas = document.getElementById('rec-insumo-pulpas');
             if (selectInsPulpas) {
-                selectInsPulpas.innerHTML = insPulpas.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+                if (insPulpas.length === 0) {
+                    selectInsPulpas.innerHTML = '<option value="">(Bodega de Pulpas vacía)</option>';
+                } else {
+                    selectInsPulpas.innerHTML = insPulpas.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+                }
             }
 
             // 2. PRODUCTOS Y INSUMOS PARA VASOS DE 500 MLS (ELÍXIRES)
@@ -2041,16 +2049,24 @@
             prodsVasos = deduplicarProductos(prodsVasos);
             const selectProdVasos = document.getElementById('rec-producto-vasos');
             if (selectProdVasos) {
-                selectProdVasos.innerHTML = prodsVasos.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || '500 mls'})</option>`).join('');
+                if (prodsVasos.length === 0) {
+                    selectProdVasos.innerHTML = '<option value="">(Sin productos de 500 mls registrados)</option>';
+                } else {
+                    selectProdVasos.innerHTML = prodsVasos.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || '500 mls'})</option>`).join('');
+                }
             }
 
             const insVasos = insNodo.filter(i => {
                 const cat = (i.categoria || '').toLowerCase();
-                return !cat.includes('shot') && !cat.includes('caldo');
+                return cat.includes('vaso') || cat.includes('packaging') || cat.includes('500') || cat.includes('batido');
             });
             const selectInsVasos = document.getElementById('rec-insumo-vasos');
             if (selectInsVasos) {
-                selectInsVasos.innerHTML = insVasos.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+                if (insVasos.length === 0) {
+                    selectInsVasos.innerHTML = '<option value="">(Bodega de Vasos 500 mls vacía)</option>';
+                } else {
+                    selectInsVasos.innerHTML = insVasos.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+                }
             }
 
             // 3. PRODUCTOS Y INSUMOS PARA SHOTS Y CALDOS DE HUESO
@@ -2062,16 +2078,24 @@
             prodsShots = deduplicarProductos(prodsShots);
             const selectProdShots = document.getElementById('rec-producto-shots');
             if (selectProdShots) {
-                selectProdShots.innerHTML = prodsShots.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || 'Shots'})</option>`).join('');
+                if (prodsShots.length === 0) {
+                    selectProdShots.innerHTML = '<option value="">(Sin productos de Shots/Caldos registrados)</option>';
+                } else {
+                    selectProdShots.innerHTML = prodsShots.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || 'Shots'})</option>`).join('');
+                }
             }
 
             const insShots = insNodo.filter(i => {
                 const cat = (i.categoria || '').toLowerCase();
-                return cat.includes('shot') || cat.includes('caldo') || (!cat.includes('vaso') && !cat.includes('packaging'));
+                return cat.includes('shot') || cat.includes('caldo');
             });
             const selectInsShots = document.getElementById('rec-insumo-shots');
             if (selectInsShots) {
-                selectInsShots.innerHTML = insShots.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+                if (insShots.length === 0) {
+                    selectInsShots.innerHTML = '<option value="">(Bodega de Shots y Caldos vacía)</option>';
+                } else {
+                    selectInsShots.innerHTML = insShots.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+                }
             }
 
             actualizarUnidadDefaultInsumo('pulpas');
