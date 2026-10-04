@@ -313,7 +313,13 @@
                         <div class="col-md-4">
                             <label class="form-label-neon">ELIXIR A SINTETIZAR</label>
                             <select id="prod-item" class="form-select" onchange="evaluarSeleccionNuevoProd(this)"></select>
-                            <input type="text" id="prod-nombre-nuevo" class="form-control mt-2 border-success text-white fw-bold" placeholder="✏️ Escribe el nombre del nuevo Pack / Elíxir..." style="display:none;">
+                            <div id="contenedor-nuevo-prod" class="mt-2" style="display:none;">
+                                <input type="text" id="prod-nombre-nuevo" class="form-control mb-1 border-success text-white fw-bold" placeholder="✏️ Escribe el nombre del nuevo Pack / Elíxir...">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark text-success border-success fw-bold">$</span>
+                                    <input type="number" id="prod-precio-nuevo" class="form-control border-success text-white fw-bold" placeholder="Precio (ej. 22000)" value="22000">
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label-neon text-magenta" style="color: var(--p-magenta);">CICLO DE GÉNESIS (ELAB)</label>
@@ -1138,20 +1144,25 @@
             prodsPulpasSelect.forEach(p => {
                 select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
             });
+            const contenedorNuevo = document.getElementById('contenedor-nuevo-prod');
+            if (contenedorNuevo) { contenedorNuevo.style.display = 'none'; }
             const inputNuevo = document.getElementById('prod-nombre-nuevo');
-            if (inputNuevo) { inputNuevo.style.display = 'none'; inputNuevo.value = ''; }
+            if (inputNuevo) { inputNuevo.value = ''; }
+            const precioNuevo = document.getElementById('prod-precio-nuevo');
+            if (precioNuevo) { precioNuevo.value = '22000'; }
         } catch(e) {}
     }
 
     function evaluarSeleccionNuevoProd(selectEl) {
+        const contenedorNuevo = document.getElementById('contenedor-nuevo-prod');
         const inputNuevo = document.getElementById('prod-nombre-nuevo');
-        if (!inputNuevo) return;
+        if (!contenedorNuevo) return;
         if (selectEl.value === '__NUEVO__') {
-            inputNuevo.style.display = 'block';
-            inputNuevo.focus();
+            contenedorNuevo.style.display = 'block';
+            if (inputNuevo) inputNuevo.focus();
         } else {
-            inputNuevo.style.display = 'none';
-            inputNuevo.value = '';
+            contenedorNuevo.style.display = 'none';
+            if (inputNuevo) inputNuevo.value = '';
         }
     }
 
@@ -1265,6 +1276,8 @@
                 alert("ALERTA: Por favor escribe el nombre del nuevo Pack o Elíxir.");
                 return;
             }
+            const rawPrecioNuevo = document.getElementById('prod-precio-nuevo') ? parseFloat(document.getElementById('prod-precio-nuevo').value) : 22000.0;
+            const precioValido = (isNaN(rawPrecioNuevo) || rawPrecioNuevo <= 0) ? 22000.0 : rawPrecioNuevo;
             try {
                 const resNuevo = await fetch('/api/productos', {
                     method: 'POST',
@@ -1272,7 +1285,7 @@
                     body: JSON.stringify({
                         nombre: nombreNuevoInput,
                         categoria: 'Packs',
-                        precio: 22000.0,
+                        precio: precioValido,
                         sucursal: document.getElementById('prod-sucursal').value || 'Antofagasta',
                         descripcion: 'Pack / Elíxir de pulpas registrado en Génesis de Producción.'
                     })
