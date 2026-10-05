@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -598,7 +598,7 @@
                                             <span class="fw-bold text-white fs-4" id="total-valor-armatubatido" style="text-shadow: 0 0 10px rgba(255,215,0,0.5);">$0</span>
                                         </div>
                                     </div>
-                                    <div class="row g-3 mb-4 mt-1">
+                                    <div class="row g-3 mb-4 mt-1 align-items-end">
                                         <input type="hidden" id="armatubatido-id">
                                         <div class="col-md-3">
                                             <label class="form-label-neon" style="color:var(--p-warning)">Ingrediente / Porción</label>
@@ -621,34 +621,36 @@
                                                 <option value="Cereales">Cereales</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-1">
+                                        <div class="col-md-2">
                                             <label class="form-label-neon" style="color:var(--p-warning)">Métrica</label>
                                             <select id="armatubatido-unidad" class="form-select">
-                                                <option value="gr">gr</option>
-                                                <option value="mls">mls</option>
-                                                <option value="und">und</option>
+                                                <option value="gr">Gramos (gr)</option>
+                                                <option value="mls">Mililitros (mls)</option>
+                                                <option value="und">Unidades (und)</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-1">
-                                            <label class="form-label-neon" style="color:var(--p-warning)">Dosis Porc</label>
+                                        <div class="col-md-2">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Dosis Porción</label>
                                             <input type="number" id="armatubatido-dosis" class="form-control text-warning fw-bold" step="0.1" placeholder="Ej: 30 o 0.5">
                                         </div>
-                                        <div class="col-md-1">
-                                            <label class="form-label-neon" style="color:var(--p-warning)">Reserva</label>
-                                            <input type="number" id="armatubatido-stock" class="form-control" placeholder="Cant porc">
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Reserva Stock (Porciones)</label>
+                                            <input type="number" id="armatubatido-stock" class="form-control" placeholder="Cant. porciones">
                                         </div>
-                                        <div class="col-md-1">
-                                            <label class="form-label-neon" style="color:var(--p-warning)">Precio/Porc</label>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Precio / Porción ($)</label>
                                             <input type="number" id="armatubatido-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="$0.00">
                                         </div>
-                                        <div class="col-md-1">
-                                            <label class="form-label-neon" style="color:var(--p-warning)">Nodo</label>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Nodo Destino</label>
                                             <select id="armatubatido-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')">
                                                 <option value="Antofagasta">Antofagasta</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-1">
-                                            <button class="btn btn-bio w-100 h-100" style="background: var(--p-warning); color: #000;" onclick="guardarInsumo('armatubatido')"><i class="bi bi-plus-lg fs-4"></i></button>
+                                        <div class="col-md-6">
+                                            <button class="btn btn-bio w-100 py-2 fs-5 font-orbitron" style="background: var(--p-warning); color: #000;" onclick="guardarInsumo('armatubatido')">
+                                                <i class="bi bi-plus-circle-fill me-2"></i> GUARDAR / ACTUALIZAR PORCIÓN
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="table-responsive">

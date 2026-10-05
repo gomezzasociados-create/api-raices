@@ -48,7 +48,7 @@ public class GestorPorciones {
         return lista;
     }
 
-    @PostMapping("/guardar")
+    @PostMapping(value = "/guardar", consumes = "application/json")
     public ResponseEntity<String> guardarInsumo(@RequestBody Insumo insumo) {
         try {
             if (insumo.getIdInsumo() != null) {

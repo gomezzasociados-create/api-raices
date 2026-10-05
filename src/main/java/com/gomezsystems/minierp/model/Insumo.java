@@ -52,7 +52,6 @@ public class Insumo {
 
     public Double getCantidadPorcion() { return cantidadPorcion; }
     public void setCantidadPorcion(Double cantidadPorcion) { this.cantidadPorcion = cantidadPorcion; }
-    public void setCantidadPorcion(Number cantidadPorcion) { this.cantidadPorcion = cantidadPorcion != null ? cantidadPorcion.doubleValue() : null; }
 
     public String getMedida() { return medida; }
     public void setMedida(String medida) { this.medida = medida; }
