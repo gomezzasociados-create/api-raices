@@ -463,12 +463,11 @@
 
     let porcionesArmado = {};
     let insumosInfoMap = {};
+    const normalizarStr = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : '';
 
     function renderizar() {
         const grid = document.getElementById('grid-menu'); grid.innerHTML = '';
         const nodo = document.getElementById('sucursal-activa').value; simboloActual = '$';
-
-        const normalizarStr = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : '';
 
         if (filtroActual === 'Arma tu Batido') {
             renderizarArmaTuBatido(nodo);
@@ -738,10 +737,11 @@
         }
 
         insumosFiltrados.forEach(ins => {
-            let cantPorc = porcionesArmado[ins.idInsumo] || 0;
+            let idInsClean = String(ins.idInsumo || ins.id || 'ins').replace(/'/g, "\\'");
+            let cantPorc = porcionesArmado[idInsClean] || porcionesArmado[ins.idInsumo] || 0;
             let precioPorc = ins.precio || 0;
             let sizePorcion = ins.sizePorcion || 1;
-            let stockUnidades = ins.unidadActual || 0;
+            let stockUnidades = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? ins.unidadActual : 9999;
             let porcionesDisponibles = Math.floor(stockUnidades / sizePorcion);
 
             let porcTexto = `${sizePorcion} ${ins.medida || 'gr'}`;
@@ -753,7 +753,7 @@
                 : `<div class="badge bg-danger text-white font-orbitron mb-2" style="font-size: 0.75rem;"><i class="bi bi-x-circle me-1"></i>AGOTADO (0 PORC)</div>`;
 
             let btnPlus = porcionesDisponibles > 0
-                ? `<button class="btn btn-warning text-dark fw-bold px-3 py-1" style="border-radius: 8px;" onclick="modificarPorcionInsumo(${ins.idInsumo}, 1, ${precioPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">+</button>`
+                ? `<button class="btn btn-warning text-dark fw-bold px-3 py-1" style="border-radius: 8px;" onclick="modificarPorcionInsumo('${idInsClean}', 1, ${precioPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">+</button>`
                 : `<button class="btn btn-secondary text-white-50 fw-bold px-3 py-1" style="border-radius: 8px;" disabled>+</button>`;
 
             htmlBuilder += `
@@ -767,8 +767,8 @@
                             <div class="text-warning fw-bold fs-5 mb-2 font-orbitron">${simboloActual}${precioPorc.toLocaleString('es-CL')}</div>
                         </div>
                         <div class="d-flex align-items-center justify-content-center gap-2 mt-2">
-                            <button class="btn btn-outline-warning fw-bold px-3 py-1" style="border-radius: 8px;" onclick="modificarPorcionInsumo(${ins.idInsumo}, -1, ${precioPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">-</button>
-                            <span id="cant-porc-${ins.idInsumo}" class="fw-bold fs-4 text-white font-orbitron px-2">${cantPorc}</span>
+                            <button class="btn btn-outline-warning fw-bold px-3 py-1" style="border-radius: 8px;" onclick="modificarPorcionInsumo('${idInsClean}', -1, ${precioPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">-</button>
+                            <span id="cant-porc-${idInsClean}" class="fw-bold fs-4 text-white font-orbitron px-2">${cantPorc}</span>
                             ${btnPlus}
                         </div>
                     </div>
