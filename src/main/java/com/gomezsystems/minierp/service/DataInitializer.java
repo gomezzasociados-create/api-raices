@@ -258,7 +258,7 @@ public class DataInitializer implements CommandLineRunner {
                     mod = true;
                 }
                 if (ins.getCantidadPorcion() == null || ins.getCantidadPorcion() <= 0) {
-                    ins.setCantidadPorcion("und".equalsIgnoreCase(ins.getMedida()) ? 1 : 50);
+                    ins.setCantidadPorcion("und".equalsIgnoreCase(ins.getMedida()) ? 1.0 : 50.0);
                     mod = true;
                 }
                 if (ins.getUnidadActual() == null) {
@@ -353,11 +353,11 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 
-    private void crearInsumoSiNoExiste(String nombre, Double stock, Integer porcion, String medida, String sucursal, String cat, String subcat, Double precio) {
+    private void crearInsumoSiNoExiste(String nombre, Double stock, Number porcion, String medida, String sucursal, String cat, String subcat, Double precio) {
         com.gomezsystems.minierp.model.Insumo ins = new com.gomezsystems.minierp.model.Insumo();
         ins.setNombre(nombre);
         ins.setUnidadActual(stock);
-        ins.setCantidadPorcion(porcion);
+        ins.setCantidadPorcion(porcion != null ? porcion.doubleValue() : 1.0);
         ins.setMedida(medida);
         ins.setSucursal(sucursal);
         ins.setCategoria(cat);

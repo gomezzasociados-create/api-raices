@@ -577,6 +577,92 @@
                                             <tbody id="tabla-shots"></tbody>
                                         </table>
                                     </div>
+                    <!-- 4. BODEGA DE PORCIONES: ARMA TU BATIDO (500 MLS) -->
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingArmaTuBatido">
+                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseArmaTuBatido" aria-expanded="false" aria-controls="collapseArmaTuBatido" style="background: rgba(255,215,0,0.05); border: 1px solid var(--p-warning); color: var(--p-warning); box-shadow: 0 0 10px rgba(255,215,0,0.2);">
+                                <i class="bi bi-sliders me-2"></i> BODEGA DE PORCIONES: ARMA TU BATIDO (500 MLS)
+                            </button>
+                        </h2>
+                        <div id="collapseArmaTuBatido" class="accordion-collapse collapse" aria-labelledby="headingArmaTuBatido" data-bs-parent="#accordionInventario">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-warning);">
+                                    <div class="d-flex justify-content-end mb-1 mt-2">
+                                        <div class="p-2 border rounded" style="border-color: var(--p-warning) !important; background: rgba(255,215,0,0.1); box-shadow: 0 0 10px rgba(255,215,0,0.2);">
+                                            <span style="color:var(--p-warning); font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
+                                            <span class="fw-bold text-white fs-4" id="total-valor-armatubatido" style="text-shadow: 0 0 10px rgba(255,215,0,0.5);">$0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-4 mt-1">
+                                        <input type="hidden" id="armatubatido-id">
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Ingrediente / Porción</label>
+                                            <input type="text" id="armatubatido-nombre" class="form-control" placeholder="Ej: Zanahoria, Espinaca, Clavo de Olor">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Subcategoría</label>
+                                            <select id="armatubatido-subcategoria" class="form-select">
+                                                <option value="Vegetales">Vegetales</option>
+                                                <option value="Frutas">Frutas</option>
+                                                <option value="Base">Base</option>
+                                                <option value="Semillas">Semillas</option>
+                                                <option value="Suplementos">Suplementos</option>
+                                                <option value="Frutos Secos">Frutos Secos</option>
+                                                <option value="Especias">Especias</option>
+                                                <option value="Endulzantes">Endulzantes</option>
+                                                <option value="Estabilizantes">Estabilizantes</option>
+                                                <option value="Grasas">Grasas</option>
+                                                <option value="Proteínas">Proteínas</option>
+                                                <option value="Cereales">Cereales</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Métrica</label>
+                                            <select id="armatubatido-unidad" class="form-select">
+                                                <option value="gr">gr</option>
+                                                <option value="mls">mls</option>
+                                                <option value="und">und</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Dosis Porc</label>
+                                            <input type="number" id="armatubatido-dosis" class="form-control text-warning fw-bold" step="0.1" placeholder="Ej: 30 o 0.5">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Reserva</label>
+                                            <input type="number" id="armatubatido-stock" class="form-control" placeholder="Cant porc">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Precio/Porc</label>
+                                            <input type="number" id="armatubatido-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="$0.00">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Nodo</label>
+                                            <select id="armatubatido-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')">
+                                                <option value="Antofagasta">Antofagasta</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button class="btn btn-bio w-100 h-100" style="background: var(--p-warning); color: #000;" onclick="guardarInsumo('armatubatido')"><i class="bi bi-plus-lg fs-4"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table text-center align-middle m-0">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th>INGREDIENTE</th>
+                                                    <th>SUBCATEGORÍA</th>
+                                                    <th>NODO_BASE</th>
+                                                    <th>TAMAÑO_PORCIÓN</th>
+                                                    <th>RESERVA_PORCIONES</th>
+                                                    <th>PRECIO/PORCIÓN</th>
+                                                    <th>VALOR_TOTAL</th>
+                                                    <th>ACCIONES</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tabla-armatubatido"></tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1941,7 +2027,7 @@
         }
     }
 
-    // --- INSUMOS (BODEGAS: PULPAS, VASOS, SHOTS/CALDOS) ---
+    // --- INSUMOS (BODEGAS: PULPAS, VASOS, SHOTS/CALDOS, ARMA TU BATIDO) ---
     async function cargarInsumos() {
         try {
             const res = await fetch('/api/insumos/todos');
@@ -1950,10 +2036,12 @@
             const tbPulpas = document.getElementById('tabla-pulpas'); if(tbPulpas) tbPulpas.innerHTML='';
             const tbVasos = document.getElementById('tabla-vasos'); if(tbVasos) tbVasos.innerHTML='';
             const tbShots = document.getElementById('tabla-shots'); if(tbShots) tbShots.innerHTML='';
+            const tbArmaTuBatido = document.getElementById('tabla-armatubatido'); if(tbArmaTuBatido) tbArmaTuBatido.innerHTML='';
 
             let totalPulpas = 0;
             let totalVasos = 0;
             let totalShots = 0;
+            let totalArmaTuBatido = 0;
 
             data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).forEach(i => {
                 const sucIns = normalizarStr(i.sucursal || '');
@@ -1961,11 +2049,13 @@
                 if (rolUsuario !== 'SUPREMO' && !sucIns.includes(sucAdmin)) return;
 
                 const cat = (i.categoria || '').toLowerCase();
-                const isVaso = cat.includes('vaso') || cat.includes('packaging');
-                const isShot = cat.includes('shot') || cat.includes('caldo');
+                const isArmaTuBatido = cat.includes('arma tu batido') || cat.includes('porciones');
+                const isVaso = !isArmaTuBatido && (cat.includes('vaso') || cat.includes('packaging'));
+                const isShot = !isArmaTuBatido && (cat.includes('shot') || cat.includes('caldo'));
 
                 let selectFiltroId = 'ins-sucursal';
-                if (isVaso) selectFiltroId = 'vaso-sucursal';
+                if (isArmaTuBatido) selectFiltroId = 'armatubatido-sucursal';
+                else if (isVaso) selectFiltroId = 'vaso-sucursal';
                 else if (isShot) selectFiltroId = 'shot-sucursal';
 
                 const selectDestino = document.getElementById(selectFiltroId);
@@ -1978,30 +2068,38 @@
                 let stockTotal = parseFloat(i.unidadActual) || 0;
                 let precioUnitario = parseFloat(i.precio) || 0;
                 
-                if (i.medida === 'gr' || i.medida === 'mls') {
+                if (isArmaTuBatido) {
+                    valorInsumo = stockTotal * precioUnitario;
+                    totalArmaTuBatido += valorInsumo;
+                } else if (i.medida === 'gr' || i.medida === 'mls') {
                     valorInsumo = (stockTotal / 1000) * precioUnitario;
                 } else {
                     valorInsumo = stockTotal * precioUnitario;
                 }
                 
-                if (isVaso) { totalVasos += valorInsumo; }
+                if (isArmaTuBatido) { /* Sumado arriba */ }
+                else if (isVaso) { totalVasos += valorInsumo; }
                 else if (isShot) { totalShots += valorInsumo; }
                 else { totalPulpas += valorInsumo; }
 
                 let stockDisplay = (i.unidadActual || 0).toFixed(2);
-                let stockHTML = `<span class="text-warning fw-bold fs-4" style="text-shadow:0 0 10px #ffdd00;">${stockDisplay} <span class="fs-6 text-white-50">${i.medida || 'gr'}</span></span>`;
-                if ((!isVaso && i.unidadActual < 500) || (isVaso && i.unidadActual < 50)) {
-                    stockHTML = `<span class="text-danger fw-bold fs-4" style="text-shadow:0 0 15px red;"><i class="bi bi-exclamation-triangle-fill me-1"></i>${stockDisplay} <span class="fs-6 text-danger">${i.medida || 'gr'}</span></span>`;
+                let stockHTML = `<span class="text-warning fw-bold fs-4" style="text-shadow:0 0 10px #ffdd00;">${stockDisplay} <span class="fs-6 text-white-50">${isArmaTuBatido ? 'porc' : (i.medida || 'gr')}</span></span>`;
+                if ((!isVaso && !isArmaTuBatido && i.unidadActual < 500) || (isVaso && i.unidadActual < 50) || (isArmaTuBatido && i.unidadActual < 10)) {
+                    stockHTML = `<span class="text-danger fw-bold fs-4" style="text-shadow:0 0 15px red;"><i class="bi bi-exclamation-triangle-fill me-1"></i>${stockDisplay} <span class="fs-6 text-danger">${isArmaTuBatido ? 'porc' : (i.medida || 'gr')}</span></span>`;
                 }
 
                 let colorBadge = 'color:var(--p-bio-green); border-color:var(--p-bio-green); box-shadow:0 0 10px var(--p-bio-green);';
-                if (isVaso) colorBadge = 'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan);';
+                if (isArmaTuBatido) colorBadge = 'color:var(--p-warning); border-color:var(--p-warning); box-shadow:0 0 10px var(--p-warning);';
+                else if (isVaso) colorBadge = 'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan);';
                 else if (isShot) colorBadge = 'color:var(--p-magenta); border-color:var(--p-magenta); box-shadow:0 0 10px var(--p-magenta);';
+
+                let dosisTdHtml = isArmaTuBatido ? `<td class="text-info fw-bold fs-5">${i.cantidadPorcion || 1} ${i.medida || 'gr'}</td>` : '';
 
                 const row = `<tr>
                     <td class="fw-bold text-white fs-5">${i.nombre}</td>
-                    <td><span class="badge-categoria" style="${colorBadge}">${(i.categoria||'Pulpas').toUpperCase()}</span></td>
+                    <td><span class="badge-categoria" style="${colorBadge}">${(i.subcategoria || i.categoria || 'Pulpas').toUpperCase()}</span></td>
                     <td class="text-white">${i.sucursal}</td>
+                    ${dosisTdHtml}
                     <td>${stockHTML}</td>
                     <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
                     <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
@@ -2011,7 +2109,8 @@
                     </td>
                 </tr>`;
 
-                if (isVaso && tbVasos) tbVasos.innerHTML += row;
+                if (isArmaTuBatido && tbArmaTuBatido) tbArmaTuBatido.innerHTML += row;
+                else if (isVaso && tbVasos) tbVasos.innerHTML += row;
                 else if (isShot && tbShots) tbShots.innerHTML += row;
                 else if (tbPulpas) tbPulpas.innerHTML += row;
             });
@@ -2028,6 +2127,10 @@
             const tbVShots = document.getElementById('total-valor-shots');
             if (tbVShots) tbVShots.innerText = formatMoney(totalShots, sucMuestraShots);
 
+            const sucMuestraArmaTuBatido = document.getElementById('armatubatido-sucursal') ? document.getElementById('armatubatido-sucursal').value : 'Antofagasta';
+            const tbVArmaTuBatido = document.getElementById('total-valor-armatubatido');
+            if (tbVArmaTuBatido) tbVArmaTuBatido.innerText = formatMoney(totalArmaTuBatido, sucMuestraArmaTuBatido);
+
         } catch(e) { console.error('Error cargando insumos:', e); }
     }
 
@@ -2035,7 +2138,16 @@
         let ins = insMem.find(i => i.idInsumo === id);
         if(ins) {
             const cat = (ins.categoria || '').toLowerCase();
-            if(cat.includes('vaso') || cat.includes('packaging')) {
+            if(cat.includes('arma tu batido') || cat.includes('porciones')) {
+                if (document.getElementById('armatubatido-id')) document.getElementById('armatubatido-id').value = ins.idInsumo;
+                if (document.getElementById('armatubatido-nombre')) document.getElementById('armatubatido-nombre').value = ins.nombre;
+                if (ins.subcategoria && document.getElementById('armatubatido-subcategoria')) document.getElementById('armatubatido-subcategoria').value = ins.subcategoria;
+                if (document.getElementById('armatubatido-unidad')) document.getElementById('armatubatido-unidad').value = ins.medida || 'gr';
+                if (document.getElementById('armatubatido-dosis')) document.getElementById('armatubatido-dosis').value = ins.cantidadPorcion || 1;
+                if (document.getElementById('armatubatido-stock')) document.getElementById('armatubatido-stock').value = ins.unidadActual || 0;
+                if (document.getElementById('armatubatido-sucursal')) document.getElementById('armatubatido-sucursal').value = ins.sucursal;
+                if (document.getElementById('armatubatido-precio')) document.getElementById('armatubatido-precio').value = ins.precio || 0;
+            } else if(cat.includes('vaso') || cat.includes('packaging')) {
                 document.getElementById('vaso-id').value = ins.idInsumo;
                 document.getElementById('vaso-nombre').value = ins.nombre;
                 document.getElementById('vaso-unidad').value = ins.medida || 'und';
@@ -2064,8 +2176,18 @@
     }
 
     function guardarInsumo(tipo) {
-        let id, nombre, cat, subcat, uni, stock, suc, precioVal;
-        if(tipo==='pulpas'){ 
+        let id, nombre, cat, subcat, uni, stock, suc, precioVal, dosisVal;
+        if(tipo==='armatubatido') {
+            id = document.getElementById('armatubatido-id').value; 
+            nombre = document.getElementById('armatubatido-nombre').value; 
+            cat='Arma tu Batido'; 
+            subcat=document.getElementById('armatubatido-subcategoria')?document.getElementById('armatubatido-subcategoria').value:'Vegetales'; 
+            uni=document.getElementById('armatubatido-unidad').value; 
+            dosisVal=parseFloat(document.getElementById('armatubatido-dosis').value) || 1;
+            stock=document.getElementById('armatubatido-stock').value; 
+            suc=document.getElementById('armatubatido-sucursal').value;
+            precioVal = parseFloat(document.getElementById('armatubatido-precio').value) || 0;
+        } else if(tipo==='pulpas'){ 
             id = document.getElementById('ins-id').value; 
             nombre = document.getElementById('ins-nombre').value; 
             cat='Pulpas'; 
@@ -2105,6 +2227,7 @@
             sucursal: suc, 
             actorAdmin: rolUsuario==='SUPREMO' ? 'SUPREMO' : ('Admin ' + sucursalAdmin)
         };
+        if(dosisVal !== undefined && dosisVal !== null) { payload.cantidadPorcion = dosisVal; }
         if(id) { payload.idInsumo = parseInt(id); }
 
         fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
@@ -2114,9 +2237,14 @@
                 alert("❌ ERROR AL GUARDAR: " + errTxt);
                 throw new Error(errTxt);
             }
+            if (document.getElementById('armatubatido-id')) document.getElementById('armatubatido-id').value=''; 
             if (document.getElementById('ins-id')) document.getElementById('ins-id').value=''; 
             if (document.getElementById('vaso-id')) document.getElementById('vaso-id').value='';
             if (document.getElementById('shot-id')) document.getElementById('shot-id').value='';
+            if (document.getElementById('armatubatido-nombre')) document.getElementById('armatubatido-nombre').value=''; 
+            if (document.getElementById('armatubatido-dosis')) document.getElementById('armatubatido-dosis').value=''; 
+            if (document.getElementById('armatubatido-stock')) document.getElementById('armatubatido-stock').value='';
+            if (document.getElementById('armatubatido-precio')) document.getElementById('armatubatido-precio').value='';
             if (document.getElementById('ins-nombre')) document.getElementById('ins-nombre').value=''; 
             if (document.getElementById('ins-stock')) document.getElementById('ins-stock').value='';
             if (document.getElementById('vaso-nombre')) document.getElementById('vaso-nombre').value=''; 

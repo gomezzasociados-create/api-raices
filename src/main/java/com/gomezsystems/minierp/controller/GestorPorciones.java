@@ -154,7 +154,7 @@ public class GestorPorciones {
                     }
 
                     // Inicializamos cantidadPorcion en 1 por defecto para evitar nulos
-                    i.setCantidadPorcion(1);
+                    i.setCantidadPorcion(1.0);
                     i.setSucursal(sucursal);
 
                     if(i.getNombre() != null && !i.getNombre().isEmpty()){

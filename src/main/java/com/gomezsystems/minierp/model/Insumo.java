@@ -12,7 +12,7 @@ public class Insumo {
 
     private String nombre;
     private Double unidadActual;
-    private Integer cantidadPorcion;
+    private Double cantidadPorcion;
     private String medida;
 
     // --- ETIQUETA MULTI-NODO ---
@@ -50,8 +50,9 @@ public class Insumo {
     public Double getUnidadActual() { return unidadActual; }
     public void setUnidadActual(Double unidadActual) { this.unidadActual = unidadActual; }
 
-    public Integer getCantidadPorcion() { return cantidadPorcion; }
-    public void setCantidadPorcion(Integer cantidadPorcion) { this.cantidadPorcion = cantidadPorcion; }
+    public Double getCantidadPorcion() { return cantidadPorcion; }
+    public void setCantidadPorcion(Double cantidadPorcion) { this.cantidadPorcion = cantidadPorcion; }
+    public void setCantidadPorcion(Number cantidadPorcion) { this.cantidadPorcion = cantidadPorcion != null ? cantidadPorcion.doubleValue() : null; }
 
     public String getMedida() { return medida; }
     public void setMedida(String medida) { this.medida = medida; }
