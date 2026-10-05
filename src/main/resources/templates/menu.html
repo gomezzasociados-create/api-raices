@@ -648,7 +648,7 @@
             let precioPorc = ins.precio || 0;
             let sizePorcion = ins.sizePorcion || 1;
             let stockUnidades = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? ins.unidadActual : 9999;
-            let porcionesDisponibles = Math.floor(stockUnidades / sizePorcion);
+            let porcionesDisponibles = Math.max(0, Math.floor(stockUnidades));
 
             let porcTexto = `${sizePorcion} ${ins.medida || 'gr'}`;
             let subcatLabel = obtenerSubcategoriaInsumo(ins).toUpperCase();
