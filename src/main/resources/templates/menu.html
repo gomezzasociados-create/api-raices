@@ -553,35 +553,40 @@
 
     async function renderizarArmaTuBatido(nodo) {
         const grid = document.getElementById('grid-menu');
+        if (!grid) return;
         grid.innerHTML = '<div class="col-12 text-center text-white py-5 font-orbitron"><span class="spinner-border text-warning me-2"></span>Cargando catálogo de ingredientes de Batidos de 500 mls...</div>';
 
         let insumosBase = [];
-        let productos500 = [];
+        let productos = [];
         let mapaFormulas500 = {}; // { "espinaca": { nombre: "Espinaca", dosis: 30, medida: "gr" } }
 
         try {
-            const [resP, resI] = await Promise.all([
-                fetch('/api/productos/sucursal/' + nodo),
-                fetch('/api/insumos/sucursal/' + nodo)
-            ]);
-
-            if (resP.ok) {
-                const prods = await resP.json();
-                productos500 = prods.filter(p => p.categoria && (p.categoria.toLowerCase().includes('500') || p.categoria.toLowerCase().includes('elixir')));
+            let resP = await fetch('/api/productos/sucursal/' + nodo);
+            if (resP.ok) productos = await resP.json();
+            if (!productos || productos.length === 0) {
+                resP = await fetch('/api/productos');
+                if (resP.ok) productos = await resP.json();
             }
 
-            if (resI.ok) {
-                insumosBase = await resI.json();
-            } else {
-                const resIAll = await fetch('/api/insumos/todos');
-                if (resIAll.ok) insumosBase = await resIAll.json();
+            let resI = await fetch('/api/insumos/sucursal/' + nodo);
+            if (resI.ok) insumosBase = await resI.json();
+            if (!insumosBase || insumosBase.length === 0) {
+                resI = await fetch('/api/insumos/todos');
+                if (resI.ok) insumosBase = await resI.json();
             }
         } catch(e) { console.error("Error al obtener datos para Arma tu Batido:", e); }
 
-        // Extraer ingredientes y dosis desde las Fórmulas de Batidos de 500 mls
-        productos500.forEach(p => {
-            if (p.recetaDetalle && p.recetaDetalle.trim() !== '') {
-                const lineas = p.recetaDetalle.split('\n');
+        // Extraer ingredientes y dosis desde las Fórmulas de Batidos de 500 mls / Elíxires
+        (productos || []).forEach(p => {
+            if (!p) return;
+            const cat = normalizarStr(p.categoria || '');
+            const nom = normalizarStr(p.nombre || '');
+
+            const esPack = cat.includes('pack') || nom.includes('pack');
+            const esShot = cat.includes('shot') || cat.includes('caldo') || nom.includes('shot') || nom.includes('caldo');
+
+            if (!esPack && !esShot && p.recetaDetalle && p.recetaDetalle.trim() !== '') {
+                const lineas = p.recetaDetalle.split(/\r?\n/);
                 lineas.forEach(l => {
                     if (l.includes(':')) {
                         const partes = l.split(':');
@@ -597,7 +602,7 @@
                         else if (rawGasto.toLowerCase().includes('gr')) unidadTxt = 'gr';
 
                         const key = normalizarStr(nombreIng);
-                        if (!mapaFormulas500[key]) {
+                        if (key && (!mapaFormulas500[key] || gastoVal > mapaFormulas500[key].dosis)) {
                             mapaFormulas500[key] = {
                                 nombre: nombreIng,
                                 dosis: gastoVal,
@@ -610,37 +615,71 @@
         });
 
         // Filtrar insumos pertenecientes a la Bodega de 500 mls O presentes en Fórmulas de 500 mls
-        // EXCLUIR los insumos que son puramente de "Pulpas" (16 unidades), Vasos/Packaging, Shots o Caldos
         let insumosArmado = [];
+        let llavesProcesadas = new Set();
 
-        insumosBase.forEach(ins => {
-            const cat = (ins.categoria || '').toLowerCase();
+        (insumosBase || []).forEach(ins => {
+            if (!ins || !ins.nombre) return;
+            const cat = normalizarStr(ins.categoria || '');
+            const subcat = normalizarStr(ins.subcategoria || '');
             const keyIns = normalizarStr(ins.nombre);
 
-            const esFormulado500 = mapaFormulas500[keyIns] !== undefined;
-            const esBodega500 = cat.includes('500') || cat.includes('batido 500') || cat.includes('vaso 500');
+            let matchFormulaKey = null;
+            if (mapaFormulas500[keyIns]) {
+                matchFormulaKey = keyIns;
+            } else {
+                for (let fk in mapaFormulas500) {
+                    if (keyIns.includes(fk) || fk.includes(keyIns)) {
+                        matchFormulaKey = fk;
+                        break;
+                    }
+                }
+            }
 
-            if (esFormulado500 || esBodega500) {
+            const esFormulado500 = matchFormulaKey !== null;
+            const esBodega500 = cat.includes('500') || cat.includes('batido') || cat.includes('vaso') || subcat.includes('500');
+            const esBotanicoGeneral = !cat.includes('pack') && !cat.includes('pulpa') && !cat.includes('shot') && !cat.includes('caldo') && !cat.includes('packaging');
+
+            if (esFormulado500 || esBodega500 || esBotanicoGeneral) {
                 let sizePorcion = (ins.cantidadPorcion && ins.cantidadPorcion > 0) ? ins.cantidadPorcion : 1;
                 let medidaPorcion = ins.medida || 'gr';
 
-                if (esFormulado500) {
-                    sizePorcion = mapaFormulas500[keyIns].dosis;
-                    medidaPorcion = mapaFormulas500[keyIns].medida;
+                if (esFormulado500 && matchFormulaKey) {
+                    sizePorcion = mapaFormulas500[matchFormulaKey].dosis;
+                    medidaPorcion = mapaFormulas500[matchFormulaKey].medida;
                 }
 
                 insumosArmado.push({
-                    idInsumo: ins.idInsumo,
+                    idInsumo: ins.idInsumo || ins.id || ('ins-' + keyIns),
                     nombre: ins.nombre,
                     subcategoria: ins.subcategoria,
                     categoria: ins.categoria,
                     precio: ins.precio || 0,
-                    unidadActual: ins.unidadActual || 0,
+                    unidadActual: (ins.unidadActual !== undefined && ins.unidadActual !== null) ? ins.unidadActual : 9999,
                     sizePorcion: sizePorcion,
                     medida: medidaPorcion
                 });
+                llavesProcesadas.add(keyIns);
+                if (matchFormulaKey) llavesProcesadas.add(matchFormulaKey);
             }
         });
+
+        // Asegurar que cualquier ingrediente de fórmula no registrado como insumo aparezca
+        for (let fk in mapaFormulas500) {
+            if (!llavesProcesadas.has(fk)) {
+                const itemF = mapaFormulas500[fk];
+                insumosArmado.push({
+                    idInsumo: 'f-' + fk,
+                    nombre: itemF.nombre,
+                    subcategoria: 'Vegetales',
+                    categoria: 'Batidos 500 mls',
+                    precio: 0,
+                    unidadActual: 9999,
+                    sizePorcion: itemF.dosis,
+                    medida: itemF.medida
+                });
+            }
+        }
 
         if (insumosArmado.length === 0) {
             grid.innerHTML = `
