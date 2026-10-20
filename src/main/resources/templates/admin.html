@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -317,7 +317,10 @@
                                 <input type="text" id="prod-nombre-nuevo" class="form-control mb-1 border-success text-white fw-bold" placeholder="✏️ Escribe el nombre del nuevo Pack / Elíxir...">
                                 <div class="input-group">
                                     <span class="input-group-text bg-dark text-success border-success fw-bold">PRECIO $</span>
-                                    <input type="number" id="prod-precio-nuevo" class="form-control border-success text-white fw-bold" placeholder="Precio (ej. 22000)" value="22000">
+                                    <input type="number" id="prod-precio-nuevo" class="form-control border-success text-white fw-bold" placeholder="Precio (ej. 22000)" value="22000" onkeydown="if(event.key==='Enter'){event.preventDefault();guardarPrecioSeleccionado();}">
+                                    <button class="btn btn-outline-success fw-bold font-orbitron px-3" type="button" id="btn-guardar-precio-rapido" onclick="guardarPrecioSeleccionado()" title="Actualizar precio de este Pack/Elíxir">
+                                        <i class="bi bi-check-lg me-1"></i> ACTUALIZAR
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -332,7 +335,7 @@
                         <div class="col-md-3">
                             <label class="form-label-neon">ACCIONES DE SÍNTESIS</label>
                             <div class="d-flex gap-2">
-                                <button class="btn btn-bio w-100 py-2 d-flex flex-column align-items-center justify-content-center" onclick="procesarEnsamblaje()">
+                                <button id="btn-sintesis-accion" class="btn btn-bio w-100 py-2 d-flex flex-column align-items-center justify-content-center" onclick="procesarEnsamblaje()">
                                     <i class="bi bi-fingerprint fs-3 mb-1"></i>
                                     <span style="font-size: 0.85rem; font-weight: 900;">PROCESAR / AUMENTAR</span>
                                 </button>
@@ -1246,6 +1249,7 @@
         const contenedorNuevo = document.getElementById('contenedor-nuevo-prod');
         const inputNombre = document.getElementById('prod-nombre-nuevo');
         const inputPrecio = document.getElementById('prod-precio-nuevo');
+        const btnGuardarPrecio = document.getElementById('btn-guardar-precio-rapido');
         if (!contenedorNuevo) return;
         
         const val = selectEl ? selectEl.value : '';
@@ -1259,6 +1263,9 @@
             if (inputPrecio) {
                 inputPrecio.value = '22000';
             }
+            if (btnGuardarPrecio) {
+                btnGuardarPrecio.style.display = 'none';
+            }
         } else if (val) {
             contenedorNuevo.style.display = 'block';
             if (inputNombre) {
@@ -1268,6 +1275,9 @@
             const prod = catalogoGlobal.find(p => p.id == val);
             if (prod && inputPrecio) {
                 inputPrecio.value = prod.precio || 22000;
+            }
+            if (btnGuardarPrecio) {
+                btnGuardarPrecio.style.display = 'inline-block';
             }
         } else {
             contenedorNuevo.style.display = 'none';
@@ -1353,13 +1363,18 @@
                 <tr>
                     <td class="fw-bold text-white fs-5 text-start ps-3">${p.nombre}</td>
                     <td class="text-money-green fs-3 fw-bold">${stock}</td>
-                    <td class="text-warning fw-bold fs-5">${formatMoney(p.precio || 0, p.sucursal)}</td>
+                    <td class="text-warning fw-bold fs-5" style="cursor: pointer;" onclick="editarPrecioRapido(${p.id})" title="Click para editar precio de ${p.nombre}">
+                        <span class="badge bg-dark border border-warning text-warning px-2 py-1 font-orbitron" style="font-size: 0.95rem;">
+                            ${formatMoney(p.precio || 0, p.sucursal)} <i class="bi bi-pencil-fill ms-1" style="font-size: 0.75rem;"></i>
+                        </span>
+                    </td>
                     <td>${fElabHtml}</td>
                     <td>${fVencHtml}</td>
                     <td class="pe-4">${barraHtml}</td>
                     <td class="text-nowrap">
+                        <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold me-1" onclick="editarPrecioRapido(${p.id})" title="Modificar Precio"><i class="bi bi-tag-fill me-1"></i>PRECIO</button>
                         <button class="btn btn-sm btn-outline-success font-orbitron fw-bold me-1" onclick="aumentarStockRapido(${p.id})" title="Aumentar Stock"><i class="bi bi-plus-circle-fill me-1"></i>AUMENTAR</button>
-                        <button class="btn btn-sm btn-outline-info font-orbitron fw-bold me-1" onclick="cargarEditorProduccion(${p.id})" title="Editar"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-sm btn-outline-info font-orbitron fw-bold me-1" onclick="cargarEditorProduccion(${p.id})" title="Editar Lote / Stock"><i class="bi bi-pencil-square"></i></button>
                         <button class="btn btn-sm btn-outline-danger font-orbitron fw-bold" onclick="borrarStockElixir(${p.id})" title="Borrar Stock"><i class="bi bi-trash3-fill"></i> BORRAR</button>
                     </td>
                 </tr>`;
@@ -1466,28 +1481,110 @@
         }, 2800);
     }
 
+    async function guardarNuevoPrecio(id, nuevoPrecio, recargar = true) {
+        if (!id || id === '__NUEVO__') return;
+        const prod = catalogoGlobal.find(p => p.id == id);
+        if (!prod) return;
+
+        prod.precio = nuevoPrecio;
+        const normNombre = normalizarStr(prod.nombre);
+
+        // Actualizar todos los duplicados del producto en memoria
+        catalogoGlobal.forEach(p => {
+            if (normalizarStr(p.nombre) === normNombre) {
+                p.precio = nuevoPrecio;
+            }
+        });
+
+        try {
+            // 1. Endpoint directo de precio (sincroniza duplicados en BD)
+            const resPrecio = await fetch(`/api/productos/${id}/precio?precio=${nuevoPrecio}`, {
+                method: 'PUT'
+            });
+            if (!resPrecio.ok) {
+                // Fallback: PUT /api/productos/${id}
+                await fetch(`/api/productos/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(prod)
+                });
+            }
+        } catch(e) {
+            try {
+                await fetch(`/api/productos/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(prod)
+                });
+            } catch(err) {}
+        }
+
+        // Sincronizar en DB duplicados si existen
+        const duplicados = catalogoGlobal.filter(p => normalizarStr(p.nombre) === normNombre && p.id != id);
+        for (const dup of duplicados) {
+            try {
+                dup.precio = nuevoPrecio;
+                await fetch(`/api/productos/${dup.id}/precio?precio=${nuevoPrecio}`, { method: 'PUT' });
+            } catch(e) {}
+        }
+
+        if (recargar) {
+            const selVal = id;
+            await cargarProduccion();
+            const select = document.getElementById('prod-item');
+            if (select) {
+                select.value = selVal;
+                evaluarSeleccionNuevoProd(select);
+            }
+            playSound('success');
+        }
+    }
+
+    async function guardarPrecioSeleccionado() {
+        const select = document.getElementById('prod-item');
+        const id = select ? select.value : '';
+        if (!id || id === '__NUEVO__') {
+            alert("Por favor selecciona un Elíxir existente en la lista desplegable.");
+            return;
+        }
+        const precioInput = document.getElementById('prod-precio-nuevo');
+        const nuevoPrecio = precioInput ? parseFloat(precioInput.value) : NaN;
+        if (isNaN(nuevoPrecio) || nuevoPrecio < 0) {
+            alert("Ingresa un precio numérico válido mayor o igual a 0.");
+            return;
+        }
+        await guardarNuevoPrecio(id, nuevoPrecio, true);
+    }
+
+    async function editarPrecioRapido(id) {
+        const prod = catalogoGlobal.find(p => p.id == id);
+        if (!prod) return;
+        const precioActual = prod.precio || 0;
+        const inputVal = prompt(`💰 Modificar precio de "${prod.nombre}":\nIngresa el nuevo valor:`, precioActual);
+        if (inputVal === null) return;
+        const nuevoPrecio = parseFloat(inputVal.replace(/[^0-9.]/g, ''));
+        if (isNaN(nuevoPrecio) || nuevoPrecio < 0) {
+            alert("Precio inválido. Debe ser un número mayor o igual a 0.");
+            return;
+        }
+        await guardarNuevoPrecio(id, nuevoPrecio, true);
+    }
+
     async function actualizarPrecioProductoSiCambio(id) {
         if (!id || id === '__NUEVO__') return;
         const prod = catalogoGlobal.find(p => p.id == id);
         const precioInput = document.getElementById('prod-precio-nuevo');
-        if (prod && precioInput && precioInput.value) {
+        if (prod && precioInput && precioInput.value !== '') {
             const nuevoPrecio = parseFloat(precioInput.value);
-            if (!isNaN(nuevoPrecio) && nuevoPrecio > 0 && Math.abs(nuevoPrecio - (prod.precio || 0)) > 0.01) {
-                prod.precio = nuevoPrecio;
-                try {
-                    await fetch(`/api/productos/${id}`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(prod)
-                    });
-                } catch(e) {}
+            if (!isNaN(nuevoPrecio) && nuevoPrecio >= 0 && Math.abs(nuevoPrecio - (prod.precio || 0)) > 0.01) {
+                await guardarNuevoPrecio(id, nuevoPrecio, false);
             }
         }
     }
 
     // --- EDICIÓN Y RESETEO DE PRODUCCIÓN (GÉNESIS) ---
     function cargarEditorProduccion(id) {
-        const prod = catalogoGlobal.find(p => p.id === id);
+        const prod = catalogoGlobal.find(p => p.id == id);
         if(!prod) return;
         const select = document.getElementById('prod-item');
         if (select) {
@@ -1495,16 +1592,18 @@
             evaluarSeleccionNuevoProd(select);
         }
         document.getElementById('prod-cantidad').value = prod.stock || 0;
-        if(lotesProduccion[id]) {
+        if(lotesProduccion[id] && lotesProduccion[id].elaboracion) {
             document.getElementById('prod-fecha').value = lotesProduccion[id].elaboracion;
+        } else {
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('prod-fecha').value = hoy;
         }
         window.scrollTo({top:0, behavior:'smooth'});
 
-        // Reemplazar la funcionalidad de Procesar ADN temporalmente para usar la ruta "ajustar-stock" rápida
-        const btnFn = document.querySelector('button[onclick="procesarEnsamblaje()"]');
+        const btnFn = document.getElementById('btn-sintesis-accion');
         if (btnFn) {
             btnFn.setAttribute('onclick', 'guardarEdicionProduccion()');
-            btnFn.innerHTML = '<i class="bi bi-check-circle-fill"></i> CORREGIR REGISTRO';
+            btnFn.innerHTML = '<i class="bi bi-check-circle-fill fs-3 mb-1"></i><span style="font-size: 0.85rem; font-weight: 900;">CORREGIR REGISTRO</span>';
             btnFn.classList.replace('btn-bio', 'btn-warning');
         }
     }
@@ -1514,7 +1613,7 @@
         const cant = document.getElementById('prod-cantidad').value;
         const fechaElab = document.getElementById('prod-fecha').value;
 
-        if(!id || cant == '') return;
+        if(!id) return;
 
         const prod = catalogoGlobal.find(p => p.id == id);
         let diasVidaPura = 5;
@@ -1525,33 +1624,48 @@
             else if(cat.includes('pulpa')) diasVidaPura = 30;
         }
 
-        let dateElabObj = new Date(fechaElab + 'T12:00:00'); 
-        let dateVencObj = new Date(dateElabObj); 
-        dateVencObj.setDate(dateElabObj.getDate() + diasVidaPura);
-        
-        // Actualización en DB mediante la misma ruta de fabricar pero con cantidad 0 o específica
-        await fetch(`/api/produccion/fabricar`, {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-                idProducto: id, 
-                cantidad: 0, // No suma stock, solo actualiza fechas
-                elaboracion: fechaElab,
-                vencimiento: dateVencObj.toISOString().split('T')[0],
-                vidaTotalDias: diasVidaPura
-            })
-        });
+        // Si se indicó fecha, actualiza fechas del lote de forma defensiva
+        if (fechaElab) {
+            try {
+                let dateElabObj = new Date(fechaElab + 'T12:00:00'); 
+                if (!isNaN(dateElabObj.getTime())) {
+                    let dateVencObj = new Date(dateElabObj); 
+                    dateVencObj.setDate(dateElabObj.getDate() + diasVidaPura);
+                    await fetch(`/api/produccion/fabricar`, {
+                        method:'POST',
+                        headers:{'Content-Type':'application/json'},
+                        body:JSON.stringify({
+                            idProducto: id, 
+                            cantidad: 0, // No suma stock, solo actualiza fechas
+                            elaboracion: fechaElab,
+                            vencimiento: dateVencObj.toISOString().split('T')[0],
+                            vidaTotalDias: diasVidaPura
+                        })
+                    });
+                }
+            } catch(e) {
+                console.error("Error al actualizar fecha de lote:", e);
+            }
+        }
 
-        // Envia ajuste al servidor sin fabricar/descontar matriz
-        await fetch(`/api/productos/${id}/ajustar-stock?cantidad=${cant}`, {method:'PUT'});
+        // Si se indicó cantidad, ajustamos el stock
+        if (cant !== '' && !isNaN(parseInt(cant))) {
+            try {
+                await fetch(`/api/productos/${id}/ajustar-stock?cantidad=${cant}`, {method:'PUT'});
+            } catch(e) {
+                console.error("Error al ajustar stock:", e);
+            }
+        }
+
+        // Actualizar precio si fue modificado
         await actualizarPrecioProductoSiCambio(id);
 
         document.getElementById('prod-cantidad').value = '';
 
-        const btnFn = document.querySelector('button[onclick="guardarEdicionProduccion()"]');
+        const btnFn = document.getElementById('btn-sintesis-accion');
         if (btnFn) {
             btnFn.setAttribute('onclick', 'procesarEnsamblaje()');
-            btnFn.innerHTML = '<i class="bi bi-fingerprint"></i> PROCESAR ADN';
+            btnFn.innerHTML = '<i class="bi bi-fingerprint fs-3 mb-1"></i><span style="font-size: 0.85rem; font-weight: 900;">PROCESAR / AUMENTAR</span>';
             btnFn.classList.replace('btn-warning', 'btn-bio');
         }
 

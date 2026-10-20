@@ -50,12 +50,48 @@ public class ProductoController {
     @PutMapping("/{id}")
     public ResponseEntity<Producto> actualizarProducto(@PathVariable Long id, @RequestBody Producto nuevoProducto) {
         return productoRepository.findById(id).map(prod -> {
-            prod.setNombre(nuevoProducto.getNombre());
-            prod.setCategoria(nuevoProducto.getCategoria());
-            prod.setPrecio(nuevoProducto.getPrecio());
-            prod.setImagen(nuevoProducto.getImagen());
-            prod.setDescripcion(nuevoProducto.getDescripcion());
-            return ResponseEntity.ok(productoRepository.save(prod));
+            if (nuevoProducto.getNombre() != null) prod.setNombre(nuevoProducto.getNombre());
+            if (nuevoProducto.getCategoria() != null) prod.setCategoria(nuevoProducto.getCategoria());
+            if (nuevoProducto.getPrecio() != null) prod.setPrecio(nuevoProducto.getPrecio());
+            if (nuevoProducto.getImagen() != null) prod.setImagen(nuevoProducto.getImagen());
+            if (nuevoProducto.getDescripcion() != null) prod.setDescripcion(nuevoProducto.getDescripcion());
+            if (nuevoProducto.getSucursal() != null) prod.setSucursal(nuevoProducto.getSucursal());
+            if (nuevoProducto.getStock() != null) prod.setStock(nuevoProducto.getStock());
+            Producto guardado = productoRepository.save(prod);
+
+            // Sincronizar precio en duplicados con el mismo nombre si se actualizó el precio
+            if (nuevoProducto.getPrecio() != null && prod.getNombre() != null && !prod.getNombre().trim().isEmpty()) {
+                String nombreBase = prod.getNombre().trim();
+                for (Producto p : productoRepository.findAll()) {
+                    if (p.getId() != null && !p.getId().equals(prod.getId()) &&
+                        p.getNombre() != null && p.getNombre().trim().equalsIgnoreCase(nombreBase)) {
+                        p.setPrecio(nuevoProducto.getPrecio());
+                        productoRepository.save(p);
+                    }
+                }
+            }
+            return ResponseEntity.ok(guardado);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}/precio")
+    public ResponseEntity<Producto> actualizarPrecio(@PathVariable Long id, @RequestParam Double precio) {
+        return productoRepository.findById(id).map(prod -> {
+            prod.setPrecio(precio);
+            Producto guardado = productoRepository.save(prod);
+
+            // Sincronizar precio en todos los duplicados con el mismo nombre
+            if (prod.getNombre() != null && !prod.getNombre().trim().isEmpty()) {
+                String nombreBase = prod.getNombre().trim();
+                for (Producto p : productoRepository.findAll()) {
+                    if (p.getId() != null && !p.getId().equals(prod.getId()) &&
+                        p.getNombre() != null && p.getNombre().trim().equalsIgnoreCase(nombreBase)) {
+                        p.setPrecio(precio);
+                        productoRepository.save(p);
+                    }
+                }
+            }
+            return ResponseEntity.ok(guardado);
         }).orElse(ResponseEntity.notFound().build());
     }
 
