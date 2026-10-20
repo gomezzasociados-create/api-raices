@@ -37,6 +37,25 @@ public class DataInitializer implements CommandLineRunner {
                         p.setCategoria("Shots");
                         mod = true;
                     }
+                    // NORMALIZACIÓN DE PRECIOS A PESOS CHILENOS (CLP)
+                    String cat = p.getCategoria() != null ? p.getCategoria().toLowerCase() : "";
+                    String nom = p.getNombre() != null ? p.getNombre().toLowerCase() : "";
+                    if (p.getPrecio() != null && p.getPrecio() > 0 && p.getPrecio() <= 100.0) {
+                        if (cat.contains("pack") || nom.contains("pulpa") || nom.contains("pack")) {
+                            p.setPrecio(25000.0);
+                        } else if (cat.contains("shot") || nom.contains("shot") || nom.contains("caldo")) {
+                            p.setPrecio(2500.0);
+                        } else {
+                            p.setPrecio(5000.0);
+                        }
+                        mod = true;
+                    } else if (p.getPrecio() != null && p.getPrecio() == 30000.0 && (cat.contains("pack") || nom.contains("pulpa"))) {
+                        p.setPrecio(25000.0);
+                        mod = true;
+                    } else if (p.getPrecio() != null && p.getPrecio() == 10000.0 && (cat.contains("500") || nom.contains("batido"))) {
+                        p.setPrecio(5000.0);
+                        mod = true;
+                    }
                     if (mod) {
                         try { repository.save(p); } catch (Exception ignored) {}
                     }
@@ -71,8 +90,8 @@ public class DataInitializer implements CommandLineRunner {
 
             for (String sede : sucursales) {
 
-                double precioBatido = 3500.0;
-                double precioPulpa = 22000.0;
+                double precioBatido = 5000.0;
+                double precioPulpa = 25000.0;
 
                 // ==========================================
                 // 🥤 1. BATIDOS ORIGINALES (500 mls)
@@ -263,6 +282,10 @@ public class DataInitializer implements CommandLineRunner {
                 }
                 if (ins.getUnidadActual() == null) {
                     ins.setUnidadActual(1000.0);
+                    mod = true;
+                }
+                if (ins.getPrecio() != null && ins.getPrecio() > 0 && ins.getPrecio() <= 100.0) {
+                    ins.setPrecio(ins.getPrecio() * 1000.0);
                     mod = true;
                 }
                 if (ins.getSubcategoria() == null || ins.getSubcategoria().isEmpty()) {

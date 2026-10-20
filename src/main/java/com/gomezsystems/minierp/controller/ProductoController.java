@@ -39,6 +39,9 @@ public class ProductoController {
 
     @PostMapping
     public Producto guardar(@RequestBody Producto producto) {
+        if (producto.getPrecio() != null && producto.getPrecio() > 0 && producto.getPrecio() <= 100.0) {
+            producto.setPrecio(producto.getPrecio() * 1000.0);
+        }
         return productoRepository.save(producto);
     }
 
@@ -52,7 +55,12 @@ public class ProductoController {
         return productoRepository.findById(id).map(prod -> {
             if (nuevoProducto.getNombre() != null) prod.setNombre(nuevoProducto.getNombre());
             if (nuevoProducto.getCategoria() != null) prod.setCategoria(nuevoProducto.getCategoria());
-            if (nuevoProducto.getPrecio() != null) prod.setPrecio(nuevoProducto.getPrecio());
+            if (nuevoProducto.getPrecio() != null) {
+                Double pr = nuevoProducto.getPrecio();
+                if (pr > 0 && pr <= 100.0) pr = pr * 1000.0;
+                nuevoProducto.setPrecio(pr);
+                prod.setPrecio(pr);
+            }
             if (nuevoProducto.getImagen() != null) prod.setImagen(nuevoProducto.getImagen());
             if (nuevoProducto.getDescripcion() != null) prod.setDescripcion(nuevoProducto.getDescripcion());
             if (nuevoProducto.getSucursal() != null) prod.setSucursal(nuevoProducto.getSucursal());
@@ -76,8 +84,9 @@ public class ProductoController {
 
     @PutMapping("/{id}/precio")
     public ResponseEntity<Producto> actualizarPrecio(@PathVariable Long id, @RequestParam Double precio) {
+        final Double precioFinal = (precio != null && precio > 0 && precio <= 100.0) ? precio * 1000.0 : precio;
         return productoRepository.findById(id).map(prod -> {
-            prod.setPrecio(precio);
+            prod.setPrecio(precioFinal);
             Producto guardado = productoRepository.save(prod);
 
             // Sincronizar precio en todos los duplicados con el mismo nombre
@@ -86,7 +95,7 @@ public class ProductoController {
                 for (Producto p : productoRepository.findAll()) {
                     if (p.getId() != null && !p.getId().equals(prod.getId()) &&
                         p.getNombre() != null && p.getNombre().trim().equalsIgnoreCase(nombreBase)) {
-                        p.setPrecio(precio);
+                        p.setPrecio(precioFinal);
                         productoRepository.save(p);
                     }
                 }

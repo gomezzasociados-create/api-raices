@@ -317,7 +317,7 @@
                                 <input type="text" id="prod-nombre-nuevo" class="form-control mb-1 border-success text-white fw-bold" placeholder="✏️ Escribe el nombre del nuevo Pack / Elíxir...">
                                 <div class="input-group">
                                     <span class="input-group-text bg-dark text-success border-success fw-bold">PRECIO $</span>
-                                    <input type="number" id="prod-precio-nuevo" class="form-control border-success text-white fw-bold" placeholder="Precio (ej. 22000)" value="22000" onkeydown="if(event.key==='Enter'){event.preventDefault();guardarPrecioSeleccionado();}">
+                                    <input type="text" inputmode="numeric" id="prod-precio-nuevo" class="form-control border-success text-white fw-bold" placeholder="Precio CLP (ej. 25000)" value="25000" onkeydown="if(event.key==='Enter'){event.preventDefault();guardarPrecioSeleccionado();}">
                                     <button class="btn btn-outline-success fw-bold font-orbitron px-3" type="button" id="btn-guardar-precio-rapido" onclick="guardarPrecioSeleccionado()" title="Actualizar precio de este Pack/Elíxir">
                                         <i class="bi bi-check-lg me-1"></i> ACTUALIZAR
                                     </button>
@@ -498,7 +498,7 @@
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Subcategoría</label><select id="ins-subcategoria" class="form-select"><option value="Base">Base</option><option value="Semillas">Semillas</option><option value="Frutas">Frutas</option><option value="Vegetales">Vegetales</option><option value="Suplementos">Suplementos</option><option value="Frutos Secos">Frutos Secos</option><option value="Especias">Especias</option><option value="Endulzantes">Endulzantes</option><option value="Estabilizantes">Estabilizantes</option><option value="Grasas">Grasas</option><option value="Proteínas">Proteínas</option><option value="Cereales">Cereales</option></select></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Métrica</label><select id="ins-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
                                         <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control"></div>
-                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/KG</label><input type="number" id="ins-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="0.00"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/KG ($)</label><input type="number" id="ins-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 3200"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
                                         <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background:var(--p-bio-green); color:#000;" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg fs-4"></i></button></div>
                                     </div>
@@ -533,7 +533,7 @@
                                         <div class="col-md-3"><label class="form-label-neon">Elemento Físico</label><input type="text" id="vaso-nombre" class="form-control"></div>
                                         <div class="col-md-2"><label class="form-label-neon">Métrica</label><select id="vaso-unidad" class="form-select"><option value="und">Unidades</option><option value="mls">Mililitros</option><option value="gr">Gramos</option></select></div>
                                         <div class="col-md-2"><label class="form-label-neon">Volumen</label><input type="number" id="vaso-stock" class="form-control"></div>
-                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UND</label><input type="number" id="vaso-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="0.00"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UND ($)</label><input type="number" id="vaso-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 250"></div>
                                         <div class="col-md-3"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
                                         <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-cyan); color: #000;" onclick="guardarInsumo('vasos')"><i class="bi bi-plus-lg fs-4"></i></button></div>
                                     </div>
@@ -570,7 +570,7 @@
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Subcategoría</label><select id="shot-subcategoria" class="form-select"><option value="Suplementos">Suplementos</option><option value="Base">Base</option><option value="Especias">Especias</option><option value="Frutas">Frutas</option><option value="Vegetales">Vegetales</option><option value="Endulzantes">Endulzantes</option></select></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Métrica</label><select id="shot-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
                                         <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-magenta)">Volumen</label><input type="number" id="shot-stock" class="form-control"></div>
-                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UNIT</label><input type="number" id="shot-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="0.00"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UNIT ($)</label><input type="number" id="shot-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 2500"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Nodo Destino</label><select id="shot-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
                                         <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-magenta); color: #fff;" onclick="guardarInsumo('shots')"><i class="bi bi-plus-lg fs-4"></i></button></div>
                                     </div>
@@ -642,7 +642,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <label class="form-label-neon" style="color:var(--p-warning)">Precio / Porción ($)</label>
-                                            <input type="number" id="armatubatido-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="$0.00">
+                                            <input type="number" id="armatubatido-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 1000">
                                         </div>
                                         <div class="col-md-3">
                                             <label class="form-label-neon" style="color:var(--p-warning)">Nodo Destino</label>
@@ -924,7 +924,7 @@
                         </div>
                         <div class="col-md-2">
                             <label class="form-label-neon text-warning">Precio ($)</label>
-                            <input type="number" id="nuevo-prod-precio" class="form-control text-warning fw-bold" placeholder="3500">
+                            <input type="number" id="nuevo-prod-precio" class="form-control text-warning fw-bold" placeholder="Precio CLP (ej: 5000)">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label-neon">URL Imagen (Opcional)</label>
@@ -1261,7 +1261,7 @@
                 inputNombre.focus();
             }
             if (inputPrecio) {
-                inputPrecio.value = '22000';
+                inputPrecio.value = '25000';
             }
             if (btnGuardarPrecio) {
                 btnGuardarPrecio.style.display = 'none';
@@ -1274,7 +1274,9 @@
             }
             const prod = catalogoGlobal.find(p => p.id == val);
             if (prod && inputPrecio) {
-                inputPrecio.value = prod.precio || 22000;
+                let pCLP = normalizarPrecioCLP(prod.precio || 0);
+                if (pCLP <= 0) pCLP = 25000;
+                inputPrecio.value = pCLP;
             }
             if (btnGuardarPrecio) {
                 btnGuardarPrecio.style.display = 'inline-block';
@@ -1400,8 +1402,8 @@
                 alert("ALERTA: Por favor escribe el nombre del nuevo Pack o Elíxir.");
                 return;
             }
-            const rawPrecioNuevo = document.getElementById('prod-precio-nuevo') ? parseFloat(document.getElementById('prod-precio-nuevo').value) : 22000.0;
-            const precioValido = (isNaN(rawPrecioNuevo) || rawPrecioNuevo <= 0) ? 22000.0 : rawPrecioNuevo;
+            const rawPrecioNuevo = document.getElementById('prod-precio-nuevo') ? normalizarPrecioCLP(document.getElementById('prod-precio-nuevo').value) : 25000.0;
+            const precioValido = (rawPrecioNuevo <= 0) ? 25000.0 : rawPrecioNuevo;
             try {
                 const resNuevo = await fetch('/api/productos', {
                     method: 'POST',
@@ -1481,10 +1483,33 @@
         }, 2800);
     }
 
+    function normalizarPrecioCLP(val) {
+        if (val === null || val === undefined) return 0;
+        let str = val.toString().trim();
+        str = str.replace(/[$€\s]/g, '');
+        if (!str) return 0;
+        // Si tiene formato chileno con separador de miles ej: "25.000" o "25,000"
+        if (/^\d{1,3}([.,]\d{3})+$/.test(str)) {
+            str = str.replace(/[.,]/g, '');
+        } else {
+            str = str.replace(',', '.');
+        }
+        let num = parseFloat(str);
+        if (isNaN(num)) return 0;
+        // Si ingresó <= 100 (ej: 25 por 25€ o shorthand), convertir a miles (25000)
+        if (num > 0 && num <= 100) {
+            num = num * 1000;
+        }
+        return Math.round(num);
+    }
+
     async function guardarNuevoPrecio(id, nuevoPrecio, recargar = true) {
         if (!id || id === '__NUEVO__') return;
         const prod = catalogoGlobal.find(p => p.id == id);
         if (!prod) return;
+
+        nuevoPrecio = normalizarPrecioCLP(nuevoPrecio);
+        if (nuevoPrecio <= 0) return;
 
         prod.precio = nuevoPrecio;
         const normNombre = normalizarStr(prod.nombre);
@@ -1548,23 +1573,25 @@
             return;
         }
         const precioInput = document.getElementById('prod-precio-nuevo');
-        const nuevoPrecio = precioInput ? parseFloat(precioInput.value) : NaN;
-        if (isNaN(nuevoPrecio) || nuevoPrecio < 0) {
-            alert("Ingresa un precio numérico válido mayor o igual a 0.");
+        const nuevoPrecio = normalizarPrecioCLP(precioInput ? precioInput.value : '');
+        if (nuevoPrecio <= 0) {
+            alert("Ingresa un precio válido en pesos chilenos (ej: 25000 o 25.000).");
             return;
         }
+        if (precioInput) precioInput.value = nuevoPrecio;
         await guardarNuevoPrecio(id, nuevoPrecio, true);
     }
 
     async function editarPrecioRapido(id) {
         const prod = catalogoGlobal.find(p => p.id == id);
         if (!prod) return;
-        const precioActual = prod.precio || 0;
-        const inputVal = prompt(`💰 Modificar precio de "${prod.nombre}":\nIngresa el nuevo valor:`, precioActual);
+        let precioActual = normalizarPrecioCLP(prod.precio || 0);
+        if (precioActual <= 0) precioActual = 25000;
+        const inputVal = prompt(`💰 Modificar precio de "${prod.nombre}" (Pesos Chilenos CLP):\nIngresa el nuevo valor (ej: 25000 o 25.000):`, precioActual);
         if (inputVal === null) return;
-        const nuevoPrecio = parseFloat(inputVal.replace(/[^0-9.]/g, ''));
-        if (isNaN(nuevoPrecio) || nuevoPrecio < 0) {
-            alert("Precio inválido. Debe ser un número mayor o igual a 0.");
+        const nuevoPrecio = normalizarPrecioCLP(inputVal);
+        if (nuevoPrecio <= 0) {
+            alert("Precio inválido. Debe ser un número mayor a 0 en pesos chilenos (ej: 25000).");
             return;
         }
         await guardarNuevoPrecio(id, nuevoPrecio, true);
@@ -1575,8 +1602,9 @@
         const prod = catalogoGlobal.find(p => p.id == id);
         const precioInput = document.getElementById('prod-precio-nuevo');
         if (prod && precioInput && precioInput.value !== '') {
-            const nuevoPrecio = parseFloat(precioInput.value);
-            if (!isNaN(nuevoPrecio) && nuevoPrecio >= 0 && Math.abs(nuevoPrecio - (prod.precio || 0)) > 0.01) {
+            const nuevoPrecio = normalizarPrecioCLP(precioInput.value);
+            if (nuevoPrecio > 0 && Math.abs(nuevoPrecio - (prod.precio || 0)) > 0.01) {
+                if (precioInput) precioInput.value = nuevoPrecio;
                 await guardarNuevoPrecio(id, nuevoPrecio, false);
             }
         }
@@ -1784,10 +1812,10 @@
             const resInd = await fetch(`/api/finanzas/indicadores/${paisVenta}`);
             const dataInd = await resInd.json();
 
-            document.getElementById('tesoreria-efectivo').innerText = `${smb}${dataInd.ingresosEfectivo.toLocaleString('es-ES')}`;
-            document.getElementById('tesoreria-bancos').innerText = `${smb}${dataInd.ingresosBanco.toLocaleString('es-ES')}`;
-            document.getElementById('tesoreria-gastos').innerText = `${smb}${dataInd.gastos.toLocaleString('es-ES')}`;
-            document.getElementById('tesoreria-utilidad').innerText = `${smb}${dataInd.utilidad.toLocaleString('es-ES')}`;
+            document.getElementById('tesoreria-efectivo').innerText = formatMoney(dataInd.ingresosEfectivo, paisVenta);
+            document.getElementById('tesoreria-bancos').innerText = formatMoney(dataInd.ingresosBanco, paisVenta);
+            document.getElementById('tesoreria-gastos').innerText = formatMoney(dataInd.gastos, paisVenta);
+            document.getElementById('tesoreria-utilidad').innerText = formatMoney(dataInd.utilidad, paisVenta);
 
             // VENTAS PENDIENTES / ACTIVAS (E-commerce y POS no archivadas)
             const resVentas = await fetch('/api/ventas');
@@ -1803,7 +1831,7 @@
                     <td class="text-white fw-bold">#OP-${v.id}</td>
                     <td>${v.origen}</td>
                     <td style="color:var(--p-cyan)">${v.medioPago || 'Por Definir'}</td>
-                    <td class="text-money-green fw-bold">${smb}${v.total.toLocaleString('es-ES')}</td>
+                    <td class="text-money-green fw-bold">${formatMoney(v.total, v.pais)}</td>
                     <td>${badgeEstado} <button class="btn btn-sm btn-outline-info ms-2 border-0" onclick="imprimirTicket(${v.id})" title="Imprimir Recibo"><i class="bi bi-printer fs-5"></i></button>${btnCobrar}</td>
                 </tr>`;
             });
@@ -1816,7 +1844,7 @@
             dataGastos.forEach(g => {
                 tbGastos.innerHTML += `<tr>
                     <td class="text-white">${g.concepto}</td>
-                    <td style="color:#ff0055" class="fw-bold">-${smb}${g.monto.toLocaleString('es-ES')}</td>
+                    <td style="color:#ff0055" class="fw-bold">-${formatMoney(g.monto, paisVenta)}</td>
                     <td><button class="btn btn-sm btn-outline-warning border-0" onclick="eliminarGasto(${g.id})"><i class="bi bi-trash fs-5"></i></button></td>
                 </tr>`;
             });
@@ -1880,7 +1908,8 @@
 
     // --- MÓDULO PROFESIONAL DE IMPRESIÓN Y CAJA ---
     function formatMoney(amount, nodo) {
-        return '$' + (amount || 0).toLocaleString('es-CL');
+        let num = normalizarPrecioCLP(amount);
+        return '$' + Math.round(num).toLocaleString('es-CL');
     }
 
     async function imprimirTicket(idVenta) {
@@ -2187,7 +2216,7 @@
 
                 let valorInsumo = 0;
                 let stockTotal = parseFloat(i.unidadActual) || 0;
-                let precioUnitario = parseFloat(i.precio) || 0;
+                let precioUnitario = normalizarPrecioCLP(i.precio || 0);
                 
                 if (isArmaTuBatido) {
                     valorInsumo = stockTotal * precioUnitario;
@@ -2307,7 +2336,7 @@
             dosisVal=parseFloat(document.getElementById('armatubatido-dosis').value) || 1;
             stock=document.getElementById('armatubatido-stock').value; 
             suc=document.getElementById('armatubatido-sucursal').value;
-            precioVal = parseFloat(document.getElementById('armatubatido-precio').value) || 0;
+            precioVal = normalizarPrecioCLP(document.getElementById('armatubatido-precio').value);
         } else if(tipo==='pulpas'){ 
             id = document.getElementById('ins-id').value; 
             nombre = document.getElementById('ins-nombre').value; 
@@ -2316,7 +2345,7 @@
             uni=document.getElementById('ins-unidad').value; 
             stock=document.getElementById('ins-stock').value; 
             suc=document.getElementById('ins-sucursal').value;
-            precioVal = parseFloat(document.getElementById('ins-precio').value) || 0;
+            precioVal = normalizarPrecioCLP(document.getElementById('ins-precio').value);
         } else if(tipo==='vasos') { 
             id = document.getElementById('vaso-id').value; 
             nombre = document.getElementById('vaso-nombre').value; 
@@ -2325,7 +2354,7 @@
             uni=document.getElementById('vaso-unidad').value; 
             stock=document.getElementById('vaso-stock').value; 
             suc=document.getElementById('vaso-sucursal').value;
-            precioVal = parseFloat(document.getElementById('vaso-precio').value) || 0;
+            precioVal = normalizarPrecioCLP(document.getElementById('vaso-precio').value);
         } else if(tipo==='shots') {
             id = document.getElementById('shot-id').value; 
             nombre = document.getElementById('shot-nombre').value; 
@@ -2334,7 +2363,7 @@
             uni=document.getElementById('shot-unidad').value; 
             stock=document.getElementById('shot-stock').value; 
             suc=document.getElementById('shot-sucursal').value;
-            precioVal = parseFloat(document.getElementById('shot-precio').value) || 0;
+            precioVal = normalizarPrecioCLP(document.getElementById('shot-precio').value);
         }
         if(!nombre) return alert("Ingresa al menos el nombre del insumo.");
 
@@ -2633,7 +2662,7 @@
                     let costoHtml = '<span class="text-muted">N/A</span>';
                     
                     if(insumo) {
-                        let precio = insumo.precio || 0;
+                        let precio = normalizarPrecioCLP(insumo.precio || 0);
                         let costoIngrediente = 0;
                         if(unidadTxt === 'gr' || unidadTxt === 'mls' || insumo.medida === 'gr' || insumo.medida === 'mls') {
                             costoIngrediente = (gastoVal / 1000) * precio;
@@ -2716,7 +2745,7 @@
                     </td>
                     <td class="align-middle text-white">${p.sucursal}</td>
                     <td class="align-middle">
-                        <input type="number" id="precio-prod-${p.id}" value="${p.precio}" class="${classPrecio} text-center fw-bold fs-4" style="max-width:120px;" ${attrReadonly}>
+                        <input type="number" id="precio-prod-${p.id}" value="${normalizarPrecioCLP(p.precio || 0)}" class="${classPrecio} text-center fw-bold fs-4" style="max-width:120px;" ${attrReadonly}>
                     </td>
                     <td class="align-middle">
                         ${colComandos}
@@ -2730,7 +2759,7 @@
         playSound('click');
         const nombre = document.getElementById('nuevo-prod-nombre').value;
         const categoria = document.getElementById('nuevo-prod-categoria').value;
-        const precio = parseFloat(document.getElementById('nuevo-prod-precio').value) || 0;
+        const precio = normalizarPrecioCLP(document.getElementById('nuevo-prod-precio').value);
         const imagen = document.getElementById('nuevo-prod-imagen').value;
         const descripcion = document.getElementById('nuevo-prod-descripcion').value;
         const sucursal = document.getElementById('filtro-sucursal-catalogo').value || 'Antofagasta';
@@ -2768,7 +2797,7 @@
         playSound('click');
         const nuevoNombre = document.getElementById(`nombre-prod-${id}`).value;
         const nuevaCategoria = document.getElementById(`cat-prod-${id}`).value;
-        const nuevoPrecio = document.getElementById(`precio-prod-${id}`).value;
+        const nuevoPrecio = normalizarPrecioCLP(document.getElementById(`precio-prod-${id}`).value);
         const nuevaImagen = document.getElementById(`img-prod-${id}`).value;
         const nuevaDesc = document.getElementById(`desc-prod-${id}`).value;
 
@@ -2779,7 +2808,7 @@
                 body: JSON.stringify({
                     nombre: nuevoNombre,
                     categoria: nuevaCategoria,
-                    precio: parseFloat(nuevoPrecio),
+                    precio: nuevoPrecio,
                     imagen: nuevaImagen,
                     descripcion: nuevaDesc
                 })
@@ -2866,7 +2895,7 @@
                 for (const row of data) {
                     const nombre = row.PRODUCTO || row.producto || "";
                     const imagen = row.IMAGEN || row.imagen || "";
-                    const precio = parseInt(row.PRECIO || row.precio || 0);
+                    const precio = normalizarPrecioCLP(row.PRECIO || row.precio || 0);
                     const descripcion = row.DESCRIPCION || row.descripcion || "";
                     const categoria = row.CATEGORIA || row.categoria || "Batidos";
 

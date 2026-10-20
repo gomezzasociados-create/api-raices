@@ -730,7 +730,7 @@
                     <li class="list-group-item bg-dark text-white border-warning mb-2 rounded p-3 d-flex justify-content-between align-items-center">
                         <div>
                             <span class="badge bg-warning text-dark me-2 font-orbitron">WEB #${v.id}</span>
-                            <span class="fw-bold">${simboloActual}${v.total.toLocaleString('es-ES')}</span>
+                            <span class="fw-bold">${simboloActual}${v.total.toLocaleString('es-CL')}</span>
                             <div style="font-size: 0.85rem; color: #aaa; margin-top: 5px;">${v.medioPago} - Ingresado hoy</div>
                         </div>
                         <button class="btn btn-sm btn-outline-warning" onclick="alert('Funcionalidad de Preparación de Envío Activa')" onmouseenter="playSound('hover')"><i class="bi bi-box-seam me-1"></i> DESPACHAR</button>
@@ -772,6 +772,14 @@
             if(!catalogoGlobal || catalogoGlobal.length === 0) {
                 let resBackup = await fetch(API_PRODUCTOS);
                 if(resBackup.ok) catalogoGlobal = await resBackup.json();
+            }
+
+            if(Array.isArray(catalogoGlobal)) {
+                catalogoGlobal.forEach(p => {
+                    let pr = Number(p.precio) || 0;
+                    if (pr > 0 && pr <= 100) pr = pr * 1000;
+                    p.precio = Math.round(pr);
+                });
             }
 
             if((!catalogoGlobal || catalogoGlobal.length === 0) && !silencioso) {
@@ -872,7 +880,7 @@
                         <div class="pos-item-img-container">${tagImagen}</div>
                         <div class="pos-item-body">
                             <div class="pos-item-nombre">${p.nombre}</div>
-                            <div class="pos-item-precio">${simboloActual}${p.precio.toLocaleString('es-ES')}</div>
+                            <div class="pos-item-precio">${simboloActual}${p.precio.toLocaleString('es-CL')}</div>
                         </div>
                     </div>
                 </div>
@@ -924,14 +932,14 @@
             const filaHTML = `
                 <div class="ticket-item-row">
                     <div style="font-family: 'Rajdhani'; font-weight: 700; width: 65%; line-height: 1.1; color: white; font-size: 1.1rem;">${item.nombre}</div>
-                    <div style="font-family: 'Orbitron'; color: var(--p-eco-green); font-weight: 900; font-size:1.1rem; text-shadow: var(--resplandor-eco);">${simboloActual}${item.precio.toLocaleString('es-ES')}</div>
+                    <div style="font-family: 'Orbitron'; color: var(--p-eco-green); font-weight: 900; font-size:1.1rem; text-shadow: var(--resplandor-eco);">${simboloActual}${item.precio.toLocaleString('es-CL')}</div>
                     <button class="btn btn-sm btn-outline-danger py-1 px-2 border-0" onclick="eliminarDelTicket(${index})" onmouseenter="playSound('hover')"><i class="bi bi-x-lg fs-5"></i></button>
                 </div>
             `;
             listaDesktop.innerHTML += filaHTML; listaMobile.innerHTML += filaHTML;
         });
 
-        actualizarTextosTotal(`${simboloActual}${totalActualCaja.toLocaleString('es-ES')}`);
+        actualizarTextosTotal(`${simboloActual}${totalActualCaja.toLocaleString('es-CL')}`);
     }
 
     function actualizarTextosTotal(texto) { document.querySelectorAll('.total-caja-display').forEach(el => el.innerText = texto); }
@@ -967,7 +975,7 @@
         const crmNombre = document.getElementById('crm-nombre').value.trim();
 
         let msjAlerta = `[ SÍNTESIS AUTORIZADA ]\n\n`;
-        msjAlerta += `CANTIDAD: ${simboloActual}${totalActualCaja.toLocaleString('es-ES')}\n`;
+        msjAlerta += `CANTIDAD: ${simboloActual}${totalActualCaja.toLocaleString('es-CL')}\n`;
 
         // Formatear el método para que se lea mejor en el comprobante final
         let metodoMostrado = metodo.toUpperCase();
@@ -1013,9 +1021,9 @@
         const res = await fetch(`/api/finanzas/indicadores/${pais}`);
         const data = await res.json();
 
-        document.getElementById('caja-efectivo').innerText = `${simboloActual}${data.ingresosEfectivo.toLocaleString('es-ES')}`;
-        document.getElementById('caja-banco').innerText = `${simboloActual}${data.ingresosBanco.toLocaleString('es-ES')}`;
-        document.getElementById('caja-total').innerText = `${simboloActual}${data.ingresosNetos.toLocaleString('es-ES')}`;
+        document.getElementById('caja-efectivo').innerText = `${simboloActual}${data.ingresosEfectivo.toLocaleString('es-CL')}`;
+        document.getElementById('caja-banco').innerText = `${simboloActual}${data.ingresosBanco.toLocaleString('es-CL')}`;
+        document.getElementById('caja-total').innerText = `${simboloActual}${data.ingresosNetos.toLocaleString('es-CL')}`;
 
         cargarPedidosWeb(pais);
         new bootstrap.Modal(document.getElementById('modalLibroCaja')).show();
@@ -1031,7 +1039,7 @@
         if (ventasWeb.length > 0) {
             lista.innerHTML = '';
             ventasWeb.forEach(v => {
-                lista.innerHTML += `<li class="list-group-item bg-transparent text-white border-warning">Pedido #00${v.id} - ${simboloActual}${v.total} (Esperando preparación)</li>`;
+                lista.innerHTML += `<li class="list-group-item bg-transparent text-white border-warning">Pedido #00${v.id} - ${simboloActual}${Number(v.total || 0).toLocaleString('es-CL')} (Esperando preparación)</li>`;
             });
             cont.style.display = 'block';
         } else {
