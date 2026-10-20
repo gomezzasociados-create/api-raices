@@ -294,6 +294,7 @@
             <li class="nav-item" id="nav-crm" style="display:block;"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-crm" type="button" onclick="cargarCRM(); playSound('click')"><i class="bi bi-people-fill me-1"></i> RED CLIENTES</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-inventario" type="button" onclick="cargarInsumos(); playSound('click')"><i class="bi bi-boxes me-1"></i> BODEGA BOTÁNICA</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-recetas" type="button" onclick="prepararRecetas(); playSound('click')"><i class="bi bi-flask me-1"></i> FÓRMULAS</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pdf" type="button" onclick="cargarDocumentosPdf(); playSound('click')"><i class="bi bi-file-earmark-pdf-fill me-1"></i> CENTRO PDF & RECETAS</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-precios" type="button" onclick="cargarCatalogo(); playSound('click')"><i class="bi bi-hdd-network me-1"></i> MATRIZ TOTAL</button></li>
         </ul>
 
@@ -306,12 +307,22 @@
                         <div class="col-md-2">
                             <label class="form-label-neon">NODO BASE</label>
                             <select id="prod-sucursal" class="form-select auth-select" onchange="cargarProduccion(); playSound('click')">
-                                <option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option>
+                                <option value="Antofagasta">Antofagasta</option>
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label-neon">ELIXIR A SINTETIZAR</label>
-                            <select id="prod-item" class="form-select"></select>
+                            <select id="prod-item" class="form-select" onchange="evaluarSeleccionNuevoProd(this)"></select>
+                            <div id="contenedor-nuevo-prod" class="mt-2" style="display:none;">
+                                <input type="text" id="prod-nombre-nuevo" class="form-control mb-1 border-success text-white fw-bold" placeholder="✏️ Escribe el nombre del nuevo Pack / Elíxir...">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark text-success border-success fw-bold">PRECIO $</span>
+                                    <input type="number" id="prod-precio-nuevo" class="form-control border-success text-white fw-bold" placeholder="Precio (ej. 22000)" value="22000" onkeydown="if(event.key==='Enter'){event.preventDefault();guardarPrecioSeleccionado();}">
+                                    <button class="btn btn-outline-success fw-bold font-orbitron px-3" type="button" id="btn-guardar-precio-rapido" onclick="guardarPrecioSeleccionado()" title="Actualizar precio de este Pack/Elíxir">
+                                        <i class="bi bi-check-lg me-1"></i> ACTUALIZAR
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label-neon text-magenta" style="color: var(--p-magenta);">CICLO DE GÉNESIS (ELAB)</label>
@@ -321,11 +332,18 @@
                             <label class="form-label-neon">LOTE (UNIDADES)</label>
                             <input type="number" id="prod-cantidad" class="form-control text-center text-white fw-bold fs-4" placeholder="0">
                         </div>
-                        <div class="col-md-2">
-                            <button class="btn btn-bio w-100 h-100 py-2 d-flex flex-column align-items-center justify-content-center" onclick="procesarEnsamblaje()">
-                                <i class="bi bi-fingerprint fs-2 mb-1"></i>
-                                <span style="font-size: 0.9rem; font-weight: 900;">PROCESAR ADN</span>
-                            </button>
+                        <div class="col-md-3">
+                            <label class="form-label-neon">ACCIONES DE SÍNTESIS</label>
+                            <div class="d-flex gap-2">
+                                <button id="btn-sintesis-accion" class="btn btn-bio w-100 py-2 d-flex flex-column align-items-center justify-content-center" onclick="procesarEnsamblaje()">
+                                    <i class="bi bi-fingerprint fs-3 mb-1"></i>
+                                    <span style="font-size: 0.85rem; font-weight: 900;">PROCESAR / AUMENTAR</span>
+                                </button>
+                                <button class="btn btn-outline-danger py-2 d-flex flex-column align-items-center justify-content-center px-3" onclick="borrarStockSeleccionadoForm()" title="Borrar Stock del Elíxir Seleccionado">
+                                    <i class="bi bi-trash3-fill fs-3 mb-1"></i>
+                                    <span style="font-size: 0.75rem; font-weight: 900;">BORRAR</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -341,8 +359,8 @@
                                 <th style="width: 10%;">VALOR</th>
                                 <th style="width: 10%;">GÉNESIS</th>
                                 <th style="width: 10%;">COLAPSO</th>
-                                <th style="width: 30%;">BIOMARCADOR</th>
-                                <th style="width: 10%;">ACCIONES</th>
+                                <th style="width: 25%;">BIOMARCADOR</th>
+                                <th style="width: 15%;">ACCIONES</th>
                             </tr>
                             </thead>
                             <tbody id="tabla-produccion"></tbody>
@@ -356,9 +374,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="fw-bold font-orbitron" style="color: var(--p-warning);"><i class="bi bi-cash-stack"></i> MOTOR CONTABLE Y FLUJO DE CAPITAL</h5>
                         <select id="tesoreria-sucursal" class="form-select auth-select w-auto" onchange="cargarTesoreria(); playSound('click')">
-                            <option value="Colombia">Nodo Colombia</option>
-                            <option value="Chile">Nodo Chile</option>
-                            <option value="España">Nodo España</option>
+                            <option value="Antofagasta">Nodo Antofagasta</option>
                         </select>
                     </div>
 
@@ -439,7 +455,7 @@
                         <div class="col-md-2"><label class="form-label-neon">F Nacimiento</label><input type="date" id="crm-cumple" class="form-control"></div>
                         <div class="col-md-1"><label class="form-label-neon text-warning">Pts</label><input type="number" id="crm-puntos" class="form-control border-warning bg-dark fw-bold text-warning text-center" placeholder="0"></div>
                         <div class="col-md-1">
-                            <label class="form-label-neon">Nodo</label><select id="crm-nodo" class="form-select auth-select"><option value="Colombia">Col</option><option value="Chile">Chi</option><option value="España">Esp</option></select>
+                            <label class="form-label-neon">Nodo</label><select id="crm-nodo" class="form-select auth-select"><option value="Antofagasta">Antofagasta</option></select>
                         </div>
                         <div class="col-md-12 mt-2"><button class="btn btn-bio w-100 py-2 fs-5" onclick="guardarCliente()"><i class="bi bi-person-fill-up me-2"></i> REGISTRAR O ACTUALIZAR CLIENTE (BD)</button></div>
                     </div>
@@ -455,10 +471,7 @@
             </div>
 
             <div class="tab-pane fade" id="tab-inventario" role="tabpanel">
-                <div class="d-flex justify-content-end mb-3 gap-2">
-                    <button class="btn btn-outline-info font-orbitron fw-bold" onclick="exportarBodegaJSON()"><i class="bi bi-download me-2"></i> EXPORTAR BACKUP</button>
-                    <label class="btn btn-outline-success font-orbitron fw-bold m-0" for="importar-bodega-file"><i class="bi bi-upload me-2"></i> IMPORTAR</label>
-                    <input type="file" id="importar-bodega-file" accept=".json" class="d-none" onchange="importarBodegaJSON(event)">
+                <div class="d-flex justify-content-end mb-3">
                     <button class="btn btn-outline-warning font-orbitron fw-bold px-4" onclick="abrirModalKardex()"><i class="bi bi-clock-history me-2"></i> VER KARDEX / AUDITORÍA</button>
                 </div>
 
@@ -482,10 +495,11 @@
                                     <div class="row g-3 mb-4 mt-1">
                                         <input type="hidden" id="ins-id">
                                         <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Cód. Botánico</label><input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Pulpa de Mango"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Subcategoría</label><select id="ins-subcategoria" class="form-select"><option value="Base">Base</option><option value="Semillas">Semillas</option><option value="Frutas">Frutas</option><option value="Vegetales">Vegetales</option><option value="Suplementos">Suplementos</option><option value="Frutos Secos">Frutos Secos</option><option value="Especias">Especias</option><option value="Endulzantes">Endulzantes</option><option value="Estabilizantes">Estabilizantes</option><option value="Grasas">Grasas</option><option value="Proteínas">Proteínas</option><option value="Cereales">Cereales</option></select></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Métrica</label><select id="ins-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
-                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control"></div>
+                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/KG</label><input type="number" id="ins-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="0.00"></div>
-                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
                                         <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background:var(--p-bio-green); color:#000;" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg fs-4"></i></button></div>
                                     </div>
                                     <div class="table-responsive">
@@ -499,7 +513,7 @@
                         </div>
                     </div>
 
-                    <div class="accordion-item bg-transparent border-0">
+                    <div class="accordion-item bg-transparent border-0 mb-4">
                         <h2 class="accordion-header" id="headingVasos">
                             <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVasos" aria-expanded="false" aria-controls="collapseVasos" style="background: rgba(0,255,255,0.05); border: 1px solid var(--p-cyan); color: var(--p-cyan); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
                                 <i class="bi bi-cup-straw me-2"></i> SUMINISTROS FÍSICOS: VASOS Y PACKAGING
@@ -520,7 +534,7 @@
                                         <div class="col-md-2"><label class="form-label-neon">Métrica</label><select id="vaso-unidad" class="form-select"><option value="und">Unidades</option><option value="mls">Mililitros</option><option value="gr">Gramos</option></select></div>
                                         <div class="col-md-2"><label class="form-label-neon">Volumen</label><input type="number" id="vaso-stock" class="form-control"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UND</label><input type="number" id="vaso-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="0.00"></div>
-                                        <div class="col-md-3"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option></select></div>
+                                        <div class="col-md-3"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
                                         <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-cyan); color: #000;" onclick="guardarInsumo('vasos')"><i class="bi bi-plus-lg fs-4"></i></button></div>
                                     </div>
                                     <div class="table-responsive">
@@ -534,30 +548,336 @@
                         </div>
                     </div>
 
+                    <!-- 3. SUMINISTROS Y MATERIA PRIMA: SHOTS Y CALDOS DE HUESO -->
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingShots">
+                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseShots" aria-expanded="false" aria-controls="collapseShots" style="background: rgba(255,0,234,0.05); border: 1px solid var(--p-magenta); color: var(--p-magenta); box-shadow: 0 0 10px rgba(255,0,234,0.2);">
+                                <i class="bi bi-lightning-charge me-2"></i> SUMINISTROS Y MATERIA PRIMA: SHOTS Y CALDOS DE HUESO
+                            </button>
+                        </h2>
+                        <div id="collapseShots" class="accordion-collapse collapse" aria-labelledby="headingShots" data-bs-parent="#accordionInventario">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-magenta);">
+                                    <div class="d-flex justify-content-end mb-1 mt-2">
+                                        <div class="p-2 border rounded" style="border-color: var(--p-magenta) !important; background: rgba(255,0,234,0.1); box-shadow: 0 0 10px rgba(255,0,234,0.2);">
+                                            <span style="color:var(--p-magenta); font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
+                                            <span class="fw-bold text-white fs-4" id="total-valor-shots" style="text-shadow: 0 0 10px rgba(255,0,234,0.5);">$0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-4 mt-1">
+                                        <input type="hidden" id="shot-id">
+                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-magenta)">Elemento / Extracto</label><input type="text" id="shot-nombre" class="form-control"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Subcategoría</label><select id="shot-subcategoria" class="form-select"><option value="Suplementos">Suplementos</option><option value="Base">Base</option><option value="Especias">Especias</option><option value="Frutas">Frutas</option><option value="Vegetales">Vegetales</option><option value="Endulzantes">Endulzantes</option></select></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Métrica</label><select id="shot-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
+                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-magenta)">Volumen</label><input type="number" id="shot-stock" class="form-control"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UNIT</label><input type="number" id="shot-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="0.00"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Nodo Destino</label><select id="shot-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
+                                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-magenta); color: #fff;" onclick="guardarInsumo('shots')"><i class="bi bi-plus-lg fs-4"></i></button></div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table text-center align-middle m-0">
+                                            <thead class="table-dark"><tr><th>ELEMENTO_SHOT_CALDO</th><th>ETIQUETA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>VALOR/UNIT</th><th>VALOR_TOTAL</th><th>ACCIONES</th></tr></thead>
+                                            <tbody id="tabla-shots"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. BODEGA DE PORCIONES: ARMA TU BATIDO (500 MLS) -->
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingArmaTuBatido">
+                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseArmaTuBatido" aria-expanded="false" aria-controls="collapseArmaTuBatido" style="background: rgba(255,215,0,0.05); border: 1px solid var(--p-warning); color: var(--p-warning); box-shadow: 0 0 10px rgba(255,215,0,0.2);">
+                                <i class="bi bi-sliders me-2"></i> BODEGA DE PORCIONES: ARMA TU BATIDO (500 MLS)
+                            </button>
+                        </h2>
+                        <div id="collapseArmaTuBatido" class="accordion-collapse collapse" aria-labelledby="headingArmaTuBatido" data-bs-parent="#accordionInventario">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-warning);">
+                                    <div class="d-flex justify-content-end mb-1 mt-2">
+                                        <div class="p-2 border rounded" style="border-color: var(--p-warning) !important; background: rgba(255,215,0,0.1); box-shadow: 0 0 10px rgba(255,215,0,0.2);">
+                                            <span style="color:var(--p-warning); font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
+                                            <span class="fw-bold text-white fs-4" id="total-valor-armatubatido" style="text-shadow: 0 0 10px rgba(255,215,0,0.5);">$0</span>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-4 mt-1 align-items-end">
+                                        <input type="hidden" id="armatubatido-id">
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Ingrediente / Porción</label>
+                                            <input type="text" id="armatubatido-nombre" class="form-control" placeholder="Ej: Zanahoria, Espinaca, Clavo de Olor">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Subcategoría</label>
+                                            <select id="armatubatido-subcategoria" class="form-select">
+                                                <option value="Vegetales">Vegetales</option>
+                                                <option value="Frutas">Frutas</option>
+                                                <option value="Base">Base</option>
+                                                <option value="Semillas">Semillas</option>
+                                                <option value="Suplementos">Suplementos</option>
+                                                <option value="Frutos Secos">Frutos Secos</option>
+                                                <option value="Especias">Especias</option>
+                                                <option value="Endulzantes">Endulzantes</option>
+                                                <option value="Estabilizantes">Estabilizantes</option>
+                                                <option value="Grasas">Grasas</option>
+                                                <option value="Proteínas">Proteínas</option>
+                                                <option value="Cereales">Cereales</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Métrica</label>
+                                            <select id="armatubatido-unidad" class="form-select">
+                                                <option value="gr">Gramos (gr)</option>
+                                                <option value="mls">Mililitros (mls)</option>
+                                                <option value="und">Unidades (und)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Dosis Porción</label>
+                                            <input type="number" id="armatubatido-dosis" class="form-control text-warning fw-bold" step="0.1" placeholder="Ej: 30 o 0.5">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Reserva Stock (Porciones)</label>
+                                            <input type="number" id="armatubatido-stock" class="form-control" placeholder="Cant. porciones">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Precio / Porción ($)</label>
+                                            <input type="number" id="armatubatido-precio" class="form-control text-warning fw-bold" step="0.01" placeholder="$0.00">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Nodo Destino</label>
+                                            <select id="armatubatido-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')">
+                                                <option value="Antofagasta">Antofagasta</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button class="btn btn-bio w-100 py-2 fs-5 font-orbitron" style="background: var(--p-warning); color: #000;" onclick="guardarInsumo('armatubatido')">
+                                                <i class="bi bi-plus-circle-fill me-2"></i> GUARDAR / ACTUALIZAR PORCIÓN
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table text-center align-middle m-0">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th>INGREDIENTE</th>
+                                                    <th>SUBCATEGORÍA</th>
+                                                    <th>NODO_BASE</th>
+                                                    <th>TAMAÑO_PORCIÓN</th>
+                                                    <th>RESERVA_PORCIONES</th>
+                                                    <th>PRECIO/PORCIÓN</th>
+                                                    <th>VALOR_TOTAL</th>
+                                                    <th>ACCIONES</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tabla-armatubatido"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
             <div class="tab-pane fade" id="tab-recetas" role="tabpanel">
-                <div class="table-container mb-4" style="border-top: 3px solid #fff;">
-                    <h5 class="text-white mb-4 fw-bold font-orbitron" style="text-shadow: 0 0 10px #fff;"><i class="bi bi-flower3"></i> ESTRUCTURADOR DE FÓRMULAS NATURALES</h5>
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label-neon text-white">NODO ESPECÍFICO</label>
-                            <select id="filtro-sucursal-recetas" class="form-select auth-select border-white" onchange="prepararRecetas()">
-                                <option value="Colombia">Colombia</option><option value="Chile">Chile</option><option value="España">España</option>
+                <div class="table-container mb-4" style="border-top: 3px solid var(--p-magenta);">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <h5 class="fw-bold font-orbitron m-0 fs-3" style="color: var(--p-magenta); text-shadow: var(--magenta-glow);">
+                            <i class="bi bi-flower3 me-2"></i> ESTRUCTURADORES DE FÓRMULAS NATURALES
+                        </h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <label class="form-label-neon m-0 text-white me-2">NODO ESPECÍFICO:</label>
+                            <select id="filtro-sucursal-recetas" class="form-select auth-select border-warning text-warning fw-bold w-auto" onchange="prepararRecetas()">
+                                <option value="Antofagasta">Antofagasta</option>
                             </select>
                         </div>
-                        <div class="col-md-4"><label class="form-label-neon text-white">ELIXIR FINAL (output)</label><select id="rec-producto" class="form-select border-white" onchange="cargarTablaReceta()"></select></div>
-                        <div class="col-md-4"><label class="form-label-neon text-white">COMPONENTE A INTEGRAR (input)</label><select id="rec-insumo" class="form-select border-white"></select></div>
-                    </div>
-                    <div class="row g-3 mt-2 align-items-end">
-                        <div class="col-md-8"><label class="form-label-neon text-white">DOSIS POR UNIDAD (gr/und)</label><input type="number" id="rec-cantidad" class="form-control border-white fs-4" placeholder="0.00"></div>
-                        <div class="col-md-4"><button class="btn btn-bio w-100 py-3 bg-white text-black" onclick="guardarReceta()"><i class="bi bi-link-45deg fs-4"></i> FUSIONAR COMPONENTE</button></div>
                     </div>
                 </div>
-                <div class="table-container p-4">
-                    <h6 class="form-label-neon mb-4 fs-5 text-center text-white">BIOLOGÍA DE LA FÓRMULA ACTIVA</h6>
-                    <table class="table text-center align-middle"><thead class="table-dark"><tr><th>EXTRACTO / MATERIAL</th><th>DOSIS_REQUERIDA</th><th>COSTO PROYECTADO</th><th>SEPARAR</th></tr></thead><tbody id="tabla-vista-formula"></tbody></table>
+
+                <div class="accordion" id="accordionRecetas">
+
+                    <!-- 1. ESTRUCTURADOR DE FÓRMULAS DE PULPAS (PACKS / PRODUCCIÓN) -->
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingRecetasPulpas">
+                            <button class="accordion-button font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasPulpas" aria-expanded="true" aria-controls="collapseRecetasPulpas" style="background: rgba(0,255,0,0.05); border: 1px solid var(--p-bio-green); color: var(--p-bio-green); box-shadow: 0 0 10px rgba(0,255,0,0.2);">
+                                <i class="bi bi-tree me-2"></i> 1. ESTRUCTURADOR DE FÓRMULAS DE PULPAS (PACKS / PRODUCCIÓN)
+                            </button>
+                        </h2>
+                        <div id="collapseRecetasPulpas" class="accordion-collapse collapse show" aria-labelledby="headingRecetasPulpas" data-bs-parent="#accordionRecetas">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-bio-green);">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon" style="color: var(--p-bio-green);">PULPA EN PACK / PRODUCCIÓN (OUTPUT)</label>
+                                            <select id="rec-producto-pulpas" class="form-select border-success text-white" onchange="cargarTablaReceta('pulpas')"></select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon" style="color: var(--p-bio-green);">MATERIA PRIMA / BOTÁNICA (INPUT)</label>
+                                            <select id="rec-insumo-pulpas" class="form-select border-success text-white" onchange="actualizarUnidadDefaultInsumo('pulpas')"></select>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mt-2 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="form-label-neon" style="color: var(--p-bio-green);">DOSIS REQUERIDA POR PULPA</label>
+                                            <input type="number" id="rec-cantidad-pulpas" class="form-control border-success text-white fs-4" placeholder="0.00" step="0.01">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
+                                            <select id="rec-unidad-pulpas" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;">
+                                                <option value="gr">🌾 Gramos (gr)</option>
+                                                <option value="mls">💧 Mililitros (mls)</option>
+                                                <option value="und">🍏 Unidades (und)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button class="btn btn-bio w-100 py-3 fw-bold" style="background: var(--p-bio-green); color: #000;" onclick="guardarReceta('pulpas')">
+                                                <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR A FÓRMULA DE PULPA
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 p-3 rounded-3" style="background: rgba(0,0,0,0.6); border: 1px dashed var(--p-bio-green);">
+                                        <h6 class="form-label-neon mb-3 fs-6 text-center" style="color: var(--p-bio-green);">BIOLOGÍA DE LA FÓRMULA ACTIVA (PULPA)</h6>
+                                        <div class="table-responsive">
+                                            <table class="table text-center align-middle m-0">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>EXTRACTO / MATERIAL</th>
+                                                        <th>DOSIS_REQUERIDA</th>
+                                                        <th>COSTO PROYECTADO</th>
+                                                        <th>SEPARAR</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tabla-vista-formula-pulpas"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. ESTRUCTURADOR DE FÓRMULAS DE VASOS DE 500 MLS (ELÍXIRES) -->
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingRecetasVasos">
+                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasVasos" aria-expanded="false" aria-controls="collapseRecetasVasos" style="background: rgba(0,255,255,0.05); border: 1px solid var(--p-cyan); color: var(--p-cyan); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
+                                <i class="bi bi-cup-straw me-2"></i> 2. ESTRUCTURADOR DE FÓRMULAS DE VASOS DE 500 MLS (ELÍXIRES)
+                            </button>
+                        </h2>
+                        <div id="collapseRecetasVasos" class="accordion-collapse collapse" aria-labelledby="headingRecetasVasos" data-bs-parent="#accordionRecetas">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-cyan);">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon text-info">BATIDO EN VASO 500 MLS (OUTPUT)</label>
+                                            <select id="rec-producto-vasos" class="form-select border-info text-white" onchange="cargarTablaReceta('vasos')"></select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon text-info">INGREDIENTE / VASO / PACKAGING (INPUT)</label>
+                                            <select id="rec-insumo-vasos" class="form-select border-info text-white" onchange="actualizarUnidadDefaultInsumo('vasos')"></select>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mt-2 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="form-label-neon text-info">DOSIS REQUERIDA POR VASO DE 500 MLS</label>
+                                            <input type="number" id="rec-cantidad-vasos" class="form-control border-info text-white fs-4" placeholder="0.00" step="0.01">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
+                                            <select id="rec-unidad-vasos" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;">
+                                                <option value="gr">🌾 Gramos (gr)</option>
+                                                <option value="mls">💧 Mililitros (mls)</option>
+                                                <option value="und">🍏 Unidades (und)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button class="btn btn-bio w-100 py-3 fw-bold" style="background: var(--p-cyan); color: #000;" onclick="guardarReceta('vasos')">
+                                                <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR A FÓRMULA DE VASO
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 p-3 rounded-3" style="background: rgba(0,0,0,0.6); border: 1px dashed var(--p-cyan);">
+                                        <h6 class="form-label-neon mb-3 fs-6 text-center text-info">BIOLOGÍA DE LA FÓRMULA ACTIVA (VASO 500 MLS)</h6>
+                                        <div class="table-responsive">
+                                            <table class="table text-center align-middle m-0">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>EXTRACTO / MATERIAL / PACKAGING</th>
+                                                        <th>DOSIS_REQUERIDA</th>
+                                                        <th>COSTO PROYECTADO</th>
+                                                        <th>SEPARAR</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tabla-vista-formula-vasos"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. ESTRUCTURADOR DE FÓRMULAS DE SHOTS Y CALDOS DE HUESO -->
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingRecetasShots">
+                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasShots" aria-expanded="false" aria-controls="collapseRecetasShots" style="background: rgba(255,0,234,0.05); border: 1px solid var(--p-magenta); color: var(--p-magenta); box-shadow: 0 0 10px rgba(255,0,234,0.2);">
+                                <i class="bi bi-lightning-charge me-2"></i> 3. ESTRUCTURADOR DE FÓRMULAS DE SHOTS Y CALDOS DE HUESO
+                            </button>
+                        </h2>
+                        <div id="collapseRecetasShots" class="accordion-collapse collapse" aria-labelledby="headingRecetasShots" data-bs-parent="#accordionRecetas">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-magenta);">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon" style="color:var(--p-magenta);">SHOT O CALDO DE HUESO (OUTPUT)</label>
+                                            <select id="rec-producto-shots" class="form-select text-white" style="border-color:var(--p-magenta);" onchange="cargarTablaReceta('shots')"></select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon" style="color:var(--p-magenta);">EXTRACTO / INGREDIENTE ESPECÍFICO (INPUT)</label>
+                                            <select id="rec-insumo-shots" class="form-select text-white" style="border-color:var(--p-magenta);" onchange="actualizarUnidadDefaultInsumo('shots')"></select>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mt-2 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="form-label-neon" style="color:var(--p-magenta);">DOSIS REQUERIDA POR SHOT / CALDO</label>
+                                            <input type="number" id="rec-cantidad-shots" class="form-control text-white fs-4" style="border-color:var(--p-magenta);" placeholder="0.00" step="0.01">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
+                                            <select id="rec-unidad-shots" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;">
+                                                <option value="gr">🌾 Gramos (gr)</option>
+                                                <option value="mls">💧 Mililitros (mls)</option>
+                                                <option value="und">🍏 Unidades (und)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button class="btn btn-bio w-100 py-3 fw-bold" style="background: var(--p-magenta); color: #fff;" onclick="guardarReceta('shots')">
+                                                <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR A FÓRMULA DE SHOT/CALDO
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 p-3 rounded-3" style="background: rgba(0,0,0,0.6); border: 1px dashed var(--p-magenta);">
+                                        <h6 class="form-label-neon mb-3 fs-6 text-center" style="color:var(--p-magenta);">BIOLOGÍA DE LA FÓRMULA ACTIVA (SHOT / CALDO DE HUESO)</h6>
+                                        <div class="table-responsive">
+                                            <table class="table text-center align-middle m-0">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>EXTRACTO / MATERIAL / BASE</th>
+                                                        <th>DOSIS_REQUERIDA</th>
+                                                        <th>COSTO PROYECTADO</th>
+                                                        <th>SEPARAR</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tabla-vista-formula-shots"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -566,7 +886,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="fw-bold font-orbitron m-0 fs-3" style="color:var(--p-magenta); text-shadow: var(--magenta-glow);"><i class="bi bi-hdd-network"></i> MATRIZ DE CONTROL TOTAL</h5>
                         <select id="filtro-sucursal-catalogo" class="form-select auth-select w-auto fw-bold fs-5" style="color:var(--p-cyan) !important; border: 2px solid var(--p-cyan);" onchange="cargarCatalogo()">
-                            <option value="Colombia">NODO COLOMBIA</option><option value="Chile">NODO CHILE</option><option value="España">NODO ESPAÑA</option>
+                            <option value="Antofagasta">NODO ANTOFAGASTA</option>
                         </select>
                     </div>
 
@@ -580,6 +900,44 @@
                                 <div id="upload-bar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%; background: linear-gradient(90deg, var(--p-magenta), var(--p-cyan)); transition: width 0.3s ease;"></div>
                             </div>
                             <p id="upload-status" class="mt-2 text-white font-orbitron fs-5 tracking-widest">TRANSMITIENDO DATOS...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container mb-4" style="border-top: 3px solid var(--p-magenta);">
+                    <h5 class="mb-4 fw-bold font-orbitron" style="color: var(--p-magenta); text-shadow: var(--magenta-glow);">
+                        <i class="bi bi-plus-circle-fill"></i> REGISTRO DE NUEVO PRODUCTO (ALTA EN MATRIZ)
+                    </h5>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label-neon">Nombre / Elíxir</label>
+                            <input type="text" id="nuevo-prod-nombre" class="form-control" placeholder="Ej: Shot Ginger Detox">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon">Categoría</label>
+                            <select id="nuevo-prod-categoria" class="form-select auth-select">
+                                <option value="500 mls">Elíxires (500 mls)</option>
+                                <option value="Packs">Packs</option>
+                                <option value="Shots">Shots</option>
+                                <option value="Arma tu Batido">Arma tu Batido</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon text-warning">Precio ($)</label>
+                            <input type="number" id="nuevo-prod-precio" class="form-control text-warning fw-bold" placeholder="3500">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label-neon">URL Imagen (Opcional)</label>
+                            <input type="text" id="nuevo-prod-imagen" class="form-control" placeholder="https://...">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-bio w-100 py-2 fw-bold" style="background:var(--p-magenta); color:#fff;" onclick="guardarNuevoProducto()">
+                                <i class="bi bi-plus-lg me-1"></i> GUARDAR PRODUCTO
+                            </button>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label-neon">Descripción / Bio-Análisis</label>
+                            <textarea id="nuevo-prod-descripcion" class="form-control" rows="2" placeholder="Escribe los beneficios e indicaciones del producto..."></textarea>
                         </div>
                     </div>
                 </div>
@@ -601,6 +959,99 @@
                             </thead>
                             <tbody id="tabla-catalogo"></tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="tab-pdf" role="tabpanel">
+                <div class="row g-4">
+                    <!-- COLUMNA IZQUIERDA: FORMULARIO Y LISTADO DE DOCUMENTOS -->
+                    <div class="col-lg-5">
+                        <div class="table-container mb-4" style="border-top: 3px solid var(--p-cyan);">
+                            <h5 class="mb-3 fw-bold font-orbitron" style="color: var(--p-cyan); text-shadow: var(--border-glow);">
+                                <i class="bi bi-cloud-arrow-up-fill me-2"></i> ALMACENAR RECETA / LISTA EN POSTGRESQL
+                            </h5>
+                            <form id="form-subir-pdf" onsubmit="subirDocumentoPdf(event)">
+                                <div class="mb-3">
+                                    <label class="form-label-neon">Seleccionar Archivo PDF (.pdf)</label>
+                                    <input type="file" id="pdf-file-input" accept=".pdf" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-neon">Título / Nombre del Documento</label>
+                                    <input type="text" id="pdf-nombre-input" class="form-control" placeholder="Ej: Lista de Precios Antofagasta 2026.pdf">
+                                </div>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label-neon">Categoría</label>
+                                        <select id="pdf-categoria-select" class="form-select auth-select">
+                                            <option value="Recetas">Fórmulas y Recetas</option>
+                                            <option value="Listas de Precios">Listas de Precios</option>
+                                            <option value="Manuales">Manuales Producción</option>
+                                            <option value="Otros">Otros Documentos</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label-neon">Nodo Base</label>
+                                        <select id="pdf-sucursal-select" class="form-select auth-select">
+                                            <option value="Antofagasta">Antofagasta</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" id="btn-subir-pdf" class="btn btn-bio w-100 py-3 font-orbitron fw-bold">
+                                    <i class="bi bi-database-add me-2"></i> GUARDAR EN POSTGRESQL
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="table-container p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold font-orbitron m-0" style="color: var(--p-bio-green); text-shadow: var(--green-glow);">
+                                    <i class="bi bi-folder-symlink-fill me-2"></i> BIBLIOTECA DE DOCUMENTOS
+                                </h5>
+                                <button class="btn btn-sm btn-outline-info" onclick="cargarDocumentosPdf()">
+                                    <i class="bi bi-arrow-clockwise me-1"></i> ACTUALIZAR
+                                </button>
+                            </div>
+                            <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+                                <table class="table text-center align-middle m-0">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>CAT</th>
+                                            <th>DOCUMENTO</th>
+                                            <th>ACCIONES</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabla-documentos-pdf"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUMNA DERECHA: REPRODUCTOR PDF INTERACTIVO -->
+                    <div class="col-lg-7">
+                        <div class="table-container p-4 h-100" style="border-top: 3px solid var(--p-magenta);">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold font-orbitron m-0 text-truncate" style="color: var(--p-magenta); text-shadow: var(--magenta-glow);" id="pdf-player-title">
+                                    <i class="bi bi-play-circle-fill me-2"></i> REPRODUCTOR PDF INTERACTIVO
+                                </h5>
+                                <div id="pdf-player-actions" style="display: none;">
+                                    <a id="btn-download-active-pdf" href="#" target="_blank" class="btn btn-sm btn-outline-warning me-2 font-orbitron">
+                                        <i class="bi bi-download me-1"></i> DESCARGAR
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-info font-orbitron" onclick="toggleFullscreenPdf()">
+                                        <i class="bi bi-arrows-fullscreen"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="pdf-viewer-container" class="w-100 rounded-3 d-flex flex-column justify-content-center align-items-center" style="min-height: 650px; background: rgba(0,0,0,0.8); border: 2px dashed rgba(0,229,255,0.3); position: relative;">
+                                <div id="pdf-viewer-placeholder" class="text-center p-5">
+                                    <i class="bi bi-file-earmark-pdf fs-1 d-block mb-3" style="color: var(--p-cyan); opacity: 0.5;"></i>
+                                    <h4 class="font-orbitron text-white opacity-75">REPRODUCTOR DE DOCUMENTOS PDF</h4>
+                                    <p class="text-white-50 font-rajdhani fs-5">Selecciona o haz clic en <b>"VER"</b> en cualquier documento de la lista para reproducir y consultar recetas en vivo desde PostgreSQL.</p>
+                                </div>
+                                <iframe id="pdf-frame-player" src="" width="100%" height="680px" style="display:none; border: 1px solid var(--p-cyan); border-radius: 10px; background: #fff;"></iframe>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -680,23 +1131,23 @@
         let rol = null, etiqueta = null, sucursalBase = null, msgVoz = "";
 
         if(userNorm === 'admin' && pass === '1234') {
-            rol = 'SUPREMO'; etiqueta = 'COMANDANTE SUPREMO';
+            rol = 'SUPREMO'; etiqueta = 'COMANDANTE SUPREMO'; sucursalBase = 'Antofagasta';
             msgVoz = "Bienvenido Comandante Supremo. Todos los módulos habilitados y enlace neuronal estable.";
         }
         else if(userNorm === 'linda mama spa' && pass === '3002') {
-            rol = 'ADMIN'; etiqueta = 'ADMIN CHILE'; sucursalBase = 'Chile';
+            rol = 'ADMIN'; etiqueta = 'ADMIN ANTOFAGASTA'; sucursalBase = 'Antofagasta';
             msgVoz = "Linda mamá spa y raíces, la combinación perfecta.";
         }
         else if(userNorm === 'administrador juan' && pass === '1807') {
-            rol = 'ADMIN'; etiqueta = 'ADMIN ESPAÑA'; sucursalBase = 'España';
+            rol = 'ADMIN'; etiqueta = 'ADMIN ANTOFAGASTA'; sucursalBase = 'Antofagasta';
             msgVoz = "Juan eres el mejor, nunca lo olvides, y todo lo que el ser humano se proponga, lo puede lograr.";
         }
         else if(userNorm === 'carolina' && pass === '2907') {
-            rol = 'ADMIN'; etiqueta = 'ADMIN ESPAÑA'; sucursalBase = 'España';
+            rol = 'ADMIN'; etiqueta = 'ADMIN ANTOFAGASTA'; sucursalBase = 'Antofagasta';
             msgVoz = "Bienvenida Carolina, que tengas un excelente turno operando en Raíces.";
         }
         else if(userNorm === 'hermana' && pass === '1307') {
-            rol = 'ADMIN'; etiqueta = 'ADMIN ESPAÑA'; sucursalBase = 'España';
+            rol = 'ADMIN'; etiqueta = 'ADMIN ANTOFAGASTA'; sucursalBase = 'Antofagasta';
             msgVoz = "Hola Hermana, lista para iniciar la operación con la mejor energía.";
         }
         else { playSound('error'); document.getElementById('error-login').style.display='block'; return; }
@@ -764,24 +1215,19 @@
             }
         });
 
-        if (!esSupremo) {
-            const pCol = document.getElementById('panel-stat-col');
-            const pChi = document.getElementById('panel-stat-chi');
-            const pEsp = document.getElementById('panel-stat-esp');
-
-            if (sucursalAdmin !== 'Colombia' && pCol) pCol.style.display = 'none';
-            if (sucursalAdmin !== 'Chile' && pChi) pChi.style.display = 'none';
-            if (sucursalAdmin !== 'España' && pEsp) pEsp.style.display = 'none';
-        } else {
-            let p1 = document.getElementById('panel-stat-col'); if(p1) p1.style.display = 'block';
-            let p2 = document.getElementById('panel-stat-chi'); if(p2) p2.style.display = 'block';
-            let p3 = document.getElementById('panel-stat-esp'); if(p3) p3.style.display = 'block';
-        }
+        // Nodo unico: Antofagasta
     }
 
     // =======================================================
     // SINTETIZADOR GENÉTICO (PRODUCCIÓN CON FECHAS)
     // =======================================================
+    function esPulpaOPack(p) {
+        if (!p) return false;
+        const n = normalizarStr(p.nombre || '');
+        const c = normalizarStr(p.categoria || '');
+        return c.includes('pack') || c.includes('pulpa') || n.includes('pulpa') || n.includes('pack') || (!c.includes('shot') && !c.includes('caldo') && !c.includes('500') && !c.includes('elixir'));
+    }
+
     async function cargarProductosSelect() {
         try {
             const suc = document.getElementById('prod-sucursal').value;
@@ -789,14 +1235,54 @@
             catalogoGlobal = await res.json();
             const select = document.getElementById('prod-item');
             select.innerHTML = '<option value="">-- Seleccione Genética --</option>';
-            catalogoGlobal.forEach(p => {
-                const nNorm = normalizarStr(p.nombre || '');
-                const cNorm = normalizarStr(p.categoria || '');
-                if(p.sucursal === suc && (nNorm.includes('pulpa') || cNorm.includes('pulpa'))) {
-                    select.innerHTML += `<option value="${p.id}">${p.nombre}</option>`;
-                }
+            select.innerHTML += '<option value="__NUEVO__" style="color:var(--p-bio-green); font-weight:bold;">➕ [ ESCRIBIR NUEVO PACK / ELÍXIR ]</option>';
+            const prodsPulpasSelect = deduplicarProductos(catalogoGlobal.filter(p => p.sucursal === suc && esPulpaOPack(p)));
+            prodsPulpasSelect.forEach(p => {
+                const precioTxt = formatMoney(p.precio || 0, p.sucursal);
+                select.innerHTML += `<option value="${p.id}">${p.nombre} — ${precioTxt}</option>`;
             });
+            evaluarSeleccionNuevoProd(select);
         } catch(e) {}
+    }
+
+    function evaluarSeleccionNuevoProd(selectEl) {
+        const contenedorNuevo = document.getElementById('contenedor-nuevo-prod');
+        const inputNombre = document.getElementById('prod-nombre-nuevo');
+        const inputPrecio = document.getElementById('prod-precio-nuevo');
+        const btnGuardarPrecio = document.getElementById('btn-guardar-precio-rapido');
+        if (!contenedorNuevo) return;
+        
+        const val = selectEl ? selectEl.value : '';
+        if (val === '__NUEVO__') {
+            contenedorNuevo.style.display = 'block';
+            if (inputNombre) {
+                inputNombre.style.display = 'block';
+                inputNombre.value = '';
+                inputNombre.focus();
+            }
+            if (inputPrecio) {
+                inputPrecio.value = '22000';
+            }
+            if (btnGuardarPrecio) {
+                btnGuardarPrecio.style.display = 'none';
+            }
+        } else if (val) {
+            contenedorNuevo.style.display = 'block';
+            if (inputNombre) {
+                inputNombre.style.display = 'none';
+                inputNombre.value = '';
+            }
+            const prod = catalogoGlobal.find(p => p.id == val);
+            if (prod && inputPrecio) {
+                inputPrecio.value = prod.precio || 22000;
+            }
+            if (btnGuardarPrecio) {
+                btnGuardarPrecio.style.display = 'inline-block';
+            }
+        } else {
+            contenedorNuevo.style.display = 'none';
+            if (inputNombre) { inputNombre.value = ''; inputNombre.style.display = 'none'; }
+        }
     }
 
     async function cargarProduccion() {
@@ -814,12 +1300,8 @@
             const res = await fetch('/api/productos');
             let data = await res.json();
 
-            // Filar solo pulpas para el Génesis de Producción
-            data = data.filter(p => {
-                const nNorm = normalizarStr(p.nombre || '');
-                const cNorm = normalizarStr(p.categoria || '');
-                return nNorm.includes('pulpa') || cNorm.includes('pulpa');
-            });
+            // Filtrar solo pulpas/packs para el Génesis de Producción y deduplicar por nombre
+            data = deduplicarProductos(data.filter(p => esPulpaOPack(p)));
 
             produccionGlobal = data; // Guardamos para el asistente
             const tb = document.getElementById('tabla-produccion'); tb.innerHTML='';
@@ -881,23 +1363,72 @@
                 <tr>
                     <td class="fw-bold text-white fs-5 text-start ps-3">${p.nombre}</td>
                     <td class="text-money-green fs-3 fw-bold">${stock}</td>
-                    <td class="text-warning fw-bold fs-5">${formatMoney(p.precio || 0, p.sucursal)}</td>
+                    <td class="text-warning fw-bold fs-5" style="cursor: pointer;" onclick="editarPrecioRapido(${p.id})" title="Click para editar precio de ${p.nombre}">
+                        <span class="badge bg-dark border border-warning text-warning px-2 py-1 font-orbitron" style="font-size: 0.95rem;">
+                            ${formatMoney(p.precio || 0, p.sucursal)} <i class="bi bi-pencil-fill ms-1" style="font-size: 0.75rem;"></i>
+                        </span>
+                    </td>
                     <td>${fElabHtml}</td>
                     <td>${fVencHtml}</td>
                     <td class="pe-4">${barraHtml}</td>
-                    <td>
-                        <button class="btn btn-sm text-info border-0 me-1" onclick="cargarEditorProduccion(${p.id})"><i class="bi bi-pencil-square fs-3"></i></button>
-                        <button class="btn btn-sm text-danger border-0" onclick="resetearProduccion(${p.id})"><i class="bi bi-scissors fs-3"></i></button>
+                    <td class="text-nowrap">
+                        <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold me-1" onclick="editarPrecioRapido(${p.id})" title="Modificar Precio"><i class="bi bi-tag-fill me-1"></i>PRECIO</button>
+                        <button class="btn btn-sm btn-outline-success font-orbitron fw-bold me-1" onclick="aumentarStockRapido(${p.id})" title="Aumentar Stock"><i class="bi bi-plus-circle-fill me-1"></i>AUMENTAR</button>
+                        <button class="btn btn-sm btn-outline-info font-orbitron fw-bold me-1" onclick="cargarEditorProduccion(${p.id})" title="Editar Lote / Stock"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-sm btn-outline-danger font-orbitron fw-bold" onclick="borrarStockElixir(${p.id})" title="Borrar Stock"><i class="bi bi-trash3-fill"></i> BORRAR</button>
                     </td>
                 </tr>`;
             });
         } catch(e) {}
     }
 
-    function procesarEnsamblaje() {
-        const id = document.getElementById('prod-item').value;
+    async function procesarEnsamblaje() {
+        let id = document.getElementById('prod-item').value;
+        const nombreNuevoInput = document.getElementById('prod-nombre-nuevo') ? document.getElementById('prod-nombre-nuevo').value.trim() : '';
         const cant = document.getElementById('prod-cantidad').value;
         const fechaElab = document.getElementById('prod-fecha').value;
+
+        if (!id) {
+            playSound('error');
+            alert("ALERTA: Selecciona un elíxir o la opción de escribir nuevo nombre.");
+            return;
+        }
+
+        if (id === '__NUEVO__') {
+            if (!nombreNuevoInput) {
+                playSound('error');
+                alert("ALERTA: Por favor escribe el nombre del nuevo Pack o Elíxir.");
+                return;
+            }
+            const rawPrecioNuevo = document.getElementById('prod-precio-nuevo') ? parseFloat(document.getElementById('prod-precio-nuevo').value) : 22000.0;
+            const precioValido = (isNaN(rawPrecioNuevo) || rawPrecioNuevo <= 0) ? 22000.0 : rawPrecioNuevo;
+            try {
+                const resNuevo = await fetch('/api/productos', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nombre: nombreNuevoInput,
+                        categoria: 'Packs',
+                        precio: precioValido,
+                        sucursal: document.getElementById('prod-sucursal').value || 'Antofagasta',
+                        descripcion: 'Pack / Elíxir de pulpas registrado en Génesis de Producción.'
+                    })
+                });
+                if (resNuevo.ok) {
+                    const prodCreado = await resNuevo.json();
+                    id = prodCreado.id;
+                    catalogoGlobal.push(prodCreado);
+                } else {
+                    playSound('error');
+                    alert("Error al registrar el nuevo producto en la base de datos.");
+                    return;
+                }
+            } catch (e) {
+                playSound('error');
+                alert("Error de conexión al servidor.");
+                return;
+            }
+        }
 
         if(!id || !cant || cant <= 0 || !fechaElab) { playSound('error'); alert("ALERTA: Faltan parámetros genéticos para la síntesis."); return; }
 
@@ -928,7 +1459,6 @@
 
         setTimeout(async () => {
             try {
-                // LLAMADA REPARADA: Envía stock + fechas al servidor
                 await fetch(`/api/produccion/fabricar`, {
                     method:'POST',
                     headers:{'Content-Type':'application/json'},
@@ -940,6 +1470,7 @@
                         vidaTotalDias: loteData.vidaTotalDias
                     })
                 });
+                await actualizarPrecioProductoSiCambio(id);
                 document.getElementById('prod-cantidad').value = '';
                 await cargarProduccion();
                 overlay.style.display = 'none';
@@ -950,22 +1481,129 @@
         }, 2800);
     }
 
+    async function guardarNuevoPrecio(id, nuevoPrecio, recargar = true) {
+        if (!id || id === '__NUEVO__') return;
+        const prod = catalogoGlobal.find(p => p.id == id);
+        if (!prod) return;
+
+        prod.precio = nuevoPrecio;
+        const normNombre = normalizarStr(prod.nombre);
+
+        // Actualizar todos los duplicados del producto en memoria
+        catalogoGlobal.forEach(p => {
+            if (normalizarStr(p.nombre) === normNombre) {
+                p.precio = nuevoPrecio;
+            }
+        });
+
+        try {
+            // 1. Endpoint directo de precio (sincroniza duplicados en BD)
+            const resPrecio = await fetch(`/api/productos/${id}/precio?precio=${nuevoPrecio}`, {
+                method: 'PUT'
+            });
+            if (!resPrecio.ok) {
+                // Fallback: PUT /api/productos/${id}
+                await fetch(`/api/productos/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(prod)
+                });
+            }
+        } catch(e) {
+            try {
+                await fetch(`/api/productos/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(prod)
+                });
+            } catch(err) {}
+        }
+
+        // Sincronizar en DB duplicados si existen
+        const duplicados = catalogoGlobal.filter(p => normalizarStr(p.nombre) === normNombre && p.id != id);
+        for (const dup of duplicados) {
+            try {
+                dup.precio = nuevoPrecio;
+                await fetch(`/api/productos/${dup.id}/precio?precio=${nuevoPrecio}`, { method: 'PUT' });
+            } catch(e) {}
+        }
+
+        if (recargar) {
+            const selVal = id;
+            await cargarProduccion();
+            const select = document.getElementById('prod-item');
+            if (select) {
+                select.value = selVal;
+                evaluarSeleccionNuevoProd(select);
+            }
+            playSound('success');
+        }
+    }
+
+    async function guardarPrecioSeleccionado() {
+        const select = document.getElementById('prod-item');
+        const id = select ? select.value : '';
+        if (!id || id === '__NUEVO__') {
+            alert("Por favor selecciona un Elíxir existente en la lista desplegable.");
+            return;
+        }
+        const precioInput = document.getElementById('prod-precio-nuevo');
+        const nuevoPrecio = precioInput ? parseFloat(precioInput.value) : NaN;
+        if (isNaN(nuevoPrecio) || nuevoPrecio < 0) {
+            alert("Ingresa un precio numérico válido mayor o igual a 0.");
+            return;
+        }
+        await guardarNuevoPrecio(id, nuevoPrecio, true);
+    }
+
+    async function editarPrecioRapido(id) {
+        const prod = catalogoGlobal.find(p => p.id == id);
+        if (!prod) return;
+        const precioActual = prod.precio || 0;
+        const inputVal = prompt(`💰 Modificar precio de "${prod.nombre}":\nIngresa el nuevo valor:`, precioActual);
+        if (inputVal === null) return;
+        const nuevoPrecio = parseFloat(inputVal.replace(/[^0-9.]/g, ''));
+        if (isNaN(nuevoPrecio) || nuevoPrecio < 0) {
+            alert("Precio inválido. Debe ser un número mayor o igual a 0.");
+            return;
+        }
+        await guardarNuevoPrecio(id, nuevoPrecio, true);
+    }
+
+    async function actualizarPrecioProductoSiCambio(id) {
+        if (!id || id === '__NUEVO__') return;
+        const prod = catalogoGlobal.find(p => p.id == id);
+        const precioInput = document.getElementById('prod-precio-nuevo');
+        if (prod && precioInput && precioInput.value !== '') {
+            const nuevoPrecio = parseFloat(precioInput.value);
+            if (!isNaN(nuevoPrecio) && nuevoPrecio >= 0 && Math.abs(nuevoPrecio - (prod.precio || 0)) > 0.01) {
+                await guardarNuevoPrecio(id, nuevoPrecio, false);
+            }
+        }
+    }
+
     // --- EDICIÓN Y RESETEO DE PRODUCCIÓN (GÉNESIS) ---
     function cargarEditorProduccion(id) {
-        const prod = catalogoGlobal.find(p => p.id === id);
+        const prod = catalogoGlobal.find(p => p.id == id);
         if(!prod) return;
-        document.getElementById('prod-item').value = prod.id;
+        const select = document.getElementById('prod-item');
+        if (select) {
+            select.value = prod.id;
+            evaluarSeleccionNuevoProd(select);
+        }
         document.getElementById('prod-cantidad').value = prod.stock || 0;
-        if(lotesProduccion[id]) {
+        if(lotesProduccion[id] && lotesProduccion[id].elaboracion) {
             document.getElementById('prod-fecha').value = lotesProduccion[id].elaboracion;
+        } else {
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('prod-fecha').value = hoy;
         }
         window.scrollTo({top:0, behavior:'smooth'});
 
-        // Reemplazar la funcionalidad de Procesar ADN temporalmente para usar la ruta "ajustar-stock" rápida
-        const btnFn = document.querySelector('button[onclick="procesarEnsamblaje()"]');
+        const btnFn = document.getElementById('btn-sintesis-accion');
         if (btnFn) {
             btnFn.setAttribute('onclick', 'guardarEdicionProduccion()');
-            btnFn.innerHTML = '<i class="bi bi-check-circle-fill"></i> CORREGIR REGISTRO';
+            btnFn.innerHTML = '<i class="bi bi-check-circle-fill fs-3 mb-1"></i><span style="font-size: 0.85rem; font-weight: 900;">CORREGIR REGISTRO</span>';
             btnFn.classList.replace('btn-bio', 'btn-warning');
         }
     }
@@ -975,7 +1613,7 @@
         const cant = document.getElementById('prod-cantidad').value;
         const fechaElab = document.getElementById('prod-fecha').value;
 
-        if(!id || cant == '') return;
+        if(!id) return;
 
         const prod = catalogoGlobal.find(p => p.id == id);
         let diasVidaPura = 5;
@@ -986,46 +1624,113 @@
             else if(cat.includes('pulpa')) diasVidaPura = 30;
         }
 
-        let dateElabObj = new Date(fechaElab + 'T12:00:00'); 
-        let dateVencObj = new Date(dateElabObj); 
-        dateVencObj.setDate(dateElabObj.getDate() + diasVidaPura);
-        
-        // Actualización en DB mediante la misma ruta de fabricar pero con cantidad 0 o específica
-        await fetch(`/api/produccion/fabricar`, {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-                idProducto: id, 
-                cantidad: 0, // No suma stock, solo actualiza fechas
-                elaboracion: fechaElab,
-                vencimiento: dateVencObj.toISOString().split('T')[0],
-                vidaTotalDias: diasVidaPura
-            })
-        });
+        // Si se indicó fecha, actualiza fechas del lote de forma defensiva
+        if (fechaElab) {
+            try {
+                let dateElabObj = new Date(fechaElab + 'T12:00:00'); 
+                if (!isNaN(dateElabObj.getTime())) {
+                    let dateVencObj = new Date(dateElabObj); 
+                    dateVencObj.setDate(dateElabObj.getDate() + diasVidaPura);
+                    await fetch(`/api/produccion/fabricar`, {
+                        method:'POST',
+                        headers:{'Content-Type':'application/json'},
+                        body:JSON.stringify({
+                            idProducto: id, 
+                            cantidad: 0, // No suma stock, solo actualiza fechas
+                            elaboracion: fechaElab,
+                            vencimiento: dateVencObj.toISOString().split('T')[0],
+                            vidaTotalDias: diasVidaPura
+                        })
+                    });
+                }
+            } catch(e) {
+                console.error("Error al actualizar fecha de lote:", e);
+            }
+        }
 
-        // Envia ajuste al servidor sin fabricar/descontar matriz
-        await fetch(`/api/productos/${id}/ajustar-stock?cantidad=${cant}`, {method:'PUT'});
+        // Si se indicó cantidad, ajustamos el stock
+        if (cant !== '' && !isNaN(parseInt(cant))) {
+            try {
+                await fetch(`/api/productos/${id}/ajustar-stock?cantidad=${cant}`, {method:'PUT'});
+            } catch(e) {
+                console.error("Error al ajustar stock:", e);
+            }
+        }
+
+        // Actualizar precio si fue modificado
+        await actualizarPrecioProductoSiCambio(id);
 
         document.getElementById('prod-cantidad').value = '';
 
-        const btnFn = document.querySelector('button[onclick="guardarEdicionProduccion()"]');
+        const btnFn = document.getElementById('btn-sintesis-accion');
         if (btnFn) {
             btnFn.setAttribute('onclick', 'procesarEnsamblaje()');
-            btnFn.innerHTML = '<i class="bi bi-fingerprint"></i> PROCESAR ADN';
+            btnFn.innerHTML = '<i class="bi bi-fingerprint fs-3 mb-1"></i><span style="font-size: 0.85rem; font-weight: 900;">PROCESAR / AUMENTAR</span>';
             btnFn.classList.replace('btn-warning', 'btn-bio');
         }
 
+        await cargarProduccion();
+        playSound('success');
+    }
+
+    async function aumentarStockRapido(id) {
+        const prod = catalogoGlobal.find(p => p.id == id);
+        if (!prod) return;
+        const cantInput = prompt(`¿Cuántas unidades deseas AUMENTAR al stock de "${prod.nombre}"?`, "1");
+        if (cantInput === null) return;
+        const numAdd = parseInt(cantInput);
+        if (isNaN(numAdd) || numAdd <= 0) {
+            alert("Ingresa un número entero positivo mayor a 0.");
+            return;
+        }
+        playSound('add');
+        const nuevoStock = (prod.stock || 0) + numAdd;
+        await fetch(`/api/productos/${id}/ajustar-stock?cantidad=${nuevoStock}`, { method: 'PUT' });
         cargarProduccion();
         playSound('success');
     }
 
-    async function resetearProduccion(id) {
-        if(confirm("¿Estás seguro de ELIMINAR el stock y reseter la biología local de este producto?")) {
-            await fetch(`/api/produccion/lotes/${id}`, {method:'DELETE'});
-            await fetch(`/api/productos/${id}/ajustar-stock?cantidad=0`, {method:'PUT'});
-            cargarProduccion();
-            playSound('error');
+    async function borrarStockElixir(id) {
+        if (!id || id === '__NUEVO__') {
+            alert("Por favor selecciona un Elíxir existente para borrar.");
+            return;
         }
+        const prod = catalogoGlobal.find(p => p.id == id);
+        const nombre = prod ? prod.nombre : 'este elixir';
+        const normNombre = prod ? normalizarStr(prod.nombre) : '';
+
+        if (confirm(`⚠️ ¿Estás seguro de ELIMINAR PERMANENTEMENTE "${nombre}" del catálogo y del listado de producción?`)) {
+            playSound('error');
+            const duplicados = normNombre ? catalogoGlobal.filter(p => normalizarStr(p.nombre) === normNombre) : [{id: id}];
+            for (const dup of duplicados) {
+                try {
+                    await fetch(`/api/produccion/lotes/${dup.id}`, { method: 'DELETE' });
+                } catch(e) {}
+                try {
+                    await fetch(`/api/productos/${dup.id}`, { method: 'DELETE' });
+                } catch(e) {}
+            }
+
+            const selectEl = document.getElementById('prod-item');
+            if (selectEl) selectEl.value = '';
+            evaluarSeleccionNuevoProd(selectEl);
+
+            await cargarProduccion();
+            playSound('success');
+        }
+    }
+
+    async function borrarStockSeleccionadoForm() {
+        const id = document.getElementById('prod-item').value;
+        if (!id) {
+            alert("Por favor selecciona un Elíxir en la lista desplegable.");
+            return;
+        }
+        borrarStockElixir(id);
+    }
+
+    async function resetearProduccion(id) {
+        borrarStockElixir(id);
     }
 
     // --- SISTEMA DE MIGRACIÓN ---
@@ -1072,7 +1777,7 @@
     // --- TESORERÍA Y FINANZAS ---
     async function cargarTesoreria() {
         const paisVenta = document.getElementById('tesoreria-sucursal').value;
-        const smb = paisVenta.includes('España') ? '€' : '$';
+        const smb = '$';
 
         try {
             // INDICADORES
@@ -1092,12 +1797,14 @@
             dataVentas.forEach(v => {
                 if (v.pais !== paisVenta || v.archivada) return;
                 let badgeEstado = v.estado === 'Pagado' ? `<span style="color:var(--p-bio-green); font-weight:900;"><i class="bi bi-shield-check"></i> PAGADO</span>` : `<span style="color:#ffdd00; font-weight:900;"><i class="bi bi-clock-history"></i> PENDIENTE</span>`;
+                let btnCobrar = v.estado !== 'Pagado' ? `<button class="btn btn-sm ms-1 border-0" style="background:var(--p-bio-green); color:#000;" onclick="cobrarVenta(${v.id})" title="Confirmar Pago y Descontar Bodega"><i class="bi bi-currency-dollar fw-bold"></i></button>` : '';
+
                 tbVentas.innerHTML += `<tr>
                     <td class="text-white fw-bold">#OP-${v.id}</td>
                     <td>${v.origen}</td>
                     <td style="color:var(--p-cyan)">${v.medioPago || 'Por Definir'}</td>
                     <td class="text-money-green fw-bold">${smb}${v.total.toLocaleString('es-ES')}</td>
-                    <td>${badgeEstado} <button class="btn btn-sm btn-outline-info ms-2 border-0" onclick="imprimirTicket(${v.id})" title="Imprimir Recibo"><i class="bi bi-printer fs-5"></i></button></td>
+                    <td>${badgeEstado} <button class="btn btn-sm btn-outline-info ms-2 border-0" onclick="imprimirTicket(${v.id})" title="Imprimir Recibo"><i class="bi bi-printer fs-5"></i></button>${btnCobrar}</td>
                 </tr>`;
             });
 
@@ -1115,6 +1822,24 @@
             });
 
         } catch(e) { console.error("Error cargando Tesorería", e); }
+    }
+
+    async function cobrarVenta(id) {
+        if(confirm("¿Confirmas que el cliente ya pagó? (Esto descontará automáticamente los vasos y pulpas de la Bodega Botánica)")) {
+            playSound('cash');
+            try {
+                const res = await fetch(`/api/ventas/${id}/pagar`, { method: 'PUT' });
+                if(res.ok) {
+                    alert("¡Pago confirmado! Inventario actualizado correctamente.");
+                    cargarTesoreria();
+                } else {
+                    const err = await res.text();
+                    alert("Error al confirmar pago: " + err);
+                }
+            } catch(e) {
+                alert("Fallo de conexión al núcleo.");
+            }
+        }
     }
 
     async function guardarGasto() {
@@ -1155,7 +1880,7 @@
 
     // --- MÓDULO PROFESIONAL DE IMPRESIÓN Y CAJA ---
     function formatMoney(amount, nodo) {
-        return (nodo.includes('España') ? '€' : '$') + amount.toLocaleString('es-ES');
+        return '$' + (amount || 0).toLocaleString('es-CL');
     }
 
     async function imprimirTicket(idVenta) {
@@ -1423,7 +2148,7 @@
         }
     }
 
-    // --- INSUMOS ---
+    // --- INSUMOS (BODEGAS: PULPAS, VASOS, SHOTS/CALDOS, ARMA TU BATIDO) ---
     async function cargarInsumos() {
         try {
             const res = await fetch('/api/insumos/todos');
@@ -1431,18 +2156,29 @@
             insMem = data;
             const tbPulpas = document.getElementById('tabla-pulpas'); if(tbPulpas) tbPulpas.innerHTML='';
             const tbVasos = document.getElementById('tabla-vasos'); if(tbVasos) tbVasos.innerHTML='';
+            const tbShots = document.getElementById('tabla-shots'); if(tbShots) tbShots.innerHTML='';
+            const tbArmaTuBatido = document.getElementById('tabla-armatubatido'); if(tbArmaTuBatido) tbArmaTuBatido.innerHTML='';
 
             let totalPulpas = 0;
             let totalVasos = 0;
+            let totalShots = 0;
+            let totalArmaTuBatido = 0;
 
             data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).forEach(i => {
                 const sucIns = normalizarStr(i.sucursal || '');
                 const sucAdmin = normalizarStr(sucursalAdmin);
                 if (rolUsuario !== 'SUPREMO' && !sucIns.includes(sucAdmin)) return;
 
-                const isVaso = i.categoria && i.categoria.includes('Vaso');
+                const cat = (i.categoria || '').toLowerCase();
+                const isArmaTuBatido = cat.includes('arma tu batido') || cat.includes('porciones');
+                const isVaso = !isArmaTuBatido && (cat.includes('vaso') || cat.includes('packaging'));
+                const isShot = !isArmaTuBatido && (cat.includes('shot') || cat.includes('caldo'));
 
-                const selectFiltroId = isVaso ? 'vaso-sucursal' : 'ins-sucursal';
+                let selectFiltroId = 'ins-sucursal';
+                if (isArmaTuBatido) selectFiltroId = 'armatubatido-sucursal';
+                else if (isVaso) selectFiltroId = 'vaso-sucursal';
+                else if (isShot) selectFiltroId = 'shot-sucursal';
+
                 const selectDestino = document.getElementById(selectFiltroId);
                 if (selectDestino) {
                     const sucFiltro = normalizarStr(selectDestino.value);
@@ -1453,51 +2189,104 @@
                 let stockTotal = parseFloat(i.unidadActual) || 0;
                 let precioUnitario = parseFloat(i.precio) || 0;
                 
-                if (i.medida === 'gr' || i.medida === 'mls') {
+                if (isArmaTuBatido) {
+                    valorInsumo = stockTotal * precioUnitario;
+                    totalArmaTuBatido += valorInsumo;
+                } else if (i.medida === 'gr' || i.medida === 'mls') {
                     valorInsumo = (stockTotal / 1000) * precioUnitario;
                 } else {
                     valorInsumo = stockTotal * precioUnitario;
                 }
                 
-                if (isVaso) { totalVasos += valorInsumo; }
+                if (isArmaTuBatido) { /* Sumado arriba */ }
+                else if (isVaso) { totalVasos += valorInsumo; }
+                else if (isShot) { totalShots += valorInsumo; }
                 else { totalPulpas += valorInsumo; }
 
-                let stockDisplay = i.unidadActual.toFixed(2);
-                let stockHTML = `<span class="text-warning fw-bold fs-4" style="text-shadow:0 0 10px #ffdd00;">${stockDisplay} <span class="fs-6 text-white-50">${i.medida}</span></span>`;
-                if ((!isVaso && i.unidadActual < 500) || (isVaso && i.unidadActual < 50)) {
-                    stockHTML = `<span class="text-danger fw-bold fs-4" style="text-shadow:0 0 15px red;"><i class="bi bi-exclamation-triangle-fill me-1"></i>${stockDisplay} <span class="fs-6 text-danger">${i.medida}</span></span>`;
+                let stockDisplay = (i.unidadActual || 0).toFixed(2);
+                let stockHTML = `<span class="text-warning fw-bold fs-4" style="text-shadow:0 0 10px #ffdd00;">${stockDisplay} <span class="fs-6 text-white-50">${isArmaTuBatido ? 'porc' : (i.medida || 'gr')}</span></span>`;
+                if ((!isVaso && !isArmaTuBatido && i.unidadActual < 500) || (isVaso && i.unidadActual < 50) || (isArmaTuBatido && i.unidadActual < 10)) {
+                    stockHTML = `<span class="text-danger fw-bold fs-4" style="text-shadow:0 0 15px red;"><i class="bi bi-exclamation-triangle-fill me-1"></i>${stockDisplay} <span class="fs-6 text-danger">${isArmaTuBatido ? 'porc' : (i.medida || 'gr')}</span></span>`;
                 }
 
-                const row = `<tr><td class="fw-bold text-white fs-5">${i.nombre}</td><td><span class="badge-categoria" style="${isVaso?'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan)':''}">${(i.categoria||'Pulpas').toUpperCase()}</span></td><td class="text-white">${i.sucursal}</td><td>${stockHTML}</td><td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td><td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td><td><button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})"><i class="bi bi-pencil-square fs-3"></i></button><button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})"><i class="bi bi-trash3-fill fs-3"></i></button></td></tr>`;
+                let colorBadge = 'color:var(--p-bio-green); border-color:var(--p-bio-green); box-shadow:0 0 10px var(--p-bio-green);';
+                if (isArmaTuBatido) colorBadge = 'color:var(--p-warning); border-color:var(--p-warning); box-shadow:0 0 10px var(--p-warning);';
+                else if (isVaso) colorBadge = 'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan);';
+                else if (isShot) colorBadge = 'color:var(--p-magenta); border-color:var(--p-magenta); box-shadow:0 0 10px var(--p-magenta);';
 
-                if (isVaso && tbVasos) tbVasos.innerHTML += row;
+                let dosisTdHtml = isArmaTuBatido ? `<td class="text-info fw-bold fs-5">${i.cantidadPorcion || 1} ${i.medida || 'gr'}</td>` : '';
+
+                const row = `<tr>
+                    <td class="fw-bold text-white fs-5">${i.nombre}</td>
+                    <td><span class="badge-categoria" style="${colorBadge}">${(i.subcategoria || i.categoria || 'Pulpas').toUpperCase()}</span></td>
+                    <td class="text-white">${i.sucursal}</td>
+                    ${dosisTdHtml}
+                    <td>${stockHTML}</td>
+                    <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
+                    <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
+                    <td>
+                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})"><i class="bi bi-pencil-square fs-3"></i></button>
+                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})"><i class="bi bi-trash3-fill fs-3"></i></button>
+                    </td>
+                </tr>`;
+
+                if (isArmaTuBatido && tbArmaTuBatido) tbArmaTuBatido.innerHTML += row;
+                else if (isVaso && tbVasos) tbVasos.innerHTML += row;
+                else if (isShot && tbShots) tbShots.innerHTML += row;
                 else if (tbPulpas) tbPulpas.innerHTML += row;
             });
             
-            const sucMuestraPulpas = document.getElementById('ins-sucursal') ? document.getElementById('ins-sucursal').value : 'Colombia';
+            const sucMuestraPulpas = document.getElementById('ins-sucursal') ? document.getElementById('ins-sucursal').value : 'Antofagasta';
             const tbVPulpas = document.getElementById('total-valor-pulpas');
             if (tbVPulpas) tbVPulpas.innerText = formatMoney(totalPulpas, sucMuestraPulpas);
             
-            const sucMuestraVasos = document.getElementById('vaso-sucursal') ? document.getElementById('vaso-sucursal').value : 'Colombia';
+            const sucMuestraVasos = document.getElementById('vaso-sucursal') ? document.getElementById('vaso-sucursal').value : 'Antofagasta';
             const tbVVasos = document.getElementById('total-valor-vasos');
             if (tbVVasos) tbVVasos.innerText = formatMoney(totalVasos, sucMuestraVasos);
             
-        } catch(e) {}
+            const sucMuestraShots = document.getElementById('shot-sucursal') ? document.getElementById('shot-sucursal').value : 'Antofagasta';
+            const tbVShots = document.getElementById('total-valor-shots');
+            if (tbVShots) tbVShots.innerText = formatMoney(totalShots, sucMuestraShots);
+
+            const sucMuestraArmaTuBatido = document.getElementById('armatubatido-sucursal') ? document.getElementById('armatubatido-sucursal').value : 'Antofagasta';
+            const tbVArmaTuBatido = document.getElementById('total-valor-armatubatido');
+            if (tbVArmaTuBatido) tbVArmaTuBatido.innerText = formatMoney(totalArmaTuBatido, sucMuestraArmaTuBatido);
+
+        } catch(e) { console.error('Error cargando insumos:', e); }
     }
 
     function editarInsumo(id) {
         let ins = insMem.find(i => i.idInsumo === id);
         if(ins) {
-            if(ins.categoria && ins.categoria.includes('Vaso')) {
+            const cat = (ins.categoria || '').toLowerCase();
+            if(cat.includes('arma tu batido') || cat.includes('porciones')) {
+                if (document.getElementById('armatubatido-id')) document.getElementById('armatubatido-id').value = ins.idInsumo;
+                if (document.getElementById('armatubatido-nombre')) document.getElementById('armatubatido-nombre').value = ins.nombre;
+                if (ins.subcategoria && document.getElementById('armatubatido-subcategoria')) document.getElementById('armatubatido-subcategoria').value = ins.subcategoria;
+                if (document.getElementById('armatubatido-unidad')) document.getElementById('armatubatido-unidad').value = ins.medida || 'gr';
+                if (document.getElementById('armatubatido-dosis')) document.getElementById('armatubatido-dosis').value = ins.cantidadPorcion || 1;
+                if (document.getElementById('armatubatido-stock')) document.getElementById('armatubatido-stock').value = ins.unidadActual || 0;
+                if (document.getElementById('armatubatido-sucursal')) document.getElementById('armatubatido-sucursal').value = ins.sucursal;
+                if (document.getElementById('armatubatido-precio')) document.getElementById('armatubatido-precio').value = ins.precio || 0;
+            } else if(cat.includes('vaso') || cat.includes('packaging')) {
                 document.getElementById('vaso-id').value = ins.idInsumo;
                 document.getElementById('vaso-nombre').value = ins.nombre;
                 document.getElementById('vaso-unidad').value = ins.medida || 'und';
                 document.getElementById('vaso-stock').value = ins.unidadActual;
                 document.getElementById('vaso-sucursal').value = ins.sucursal;
                 document.getElementById('vaso-precio').value = ins.precio || 0;
+            } else if(cat.includes('shot') || cat.includes('caldo')) {
+                document.getElementById('shot-id').value = ins.idInsumo;
+                document.getElementById('shot-nombre').value = ins.nombre;
+                if (ins.subcategoria && document.getElementById('shot-subcategoria')) document.getElementById('shot-subcategoria').value = ins.subcategoria;
+                document.getElementById('shot-unidad').value = ins.medida || 'mls';
+                document.getElementById('shot-stock').value = ins.unidadActual;
+                document.getElementById('shot-sucursal').value = ins.sucursal;
+                document.getElementById('shot-precio').value = ins.precio || 0;
             } else {
                 document.getElementById('ins-id').value = ins.idInsumo;
                 document.getElementById('ins-nombre').value = ins.nombre;
+                if (ins.subcategoria && document.getElementById('ins-subcategoria')) document.getElementById('ins-subcategoria').value = ins.subcategoria;
                 document.getElementById('ins-unidad').value = ins.medida || 'mls';
                 document.getElementById('ins-stock').value = ins.unidadActual;
                 document.getElementById('ins-sucursal').value = ins.sucursal;
@@ -1508,19 +2297,85 @@
     }
 
     function guardarInsumo(tipo) {
-        let id, nombre, cat, uni, stock, suc;
-        if(tipo==='pulpas'){ id = document.getElementById('ins-id').value; nombre = document.getElementById('ins-nombre').value; cat='Pulpas'; uni=document.getElementById('ins-unidad').value; stock=document.getElementById('ins-stock').value; suc=document.getElementById('ins-sucursal').value; }
-        else { id = document.getElementById('vaso-id').value; nombre = document.getElementById('vaso-nombre').value; cat='Insumos Vaso'; uni=document.getElementById('vaso-unidad').value; stock=document.getElementById('vaso-stock').value; suc=document.getElementById('vaso-sucursal').value; }
-        if(!nombre) return;
+        let id, nombre, cat, subcat, uni, stock, suc, precioVal, dosisVal;
+        if(tipo==='armatubatido') {
+            id = document.getElementById('armatubatido-id').value; 
+            nombre = document.getElementById('armatubatido-nombre').value; 
+            cat='Arma tu Batido'; 
+            subcat=document.getElementById('armatubatido-subcategoria')?document.getElementById('armatubatido-subcategoria').value:'Vegetales'; 
+            uni=document.getElementById('armatubatido-unidad').value; 
+            dosisVal=parseFloat(document.getElementById('armatubatido-dosis').value) || 1;
+            stock=document.getElementById('armatubatido-stock').value; 
+            suc=document.getElementById('armatubatido-sucursal').value;
+            precioVal = parseFloat(document.getElementById('armatubatido-precio').value) || 0;
+        } else if(tipo==='pulpas'){ 
+            id = document.getElementById('ins-id').value; 
+            nombre = document.getElementById('ins-nombre').value; 
+            cat='Pulpas'; 
+            subcat=document.getElementById('ins-subcategoria')?document.getElementById('ins-subcategoria').value:'Vegetales'; 
+            uni=document.getElementById('ins-unidad').value; 
+            stock=document.getElementById('ins-stock').value; 
+            suc=document.getElementById('ins-sucursal').value;
+            precioVal = parseFloat(document.getElementById('ins-precio').value) || 0;
+        } else if(tipo==='vasos') { 
+            id = document.getElementById('vaso-id').value; 
+            nombre = document.getElementById('vaso-nombre').value; 
+            cat='Insumos Vaso'; 
+            subcat='Packaging'; 
+            uni=document.getElementById('vaso-unidad').value; 
+            stock=document.getElementById('vaso-stock').value; 
+            suc=document.getElementById('vaso-sucursal').value;
+            precioVal = parseFloat(document.getElementById('vaso-precio').value) || 0;
+        } else if(tipo==='shots') {
+            id = document.getElementById('shot-id').value; 
+            nombre = document.getElementById('shot-nombre').value; 
+            cat='Shots y Caldos'; 
+            subcat=document.getElementById('shot-subcategoria')?document.getElementById('shot-subcategoria').value:'Suplementos'; 
+            uni=document.getElementById('shot-unidad').value; 
+            stock=document.getElementById('shot-stock').value; 
+            suc=document.getElementById('shot-sucursal').value;
+            precioVal = parseFloat(document.getElementById('shot-precio').value) || 0;
+        }
+        if(!nombre) return alert("Ingresa al menos el nombre del insumo.");
 
-        let payload = {nombre, categoria:cat, medida:uni, unidadActual:parseFloat(stock)||0, precio: parseFloat(document.getElementById(tipo==='pulpas' ? 'ins-precio' : 'vaso-precio').value)||0, sucursal:suc, actorAdmin: rolUsuario==='SUPREMO' ? 'SUPREMO' : ('Admin ' + sucursalAdmin)};
+        let payload = {
+            nombre, 
+            categoria: cat, 
+            subcategoria: subcat, 
+            medida: uni, 
+            unidadActual: parseFloat(stock)||0, 
+            precio: precioVal, 
+            sucursal: suc, 
+            actorAdmin: rolUsuario==='SUPREMO' ? 'SUPREMO' : ('Admin ' + sucursalAdmin)
+        };
+        if(dosisVal !== undefined && dosisVal !== null) { payload.cantidadPorcion = dosisVal; }
         if(id) { payload.idInsumo = parseInt(id); }
 
-        fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).then(()=>{
-            document.getElementById('ins-id').value=''; document.getElementById('vaso-id').value='';
-            document.getElementById('ins-nombre').value=''; document.getElementById('ins-stock').value='';
-            document.getElementById('vaso-nombre').value=''; document.getElementById('vaso-stock').value='';
+        fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+        .then(async (res) => {
+            if(!res.ok) {
+                const errTxt = await res.text();
+                alert("❌ ERROR AL GUARDAR: " + errTxt);
+                throw new Error(errTxt);
+            }
+            if (document.getElementById('armatubatido-id')) document.getElementById('armatubatido-id').value=''; 
+            if (document.getElementById('ins-id')) document.getElementById('ins-id').value=''; 
+            if (document.getElementById('vaso-id')) document.getElementById('vaso-id').value='';
+            if (document.getElementById('shot-id')) document.getElementById('shot-id').value='';
+            if (document.getElementById('armatubatido-nombre')) document.getElementById('armatubatido-nombre').value=''; 
+            if (document.getElementById('armatubatido-dosis')) document.getElementById('armatubatido-dosis').value=''; 
+            if (document.getElementById('armatubatido-stock')) document.getElementById('armatubatido-stock').value='';
+            if (document.getElementById('armatubatido-precio')) document.getElementById('armatubatido-precio').value='';
+            if (document.getElementById('ins-nombre')) document.getElementById('ins-nombre').value=''; 
+            if (document.getElementById('ins-stock')) document.getElementById('ins-stock').value='';
+            if (document.getElementById('vaso-nombre')) document.getElementById('vaso-nombre').value=''; 
+            if (document.getElementById('vaso-stock')) document.getElementById('vaso-stock').value='';
+            if (document.getElementById('shot-nombre')) document.getElementById('shot-nombre').value=''; 
+            if (document.getElementById('shot-stock')) document.getElementById('shot-stock').value='';
             cargarInsumos(); playSound('click');
+        }).catch(err => {
+            console.error("Error guardando insumo:", err);
+            playSound('error');
         });
     }
 
@@ -1551,38 +2406,228 @@
         } catch(e) {}
     }
 
-    // --- RECETAS ---
+    function deduplicarProductos(lista) {
+        const vistos = new Set();
+        return lista.filter(p => {
+            if (!p || !p.nombre) return false;
+            const clave = normalizarStr(p.nombre);
+            if (vistos.has(clave)) return false;
+            vistos.add(clave);
+            return true;
+        });
+    }
+
+    // --- RECETAS DE PULPAS, VASOS Y SHOTS/CALDOS ---
     async function prepararRecetas() { 
         try { 
             const [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]); 
             const productos = await rP.json(); 
             const insumos = await rI.json(); 
             insMem = insumos; // <-- CRUCIAL PARA CALCULAR PRECIO
-            const suc = document.getElementById('filtro-sucursal-recetas').value; 
-            document.getElementById('rec-producto').innerHTML = productos.filter(p=>p.sucursal===suc).map(p=>`<option value="${p.id}">${p.nombre}</option>`).join(''); 
-            document.getElementById('rec-insumo').innerHTML = insumos.filter(i=>i.sucursal===suc).map(i=>`<option value="${i.nombre}">${i.nombre} (${i.medida})</option>`).join(''); 
-            cargarTablaReceta(); 
-        } catch(e) {} 
+            const suc = document.getElementById('filtro-sucursal-recetas') ? document.getElementById('filtro-sucursal-recetas').value : 'Antofagasta'; 
+            
+            const prodsNodo = productos.filter(p => p.sucursal === suc);
+            const insNodo = insumos.filter(i => i.sucursal === suc);
+
+            // 1. PRODUCTOS Y INSUMOS PARA PULPAS (PACKS / PRODUCCIÓN)
+            let prodsPulpas = prodsNodo.filter(p => {
+                const cat = (p.categoria || '').toLowerCase();
+                const nom = (p.nombre || '').toLowerCase();
+                return (cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa')) && !cat.includes('shot') && !cat.includes('caldo');
+            });
+            prodsPulpas = deduplicarProductos(prodsPulpas);
+            const selectProdPulpas = document.getElementById('rec-producto-pulpas');
+            if (selectProdPulpas) {
+                if (prodsPulpas.length === 0) {
+                    selectProdPulpas.innerHTML = '<option value="">(Sin productos de Pulpas registrados)</option>';
+                } else {
+                    selectProdPulpas.innerHTML = prodsPulpas.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || 'Packs'})</option>`).join('');
+                }
+            }
+
+            const insPulpas = insNodo.filter(i => {
+                const cat = (i.categoria || '').toLowerCase();
+                return cat.includes('pulpa') || (!cat.includes('vaso') && !cat.includes('packaging') && !cat.includes('shot') && !cat.includes('caldo'));
+            });
+            const selectInsPulpas = document.getElementById('rec-insumo-pulpas');
+            if (selectInsPulpas) {
+                if (insPulpas.length === 0) {
+                    selectInsPulpas.innerHTML = '<option value="">(Bodega de Pulpas vacía)</option>';
+                } else {
+                    selectInsPulpas.innerHTML = insPulpas.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+                }
+            }
+
+            // 2. PRODUCTOS Y INSUMOS PARA VASOS DE 500 MLS (ELÍXIRES)
+            let prodsVasos = prodsNodo.filter(p => {
+                const cat = (p.categoria || '').toLowerCase();
+                return (cat.includes('500') || cat.includes('elixir') || cat.includes('vaso')) && !cat.includes('pack') && !cat.includes('pulpa') && !cat.includes('shot') && !cat.includes('caldo');
+            });
+            if (prodsVasos.length === 0) prodsVasos = prodsNodo.filter(p => !p.categoria || (!p.categoria.toLowerCase().includes('pack') && !p.categoria.toLowerCase().includes('shot')));
+            prodsVasos = deduplicarProductos(prodsVasos);
+            const selectProdVasos = document.getElementById('rec-producto-vasos');
+            if (selectProdVasos) {
+                if (prodsVasos.length === 0) {
+                    selectProdVasos.innerHTML = '<option value="">(Sin productos de 500 mls registrados)</option>';
+                } else {
+                    selectProdVasos.innerHTML = prodsVasos.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || '500 mls'})</option>`).join('');
+                }
+            }
+
+            const insVasos = insNodo.filter(i => {
+                const cat = (i.categoria || '').toLowerCase();
+                return cat.includes('vaso') || cat.includes('packaging') || cat.includes('500') || cat.includes('batido');
+            });
+            const selectInsVasos = document.getElementById('rec-insumo-vasos');
+            if (selectInsVasos) {
+                if (insVasos.length === 0) {
+                    selectInsVasos.innerHTML = '<option value="">(Bodega de Vasos 500 mls vacía)</option>';
+                } else {
+                    selectInsVasos.innerHTML = insVasos.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+                }
+            }
+
+            // 3. PRODUCTOS Y INSUMOS PARA SHOTS Y CALDOS DE HUESO
+            let prodsShots = prodsNodo.filter(p => {
+                const cat = (p.categoria || '').toLowerCase();
+                const nom = (p.nombre || '').toLowerCase();
+                return cat.includes('shot') || cat.includes('caldo') || nom.includes('shot') || nom.includes('caldo');
+            });
+            prodsShots = deduplicarProductos(prodsShots);
+            const selectProdShots = document.getElementById('rec-producto-shots');
+            if (selectProdShots) {
+                if (prodsShots.length === 0) {
+                    selectProdShots.innerHTML = '<option value="">(Sin productos de Shots/Caldos registrados)</option>';
+                } else {
+                    selectProdShots.innerHTML = prodsShots.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || 'Shots'})</option>`).join('');
+                }
+            }
+
+            const insShots = insNodo.filter(i => {
+                const cat = (i.categoria || '').toLowerCase();
+                return cat.includes('shot') || cat.includes('caldo');
+            });
+            const selectInsShots = document.getElementById('rec-insumo-shots');
+            if (selectInsShots) {
+                if (insShots.length === 0) {
+                    selectInsShots.innerHTML = '<option value="">(Bodega de Shots y Caldos vacía)</option>';
+                } else {
+                    selectInsShots.innerHTML = insShots.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+                }
+            }
+
+            actualizarUnidadDefaultInsumo('pulpas');
+            actualizarUnidadDefaultInsumo('vasos');
+            actualizarUnidadDefaultInsumo('shots');
+            cargarTablaReceta('pulpas'); 
+            cargarTablaReceta('vasos'); 
+            cargarTablaReceta('shots'); 
+        } catch(e) { console.error('Error preparando recetas:', e); } 
     }
-    async function guardarReceta() { const id = document.getElementById('rec-producto').value; const ing = document.getElementById('rec-insumo').value; const cant = document.getElementById('rec-cantidad').value; await fetch(`/api/insumos/${id}/vincular-ingrediente`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ingrediente:ing, gasto:cant})}); cargarTablaReceta(); playSound('click'); }
-    async function desvincularIngrediente(nombreIngrediente) { const id = document.getElementById('rec-producto').value; if(confirm(`¿Desvincular ${nombreIngrediente} de la fórmula?`)){ await fetch(`/api/insumos/${id}/desvincular/${encodeURIComponent(nombreIngrediente)}`, {method:'DELETE'}); cargarTablaReceta(); playSound('error'); } }
-    async function cargarTablaReceta() { 
-        const id = document.getElementById('rec-producto').value; 
+
+    function actualizarUnidadDefaultInsumo(tipo = 'pulpas') {
+        let idIns = 'rec-insumo-pulpas';
+        let idUni = 'rec-unidad-pulpas';
+        if (tipo === 'vasos') { idIns = 'rec-insumo-vasos'; idUni = 'rec-unidad-vasos'; }
+        else if (tipo === 'shots') { idIns = 'rec-insumo-shots'; idUni = 'rec-unidad-shots'; }
+
+        const insSelect = document.getElementById(idIns);
+        const uniSelect = document.getElementById(idUni);
+        if (!insSelect || !uniSelect) return;
+        const selectedOpt = insSelect.options[insSelect.selectedIndex];
+        if (selectedOpt && selectedOpt.dataset && selectedOpt.dataset.medida) {
+            const med = selectedOpt.dataset.medida.toLowerCase();
+            if (['gr', 'mls', 'und'].includes(med)) {
+                uniSelect.value = med;
+            }
+        }
+    }
+
+    async function guardarReceta(tipo = 'pulpas') { 
+        let idProdSelect = 'rec-producto-pulpas';
+        let idInsSelect = 'rec-insumo-pulpas';
+        let idCantInput = 'rec-cantidad-pulpas';
+        let idUniSelect = 'rec-unidad-pulpas';
+
+        if (tipo === 'vasos') {
+            idProdSelect = 'rec-producto-vasos'; idInsSelect = 'rec-insumo-vasos'; idCantInput = 'rec-cantidad-vasos'; idUniSelect = 'rec-unidad-vasos';
+        } else if (tipo === 'shots') {
+            idProdSelect = 'rec-producto-shots'; idInsSelect = 'rec-insumo-shots'; idCantInput = 'rec-cantidad-shots'; idUniSelect = 'rec-unidad-shots';
+        }
+
+        const id = document.getElementById(idProdSelect) ? document.getElementById(idProdSelect).value : null; 
+        const ing = document.getElementById(idInsSelect) ? document.getElementById(idInsSelect).value : null; 
+        const cant = document.getElementById(idCantInput) ? document.getElementById(idCantInput).value : null; 
+        const uni = document.getElementById(idUniSelect) ? document.getElementById(idUniSelect).value : 'gr'; 
+
+        if (!id || !ing || !cant || parseFloat(cant) <= 0) {
+            alert("Por favor selecciona un producto, un ingrediente e ingresa una dosis válida mayor a 0.");
+            return;
+        }
+
+        const gastoConUnidad = cant + ' ' + uni;
+
+        await fetch(`/api/insumos/${id}/vincular-ingrediente`, {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({ingrediente: ing, gasto: gastoConUnidad})
+        }); 
+
+        if (document.getElementById(idCantInput)) document.getElementById(idCantInput).value = '';
+        cargarTablaReceta(tipo); 
+        playSound('click'); 
+    }
+
+    async function desvincularIngrediente(nombreIngrediente, tipo = 'pulpas') { 
+        let idProdSelect = 'rec-producto-pulpas';
+        if (tipo === 'vasos') idProdSelect = 'rec-producto-vasos';
+        else if (tipo === 'shots') idProdSelect = 'rec-producto-shots';
+
+        const id = document.getElementById(idProdSelect) ? document.getElementById(idProdSelect).value : null; 
+        if(!id) return;
+        if(confirm(`¿Desvincular ${nombreIngrediente} de la fórmula?`)){ 
+            await fetch(`/api/insumos/${id}/desvincular/${encodeURIComponent(nombreIngrediente)}`, {method:'DELETE'}); 
+            cargarTablaReceta(tipo); 
+            playSound('error'); 
+        } 
+    }
+
+    async function cargarTablaReceta(tipo = 'pulpas') { 
+        let idProdSelect = 'rec-producto-pulpas';
+        let idTabla = 'tabla-vista-formula-pulpas';
+        let colorTipo = 'var(--p-bio-green)';
+
+        if (tipo === 'vasos') {
+            idProdSelect = 'rec-producto-vasos'; idTabla = 'tabla-vista-formula-vasos'; colorTipo = 'var(--p-cyan)';
+        } else if (tipo === 'shots') {
+            idProdSelect = 'rec-producto-shots'; idTabla = 'tabla-vista-formula-shots'; colorTipo = 'var(--p-magenta)';
+        }
+
+        const id = document.getElementById(idProdSelect) ? document.getElementById(idProdSelect).value : null; 
+        const tb = document.getElementById(idTabla); 
+        if(!tb) return;
+        tb.innerHTML=''; 
         if(!id) return; 
         try { 
             const res = await fetch(`/api/insumos/${id}/receta`); 
             const txt = await res.text(); 
-            const tb = document.getElementById('tabla-vista-formula'); 
-            tb.innerHTML=''; 
             
             let costoTotal = 0;
-            const suc = document.getElementById('filtro-sucursal-recetas').value;
+            const suc = document.getElementById('filtro-sucursal-recetas') ? document.getElementById('filtro-sucursal-recetas').value : 'Antofagasta';
 
             txt.split('\n').forEach(l=>{ 
                 if(l.includes(':')) {
                     const nombre = l.split(':')[0].trim();
-                    const gasto = parseFloat(l.split(':')[1].trim()) || 0;
+                    const rawGasto = l.split(':')[1].trim();
                     
+                    const numClean = rawGasto.replace(/[^0-9.]/g, '');
+                    const gastoVal = parseFloat(numClean) || 0;
+                    
+                    let unidadTxt = 'gr';
+                    if (rawGasto.toLowerCase().includes('mls')) unidadTxt = 'mls';
+                    else if (rawGasto.toLowerCase().includes('und')) unidadTxt = 'und';
+                    else if (rawGasto.toLowerCase().includes('gr')) unidadTxt = 'gr';
+
                     // Buscar precio del insumo
                     const insumo = insMem.find(i => normalizarStr(i.nombre) === normalizarStr(nombre) && i.sucursal === suc);
                     let costoHtml = '<span class="text-muted">N/A</span>';
@@ -1590,20 +2635,21 @@
                     if(insumo) {
                         let precio = insumo.precio || 0;
                         let costoIngrediente = 0;
-                        if(insumo.medida === 'gr' || insumo.medida === 'mls') {
-                            costoIngrediente = (gasto / 1000) * precio;
+                        if(unidadTxt === 'gr' || unidadTxt === 'mls' || insumo.medida === 'gr' || insumo.medida === 'mls') {
+                            costoIngrediente = (gastoVal / 1000) * precio;
                         } else {
-                            costoIngrediente = gasto * precio;
+                            costoIngrediente = gastoVal * precio;
                         }
                         costoTotal += costoIngrediente;
                         costoHtml = `<span class="text-warning fw-bold">${formatMoney(costoIngrediente, suc)}</span>`;
+                        if (insumo.medida && (!unidadTxt || unidadTxt === 'gr')) unidadTxt = insumo.medida;
                     }
 
                     tb.innerHTML+=`<tr>
                         <td class="text-white fw-bold fs-4">${nombre}</td>
-                        <td class="fs-4" style="color:var(--p-bio-green); text-shadow:var(--green-glow);">${gasto}</td>
+                        <td class="fs-4" style="color:${colorTipo}; text-shadow:0 0 10px currentColor;">${gastoVal} <span class="fs-6 text-white-50">${unidadTxt}</span></td>
                         <td class="fs-4">${costoHtml}</td>
-                        <td><i class="bi bi-scissors text-danger fs-3" style="cursor:pointer;" onclick="desvincularIngrediente('${nombre}')"></i></td>
+                        <td><i class="bi bi-scissors text-danger fs-3" style="cursor:pointer;" onclick="desvincularIngrediente('${nombre}', '${tipo}')"></i></td>
                     </tr>`; 
                 }
             }); 
@@ -1625,7 +2671,8 @@
 
         try {
             const res = await fetch('/api/productos/sucursal/' + suc);
-            const data = await res.json();
+            let data = await res.json();
+            data = deduplicarProductos(data);
             const tb = document.getElementById('tabla-catalogo'); tb.innerHTML='';
 
             data.forEach(p => {
@@ -1634,6 +2681,17 @@
                 const attrReadonly = esSupremo ? '' : 'readonly';
                 const classInput = esSupremo ? 'input-matriz' : 'input-matriz border-0 text-white-50 pointer-events-none';
                 const classPrecio = esSupremo ? 'input-matriz text-money-green' : 'input-matriz border-0 text-money-green pointer-events-none';
+
+                const catActual = p.categoria || '500 mls';
+                let optionsCat = `
+                    <option value="500 mls" ${catActual==='500 mls'?'selected':''}>Elíxires (500 mls)</option>
+                    <option value="Packs" ${catActual==='Packs'?'selected':''}>Packs</option>
+                    <option value="Shots" ${catActual==='Shots'?'selected':''}>Shots</option>
+                    <option value="Arma tu Batido" ${catActual==='Arma tu Batido'?'selected':''}>Arma tu Batido</option>
+                `;
+                if (catActual && !['500 mls', 'Packs', 'Shots', 'Arma tu Batido'].includes(catActual)) {
+                    optionsCat += `<option value="${catActual}" selected>${catActual}</option>`;
+                }
 
                 const colComandos = esSupremo ? `
                     <button class="btn btn-bio px-3 py-2 me-1 mb-1" onclick="actualizarProducto(${p.id})" title="Sobreescribir Matriz"><i class="bi bi-cloud-check-fill fs-5"></i></button>
@@ -1649,7 +2707,9 @@
                         <input type="text" id="nombre-prod-${p.id}" value="${p.nombre}" class="${classInput} w-100 fw-bold fs-5 text-center" ${attrReadonly}>
                     </td>
                     <td class="align-middle">
-                        <input type="text" id="cat-prod-${p.id}" value="${p.categoria || 'Batidos'}" class="${classInput} w-100 text-warning fs-6 text-center" placeholder="Categoría" ${attrReadonly}>
+                        <select id="cat-prod-${p.id}" class="form-select bg-dark text-warning border-warning fw-bold fs-6 text-center" ${esSupremo ? '' : 'disabled'}>
+                            ${optionsCat}
+                        </select>
                     </td>
                     <td class="align-middle">
                         <textarea id="desc-prod-${p.id}" class="${classInput} w-100" style="font-size: 0.9rem; min-width: 250px; height: 65px;" placeholder="Escribe la biología del producto aquí..." ${attrReadonly}>${p.descripcion || ''}</textarea>
@@ -1664,6 +2724,44 @@
                 </tr>`;
             });
         } catch(e) { console.error("Error al cargar el catálogo:", e); }
+    }
+
+    async function guardarNuevoProducto() {
+        playSound('click');
+        const nombre = document.getElementById('nuevo-prod-nombre').value;
+        const categoria = document.getElementById('nuevo-prod-categoria').value;
+        const precio = parseFloat(document.getElementById('nuevo-prod-precio').value) || 0;
+        const imagen = document.getElementById('nuevo-prod-imagen').value;
+        const descripcion = document.getElementById('nuevo-prod-descripcion').value;
+        const sucursal = document.getElementById('filtro-sucursal-catalogo').value || 'Antofagasta';
+
+        if (!nombre || !precio) {
+            alert("Complete al menos el nombre y precio del producto.");
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/productos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nombre, categoria, precio, imagen, descripcion, sucursal })
+            });
+
+            if (res.ok) {
+                alert("¡Producto registrado exitosamente en la Matriz!");
+                document.getElementById('nuevo-prod-nombre').value = '';
+                document.getElementById('nuevo-prod-precio').value = '';
+                document.getElementById('nuevo-prod-imagen').value = '';
+                document.getElementById('nuevo-prod-descripcion').value = '';
+                cargarCatalogo();
+                playSound('success');
+            } else {
+                const err = await res.text();
+                alert("Error al guardar el producto: " + err);
+            }
+        } catch(e) {
+            alert("Fallo de conexión al servidor.");
+        }
     }
 
     async function actualizarProducto(id) {
@@ -1703,11 +2801,20 @@
     }
 
     async function eliminarProducto(id) {
+        const prod = catalogoGlobal.find(p => p.id == id);
+        const normNombre = prod ? normalizarStr(prod.nombre) : '';
         playSound('error');
         if(confirm("ALERTA: ¿Deseas purgar este elixir de la base de datos de manera irreversible?")) {
             try {
-                const res = await fetch(`/api/productos/${id}`, { method: 'DELETE' });
-                if(res.ok) { document.getElementById(`fila-prod-${id}`).remove(); }
+                const duplicados = normNombre ? catalogoGlobal.filter(p => normalizarStr(p.nombre) === normNombre) : [{id: id}];
+                for (const dup of duplicados) {
+                    try { await fetch(`/api/produccion/lotes/${dup.id}`, { method: 'DELETE' }); } catch(e) {}
+                    try { await fetch(`/api/productos/${dup.id}`, { method: 'DELETE' }); } catch(e) {}
+                }
+                const fila = document.getElementById(`fila-prod-${id}`);
+                if (fila) fila.remove();
+                await cargarProduccion();
+                playSound('success');
             } catch(e) { console.error("Error al purgar", e); }
         }
     }
@@ -1822,18 +2929,8 @@
     }
 
     function generarReporteVentas() {
-        let col = document.getElementById('caja-col').innerText || "0";
-        let chi = document.getElementById('caja-chi').innerText || "0";
-        let esp = document.getElementById('caja-esp').innerText || "0";
-
-        if (rolUsuario === 'SUPREMO') {
-            return `En tesorería general tenemos: Nodo Colombia con ${col} pesos. Nodo Chile con ${chi} pesos. Y Nodo España con ${esp} euros. `;
-        } else {
-            if(sucursalAdmin === 'Colombia') return `La tesorería del Nodo Colombia registra ${col} pesos. `;
-            if(sucursalAdmin === 'Chile') return `La tesorería del Nodo Chile registra ${chi} pesos. `;
-            if(sucursalAdmin === 'España') return `La tesorería del Nodo España registra ${esp} euros. `;
-        }
-        return "No hay datos de ventas disponibles. ";
+        let ant = document.getElementById('tesoreria-efectivo') ? document.getElementById('tesoreria-efectivo').innerText : "$0";
+        return `La tesorería del Nodo Antofagasta registra ${ant}. `;
     }
 
     function generarReporteProduccion() {
@@ -1910,6 +3007,158 @@
     }
 
     // ==========================================
+    // CENTRO DE DOCUMENTOS Y REPRODUCTOR PDF (POSTGRESQL)
+    // ==========================================
+    async function cargarDocumentosPdf() {
+        const sucursal = document.getElementById('prod-sucursal') ? document.getElementById('prod-sucursal').value : 'Antofagasta';
+        const tbody = document.getElementById('tabla-documentos-pdf');
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center text-info py-4 font-orbitron"><span class="spinner-border spinner-border-sm me-2"></span>Cargando biblioteca de PDFs desde PostgreSQL...</td></tr>';
+        
+        try {
+            const res = await fetch('/api/documentos/sucursal/' + sucursal);
+            if (!res.ok) throw new Error("Fallo API");
+            const docs = await res.json();
+            
+            if (!docs || docs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center text-white-50 py-4 font-orbitron">No hay documentos PDF registrados aún en esta sucursal.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            docs.forEach(d => {
+                const mb = d.tamanoBytes ? (d.tamanoBytes / (1024 * 1024)).toFixed(2) : '0.00';
+                const catClass = d.categoria === 'Recetas' ? 'bg-primary' : (d.categoria === 'Listas de Precios' ? 'bg-warning text-dark' : 'bg-secondary');
+                const nombreEsc = (d.nombre || '').replace(/'/g, "\\'");
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="align-middle">
+                            <span class="badge ${catClass} font-orbitron">${d.categoria || 'PDF'}</span>
+                        </td>
+                        <td class="align-middle text-start">
+                            <div class="fw-bold text-white font-rajdhani text-truncate" style="max-width: 200px;" title="${d.nombre}">${d.nombre}</div>
+                            <small class="text-white-50" style="font-size: 0.75rem;">${mb} MB</small>
+                        </td>
+                        <td class="align-middle">
+                            <button class="btn btn-sm btn-bio px-2 py-1 me-1" style="background:var(--p-cyan); color:#000;" onclick="reproducirPdf(${d.id}, '${nombreEsc}')" title="Ver en Reproductor">
+                                <i class="bi bi-play-fill fs-6"></i> VER
+                            </button>
+                            <a class="btn btn-sm btn-outline-warning px-2 py-1 me-1" href="/api/documentos/${d.id}/descargar" target="_blank" title="Descargar PDF">
+                                <i class="bi bi-download fs-6"></i>
+                            </a>
+                            <button class="btn btn-sm btn-outline-danger px-2 py-1" onclick="eliminarPdf(${d.id}, '${nombreEsc}')" title="Eliminar de PostgreSQL">
+                                <i class="bi bi-trash3-fill fs-6"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch(e) {
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger py-4 font-orbitron"><i class="bi bi-exclamation-triangle me-2"></i>Error conectando con PostgreSQL.</td></tr>';
+        }
+    }
+
+    async function subirDocumentoPdf(event) {
+        event.preventDefault();
+        playSound('click');
+        const fileInput = document.getElementById('pdf-file-input');
+        const nombreInput = document.getElementById('pdf-nombre-input');
+        const catSelect = document.getElementById('pdf-categoria-select');
+        const sucSelect = document.getElementById('pdf-sucursal-select');
+        const btnSubir = document.getElementById('btn-subir-pdf');
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert("Por favor selecciona un archivo PDF.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        formData.append("nombre", nombreInput.value.trim());
+        formData.append("categoria", catSelect.value);
+        formData.append("sucursal", sucSelect.value);
+
+        const textoOriginal = btnSubir.innerHTML;
+        btnSubir.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>SUBIENDO A POSTGRESQL...';
+        btnSubir.disabled = true;
+
+        try {
+            const res = await fetch('/api/documentos/subir', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (res.ok) {
+                const msg = await res.text();
+                alert("¡Éxito! " + msg);
+                playSound('success');
+                fileInput.value = '';
+                nombreInput.value = '';
+                cargarDocumentosPdf();
+            } else {
+                const err = await res.text();
+                alert("Error al subir el archivo: " + err);
+                playSound('error');
+            }
+        } catch(e) {
+            alert("Fallo de conexión al servidor al subir el archivo PDF.");
+            playSound('error');
+        } finally {
+            btnSubir.innerHTML = textoOriginal;
+            btnSubir.disabled = false;
+        }
+    }
+
+    function reproducirPdf(id, nombre) {
+        playSound('magic');
+        const titleEl = document.getElementById('pdf-player-title');
+        const actionsEl = document.getElementById('pdf-player-actions');
+        const placeholder = document.getElementById('pdf-viewer-placeholder');
+        const iframe = document.getElementById('pdf-frame-player');
+        const btnDownload = document.getElementById('btn-download-active-pdf');
+
+        titleEl.innerHTML = `<i class="bi bi-file-earmark-pdf-fill me-2"></i> ${nombre}`;
+        btnDownload.href = `/api/documentos/${id}/descargar`;
+        actionsEl.style.display = 'block';
+
+        placeholder.style.display = 'none';
+        iframe.style.display = 'block';
+        iframe.src = `/api/documentos/${id}/ver#toolbar=1&navpanes=1&scrollbar=1`;
+    }
+
+    function toggleFullscreenPdf() {
+        const iframe = document.getElementById('pdf-frame-player');
+        if (iframe && iframe.src) {
+            window.open(iframe.src, '_blank');
+        }
+    }
+
+    async function eliminarPdf(id, nombre) {
+        if (!confirm(`¿Estás seguro de eliminar permanentemente el documento "${nombre}" de PostgreSQL?`)) return;
+        playSound('error');
+        try {
+            const res = await fetch(`/api/documentos/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                alert("Documento eliminado correctamente.");
+                cargarDocumentosPdf();
+                const iframe = document.getElementById('pdf-frame-player');
+                if (iframe && iframe.src.includes(`/api/documentos/${id}/`)) {
+                    iframe.style.display = 'none';
+                    iframe.src = '';
+                    document.getElementById('pdf-viewer-placeholder').style.display = 'block';
+                    document.getElementById('pdf-player-title').innerHTML = '<i class="bi bi-play-circle-fill me-2"></i> REPRODUCTOR PDF INTERACTIVO';
+                    document.getElementById('pdf-player-actions').style.display = 'none';
+                }
+            } else {
+                alert("Error al eliminar el documento.");
+            }
+        } catch(e) {
+            alert("Fallo de conexión al eliminar.");
+        }
+    }
+
+    // ==========================================
     // INSTALADOR PWA (APP NATIVA)
     // ==========================================
     let eventoInstalacionPWA;
@@ -1940,53 +3189,6 @@
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Error:', err));
         });
-    }
-
-    // ==========================================
-    // BACKUP Y MIGRACIÓN DE BODEGA
-    // ==========================================
-    function exportarBodegaJSON() {
-        if(insMem.length === 0) return alert("Bodega vacía. Nada que exportar.");
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(insMem));
-        const dlAnchorElem = document.createElement('a');
-        dlAnchorElem.setAttribute("href", dataStr);
-        dlAnchorElem.setAttribute("download", "backup_bodega_raices.json");
-        dlAnchorElem.click();
-        playSound('success');
-    }
-
-    function importarBodegaJSON(event) {
-        const file = event.target.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            try {
-                const insumosImportados = JSON.parse(e.target.result);
-                if(!Array.isArray(insumosImportados)) throw new Error("Formato inválido.");
-                
-                if(confirm(`Se detectaron ${insumosImportados.length} insumos en el archivo. ¿Deseas inyectarlos en la base de datos de este servidor?`)) {
-                    document.getElementById('overlay-ensamblaje').style.display = 'flex';
-                    for(let ins of insumosImportados) {
-                        // Limpiamos IDs para que PostgreSQL los asigne como nuevos registros
-                        delete ins.idInsumo;
-                        ins.actorAdmin = rolUsuario === 'SUPREMO' ? 'SUPREMO (MIGRACIÓN)' : 'ADMIN (MIGRACIÓN)';
-                        await fetch('/api/insumos/guardar', {
-                            method:'POST',
-                            headers:{'Content-Type':'application/json'},
-                            body:JSON.stringify(ins)
-                        });
-                    }
-                    document.getElementById('overlay-ensamblaje').style.display = 'none';
-                    cargarInsumos();
-                    alert("¡Migración completada con éxito!");
-                    playSound('success');
-                }
-            } catch(error) {
-                alert("Error al leer el archivo de backup.");
-            }
-            event.target.value = ""; // Resetear input
-        };
-        reader.readAsText(file);
     }
 
 </script>

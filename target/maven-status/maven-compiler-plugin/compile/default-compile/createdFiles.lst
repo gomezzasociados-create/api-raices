@@ -1,0 +1,3 @@
+com\gomezsystems\minierp\repository\DocumentoPdfRepository.class
+com\gomezsystems\minierp\controller\DocumentoPdfController.class
+com\gomezsystems\minierp\model\DocumentoPdf.class
