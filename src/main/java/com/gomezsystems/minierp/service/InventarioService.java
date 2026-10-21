@@ -31,6 +31,9 @@ public class InventarioService {
     @Autowired
     private ProductoRepository productoRepository;
 
+    @Autowired
+    private WhatsAppNotificationService whatsAppNotificationService;
+
     @Transactional
     public void procesarVenta(Long idProductoVendido, int cantidadVendida, String actorCausa) {
 
@@ -152,6 +155,14 @@ public class InventarioService {
         if (catIns.contains("vaso") || catIns.contains("packaging")) {
             if (nuevoStock <= 10) {
                 System.out.println("⚠️ [AVISO ADMINISTRADOR - BODEGA VASOS 500 MLS] Umbral bajo detectado en '" + insumo.getNombre() + "': " + nuevoStock + " " + insumo.getMedida() + " restantes.");
+                if (whatsAppNotificationService != null) {
+                    whatsAppNotificationService.enviarAlertaUmbralBajoVasos(
+                        insumo.getNombre(),
+                        nuevoStock,
+                        insumo.getMedida(),
+                        insumo.getSucursal()
+                    );
+                }
             }
         }
 

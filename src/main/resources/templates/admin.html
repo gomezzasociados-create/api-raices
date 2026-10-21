@@ -371,9 +371,14 @@
                     <div id="texto-alerta-vasos" class="font-rajdhani fs-6 text-white-50"></div>
                 </div>
             </div>
-            <button class="btn btn-outline-danger fw-bold font-orbitron px-3 py-2 text-nowrap ms-3" onclick="irABodegaVasos()">
-                <i class="bi bi-arrow-right-circle-fill me-1"></i> REVISAR BODEGA VASOS
-            </button>
+            <div class="d-flex gap-2 ms-3 flex-wrap">
+                <button class="btn btn-outline-success fw-bold font-orbitron px-3 py-2 text-nowrap" onclick="probarAlertaWhatsapp()" title="Enviar notificación inmediata a WhatsApp del Administrador">
+                    <i class="bi bi-whatsapp me-1"></i> AVISO WHATSAPP
+                </button>
+                <button class="btn btn-outline-danger fw-bold font-orbitron px-3 py-2 text-nowrap" onclick="irABodegaVasos()">
+                    <i class="bi bi-arrow-right-circle-fill me-1"></i> REVISAR BODEGA VASOS
+                </button>
+            </div>
         </div>
     </div>
 
@@ -2533,16 +2538,38 @@
 
         if (detalleBox) {
             detalleBox.innerHTML = `
-                <div class="alert alert-danger border-danger bg-dark text-white p-3 mb-3 d-flex align-items-center justify-content-between rounded-3" style="box-shadow: 0 0 20px rgba(255,0,0,0.3); border-width: 2px;">
+                <div class="alert alert-danger border-danger bg-dark text-white p-3 mb-3 d-flex flex-column flex-md-row align-items-md-center justify-content-between rounded-3" style="box-shadow: 0 0 20px rgba(255,0,0,0.3); border-width: 2px;">
                     <div>
                         <h6 class="text-danger fw-bold font-orbitron mb-1 fs-6">
                             <i class="bi bi-exclamation-octagon-fill me-2"></i> MENSAJE PARA EL ADMINISTRADOR: BODEGA DE VASOS 500 MLS
                         </h6>
                         <p class="mb-2 font-rajdhani text-white-50 fs-6">Los siguientes insumos de packaging para batidos de 500 mls han alcanzado o cruzado el umbral bajo de seguridad (10 unidades o menos). Por favor reabastecer a la brevedad:</p>
-                        <div class="d-flex flex-wrap gap-2">${listaPillsHtml}</div>
+                        <div class="d-flex flex-wrap gap-2 mb-2 mb-md-0">${listaPillsHtml}</div>
                     </div>
+                    <button class="btn btn-outline-success font-orbitron fw-bold text-nowrap ms-md-3" onclick="probarAlertaWhatsapp()">
+                        <i class="bi bi-whatsapp me-1"></i> NOTIFICAR WHATSAPP
+                    </button>
                 </div>
             `;
+        }
+    }
+
+    async function probarAlertaWhatsapp() {
+        const btn = event?.currentTarget;
+        const originalHtml = btn ? btn.innerHTML : '';
+        if (btn) btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Enviando...';
+        try {
+            const res = await fetch('/api/inventario/test-alerta-vasos', { method: 'POST' });
+            if (res.ok) {
+                const msg = await res.text();
+                alert('📲 Alerta enviada con éxito:\n' + msg);
+            } else {
+                alert('⚠️ Error al enviar alerta por WhatsApp: ' + res.statusText);
+            }
+        } catch (e) {
+            alert('Error de conexión al enviar alerta WhatsApp: ' + e.message);
+        } finally {
+            if (btn) btn.innerHTML = originalHtml;
         }
     }
 
