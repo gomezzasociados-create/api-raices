@@ -835,9 +835,11 @@
             let precioBasePorc = ins.precio || 0;
             let dtoPorc = (ins.descuento && ins.descuento > 0) ? Math.min(Math.round(ins.descuento), 100) : 0;
             let precioFinalPorc = dtoPorc > 0 ? Math.round(precioBasePorc * (1 - dtoPorc / 100)) : precioBasePorc;
-            let sizePorcion = ins.sizePorcion || 1;
-            let stockUnidades = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? ins.unidadActual : 9999;
-            let porcionesDisponibles = Math.max(0, Math.floor(stockUnidades));
+            let sizePorcion = (ins.sizePorcion && Number(ins.sizePorcion) > 0) ? Number(ins.sizePorcion) : 1;
+            let stockRaw = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
+            let porcionesDisponibles = (sizePorcion > 1 && stockRaw >= sizePorcion && (ins.medida === 'gr' || ins.medida === 'mls'))
+                ? Math.floor(stockRaw / sizePorcion)
+                : Math.max(0, Math.floor(stockRaw));
 
             const esAgotado = porcionesDisponibles <= 0;
             const esUltimas = porcionesDisponibles > 0 && porcionesDisponibles <= 10;
@@ -884,7 +886,7 @@
                     </span>
                 `;
             } else {
-                badgeStock = `<div class="badge-stock-estado badge-disponible mb-2"><i class="bi bi-check-circle-fill me-1"></i> EN STOCK (${porcionesDisponibles} unid)</div>`;
+                badgeStock = `<div class="badge-stock-estado badge-disponible mb-2"><i class="bi bi-check-circle-fill me-1"></i> EN STOCK</div>`;
             }
 
             const disMinus = cantPorc <= 0 ? 'disabled' : '';
@@ -927,7 +929,7 @@
 
                             <!-- DATOS Y STOCK -->
                             <h5 class="fw-bold text-white fs-6 text-uppercase mb-1 font-rajdhani text-truncate" title="${ins.nombre}">${ins.nombre}</h5>
-                            <div class="text-white-50 small mb-2 font-orbitron" style="font-size: 0.72rem;">Porción: <span class="text-info fw-bold">${porcTexto}</span></div>
+
                             
                             <!-- SEMÁFORO DE INVENTARIO (UMBRAL 10 A 0) -->
                             ${badgeStock}
@@ -1027,7 +1029,8 @@
             let cant = porcionesArmado[id];
             if (cant > 0 && insumosInfoMap[id]) {
                 let info = insumosInfoMap[id];
-                let gastoReal = cant; // Cantidad exacta de porciones a descontar de Bodega Arma tu Batido
+                const porcionDosis = (info.sizePorcion && Number(info.sizePorcion) > 0) ? Number(info.sizePorcion) : 1;
+                const gastoReal = cant * porcionDosis; // Descuento de bodega según la cantidad de porción (gr/mls)
                 lista.push(`${cant}x ${info.nombre}`);
                 lineasReceta.push(`${info.nombre}:${gastoReal}`);
                 total += (cant * info.precio);

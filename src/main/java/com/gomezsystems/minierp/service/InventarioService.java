@@ -105,7 +105,13 @@ public class InventarioService {
                     }
 
                     if (insumoMatch != null) {
-                        descontarInsumo(insumoMatch, gasto * cantidadVendida, actorCausa);
+                        double totalADescontar = gasto * cantidadVendida;
+                        // Salvaguarda: si es Arma tu Batido y el gasto viniera en número de porciones (ej. <= 5)
+                        // y el insumo tiene configurada una porción mayor a 5 (en gr/mls), aseguramos la multiplicación por cantidadPorcion
+                        if (esArmaTuBatido && insumoMatch.getCantidadPorcion() != null && insumoMatch.getCantidadPorcion() > 5.0 && gasto <= 5.0) {
+                            totalADescontar = (gasto * insumoMatch.getCantidadPorcion()) * cantidadVendida;
+                        }
+                        descontarInsumo(insumoMatch, totalADescontar, actorCausa);
                     } else {
                         System.out.println("Aviso Venta: No se encontró insumo en bodega para '" + nombreLimpio + "' (No se descuenta de pulpas).");
                     }
