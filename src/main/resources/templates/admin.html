@@ -3521,18 +3521,7 @@
         });
     }
 
-    function irABodegaArmaTuBatido() {
-        const tabBtn = document.querySelector('button[data-bs-target="#tab-inventario"]');
-        if (tabBtn) tabBtn.click();
-        const collapseArma = document.getElementById('collapseArmaTuBatido');
-        if (collapseArma && !collapseArma.classList.contains('show')) {
-            new bootstrap.Collapse(collapseArma, { toggle: true });
-        }
-        setTimeout(() => {
-            const heading = document.getElementById('headingArmaTuBatido');
-            if (heading) heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 300);
-    }
+
 
     function cambiarVistaCatalogo(vista) {
         const contenedorAcordeon = document.getElementById('contenedor-catalogo-acordeon');

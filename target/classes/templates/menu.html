@@ -566,6 +566,11 @@
             const nom = normalizarStr(p.nombre || '');
             const f = normalizarStr(filtroActual);
             
+            // Los ingredientes de "Arma tu Batido" pertenecen exclusivamente a la sección interactiva Arma tu Batido
+            if (cat.includes('arma') || cat.includes('batido') || cat.includes('porcion') || nom.includes('porcion') || nom.includes('porción')) {
+                return false;
+            }
+
             const esPulpa = cat.includes('pulpa') || nom.includes('pulpa');
             const esPack = cat.includes('pack') || cat.includes('16') || esPulpa;
             const esShot = cat.includes('shot') || nom.includes('shot');
@@ -576,7 +581,7 @@
             if (f.includes('shot')) {
                 return esShot && !esPack;
             }
-            // Categoría Elíxires (500 mls): no debe incluir ni packs ni pulpas
+            // Categoría Elíxires (500 mls): no debe incluir ni packs, ni pulpas, ni shots
             return !esPack && !esShot;
         });
 
