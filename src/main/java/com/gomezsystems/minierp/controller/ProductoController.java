@@ -72,21 +72,6 @@ public class ProductoController {
             if (nuevoProducto.getSucursal() != null) prod.setSucursal(nuevoProducto.getSucursal());
             if (nuevoProducto.getStock() != null) prod.setStock(nuevoProducto.getStock());
             Producto guardado = productoRepository.save(prod);
-            // Sincronizar automáticamente con la Bodega de Insumos si es de Arma tu Batido
-            String catProd = prod.getCategoria() != null ? prod.getCategoria().toLowerCase() : "";
-            if (catProd.contains("arma tu batido") || catProd.contains("batido")) {
-                try {
-                    String nomProd = prod.getNombre() != null ? prod.getNombre().trim() : "";
-                    for (com.gomezsystems.minierp.model.Insumo ins : insumoRepository.findAll()) {
-                        if (ins.getNombre() != null && ins.getNombre().trim().equalsIgnoreCase(nomProd)) {
-                            if (nuevoProducto.getPrecio() != null) ins.setPrecio(nuevoProducto.getPrecio());
-                            if (nuevoProducto.getImagen() != null) ins.setImagen(nuevoProducto.getImagen());
-                            if (nuevoProducto.getStock() != null) ins.setUnidadActual(nuevoProducto.getStock().doubleValue());
-                            insumoRepository.save(ins);
-                        }
-                    }
-                } catch (Exception ignored) {}
-            }
 
             // Sincronizar precio y descuento en duplicados con el mismo nombre si se actualizó
             if (prod.getNombre() != null && !prod.getNombre().trim().isEmpty()) {
