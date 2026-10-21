@@ -610,6 +610,11 @@
                    </div>`
                 : `<div class="precio-prod">${simboloActual}${precioBase.toLocaleString('es-CL')}</div>`;
 
+            const esVideo = img && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(img.trim());
+            const mediaTag = esVideo 
+                ? `<video src="${img}" class="img-batido" autoplay loop muted playsinline style="object-fit:cover;"></video>`
+                : `<img src="${img}" class="img-batido" loading="lazy" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">`;
+
             grid.innerHTML += `
                 <div class="col-12 col-md-6 col-lg-4 col-xl-3 item-tarjeta">
                     <div class="card-escena" id="card-${p.id}">
@@ -618,7 +623,7 @@
                                 <div class="enredadera-magica"></div>
                                 ${badgeDto}
                                 <button class="btn-info-flip" onclick="event.stopPropagation(); flip('${p.id}')">INFORMACIÓN <i class="bi bi-info-circle ms-2"></i></button>
-                                <div class="img-zona"><img src="${img}" class="img-batido"></div>
+                                <div class="img-zona">${mediaTag}</div>
                                 <div><div class="nombre-prod text-truncate">${p.nombre}</div>${precioHtml}</div>
                                 <button class="btn-extraer mt-3" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase})">EXTRAER</button>
                             </div>
@@ -872,18 +877,19 @@
                 ? `<button id="btn-minus-${idInsClean}" class="btn btn-outline-warning fw-bold px-3 py-1" style="border-radius: 8px;" onclick="modificarPorcionInsumo('${idInsClean}', -1, ${precioPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">-</button>`
                 : `<button id="btn-minus-${idInsClean}" class="btn btn-outline-secondary text-white-50 fw-bold px-3 py-1" style="border-radius: 8px;" disabled>-</button>`;
 
+            const esVideoIng = imgUrl && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(imgUrl.trim());
+            const mediaIngTag = esVideoIng
+                ? `<video src="${imgUrl}" autoplay loop muted playsinline class="w-100 h-100" style="object-fit: cover; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}"></video>`
+                : `<img src="${imgUrl}" alt="${ins.nombre}" loading="lazy" class="w-100 h-100" style="object-fit: cover; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">`;
+
             htmlBuilder += `
                 <div class="col-6 col-md-4 col-lg-3 mb-3">
                     <div class="card-ingrediente-batido p-3 rounded-3 text-center h-100 d-flex flex-column justify-content-between position-relative ${esAgotado ? 'ingrediente-agotado' : (esUltimas ? 'ingrediente-ultimas' : '')}" 
                          style="background: rgba(10, 14, 18, 0.92); ${bordeCard}; box-shadow: 0 5px 15px rgba(0,0,0,0.8); backdrop-filter: blur(8px);">
                         <div>
-                            <!-- IMAGEN DEL INGREDIENTE -->
+                            <!-- IMAGEN/VIDEO DEL INGREDIENTE -->
                             <div class="position-relative mb-2 overflow-hidden rounded-3 border ${bordeImg}" style="background: rgba(0,0,0,0.6); height: 125px;">
-                                <img src="${imgUrl}" 
-                                     alt="${ins.nombre}" 
-                                     class="w-100 h-100" 
-                                     style="object-fit: cover; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}" 
-                                     onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">
+                                ${mediaIngTag}
                                 
                                 <span class="badge bg-dark bg-opacity-75 text-warning font-orbitron position-absolute top-0 start-0 m-1 border border-warning" style="font-size: 0.65rem; letter-spacing: 0.5px;">
                                     ${subcatLabel}

@@ -873,9 +873,12 @@
 
         lista.forEach((p, index) => {
             const idValido = p.id || index;
+            const esVideo = p.imagen && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(p.imagen.trim());
             const tagImagen = p.imagen && p.imagen.trim() !== ""
-                ? `<img src="${p.imagen}" class="pos-item-img" loading="lazy" alt="${p.nombre}">`
-                : `<i class="bi bi-hexagon-half fs-1" style="color: var(--p-cyan) !important; text-shadow: var(--resplandor-cyan);"></i>`;
+                ? (esVideo
+                    ? `<video src="${p.imagen}" class="pos-item-img" autoplay loop muted playsinline style="object-fit:cover;"></video>`
+                    : `<img src="${p.imagen}" class="pos-item-img" loading="lazy" alt="${p.nombre}">`)
+                : `<i class="bi bi-hexagon-half fs-1" style="color: var(--p-cyan) !important; text-shadow: var(--resplandor-cyan);"></i>`; text-shadow: var(--resplandor-cyan);"></i>`;
 
             const dto = (p.descuento && p.descuento > 0) ? Math.min(Math.round(p.descuento), 100) : 0;
             const tieneDto = dto > 0;

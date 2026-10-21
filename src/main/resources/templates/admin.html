@@ -745,8 +745,14 @@
                                             <input type="number" id="armatubatido-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 1000">
                                         </div>
                                         <div class="col-md-4">
-                                            <label class="form-label-neon" style="color:var(--p-warning)">URL Imagen</label>
-                                            <input type="text" id="armatubatido-imagen" class="form-control" placeholder="https://... (opcional)">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Foto / Video (URL o Subida)</label>
+                                            <div class="input-group">
+                                                <input type="text" id="armatubatido-imagen" class="form-control" placeholder="/uploads/media/... o https://...">
+                                                <button class="btn btn-outline-warning" type="button" id="btn-upload-armatubatido" onclick="document.getElementById('upload-armatubatido-file').click()" title="Subir desde dispositivo">
+                                                    <i class="bi bi-cloud-arrow-up-fill"></i>
+                                                </button>
+                                            </div>
+                                            <input type="file" id="upload-armatubatido-file" class="d-none" accept="image/*,video/*" onchange="subirMultimediaArmaTuBatido(this)">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label-neon" style="color:var(--p-warning)">Nodo Destino</label>
@@ -1036,8 +1042,14 @@
                             <input type="number" id="nuevo-prod-descuento" class="form-control text-info fw-bold" placeholder="0" min="0" max="100" value="0">
                         </div>
                         <div class="col-md-2">
-                            <label class="form-label-neon">URL Imagen</label>
-                            <input type="text" id="nuevo-prod-imagen" class="form-control" placeholder="https://...">
+                            <label class="form-label-neon">Foto / Video</label>
+                            <div class="input-group">
+                                <input type="text" id="nuevo-prod-imagen" class="form-control" placeholder="/uploads/media/... o https://...">
+                                <button class="btn btn-outline-info" type="button" id="btn-upload-nuevo-prod" onclick="document.getElementById('upload-nuevo-prod').click()" title="Subir desde dispositivo">
+                                    <i class="bi bi-cloud-arrow-up-fill"></i>
+                                </button>
+                            </div>
+                            <input type="file" id="upload-nuevo-prod" class="d-none" accept="image/*,video/*" onchange="subirMultimediaNuevoProd(this)">
                         </div>
                         <div class="col-md-2">
                             <button class="btn btn-bio w-100 py-2 fw-bold" style="background:var(--p-magenta); color:#fff;" onclick="guardarNuevoProducto()">
@@ -3089,11 +3101,9 @@
                                     
                                     <!-- IZQUIERDA: FOTO MINIATURA Y DATOS PRINCIPALES -->
                                     <div class="d-flex align-items-center gap-3 flex-grow-1 overflow-hidden me-2">
-                                        <img src="${imgUrl}" 
-                                             class="rounded-3 border border-info flex-shrink-0" 
-                                             id="thumb-header-${p.id}" 
-                                             style="width: 52px; height: 52px; object-fit: cover;"
-                                             onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">
+                                        <div id="thumb-header-container-${p.id}" class="flex-shrink-0">
+                                            ${renderMediaThumbnail(imgUrl, `thumb-header-${p.id}`, "width: 52px; height: 52px; object-fit: cover;")}
+                                        </div>
                                         <div class="overflow-hidden">
                                             <div class="fw-bold font-orbitron fs-5 text-white text-truncate" id="header-nombre-${p.id}">
                                                 ${p.nombre}
@@ -3124,14 +3134,20 @@
                             <div id="collapse-${p.id}" class="accordion-collapse collapse" aria-labelledby="heading-${p.id}">
                                 <div class="accordion-body">
                                     <div class="row g-3">
-                                        <!-- COLUMNA 1: IMAGEN Y PREVIEW -->
+                                        <!-- COLUMNA 1: IMAGEN/VIDEO Y PREVIEW -->
                                         <div class="col-lg-3 col-md-4 text-center">
-                                            <label class="form-label-neon small mb-1"><i class="bi bi-image me-1"></i> VISTA PREVIA IMAGEN</label>
-                                            <div class="p-2 border border-info rounded mb-2 d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.8); min-height: 180px;">
-                                                <img src="${imgUrl}" id="preview-img-${p.id}" class="img-fluid rounded" style="max-height: 170px; object-fit: contain;" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">
+                                            <label class="form-label-neon small mb-1"><i class="bi bi-camera-video me-1"></i> VISTA PREVIA MULTIMEDIA</label>
+                                            <div class="p-2 border border-info rounded mb-2 d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.8); min-height: 180px;" id="preview-box-container-${p.id}">
+                                                ${renderMediaPreviewBox(imgUrl, `preview-img-${p.id}`, "170px")}
                                             </div>
-                                            <label class="form-label-neon small mb-1">URL de la Imagen</label>
-                                            <input type="text" id="img-prod-${p.id}" value="${p.imagen || ''}" class="form-control form-control-sm text-info bg-dark" placeholder="https://..." oninput="actualizarPreviewImg(${p.id})" onchange="actualizarProducto(${p.id})" ${attrReadonly}>
+                                            <label class="form-label-neon small mb-1">URL Pública / Externa</label>
+                                            <input type="text" id="img-prod-${p.id}" value="${p.imagen || ''}" class="form-control form-control-sm text-info bg-dark mb-2" placeholder="/uploads/media/... o https://..." oninput="actualizarPreviewImg(${p.id})" onchange="actualizarProducto(${p.id})" ${attrReadonly}>
+                                            ${esSupremo ? `
+                                                <label for="subir-media-${p.id}" class="btn btn-sm btn-outline-info font-orbitron w-100 text-nowrap" id="btn-subir-media-${p.id}" style="cursor: pointer;">
+                                                    <i class="bi bi-cloud-arrow-up-fill me-1"></i> SUBIR FOTO O VIDEO
+                                                </label>
+                                                <input type="file" id="subir-media-${p.id}" class="d-none" accept="image/*,video/*" onchange="subirMultimediaItem(${p.id}, this)">
+                                            ` : ''}
                                         </div>
 
                                         <!-- COLUMNA 2: DATOS COMERCIALES & PARAMETROS -->
@@ -3209,7 +3225,7 @@
 
                 // 2. RENDERIZAR EN TABLA CLÁSICA (COMPATIBILIDAD VISTA ALTERNATIVA)
                 if (tb) {
-                    const imgTag = p.imagen ? `<img src="${p.imagen}" class="img-preview" id="img-display-${p.id}">` : `<i class="bi bi-file-image fs-1 text-muted" id="img-display-${p.id}"></i>`;
+                    const imgTag = renderMediaThumbnail(p.imagen, `img-display-${p.id}`, "width: 50px; height: 50px; object-fit: cover;");
                     const colComandos = esSupremo ? `
                         <button class="btn btn-bio px-3 py-2 me-1 mb-1" onclick="actualizarProducto(${p.id})" title="Sobreescribir Matriz"><i class="bi bi-cloud-check-fill fs-5"></i></button>
                         <button class="btn btn-outline-danger px-3 py-2 border-0 mb-1" onclick="eliminarProducto(${p.id})" title="Purgar"><i class="bi bi-trash3-fill fs-5"></i></button>
@@ -3253,16 +3269,147 @@
         } catch(e) { console.error("Error al cargar el catálogo:", e); }
     }
 
+    function esVideoUrl(url) {
+        if (!url) return false;
+        return /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(url.trim());
+    }
+
+    function renderMediaThumbnail(url, id, sizeStyle = "width: 52px; height: 52px; object-fit: cover;") {
+        const safeUrl = (url && url.trim() !== '') ? url.trim() : 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+        if (esVideoUrl(safeUrl)) {
+            return `<video src="${safeUrl}" autoplay loop muted playsinline class="rounded-3 border border-info flex-shrink-0" id="${id}" style="${sizeStyle}"></video>`;
+        }
+        return `<img src="${safeUrl}" class="rounded-3 border border-info flex-shrink-0" id="${id}" style="${sizeStyle}" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">`;
+    }
+
+    function renderMediaPreviewBox(url, id, maxHeight = "170px") {
+        const safeUrl = (url && url.trim() !== '') ? url.trim() : 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+        if (esVideoUrl(safeUrl)) {
+            return `<video src="${safeUrl}" id="${id}" controls autoplay loop muted playsinline class="img-fluid rounded" style="max-height: ${maxHeight}; object-fit: contain; width: 100%;"></video>`;
+        }
+        return `<img src="${safeUrl}" id="${id}" class="img-fluid rounded" style="max-height: ${maxHeight}; object-fit: contain;" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">`;
+    }
+
     function actualizarPreviewImg(id) {
         const input = document.getElementById(`img-prod-${id}`);
-        const imgPreview = document.getElementById(`preview-img-${id}`);
-        const thumbHeader = document.getElementById(`thumb-header-${id}`);
+        const previewBox = document.getElementById(`preview-box-container-${id}`);
+        const thumbHeaderBox = document.getElementById(`thumb-header-container-${id}`);
         const imgTable = document.getElementById(`img-display-${id}`);
         if (input) {
             const url = input.value.trim() || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
-            if (imgPreview) imgPreview.src = url;
-            if (thumbHeader) thumbHeader.src = url;
-            if (imgTable && imgTable.tagName === 'IMG') imgTable.src = url;
+            if (previewBox) {
+                previewBox.innerHTML = renderMediaPreviewBox(url, `preview-img-${id}`, "170px");
+            }
+            if (thumbHeaderBox) {
+                thumbHeaderBox.innerHTML = renderMediaThumbnail(url, `thumb-header-${id}`, "width: 52px; height: 52px; object-fit: cover;");
+            }
+            if (imgTable) {
+                if (esVideoUrl(url)) {
+                    imgTable.outerHTML = `<video src="${url}" class="img-preview" id="img-display-${id}" autoplay loop muted playsinline style="width:50px; height:50px; object-fit:cover;"></video>`;
+                } else if (imgTable.tagName === 'IMG') {
+                    imgTable.src = url;
+                } else {
+                    imgTable.outerHTML = `<img src="${url}" class="img-preview" id="img-display-${id}" style="width:50px; height:50px; object-fit:cover;" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">`;
+                }
+            }
+        }
+    }
+
+    async function subirMultimediaItem(id, inputElement) {
+        const file = inputElement.files?.[0];
+        if (!file) return;
+
+        const labelBtn = document.getElementById(`btn-subir-media-${id}`);
+        const originalText = labelBtn ? labelBtn.innerHTML : '';
+        if (labelBtn) labelBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Subiendo...';
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await fetch('/api/media/subir', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                const inputUrl = document.getElementById(`img-prod-${id}`);
+                if (inputUrl) {
+                    inputUrl.value = data.url;
+                    actualizarPreviewImg(id);
+                    actualizarProducto(id);
+                }
+                alert(`✅ Archivo multimedia subido exitosamente.\nURL Pública: ${data.url}`);
+            } else {
+                const err = await res.json();
+                alert(`⚠️ Error al subir archivo: ${err.error || res.statusText}`);
+            }
+        } catch (e) {
+            alert('Error de red al subir multimedia: ' + e.message);
+        } finally {
+            if (labelBtn) labelBtn.innerHTML = originalText;
+            inputElement.value = '';
+        }
+    }
+
+    async function subirMultimediaNuevoProd(inputElement) {
+        const file = inputElement.files?.[0];
+        if (!file) return;
+
+        const btn = document.getElementById('btn-upload-nuevo-prod');
+        const originalText = btn ? btn.innerHTML : '';
+        if (btn) btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await fetch('/api/media/subir', { method: 'POST', body: formData });
+            if (res.ok) {
+                const data = await res.json();
+                const input = document.getElementById('nuevo-prod-imagen');
+                if (input) input.value = data.url;
+                alert(`✅ Multimedia cargada correctamente: ${data.url}`);
+            } else {
+                const err = await res.json();
+                alert(`⚠️ Error: ${err.error || res.statusText}`);
+            }
+        } catch (e) {
+            alert('Error al subir: ' + e.message);
+        } finally {
+            if (btn) btn.innerHTML = originalText;
+            inputElement.value = '';
+        }
+    }
+
+    async function subirMultimediaArmaTuBatido(inputElement) {
+        const file = inputElement.files?.[0];
+        if (!file) return;
+
+        const btn = document.getElementById('btn-upload-armatubatido');
+        const originalText = btn ? btn.innerHTML : '';
+        if (btn) btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await fetch('/api/media/subir', { method: 'POST', body: formData });
+            if (res.ok) {
+                const data = await res.json();
+                const input = document.getElementById('armatubatido-imagen');
+                if (input) input.value = data.url;
+                alert(`✅ Imagen/video asignado: ${data.url}`);
+            } else {
+                const err = await res.json();
+                alert(`⚠️ Error: ${err.error || res.statusText}`);
+            }
+        } catch (e) {
+            alert('Error al subir: ' + e.message);
+        } finally {
+            if (btn) btn.innerHTML = originalText;
+            inputElement.value = '';
         }
     }
 
