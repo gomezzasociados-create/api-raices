@@ -171,6 +171,35 @@
         .btn-info-flip { position: absolute; top: 10px; right: 10px; background: rgba(5, 2, 0, 0.85); color: var(--bio-oro); border: 1px solid var(--bio-oro); width: auto; padding: 6px 14px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; z-index: 30; box-shadow: 0 5px 10px rgba(0,0,0,0.8); backdrop-filter: blur(5px); cursor: pointer; transition: 0.3s; }
         .btn-info-flip:hover { background: var(--bio-oro); color: #000; }
 
+        .badge-descuento {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(135deg, #ff0055 0%, #ff5500 100%);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            z-index: 30;
+            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: pulse-dto 2s infinite alternate;
+        }
+        @keyframes pulse-dto {
+            0% { transform: scale(1); box-shadow: 0 4px 15px rgba(255, 0, 85, 0.6); }
+            100% { transform: scale(1.06); box-shadow: 0 4px 25px rgba(255, 85, 0, 0.9); }
+        }
+        .precio-original {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: line-through;
+            font-weight: 600;
+        }
+
         .btn-extraer { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.3) 100%); color: var(--bio-oro); border: 1px solid var(--bio-oro); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.6); position: relative; z-index: 25;}
 
         .btn-disabled-pago { background: rgba(50, 50, 50, 0.5); color: rgba(255, 255, 255, 0.5); border: 1px dashed rgba(255, 255, 255, 0.3); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: not-allowed; }
@@ -462,6 +491,7 @@
                     let num = Number(p.precio) || 0;
                     if (num > 0 && num <= 100) num = num * 1000;
                     p.precio = Math.round(num);
+                    p.descuento = Number(p.descuento) || 0;
                 });
             }
             renderizar();
@@ -508,16 +538,29 @@
 
         lista.forEach(p => {
             let desc = (p.descripcion || "").replace(/\n/g, '<br>'); let img = p.imagen || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+            const dto = (p.descuento && p.descuento > 0) ? Math.min(Math.round(p.descuento), 100) : 0;
+            const tieneDto = dto > 0;
+            const precioFinal = tieneDto ? Math.round(p.precio * (1 - dto / 100)) : p.precio;
+
+            const badgeDto = tieneDto ? `<div class="badge-descuento">-${dto}% OFF</div>` : '';
+            const precioHtml = tieneDto
+                ? `<div class="d-flex align-items-center justify-content-center gap-2">
+                       <span class="precio-original">${simboloActual}${p.precio.toLocaleString('es-CL')}</span>
+                       <span class="precio-prod">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span>
+                   </div>`
+                : `<div class="precio-prod">${simboloActual}${p.precio.toLocaleString('es-CL')}</div>`;
+
             grid.innerHTML += `
                 <div class="col-12 col-md-6 col-lg-4 col-xl-3 item-tarjeta">
                     <div class="card-escena" id="card-${p.id}">
                         <div class="card-flipper">
                             <div class="card-front">
                                 <div class="enredadera-magica"></div>
+                                ${badgeDto}
                                 <button class="btn-info-flip" onclick="event.stopPropagation(); flip('${p.id}')">INFORMACIÓN <i class="bi bi-info-circle ms-2"></i></button>
                                 <div class="img-zona"><img src="${img}" class="img-batido"></div>
-                                <div><div class="nombre-prod text-truncate">${p.nombre}</div><div class="precio-prod">${simboloActual}${p.precio.toLocaleString('es-CL')}</div></div>
-                                <button class="btn-extraer mt-3" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre}', ${p.precio}, this)">EXTRAER</button>
+                                <div><div class="nombre-prod text-truncate">${p.nombre}</div>${precioHtml}</div>
+                                <button class="btn-extraer mt-3" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto})">EXTRAER</button>
                             </div>
                             <div class="card-back">
                                 <button class="btn-cerrar-flip" onclick="flip('${p.id}')"><i class="bi bi-x-lg"></i></button>
@@ -780,12 +823,12 @@
     function flip(id) { document.getElementById(`card-${id}`).classList.toggle('flipped'); }
     function filtrar(cat, btn) { filtroActual = cat; document.querySelectorAll('.categoria-badge').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderizar(); }
 
-    function agregar(id, nombre, precio, btn) {
+    function agregar(id, nombre, precio, btn, dto = 0) {
         if(btn) {
             const originalHTML = btn.innerHTML; btn.innerHTML = '<i class="bi bi-check2"></i>'; btn.style.background = 'var(--bio-oro)'; btn.style.color = '#000';
             setTimeout(()=>{ btn.innerHTML = originalHTML; btn.style=''; }, 600);
         }
-        carrito.push({ id, nombre, precio: Number(precio) }); actualizarCarrito();
+        carrito.push({ id, nombre, precio: Number(precio), descuento: Number(dto) || 0 }); actualizarCarrito();
     }
 
     function actualizarCarrito() {
@@ -798,7 +841,10 @@
         if(carrito.length === 0) return;
 
         const cont = document.getElementById('lista-carrito-modal'); cont.innerHTML = '';
-        carrito.forEach((i, idx) => { cont.innerHTML += `<div class="d-flex justify-content-between mb-2 p-2" style="border: 1px solid rgba(255,215,0,0.3); border-radius: 8px; font-size:0.9rem;"><span>${i.nombre}</span><b>${simboloActual}${i.precio.toLocaleString('es-CL')} <i class="bi bi-x-lg text-danger ms-2" style="cursor:pointer" onclick="eliminar(${idx}, event)"></i></b></div>`; });
+        carrito.forEach((i, idx) => {
+            const badgeItemDto = (i.descuento && i.descuento > 0) ? `<span class="badge bg-danger ms-2 font-orbitron" style="font-size:0.75rem;">-${Math.round(i.descuento)}%</span>` : '';
+            cont.innerHTML += `<div class="d-flex justify-content-between mb-2 p-2" style="border: 1px solid rgba(255,215,0,0.3); border-radius: 8px; font-size:0.9rem;"><span>${i.nombre}${badgeItemDto}</span><b>${simboloActual}${i.precio.toLocaleString('es-CL')} <i class="bi bi-x-lg text-danger ms-2" style="cursor:pointer" onclick="eliminar(${idx}, event)"></i></b></div>`;
+        });
         document.getElementById('total-modal-caja').innerText = document.getElementById('total-precio').innerText;
 
         // RENDERIZAR BOTONES DE PAGO SEGÚN SUCURSAL
@@ -932,7 +978,9 @@
 
         if (productoEncontrado) {
             let btnElement = document.querySelector(`#card-${productoEncontrado.id} .btn-extraer`);
-            agregar(productoEncontrado.id, productoEncontrado.nombre, productoEncontrado.precio, btnElement);
+            const dto = (productoEncontrado.descuento && productoEncontrado.descuento > 0) ? Math.min(Math.round(productoEncontrado.descuento), 100) : 0;
+            const precioFinal = dto > 0 ? Math.round(productoEncontrado.precio * (1 - dto / 100)) : productoEncontrado.precio;
+            agregar(productoEncontrado.id, productoEncontrado.nombre, precioFinal, btnElement, dto);
             hablarCliente("Excelente elección. He añadido " + productoEncontrado.nombre + " a tu reserva.");
         } else {
             hablarCliente("Lo siento, no pude identificar ese elíxir. Intenta pronunciar su nombre nuevamente.");

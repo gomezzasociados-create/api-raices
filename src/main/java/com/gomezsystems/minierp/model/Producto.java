@@ -13,6 +13,7 @@ public class Producto {
     private String nombre;
     private String categoria;
     private Double precio;
+    private Double descuento = 0.0;
     private String sucursal;
 
     // Variables de inventario y producción
@@ -43,6 +44,9 @@ public class Producto {
 
     public Double getPrecio() { return precio; }
     public void setPrecio(Double precio) { this.precio = precio; }
+
+    public Double getDescuento() { return descuento != null ? descuento : 0.0; }
+    public void setDescuento(Double descuento) { this.descuento = (descuento != null) ? descuento : 0.0; }
 
     public String getSucursal() { return sucursal; }
     public void setSucursal(String sucursal) { this.sucursal = sucursal; }

@@ -502,7 +502,9 @@
                 let productoEncontrado = candidatos[0];
 
                 if (productoEncontrado) {
-                    agregarAlTicket(productoEncontrado.id, productoEncontrado.nombre, productoEncontrado.precio);
+                    const dto = (productoEncontrado.descuento && productoEncontrado.descuento > 0) ? Math.min(Math.round(productoEncontrado.descuento), 100) : 0;
+                    const precioFinal = dto > 0 ? Math.round(productoEncontrado.precio * (1 - dto / 100)) : productoEncontrado.precio;
+                    agregarAlTicket(productoEncontrado.id, productoEncontrado.nombre, precioFinal);
                     hablar(productoEncontrado.nombre + " añadido a la orden.");
                 } else {
                     playSound('error'); hablar("No encontré ese elíxir en este Nodo. Intenta de nuevo.");
@@ -779,6 +781,7 @@
                     let pr = Number(p.precio) || 0;
                     if (pr > 0 && pr <= 100) pr = pr * 1000;
                     p.precio = Math.round(pr);
+                    p.descuento = Number(p.descuento) || 0;
                 });
             }
 
@@ -874,13 +877,22 @@
                 ? `<img src="${p.imagen}" class="pos-item-img" loading="lazy" alt="${p.nombre}">`
                 : `<i class="bi bi-hexagon-half fs-1" style="color: var(--p-cyan) !important; text-shadow: var(--resplandor-cyan);"></i>`;
 
+            const dto = (p.descuento && p.descuento > 0) ? Math.min(Math.round(p.descuento), 100) : 0;
+            const tieneDto = dto > 0;
+            const precioFinal = tieneDto ? Math.round(p.precio * (1 - dto / 100)) : p.precio;
+            const badgeDto = tieneDto ? `<span class="badge bg-danger position-absolute top-0 end-0 m-2 font-orbitron" style="font-size:0.75rem; z-index:5;">-${dto}%</span>` : '';
+            const precioHtml = tieneDto
+                ? `<div class="d-flex align-items-baseline justify-content-center gap-1"><s class="text-white-50" style="font-size:0.8rem;">${simboloActual}${p.precio.toLocaleString('es-CL')}</s> <span class="pos-item-precio">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span></div>`
+                : `<div class="pos-item-precio">${simboloActual}${p.precio.toLocaleString('es-CL')}</div>`;
+
             htmlTemporal += `
                 <div class="col-6 col-md-4 col-xl-3">
-                    <div class="btn-pos-item" onclick="agregarAlTicket(${idValido}, '${p.nombre.replace(/'/g, "\\'")}', ${p.precio})" onmouseenter="playSound('hover')">
+                    <div class="btn-pos-item position-relative" onclick="agregarAlTicket(${idValido}, '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal})" onmouseenter="playSound('hover')">
+                        ${badgeDto}
                         <div class="pos-item-img-container">${tagImagen}</div>
                         <div class="pos-item-body">
                             <div class="pos-item-nombre">${p.nombre}</div>
-                            <div class="pos-item-precio">${simboloActual}${p.precio.toLocaleString('es-CL')}</div>
+                            ${precioHtml}
                         </div>
                     </div>
                 </div>

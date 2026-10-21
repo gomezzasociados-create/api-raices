@@ -926,8 +926,12 @@
                             <label class="form-label-neon text-warning">Precio ($)</label>
                             <input type="number" id="nuevo-prod-precio" class="form-control text-warning fw-bold" placeholder="Precio CLP (ej: 5000)">
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label-neon">URL Imagen (Opcional)</label>
+                        <div class="col-md-1">
+                            <label class="form-label-neon text-info">% Dto Web</label>
+                            <input type="number" id="nuevo-prod-descuento" class="form-control text-info fw-bold" placeholder="0" min="0" max="100" value="0">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon">URL Imagen</label>
                             <input type="text" id="nuevo-prod-imagen" class="form-control" placeholder="https://...">
                         </div>
                         <div class="col-md-2">
@@ -954,6 +958,7 @@
                                 <th>BIOLOGÍA (DESCRIPCIÓN)</th>
                                 <th>NODO_BASE</th>
                                 <th>VALOR</th>
+                                <th>% DTO WEB</th>
                                 <th>COMANDOS</th>
                             </tr>
                             </thead>
@@ -2748,6 +2753,12 @@
                         <input type="number" id="precio-prod-${p.id}" value="${normalizarPrecioCLP(p.precio || 0)}" class="${classPrecio} text-center fw-bold fs-4" style="max-width:120px;" ${attrReadonly}>
                     </td>
                     <td class="align-middle">
+                        <div class="d-flex align-items-center justify-content-center">
+                            <input type="number" id="desc-prod-${p.id}" value="${p.descuento || 0}" min="0" max="100" class="${classInput} text-center text-info fw-bold fs-5" style="max-width:70px;" ${attrReadonly} onchange="actualizarProducto(${p.id})">
+                            <span class="text-info fw-bold ms-1">%</span>
+                        </div>
+                    </td>
+                    <td class="align-middle">
                         ${colComandos}
                     </td>
                 </tr>`;
@@ -2760,6 +2771,7 @@
         const nombre = document.getElementById('nuevo-prod-nombre').value;
         const categoria = document.getElementById('nuevo-prod-categoria').value;
         const precio = normalizarPrecioCLP(document.getElementById('nuevo-prod-precio').value);
+        const descuento = parseFloat(document.getElementById('nuevo-prod-descuento').value) || 0;
         const imagen = document.getElementById('nuevo-prod-imagen').value;
         const descripcion = document.getElementById('nuevo-prod-descripcion').value;
         const sucursal = document.getElementById('filtro-sucursal-catalogo').value || 'Antofagasta';
@@ -2773,13 +2785,14 @@
             const res = await fetch('/api/productos', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nombre, categoria, precio, imagen, descripcion, sucursal })
+                body: JSON.stringify({ nombre, categoria, precio, descuento, imagen, descripcion, sucursal })
             });
 
             if (res.ok) {
                 alert("¡Producto registrado exitosamente en la Matriz!");
                 document.getElementById('nuevo-prod-nombre').value = '';
                 document.getElementById('nuevo-prod-precio').value = '';
+                document.getElementById('nuevo-prod-descuento').value = '0';
                 document.getElementById('nuevo-prod-imagen').value = '';
                 document.getElementById('nuevo-prod-descripcion').value = '';
                 cargarCatalogo();
@@ -2798,6 +2811,7 @@
         const nuevoNombre = document.getElementById(`nombre-prod-${id}`).value;
         const nuevaCategoria = document.getElementById(`cat-prod-${id}`).value;
         const nuevoPrecio = normalizarPrecioCLP(document.getElementById(`precio-prod-${id}`).value);
+        const nuevoDescuento = parseFloat(document.getElementById(`desc-prod-${id}`).value) || 0;
         const nuevaImagen = document.getElementById(`img-prod-${id}`).value;
         const nuevaDesc = document.getElementById(`desc-prod-${id}`).value;
 
@@ -2809,6 +2823,7 @@
                     nombre: nuevoNombre,
                     categoria: nuevaCategoria,
                     precio: nuevoPrecio,
+                    descuento: nuevoDescuento,
                     imagen: nuevaImagen,
                     descripcion: nuevaDesc
                 })

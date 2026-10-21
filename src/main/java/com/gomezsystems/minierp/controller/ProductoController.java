@@ -42,6 +42,9 @@ public class ProductoController {
         if (producto.getPrecio() != null && producto.getPrecio() > 0 && producto.getPrecio() <= 100.0) {
             producto.setPrecio(producto.getPrecio() * 1000.0);
         }
+        if (producto.getDescuento() == null) {
+            producto.setDescuento(0.0);
+        }
         return productoRepository.save(producto);
     }
 
@@ -61,19 +64,21 @@ public class ProductoController {
                 nuevoProducto.setPrecio(pr);
                 prod.setPrecio(pr);
             }
+            if (nuevoProducto.getDescuento() != null) prod.setDescuento(nuevoProducto.getDescuento());
             if (nuevoProducto.getImagen() != null) prod.setImagen(nuevoProducto.getImagen());
             if (nuevoProducto.getDescripcion() != null) prod.setDescripcion(nuevoProducto.getDescripcion());
             if (nuevoProducto.getSucursal() != null) prod.setSucursal(nuevoProducto.getSucursal());
             if (nuevoProducto.getStock() != null) prod.setStock(nuevoProducto.getStock());
             Producto guardado = productoRepository.save(prod);
 
-            // Sincronizar precio en duplicados con el mismo nombre si se actualizó el precio
-            if (nuevoProducto.getPrecio() != null && prod.getNombre() != null && !prod.getNombre().trim().isEmpty()) {
+            // Sincronizar precio y descuento en duplicados con el mismo nombre si se actualizó
+            if (prod.getNombre() != null && !prod.getNombre().trim().isEmpty()) {
                 String nombreBase = prod.getNombre().trim();
                 for (Producto p : productoRepository.findAll()) {
                     if (p.getId() != null && !p.getId().equals(prod.getId()) &&
                         p.getNombre() != null && p.getNombre().trim().equalsIgnoreCase(nombreBase)) {
-                        p.setPrecio(nuevoProducto.getPrecio());
+                        if (nuevoProducto.getPrecio() != null) p.setPrecio(nuevoProducto.getPrecio());
+                        if (nuevoProducto.getDescuento() != null) p.setDescuento(nuevoProducto.getDescuento());
                         productoRepository.save(p);
                     }
                 }
@@ -96,6 +101,28 @@ public class ProductoController {
                     if (p.getId() != null && !p.getId().equals(prod.getId()) &&
                         p.getNombre() != null && p.getNombre().trim().equalsIgnoreCase(nombreBase)) {
                         p.setPrecio(precioFinal);
+                        productoRepository.save(p);
+                    }
+                }
+            }
+            return ResponseEntity.ok(guardado);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}/descuento")
+    public ResponseEntity<Producto> actualizarDescuento(@PathVariable Long id, @RequestParam Double descuento) {
+        final Double descFinal = (descuento != null && descuento >= 0.0) ? descuento : 0.0;
+        return productoRepository.findById(id).map(prod -> {
+            prod.setDescuento(descFinal);
+            Producto guardado = productoRepository.save(prod);
+
+            // Sincronizar descuento en todos los duplicados con el mismo nombre
+            if (prod.getNombre() != null && !prod.getNombre().trim().isEmpty()) {
+                String nombreBase = prod.getNombre().trim();
+                for (Producto p : productoRepository.findAll()) {
+                    if (p.getId() != null && !p.getId().equals(prod.getId()) &&
+                        p.getNombre() != null && p.getNombre().trim().equalsIgnoreCase(nombreBase)) {
+                        p.setDescuento(descFinal);
                         productoRepository.save(p);
                     }
                 }
@@ -137,7 +164,7 @@ public class ProductoController {
             if (filas.isEmpty() || filas.size() == 1) return ResponseEntity.badRequest().body("El CSV está vacío o solo tiene títulos.");
 
             String[] cabeceras = filas.get(0);
-            int idxProducto = -1, idxImagen = -1, idxDesc = -1, idxCat = -1, idxPrecio = -1;
+            int idxProducto = -1, idxImagen = -1, idxDesc = -1, idxCat = -1, idxPrecio = -1, idxDto = -1;
 
             // Mapeo Automático de Columnas
             for (int i = 0; i < cabeceras.length; i++) {
@@ -147,6 +174,7 @@ public class ProductoController {
                 else if (c.equals("DESCRIPCION") || c.equals("DETALLE")) idxDesc = i;
                 else if (c.equals("CATEGORIA") || c.equals("TIPO")) idxCat = i;
                 else if (c.equals("PRECIO") || c.equals("VALOR")) idxPrecio = i;
+                else if (c.contains("DESCUENTO") || c.contains("DTO") || c.contains("OFF")) idxDto = i;
             }
 
             if (idxProducto == -1) {
@@ -173,7 +201,18 @@ public class ProductoController {
 
                     if (idxPrecio != -1 && valores.length > idxPrecio) {
                         String txt = valores[idxPrecio].replaceAll("[^0-9.]", "");
-                        if (!txt.isEmpty()) p.setPrecio(Double.parseDouble(txt));
+                        if (!txt.isEmpty()) {
+                            double val = Double.parseDouble(txt);
+                            if (val > 0 && val <= 100.0) val = val * 1000.0;
+                            p.setPrecio(val);
+                        }
+                    }
+
+                    if (idxDto != -1 && valores.length > idxDto) {
+                        String txt = valores[idxDto].replaceAll("[^0-9.]", "");
+                        if (!txt.isEmpty()) p.setDescuento(Double.parseDouble(txt));
+                    } else {
+                        p.setDescuento(0.0);
                     }
 
                     p.setSucursal(sucursal);
