@@ -987,7 +987,7 @@
                             <label class="form-label-neon">Categoría</label>
                             <select id="nuevo-prod-categoria" class="form-select auth-select">
                                 <option value="500 mls">Elíxires (500 mls)</option>
-                                <option value="Packs">Packs & Pulpas</option>
+                                <option value="Packs">Pack de Pulpas</option>
                                 <option value="Shots">Shots</option>
                                 <option value="Arma tu Batido">Arma tu Batido</option>
                             </select>
@@ -1030,7 +1030,7 @@
                             <span class="text-white-50 small font-orbitron d-none d-xl-inline">FILTRAR:</span>
                             <button type="button" class="categoria-filtro-btn active" data-cat="TODAS" onclick="filtrarCategoriaAcordeon('TODAS', this)">TODOS</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="500 mls" onclick="filtrarCategoriaAcordeon('500 mls', this)">ELÍXIRES</button>
-                            <button type="button" class="categoria-filtro-btn" data-cat="Packs" onclick="filtrarCategoriaAcordeon('Packs', this)">PACKS & PULPAS</button>
+                            <button type="button" class="categoria-filtro-btn" data-cat="Packs" onclick="filtrarCategoriaAcordeon('Packs', this)">PACK DE PULPAS</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Shots" onclick="filtrarCategoriaAcordeon('Shots', this)">SHOTS</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Arma tu Batido" onclick="filtrarCategoriaAcordeon('Arma tu Batido', this)">ARMA TU BATIDO</button>
                             
@@ -2849,13 +2849,18 @@
                 const classPrecio = esSupremo ? 'input-matriz text-money-green' : 'input-matriz border-0 text-money-green pointer-events-none';
 
                 const catActual = p.categoria || '500 mls';
+                const catNorm = (catActual || '').toLowerCase();
+                const nomNorm = (p.nombre || '').toLowerCase();
+                const esPack = catNorm.includes('pack') || catNorm.includes('pulpa') || nomNorm.includes('pulpa');
+                const catMostrar = esPack ? 'Pack de Pulpas' : catActual;
+
                 let optionsCat = `
-                    <option value="500 mls" ${catActual==='500 mls'?'selected':''}>Elíxires (500 mls)</option>
-                    <option value="Packs" ${catActual==='Packs'?'selected':''}>Packs & Pulpas</option>
-                    <option value="Shots" ${catActual==='Shots'?'selected':''}>Shots</option>
-                    <option value="Arma tu Batido" ${catActual==='Arma tu Batido'?'selected':''}>Arma tu Batido</option>
+                    <option value="500 mls" ${catActual==='500 mls' || (!esPack && !catNorm.includes('shot') && !catNorm.includes('batido')) ? 'selected' : ''}>Elíxires (500 mls)</option>
+                    <option value="Packs" ${esPack ? 'selected' : ''}>Pack de Pulpas</option>
+                    <option value="Shots" ${catNorm.includes('shot') ? 'selected' : ''}>Shots</option>
+                    <option value="Arma tu Batido" ${catNorm.includes('batido') ? 'selected' : ''}>Arma tu Batido</option>
                 `;
-                if (catActual && !['500 mls', 'Packs', 'Shots', 'Arma tu Batido'].includes(catActual)) {
+                if (catActual && !['500 mls', 'Packs', 'Shots', 'Arma tu Batido'].includes(catActual) && !esPack) {
                     optionsCat += `<option value="${catActual}" selected>${catActual}</option>`;
                 }
 
@@ -2893,7 +2898,7 @@
                                                 ${p.nombre}
                                             </div>
                                             <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
-                                                <span class="badge badge-categoria" id="header-cat-${p.id}">${catActual}</span>
+                                                <span class="badge badge-categoria" id="header-cat-${p.id}">${catMostrar}</span>
                                                 <span class="badge bg-dark border border-cyan text-info" style="font-size:0.75rem;"><i class="bi bi-geo-alt me-1"></i>${p.sucursal || 'Antofagasta'}</span>
                                                 <span class="badge bg-dark border border-success text-success" style="font-size:0.75rem;" id="header-stock-${p.id}"><i class="bi bi-box-seam me-1"></i>Stock: ${p.stock || 0}</span>
                                             </div>
@@ -3286,7 +3291,10 @@
                 if (headerNombre) headerNombre.innerText = nuevoNombre;
 
                 const headerCat = document.getElementById(`header-cat-${id}`);
-                if (headerCat) headerCat.innerText = nuevaCategoria;
+                if (headerCat) {
+                    const esP = nuevaCategoria.toLowerCase().includes('pack') || nuevaCategoria.toLowerCase().includes('pulpa') || nuevoNombre.toLowerCase().includes('pulpa');
+                    headerCat.innerText = esP ? 'Pack de Pulpas' : nuevaCategoria;
+                }
 
                 const headerStock = document.getElementById(`header-stock-${id}`);
                 if (headerStock && nuevoStock !== undefined) {
