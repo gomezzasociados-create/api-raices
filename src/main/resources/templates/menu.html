@@ -887,13 +887,14 @@
                 badgeStock = `<div class="badge-stock-estado badge-disponible mb-2"><i class="bi bi-check-circle-fill me-1"></i> EN STOCK (${porcionesDisponibles} unid)</div>`;
             }
 
-            let btnPlus = (!esAgotado && cantPorc < porcionesDisponibles)
-                ? `<button id="btn-plus-${idInsClean}" class="btn btn-warning text-dark fw-bold px-3 py-1 shadow-sm" style="border-radius: 8px;" onclick="modificarPorcionInsumo('${idInsClean}', 1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">+</button>`
-                : `<button id="btn-plus-${idInsClean}" class="btn btn-secondary text-white-50 fw-bold px-3 py-1" style="border-radius: 8px;" disabled title="${esAgotado ? 'Agotado en Bodega' : 'Máximo stock alcanzado'}">+</button>`;
+            const disMinus = cantPorc <= 0 ? 'disabled' : '';
+            const classMinus = cantPorc > 0 ? 'btn-outline-warning text-warning' : 'btn-outline-secondary text-white-50';
+            let btnMinus = `<button id="btn-minus-${idInsClean}" class="btn ${classMinus} fw-bold px-3 py-1" style="border-radius: 8px;" ${disMinus} onclick="modificarPorcionInsumo('${idInsClean}', -1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">-</button>`;
 
-            let btnMinus = (cantPorc > 0)
-                ? `<button id="btn-minus-${idInsClean}" class="btn btn-outline-warning fw-bold px-3 py-1" style="border-radius: 8px;" onclick="modificarPorcionInsumo('${idInsClean}', -1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">-</button>`
-                : `<button id="btn-minus-${idInsClean}" class="btn btn-outline-secondary text-white-50 fw-bold px-3 py-1" style="border-radius: 8px;" disabled>-</button>`;
+            const disPlus = (esAgotado || cantPorc >= porcionesDisponibles) ? 'disabled' : '';
+            const classPlus = (!esAgotado && cantPorc < porcionesDisponibles) ? 'btn-warning text-dark' : 'btn-secondary text-white-50';
+            const titlePlus = esAgotado ? 'Agotado en Bodega' : (cantPorc >= porcionesDisponibles ? 'Máximo stock alcanzado' : 'Añadir porción');
+            let btnPlus = `<button id="btn-plus-${idInsClean}" class="btn ${classPlus} fw-bold px-3 py-1 shadow-sm" style="border-radius: 8px;" ${disPlus} onclick="modificarPorcionInsumo('${idInsClean}', 1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})" title="${titlePlus}">+</button>`;
 
             const esVideoIng = imgUrl && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(imgUrl.trim());
             const mediaIngTag = esVideoIng
@@ -973,22 +974,18 @@
         if (btnPlus) {
             btnPlus.disabled = (porcionesArmado[idInsumo] >= maxPorciones);
             if (btnPlus.disabled) {
-                btnPlus.classList.remove('btn-warning');
-                btnPlus.classList.add('btn-secondary');
+                btnPlus.className = 'btn btn-secondary text-white-50 fw-bold px-3 py-1 shadow-sm';
             } else {
-                btnPlus.classList.remove('btn-secondary');
-                btnPlus.classList.add('btn-warning');
+                btnPlus.className = 'btn btn-warning text-dark fw-bold px-3 py-1 shadow-sm';
             }
         }
         const btnMinus = document.getElementById(`btn-minus-${idInsumo}`);
         if (btnMinus) {
             btnMinus.disabled = (porcionesArmado[idInsumo] <= 0);
             if (btnMinus.disabled) {
-                btnMinus.classList.remove('btn-outline-warning');
-                btnMinus.classList.add('btn-outline-secondary');
+                btnMinus.className = 'btn btn-outline-secondary text-white-50 fw-bold px-3 py-1';
             } else {
-                btnMinus.classList.remove('btn-outline-secondary');
-                btnMinus.classList.add('btn-outline-warning');
+                btnMinus.className = 'btn btn-outline-warning text-warning fw-bold px-3 py-1';
             }
         }
         
