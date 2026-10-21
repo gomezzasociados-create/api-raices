@@ -987,7 +987,7 @@
                             <label class="form-label-neon">Categoría</label>
                             <select id="nuevo-prod-categoria" class="form-select auth-select">
                                 <option value="500 mls">Elíxires (500 mls)</option>
-                                <option value="Packs">Packs</option>
+                                <option value="Packs">Packs & Pulpas</option>
                                 <option value="Shots">Shots</option>
                                 <option value="Arma tu Batido">Arma tu Batido</option>
                             </select>
@@ -1030,7 +1030,7 @@
                             <span class="text-white-50 small font-orbitron d-none d-xl-inline">FILTRAR:</span>
                             <button type="button" class="categoria-filtro-btn active" data-cat="TODAS" onclick="filtrarCategoriaAcordeon('TODAS', this)">TODOS</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="500 mls" onclick="filtrarCategoriaAcordeon('500 mls', this)">ELÍXIRES</button>
-                            <button type="button" class="categoria-filtro-btn" data-cat="Packs" onclick="filtrarCategoriaAcordeon('Packs', this)">PACKS</button>
+                            <button type="button" class="categoria-filtro-btn" data-cat="Packs" onclick="filtrarCategoriaAcordeon('Packs', this)">PACKS & PULPAS</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Shots" onclick="filtrarCategoriaAcordeon('Shots', this)">SHOTS</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Arma tu Batido" onclick="filtrarCategoriaAcordeon('Arma tu Batido', this)">ARMA TU BATIDO</button>
                             
@@ -2851,7 +2851,7 @@
                 const catActual = p.categoria || '500 mls';
                 let optionsCat = `
                     <option value="500 mls" ${catActual==='500 mls'?'selected':''}>Elíxires (500 mls)</option>
-                    <option value="Packs" ${catActual==='Packs'?'selected':''}>Packs</option>
+                    <option value="Packs" ${catActual==='Packs'?'selected':''}>Packs & Pulpas</option>
                     <option value="Shots" ${catActual==='Shots'?'selected':''}>Shots</option>
                     <option value="Arma tu Batido" ${catActual==='Arma tu Batido'?'selected':''}>Arma tu Batido</option>
                 `;
@@ -2925,7 +2925,7 @@
                                                 <img src="${imgUrl}" id="preview-img-${p.id}" class="img-fluid rounded" style="max-height: 170px; object-fit: contain;" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">
                                             </div>
                                             <label class="form-label-neon small mb-1">URL de la Imagen</label>
-                                            <input type="text" id="img-prod-${p.id}" value="${p.imagen || ''}" class="form-control form-control-sm text-info bg-dark" placeholder="https://..." oninput="actualizarPreviewImg(${p.id})" ${attrReadonly}>
+                                            <input type="text" id="img-prod-${p.id}" value="${p.imagen || ''}" class="form-control form-control-sm text-info bg-dark" placeholder="https://..." oninput="actualizarPreviewImg(${p.id})" onchange="actualizarProducto(${p.id})" ${attrReadonly}>
                                         </div>
 
                                         <!-- COLUMNA 2: DATOS COMERCIALES & PARAMETROS -->
@@ -2933,32 +2933,32 @@
                                             <div class="row g-2">
                                                 <div class="col-12">
                                                     <label class="form-label-neon"><i class="bi bi-tag me-1"></i> Nombre del Producto / Elíxir</label>
-                                                    <input type="text" id="nombre-prod-${p.id}" value="${p.nombre}" class="form-control fw-bold fs-5 text-white bg-dark" ${attrReadonly}>
+                                                    <input type="text" id="nombre-prod-${p.id}" value="${p.nombre}" class="form-control fw-bold fs-5 text-white bg-dark" onchange="actualizarProducto(${p.id})" ${attrReadonly}>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="form-label-neon">Categoría</label>
-                                                    <select id="cat-prod-${p.id}" class="form-select bg-dark text-warning border-warning fw-bold" ${esSupremo ? '' : 'disabled'}>
+                                                    <select id="cat-prod-${p.id}" class="form-select bg-dark text-warning border-warning fw-bold" onchange="actualizarProducto(${p.id})" ${esSupremo ? '' : 'disabled'}>
                                                         ${optionsCat}
                                                     </select>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="form-label-neon">Nodo / Sucursal</label>
-                                                    <input type="text" id="sucursal-prod-${p.id}" value="${p.sucursal || 'Antofagasta'}" class="form-control bg-dark text-white fw-bold" ${attrReadonly}>
+                                                    <input type="text" id="sucursal-prod-${p.id}" value="${p.sucursal || 'Antofagasta'}" class="form-control bg-dark text-white fw-bold" onchange="actualizarProducto(${p.id})" ${attrReadonly}>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="form-label-neon text-warning">Precio Base ($ CLP)</label>
-                                                    <input type="number" id="precio-prod-${p.id}" value="${precioNorm}" class="form-control text-warning fw-bold fs-5 bg-dark" oninput="calcularPrecioFinalAcordeon(${p.id})" ${attrReadonly}>
+                                                    <input type="number" id="precio-prod-${p.id}" value="${precioNorm}" class="form-control text-warning fw-bold fs-5 bg-dark" oninput="calcularPrecioFinalAcordeon(${p.id})" onchange="actualizarProducto(${p.id})" ${attrReadonly}>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="form-label-neon text-info">% Descuento Web</label>
                                                     <div class="input-group">
-                                                        <input type="number" id="desc-prod-${p.id}" value="${p.descuento || 0}" min="0" max="100" class="form-control text-info fw-bold fs-5 bg-dark" oninput="calcularPrecioFinalAcordeon(${p.id})" ${attrReadonly}>
+                                                        <input type="number" id="dto-prod-${p.id}" value="${p.descuento || 0}" min="0" max="100" class="form-control text-info fw-bold fs-5 bg-dark" oninput="calcularPrecioFinalAcordeon(${p.id})" onchange="actualizarProducto(${p.id})" ${attrReadonly}>
                                                         <span class="input-group-text bg-dark text-info border-info">%</span>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <label class="form-label-neon text-success">Stock en Bodega</label>
-                                                    <input type="number" id="stock-prod-${p.id}" value="${p.stock || 0}" class="form-control text-success fw-bold fs-5 bg-dark" ${attrReadonly}>
+                                                    <input type="number" id="stock-prod-${p.id}" value="${p.stock || 0}" class="form-control text-success fw-bold fs-5 bg-dark" onchange="actualizarProducto(${p.id})" ${attrReadonly}>
                                                 </div>
                                                 <div class="col-12 mt-2">
                                                     <div class="p-3 rounded border border-warning-subtle" style="background: rgba(255, 215, 0, 0.04);">
@@ -2978,7 +2978,7 @@
                                         <div class="col-lg-4 col-md-12 d-flex flex-column justify-content-between">
                                             <div>
                                                 <label class="form-label-neon"><i class="bi bi-file-text me-1"></i> Biología / Descripción & Propiedades</label>
-                                                <textarea id="desc-prod-${p.id}" class="form-control bg-dark text-white" rows="6" placeholder="Escribe la composición, beneficios para la salud e instrucciones..." ${attrReadonly}>${p.descripcion || ''}</textarea>
+                                                <textarea id="desc-prod-${p.id}" class="form-control bg-dark text-white" rows="6" placeholder="Escribe la composición, beneficios para la salud e instrucciones..." onchange="actualizarProducto(${p.id})" ${attrReadonly}>${p.descripcion || ''}</textarea>
                                             </div>
 
                                             <div class="d-flex gap-2 mt-3 pt-2 border-top border-secondary">
@@ -3012,26 +3012,26 @@
                     tb.innerHTML += `<tr id="fila-prod-${p.id}">
                         <td class="align-middle text-center">${imgTag}</td>
                         <td class="align-middle">
-                            <input type="text" id="img-prod-tabla-${p.id}" value="${p.imagen || ''}" class="${classInput} w-100 text-info" style="font-size: 0.85rem; max-width: 150px;" placeholder="https://..." ${attrReadonly}>
+                            <input type="text" id="img-prod-tabla-${p.id}" value="${p.imagen || ''}" class="${classInput} w-100 text-info" style="font-size: 0.85rem; max-width: 150px;" placeholder="https://..." onchange="actualizarProducto(${p.id})" ${attrReadonly}>
                         </td>
                         <td class="align-middle">
-                            <input type="text" id="nombre-prod-tabla-${p.id}" value="${p.nombre}" class="${classInput} w-100 fw-bold fs-5 text-center" ${attrReadonly}>
+                            <input type="text" id="nombre-prod-tabla-${p.id}" value="${p.nombre}" class="${classInput} w-100 fw-bold fs-5 text-center" onchange="actualizarProducto(${p.id})" ${attrReadonly}>
                         </td>
                         <td class="align-middle">
-                            <select id="cat-prod-tabla-${p.id}" class="form-select bg-dark text-warning border-warning fw-bold fs-6 text-center" ${esSupremo ? '' : 'disabled'}>
+                            <select id="cat-prod-tabla-${p.id}" class="form-select bg-dark text-warning border-warning fw-bold fs-6 text-center" onchange="actualizarProducto(${p.id})" ${esSupremo ? '' : 'disabled'}>
                                 ${optionsCat}
                             </select>
                         </td>
                         <td class="align-middle">
-                            <textarea id="desc-prod-tabla-${p.id}" class="${classInput} w-100" style="font-size: 0.9rem; min-width: 250px; height: 65px;" placeholder="Escribe la biología del producto aquí..." ${attrReadonly}>${p.descripcion || ''}</textarea>
+                            <textarea id="desc-prod-tabla-${p.id}" class="${classInput} w-100" style="font-size: 0.9rem; min-width: 250px; height: 65px;" placeholder="Escribe la biología del producto aquí..." onchange="actualizarProducto(${p.id})" ${attrReadonly}>${p.descripcion || ''}</textarea>
                         </td>
                         <td class="align-middle text-white">${p.sucursal}</td>
                         <td class="align-middle">
-                            <input type="number" id="precio-prod-tabla-${p.id}" value="${precioNorm}" class="${classPrecio} text-center fw-bold fs-4" style="max-width:120px;" ${attrReadonly}>
+                            <input type="number" id="precio-prod-tabla-${p.id}" value="${precioNorm}" class="${classPrecio} text-center fw-bold fs-4" style="max-width:120px;" oninput="calcularPrecioFinalAcordeon(${p.id})" onchange="actualizarProducto(${p.id})" ${attrReadonly}>
                         </td>
                         <td class="align-middle">
                             <div class="d-flex align-items-center justify-content-center">
-                                <input type="number" id="desc-prod-tabla-${p.id}" value="${p.descuento || 0}" min="0" max="100" class="${classInput} text-center text-info fw-bold fs-5" style="max-width:70px;" ${attrReadonly} onchange="actualizarProducto(${p.id})">
+                                <input type="number" id="dto-prod-tabla-${p.id}" value="${p.descuento || 0}" min="0" max="100" class="${classInput} text-center text-info fw-bold fs-5" style="max-width:70px;" oninput="calcularPrecioFinalAcordeon(${p.id})" onchange="actualizarProducto(${p.id})" ${attrReadonly}>
                                 <span class="text-info fw-bold ms-1">%</span>
                             </div>
                         </td>
@@ -3062,7 +3062,7 @@
 
     function calcularPrecioFinalAcordeon(id) {
         const inputPrecio = document.getElementById(`precio-prod-${id}`) || document.getElementById(`precio-prod-tabla-${id}`);
-        const inputDesc = document.getElementById(`desc-prod-${id}`) || document.getElementById(`desc-prod-tabla-${id}`);
+        const inputDesc = document.getElementById(`dto-prod-${id}`) || document.getElementById(`dto-prod-tabla-${id}`);
         if (!inputPrecio || !inputDesc) return;
 
         const precio = normalizarPrecioCLP(inputPrecio.value || 0);
@@ -3105,14 +3105,22 @@
         let visibles = 0;
 
         items.forEach(item => {
-            const nom = item.getAttribute('data-nombre') || '';
-            const cat = item.getAttribute('data-categoria') || '';
+            const nom = (item.getAttribute('data-nombre') || '').toLowerCase();
+            const cat = (item.getAttribute('data-categoria') || '').toLowerCase();
             const desc = (item.querySelector('textarea')?.value || '').toLowerCase();
 
-            const coincideTexto = !query || nom.includes(query) || cat.toLowerCase().includes(query) || desc.includes(query);
+            const coincideTexto = !query || nom.includes(query) || cat.includes(query) || desc.includes(query);
             let coincideCat = true;
             if (categoriaFiltroMatriz !== 'TODAS') {
-                coincideCat = cat.toLowerCase().includes(categoriaFiltroMatriz.toLowerCase());
+                const f = categoriaFiltroMatriz.toLowerCase();
+                if (f === 'packs') {
+                    coincideCat = cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa');
+                } else if (f === '500 mls') {
+                    const esPackOPulpa = cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa');
+                    coincideCat = !esPackOPulpa && (cat.includes('500') || !cat);
+                } else {
+                    coincideCat = cat.includes(f);
+                }
             }
 
             if (coincideTexto && coincideCat) {
@@ -3221,8 +3229,8 @@
             || document.getElementById(`precio-prod-tabla-${id}`)?.value || 0
         );
         const nuevoDescuento = parseFloat(
-            document.getElementById(`desc-prod-${id}`)?.value 
-            || document.getElementById(`desc-prod-tabla-${id}`)?.value || 0
+            document.getElementById(`dto-prod-${id}`)?.value 
+            || document.getElementById(`dto-prod-tabla-${id}`)?.value || 0
         ) || 0;
         const nuevaImagen = document.getElementById(`img-prod-${id}`)?.value 
             || document.getElementById(`img-prod-tabla-${id}`)?.value || '';
@@ -3295,7 +3303,7 @@
                 if (tCat) tCat.value = nuevaCategoria;
                 const tPrecio = document.getElementById(`precio-prod-tabla-${id}`);
                 if (tPrecio) tPrecio.value = nuevoPrecio;
-                const tDesc = document.getElementById(`desc-prod-tabla-${id}`);
+                const tDesc = document.getElementById(`dto-prod-tabla-${id}`);
                 if (tDesc) tDesc.value = nuevoDescuento;
                 const tImg = document.getElementById(`img-prod-tabla-${id}`);
                 if (tImg) tImg.value = nuevaImagen;

@@ -281,7 +281,7 @@
     <div id="display-nodo-actual" class="badge-nodo-actual">🇨🇱 NODO ANTOFAGASTA</div>
     <input type="hidden" id="sucursal-activa" value="Antofagasta"> <div class="contenedor-categorias">
     <button class="categoria-badge active" onclick="filtrar('500 mls', this)">Elíxires</button>
-    <button class="categoria-badge" onclick="filtrar('Packs', this)">Packs</button>
+    <button class="categoria-badge" onclick="filtrar('Packs', this)">Packs & Pulpas</button>
     <button class="categoria-badge" onclick="filtrar('Arma tu Batido', this)">Arma tu Batido</button>
     <button class="categoria-badge" onclick="filtrar('Shots', this)">Shots</button>
 </div>
@@ -330,9 +330,11 @@
                 <label class="label-bio mb-3">ELÍXIRES EXTRAÍDOS</label>
                 <div id="lista-carrito-modal" class="mb-2"></div>
 
-                <div class="d-flex justify-content-between align-items-center mt-3 pt-3" style="border-top: 1px dashed rgba(255,215,0,0.3);">
-                    <span style="font-family: 'Rajdhani'; font-size: 0.9rem;">TOTAL:</span>
-                    <span id="total-modal-caja" style="color: var(--bio-oro); font-weight: 900; font-size: 1.5rem; font-family: 'Orbitron';">$0</span>
+                <div class="mt-3 pt-3" style="border-top: 1px dashed rgba(255,215,0,0.3);" id="desglose-totales-carrito">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span style="font-family: 'Rajdhani'; font-size: 0.9rem;">TOTAL:</span>
+                        <span id="total-modal-caja" style="color: var(--bio-oro); font-weight: 900; font-size: 1.5rem; font-family: 'Orbitron';">$0</span>
+                    </div>
                 </div>
             </div>
 
@@ -512,13 +514,22 @@
         }
 
         let lista = productosRaw.filter(p => {
-            if (!p.categoria) return false;
-            const cat = normalizarStr(p.categoria);
+            const cat = normalizarStr(p.categoria || '');
+            const nom = normalizarStr(p.nombre || '');
             const f = normalizarStr(filtroActual);
             
-            if (f.includes('pack')) return cat.includes('pack') || cat.includes('16');
-            if (f.includes('shot')) return cat.includes('shot');
-            return cat.includes('500') || cat.includes('vaso') || cat.includes('elixir');
+            const esPulpa = cat.includes('pulpa') || nom.includes('pulpa');
+            const esPack = cat.includes('pack') || cat.includes('16') || esPulpa;
+            const esShot = cat.includes('shot') || nom.includes('shot');
+
+            if (f.includes('pack') || f.includes('pulpa')) {
+                return esPack;
+            }
+            if (f.includes('shot')) {
+                return esShot && !esPack;
+            }
+            // Categoría Elíxires (500 mls): no debe incluir ni packs ni pulpas
+            return !esPack && !esShot;
         });
 
         // Deduplicar por nombre normalizado en Frontend
@@ -538,17 +549,18 @@
 
         lista.forEach(p => {
             let desc = (p.descripcion || "").replace(/\n/g, '<br>'); let img = p.imagen || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+            const precioBase = Number(p.precio) || 0;
             const dto = (p.descuento && p.descuento > 0) ? Math.min(Math.round(p.descuento), 100) : 0;
             const tieneDto = dto > 0;
-            const precioFinal = tieneDto ? Math.round(p.precio * (1 - dto / 100)) : p.precio;
+            const precioFinal = tieneDto ? Math.round(precioBase * (1 - dto / 100)) : precioBase;
 
             const badgeDto = tieneDto ? `<div class="badge-descuento">-${dto}% OFF</div>` : '';
             const precioHtml = tieneDto
                 ? `<div class="d-flex align-items-center justify-content-center gap-2">
-                       <span class="precio-original">${simboloActual}${p.precio.toLocaleString('es-CL')}</span>
+                       <span class="precio-original">${simboloActual}${precioBase.toLocaleString('es-CL')}</span>
                        <span class="precio-prod">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span>
                    </div>`
-                : `<div class="precio-prod">${simboloActual}${p.precio.toLocaleString('es-CL')}</div>`;
+                : `<div class="precio-prod">${simboloActual}${precioBase.toLocaleString('es-CL')}</div>`;
 
             grid.innerHTML += `
                 <div class="col-12 col-md-6 col-lg-4 col-xl-3 item-tarjeta">
@@ -560,7 +572,7 @@
                                 <button class="btn-info-flip" onclick="event.stopPropagation(); flip('${p.id}')">INFORMACIÓN <i class="bi bi-info-circle ms-2"></i></button>
                                 <div class="img-zona"><img src="${img}" class="img-batido"></div>
                                 <div><div class="nombre-prod text-truncate">${p.nombre}</div>${precioHtml}</div>
-                                <button class="btn-extraer mt-3" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto})">EXTRAER</button>
+                                <button class="btn-extraer mt-3" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase})">EXTRAER</button>
                             </div>
                             <div class="card-back">
                                 <button class="btn-cerrar-flip" onclick="flip('${p.id}')"><i class="bi bi-x-lg"></i></button>
@@ -823,29 +835,115 @@
     function flip(id) { document.getElementById(`card-${id}`).classList.toggle('flipped'); }
     function filtrar(cat, btn) { filtroActual = cat; document.querySelectorAll('.categoria-badge').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderizar(); }
 
-    function agregar(id, nombre, precio, btn, dto = 0) {
+    function agregar(id, nombre, precio, btn, dto = 0, precioOriginal = null) {
         if(btn) {
             const originalHTML = btn.innerHTML; btn.innerHTML = '<i class="bi bi-check2"></i>'; btn.style.background = 'var(--bio-oro)'; btn.style.color = '#000';
             setTimeout(()=>{ btn.innerHTML = originalHTML; btn.style=''; }, 600);
         }
-        carrito.push({ id, nombre, precio: Number(precio), descuento: Number(dto) || 0 }); actualizarCarrito();
+        const precioCobrar = Number(precio);
+        const descuentoPct = Number(dto) || 0;
+        let base = Number(precioOriginal);
+        if (!base || isNaN(base) || base <= 0) {
+            base = descuentoPct > 0 ? Math.round(precioCobrar / (1 - descuentoPct / 100)) : precioCobrar;
+        }
+
+        carrito.push({
+            id: id,
+            nombre: nombre,
+            precio: precioCobrar,
+            precioOriginal: base,
+            descuento: descuentoPct
+        });
+        actualizarCarrito();
     }
 
     function actualizarCarrito() {
         const bar = document.getElementById('carrito-bar');
-        if(carrito.length > 0) { bar.style.display = 'flex'; document.getElementById('items-count').innerText = carrito.length; document.getElementById('total-precio').innerText = simboloActual + carrito.reduce((s, i) => s + i.precio, 0).toLocaleString('es-CL'); } else { bar.style.display = 'none'; }
+        if(carrito.length > 0) {
+            bar.style.display = 'flex';
+            document.getElementById('items-count').innerText = carrito.length;
+            const total = carrito.reduce((s, i) => s + i.precio, 0);
+            const totalAhorro = carrito.reduce((s, i) => s + ((i.precioOriginal || i.precio) - i.precio), 0);
+
+            if (totalAhorro > 0) {
+                document.getElementById('total-precio').innerHTML = `
+                    <span>${simboloActual}${total.toLocaleString('es-CL')}</span>
+                    <span class="badge bg-danger ms-2 font-orbitron" style="font-size:0.75rem;">AHORRAS ${simboloActual}${totalAhorro.toLocaleString('es-CL')}</span>
+                `;
+            } else {
+                document.getElementById('total-precio').innerText = simboloActual + total.toLocaleString('es-CL');
+            }
+        } else {
+            bar.style.display = 'none';
+        }
     }
 
     function abrirModalCarrito() {
         playCashSound();
         if(carrito.length === 0) return;
 
-        const cont = document.getElementById('lista-carrito-modal'); cont.innerHTML = '';
+        const cont = document.getElementById('lista-carrito-modal');
+        cont.innerHTML = '';
+
+        let subtotalOriginal = 0;
+        let ahorroTotal = 0;
+        let totalFinal = 0;
+
         carrito.forEach((i, idx) => {
-            const badgeItemDto = (i.descuento && i.descuento > 0) ? `<span class="badge bg-danger ms-2 font-orbitron" style="font-size:0.75rem;">-${Math.round(i.descuento)}%</span>` : '';
-            cont.innerHTML += `<div class="d-flex justify-content-between mb-2 p-2" style="border: 1px solid rgba(255,215,0,0.3); border-radius: 8px; font-size:0.9rem;"><span>${i.nombre}${badgeItemDto}</span><b>${simboloActual}${i.precio.toLocaleString('es-CL')} <i class="bi bi-x-lg text-danger ms-2" style="cursor:pointer" onclick="eliminar(${idx}, event)"></i></b></div>`;
+            const precioCobro = Number(i.precio) || 0;
+            const precioBase = Number(i.precioOriginal) || precioCobro;
+            const tieneDto = i.descuento && i.descuento > 0 && precioBase > precioCobro;
+            const ahorroItem = tieneDto ? (precioBase - precioCobro) : 0;
+
+            subtotalOriginal += precioBase;
+            ahorroTotal += ahorroItem;
+            totalFinal += precioCobro;
+
+            cont.innerHTML += `
+                <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded" style="border: 1px solid rgba(255,215,0,0.3); background: rgba(10,5,2,0.85); font-size:0.95rem;">
+                    <div class="me-2">
+                        <div class="fw-bold text-white">${i.nombre}</div>
+                        ${tieneDto ? `
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <s class="text-white-50 small">${simboloActual}${precioBase.toLocaleString('es-CL')}</s>
+                                <span class="badge bg-danger font-orbitron" style="font-size:0.7rem; padding: 2px 6px;">-${Math.round(i.descuento)}% OFF</span>
+                                <span class="text-success small fw-bold">Rebaja: -${simboloActual}${ahorroItem.toLocaleString('es-CL')}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="d-flex align-items-center gap-3 flex-shrink-0">
+                        <span class="fw-bold font-orbitron" style="color: var(--bio-oro); font-size: 1.15rem;">
+                            ${simboloActual}${precioCobro.toLocaleString('es-CL')}
+                        </span>
+                        <i class="bi bi-trash3 text-danger fs-5" style="cursor:pointer;" onclick="eliminar(${idx}, event)" title="Eliminar del pedido"></i>
+                    </div>
+                </div>`;
         });
-        document.getElementById('total-modal-caja').innerText = document.getElementById('total-precio').innerText;
+
+        const desgloseEl = document.getElementById('desglose-totales-carrito');
+        if (desgloseEl) {
+            desgloseEl.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center text-white-50 mb-1" style="font-family: 'Rajdhani'; font-size: 1rem;">
+                    <span>SUBTOTAL NORMAL:</span>
+                    <span class="font-orbitron fw-bold text-white">${simboloActual}${subtotalOriginal.toLocaleString('es-CL')}</span>
+                </div>
+                ${ahorroTotal > 0 ? `
+                    <div class="d-flex justify-content-between align-items-center text-danger mb-2 fw-bold" style="font-family: 'Rajdhani'; font-size: 1rem;">
+                        <span><i class="bi bi-tag-fill me-1"></i> DESCUENTO WEB APLICADO:</span>
+                        <span class="font-orbitron fw-bold text-danger">-${simboloActual}${ahorroTotal.toLocaleString('es-CL')}</span>
+                    </div>
+                ` : ''}
+                <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary">
+                    <span class="font-orbitron fw-bold fs-5" style="color: var(--bio-aqua);">TOTAL A PAGAR:</span>
+                    <span id="total-modal-caja" style="color: var(--bio-oro); font-weight: 900; font-size: 1.6rem; font-family: 'Orbitron'; text-shadow: 0 0 10px rgba(255,215,0,0.5);">
+                        ${simboloActual}${totalFinal.toLocaleString('es-CL')}
+                    </span>
+                </div>
+            `;
+        } else {
+            const totalEl = document.getElementById('total-modal-caja');
+            if (totalEl) totalEl.innerText = simboloActual + totalFinal.toLocaleString('es-CL');
+        }
 
         // RENDERIZAR BOTONES DE PAGO SEGÚN SUCURSAL
         renderizarBotonesPagoModal();
@@ -980,7 +1078,7 @@
             let btnElement = document.querySelector(`#card-${productoEncontrado.id} .btn-extraer`);
             const dto = (productoEncontrado.descuento && productoEncontrado.descuento > 0) ? Math.min(Math.round(productoEncontrado.descuento), 100) : 0;
             const precioFinal = dto > 0 ? Math.round(productoEncontrado.precio * (1 - dto / 100)) : productoEncontrado.precio;
-            agregar(productoEncontrado.id, productoEncontrado.nombre, precioFinal, btnElement, dto);
+            agregar(productoEncontrado.id, productoEncontrado.nombre, precioFinal, btnElement, dto, productoEncontrado.precio);
             hablarCliente("Excelente elección. He añadido " + productoEncontrado.nombre + " a tu reserva.");
         } else {
             hablarCliente("Lo siento, no pude identificar ese elíxir. Intenta pronunciar su nombre nuevamente.");
