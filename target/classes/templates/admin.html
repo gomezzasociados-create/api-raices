@@ -2395,7 +2395,8 @@
                 if (isArmaTuBatido) { /* Sumado arriba */ }
                 else if (isVaso) { 
                     totalVasos += valorInsumo; 
-                    if (stockTotal <= 50) {
+                    // REGLA: Alerta de umbral bajo solo para bodega de vasos 500 mls (stock <= 10 unidades o agotado)
+                    if (stockTotal <= 10) {
                         alertasVasos500.push({
                             id: i.idInsumo,
                             nombre: i.nombre,
@@ -2517,15 +2518,13 @@
         let listaPillsHtml = alertas.map(a => {
             if (a.esAgotado) {
                 return `<span class="badge bg-danger text-white px-2 py-1 fs-7 font-orbitron border border-white" style="box-shadow: 0 0 10px red;"><i class="bi bi-x-circle-fill me-1"></i> ${a.nombre}: AGOTADO (0 ${a.medida})</span>`;
-            } else if (a.esCritico) {
-                return `<span class="badge bg-warning text-dark px-2 py-1 fs-7 font-orbitron fw-bold border border-warning" style="box-shadow: 0 0 10px #ffdd00;"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${a.nombre}: ¡CRÍTICO (${a.stock} ${a.medida})!</span>`;
             } else {
-                return `<span class="badge bg-info text-dark px-2 py-1 fs-7 font-orbitron fw-bold border border-info"><i class="bi bi-bell-fill me-1"></i> ${a.nombre}: UMBRAL BAJO (${a.stock} ${a.medida})</span>`;
+                return `<span class="badge bg-warning text-dark px-2 py-1 fs-7 font-orbitron fw-bold border border-warning" style="box-shadow: 0 0 10px #ffdd00;"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${a.nombre}: ¡ÚLTIMAS ${Math.floor(a.stock)} ${a.medida}!</span>`;
             }
         }).join(' ');
 
         if (txtBanner) {
-            txtBanner.innerHTML = `Atención Administrador: Se han detectado <b>${alertas.length} insumo(s)</b> en umbral de seguridad bajo: ${listaPillsHtml}`;
+            txtBanner.innerHTML = `Atención Administrador: Se han detectado <b>${alertas.length} insumo(s)</b> en umbral bajo (≤ 10 unidades): ${listaPillsHtml}`;
         }
 
         if (badgeHeader) {
@@ -2539,7 +2538,7 @@
                         <h6 class="text-danger fw-bold font-orbitron mb-1 fs-6">
                             <i class="bi bi-exclamation-octagon-fill me-2"></i> MENSAJE PARA EL ADMINISTRADOR: BODEGA DE VASOS 500 MLS
                         </h6>
-                        <p class="mb-2 font-rajdhani text-white-50 fs-6">Los siguientes insumos de packaging para batidos de 500 mls han alcanzado o cruzado el umbral mínimo permitido (50 unidades). Por favor reabastecer a la brevedad:</p>
+                        <p class="mb-2 font-rajdhani text-white-50 fs-6">Los siguientes insumos de packaging para batidos de 500 mls han alcanzado o cruzado el umbral bajo de seguridad (10 unidades o menos). Por favor reabastecer a la brevedad:</p>
                         <div class="d-flex flex-wrap gap-2">${listaPillsHtml}</div>
                     </div>
                 </div>
