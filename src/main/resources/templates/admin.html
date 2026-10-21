@@ -16,6 +16,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         :root {
@@ -501,8 +502,10 @@
                     </div>
 
                     <div class="text-end mb-4 d-flex justify-content-end gap-2 flex-wrap">
-                        <button class="btn btn-outline-info font-orbitron fw-bold" onclick="abrirLibroContable()"><i class="bi bi-journal-text me-2"></i> LIBRO CONTABLE Y MAYOR</button>
-                        <button class="btn btn-outline-light font-orbitron fw-bold" onclick="imprimirCierreCaja()"><i class="bi bi-printer me-2"></i> IMPRIMIR BALANCE ACTUAL</button>
+                        <button class="btn btn-outline-info font-orbitron fw-bold" onclick="abrirLibroContable()"><i class="bi bi-journal-text me-2"></i> LIBRO CONTABLE</button>
+                        <button class="btn btn-outline-primary font-orbitron fw-bold" onclick="descargarLibroContable()" title="Descargar Libro Mayor en PDF"><i class="bi bi-file-earmark-pdf me-2"></i> DESCARGAR LIBRO</button>
+                        <button class="btn btn-outline-light font-orbitron fw-bold" onclick="imprimirCierreCaja()"><i class="bi bi-printer me-2"></i> IMPRIMIR BALANCE</button>
+                        <button class="btn btn-outline-success font-orbitron fw-bold" onclick="descargarCierreCaja()" title="Descargar Balance de Turno en PDF"><i class="bi bi-download me-2"></i> DESCARGAR BALANCE</button>
                         <button class="btn" style="background:var(--p-warning); color:#000; font-family:'Orbitron'; font-weight:bold;" onclick="ejecutarCierreAdmin()"><i class="bi bi-safe me-2"></i> EJECUTAR CIERRE ADMIN (RESET)</button>
                     </div>
                 </div>
@@ -1996,7 +1999,7 @@
                     <td>${v.origen}</td>
                     <td style="color:var(--p-cyan)">${v.medioPago || 'Por Definir'}</td>
                     <td class="text-money-green fw-bold">${formatMoney(v.total, v.pais)}</td>
-                    <td>${badgeEstado} <button class="btn btn-sm btn-outline-info ms-2 border-0" onclick="imprimirTicket(${v.id})" title="Imprimir Recibo"><i class="bi bi-printer fs-5"></i></button>${btnCobrar}${btnCancelar}</td>
+                    <td>${badgeEstado} <button class="btn btn-sm btn-outline-info ms-2 border-0" onclick="imprimirTicket(${v.id})" title="Ver e Imprimir Recibo"><i class="bi bi-printer fs-5"></i></button> <button class="btn btn-sm btn-outline-success ms-1 border-0" onclick="descargarTicket(${v.id})" title="Descargar Comprobante (PDF)"><i class="bi bi-download fs-5"></i></button>${btnCobrar}${btnCancelar}</td>
                 </tr>`;
             });
 
@@ -2095,6 +2098,75 @@
         return '$' + Math.round(num).toLocaleString('es-CL');
     }
 
+    let ventaActualComprobante = null;
+
+    function generarHtmlTicket(v) {
+        let itemsHtml = '';
+        const listaItems = (v.productos && v.productos.length > 0) ? v.productos : (v.detalles || []);
+        listaItems.forEach(item => {
+            const prodNom = item.nombre || (item.producto ? item.producto.nombre : 'Producto');
+            const precio = item.precio || item.subtotal || 0;
+            const cant = item.cantidad || 1;
+            itemsHtml += `<tr>
+                <td style="text-align:left; border:none; border-bottom:1px solid #ddd; padding:5px 0; font-size:12px; color:#111;">
+                    ${cant > 1 ? `<b>${cant}x</b> ` : ''}${prodNom}
+                </td>
+                <td style="text-align:right; border:none; border-bottom:1px solid #ddd; padding:5px 0; font-size:12px; font-weight:bold; color:#111;">
+                    ${formatMoney(precio, v.pais)}
+                </td>
+            </tr>`;
+        });
+
+        const fechaFormateada = v.fecha ? new Date(v.fecha).toLocaleString('es-CL') : new Date().toLocaleString('es-CL');
+        const clienteStr = v.nombreCliente && v.nombreCliente.trim() !== '' ? v.nombreCliente.toUpperCase() : 'CLIENTE GENERAL';
+        const medioPagoStr = v.medioPago ? v.medioPago.toUpperCase() : 'POR DEFINIR';
+        const origenStr = v.origen ? v.origen.toUpperCase() : 'WEB';
+        const estadoStr = v.estado ? v.estado.toUpperCase() : 'PENDIENTE';
+
+        return `
+            <div class="ticket-print font-orbitron" style="background:#ffffff; color:#000000; padding:15px; width:100%; max-width:320px; margin:0 auto; font-family:'Rajdhani', sans-serif;">
+                <div style="text-align:center; border-bottom:2px dashed #000; padding-bottom:10px; margin-bottom:12px;">
+                    <h2 style="font-family:'Orbitron', sans-serif; font-weight:900; margin:0; font-size:20px; color:#000;">BATIDOS RAÍCES</h2>
+                    <p style="font-size:11px; margin:2px 0 0; color:#444;">SISTEMA ERP · NODO ${(v.pais || 'ANTOFAGASTA').toUpperCase()}</p>
+                    <div style="display:inline-block; margin-top:6px; padding:2px 8px; border:1px solid #000; font-weight:bold; font-size:11px; border-radius:3px;">
+                        COMPROBANTE ELECTRÓNICO
+                    </div>
+                </div>
+
+                <div style="text-align:left; margin-bottom:12px; font-size:12px; line-height:1.4; color:#222;">
+                    <div><b>ORDEN:</b> #OP-${v.id}</div>
+                    <div><b>FECHA:</b> ${fechaFormateada}</div>
+                    <div><b>CLIENTE:</b> ${clienteStr}</div>
+                    <div><b>CANAL:</b> ${origenStr}</div>
+                    <div><b>MEDIO PAGO:</b> ${medioPagoStr}</div>
+                    <div><b>ESTADO:</b> ${estadoStr}</div>
+                </div>
+
+                <table style="width:100%; border-collapse:collapse; margin-bottom:12px;">
+                    <thead>
+                        <tr style="border-bottom:2px solid #000;">
+                            <th style="text-align:left; padding:4px 0; font-size:11px; color:#000;">DETALLE</th>
+                            <th style="text-align:right; padding:4px 0; font-size:11px; color:#000;">IMPORTE</th>
+                        </tr>
+                    </thead>
+                    <tbody>${itemsHtml}</tbody>
+                </table>
+
+                <div style="border-top:2px solid #000; padding-top:6px; margin-top:8px; text-align:right;">
+                    <div style="font-size:17px; font-weight:900; font-family:'Orbitron', sans-serif; color:#000;">
+                        TOTAL: ${formatMoney(v.total, v.pais)}
+                    </div>
+                    <div style="font-size:10px; color:#666; margin-top:2px;">(IVA Incluido / Base Legal Exenta)</div>
+                </div>
+
+                <div style="margin-top:20px; text-align:center; border-top:1px dashed #777; padding-top:10px; font-size:11px; color:#444;">
+                    <div style="font-weight:bold;">¡GRACIAS POR PREFERIR BATIDOS RAÍCES!</div>
+                    <div style="font-size:10px; color:#777; margin-top:2px;">Conserve este comprobante para respaldo contable.</div>
+                </div>
+            </div>
+        `;
+    }
+
     async function imprimirTicket(idVenta) {
         playSound('magic');
         try {
@@ -2103,57 +2175,73 @@
             const v = ventas.find(x => x.id === idVenta);
             if(!v) return alert('Operación no encontrada.');
 
-            let itemsHtml = '';
-            const listaItems = (v.productos && v.productos.length > 0) ? v.productos : (v.detalles || []);
-            listaItems.forEach(item => {
-                const prodNom = item.nombre || (item.producto ? item.producto.nombre : 'Producto');
-                const precio = item.precio || item.subtotal || 0;
-                const cant = item.cantidad || 1;
-                itemsHtml += `<tr>
-                    <td style="text-align:left; border:none; border-bottom:1px solid #ccc; padding:4px 0;">${cant > 1 ? cant + 'x ' : ''}${prodNom}</td>
-                    <td style="text-align:right; border:none; border-bottom:1px solid #ccc; padding:4px 0;">${formatMoney(precio, v.pais)}</td>
-                </tr>`;
-            });
+            ventaActualComprobante = v;
+            const html = generarHtmlTicket(v);
 
             const zona = document.getElementById('impresion-zona');
-            zona.innerHTML = `
-                <div class="ticket-print font-orbitron">
-                    <h2 style="font-weight:900; margin-bottom:0;">BATIDOS RAÍCES</h2>
-                    <p style="font-size:12px; margin-top:2px;">SISTEMA ERP · NODO ${v.pais.toUpperCase()}</p>
-                    <p style="font-size:12px; border-bottom:1px solid #000; padding-bottom:5px;">
-                        TICKET ORIGINAL CLIENTE
-                    </p>
-                    <div style="text-align:left; margin-bottom:10px; font-size:13px;">
-                        <b>FECHA:</b> ${v.fecha ? new Date(v.fecha).toLocaleString() : new Date().toLocaleString()}<br>
-                        <b>ORDEN:</b> #OP-${v.id}<br>
-                        <b>ORIGEN:</b> ${v.origen.toUpperCase()}<br>
-                        <b>PAGO:</b> ${v.medioPago ? v.medioPago.toUpperCase() : 'PENDIENTE'}
-                    </div>
+            if (zona) zona.innerHTML = html;
 
-                    <table style="width:100%; font-size:13px; margin-bottom:10px; border:none;">
-                        <thead>
-                            <tr>
-                                <th style="text-align:left; border:none; border-bottom:2px solid #000;">PRODUCTO</th>
-                                <th style="text-align:right; border:none; border-bottom:2px solid #000;">IMPORTE</th>
-                            </tr>
-                        </thead>
-                        <tbody>${itemsHtml}</tbody>
-                    </table>
+            const prev = document.getElementById('contenedor-ticket-preview');
+            if (prev) prev.innerHTML = html;
 
-                    <div style="text-align:right; font-size:16px; font-weight:bold; margin-top:10px;">
-                        TOTAL BRUTO: ${formatMoney(v.total, v.pais)}
-                    </div>
-                    <div style="text-align:right; font-size:12px; margin-top:5px; color:#555 !important;">
-                        (IVA Incluido / Base Legal Exenta)
-                    </div>
+            const modalEl = document.getElementById('modalComprobanteTicket');
+            if (modalEl) {
+                const m = bootstrap.Modal.getOrCreateInstance(modalEl);
+                m.show();
+            } else {
+                window.print();
+            }
+        } catch(e) { 
+            console.error(e);
+            alert("Error al cargar comprobante.");
+        }
+    }
 
-                    <p style="font-size:12px; margin-top:20px; font-weight:bold;">
-                        ¡GRACIAS POR PREFERIR BATIDOS RAÍCES!
-                    </p>
-                </div>
-            `;
+    async function descargarTicket(idVenta) {
+        playSound('magic');
+        try {
+            const res = await fetch('/api/ventas');
+            const ventas = await res.json();
+            const v = ventas.find(x => x.id === idVenta);
+            if(!v) return alert('Operación no encontrada.');
+
+            const tempDiv = document.createElement('div');
+            tempDiv.style.width = '320px';
+            tempDiv.style.margin = '0 auto';
+            tempDiv.innerHTML = generarHtmlTicket(v);
+
+            const nombrePdf = `Comprobante_OP-${v.id}_${(v.pais || 'Raices')}.pdf`;
+
+            if (typeof html2pdf !== 'undefined') {
+                const opt = {
+                    margin: [4, 4, 4, 4],
+                    filename: nombrePdf,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, logging: false },
+                    jsPDF: { unit: 'mm', format: [90, 220], orientation: 'portrait' }
+                };
+                html2pdf().set(opt).from(tempDiv).save();
+            } else {
+                imprimirTicket(idVenta);
+            }
+        } catch(e) {
+            console.error(e);
+            alert("Error al descargar comprobante.");
+        }
+    }
+
+    function ejecutarImpresionDesdeModal() {
+        if (!ventaActualComprobante) return;
+        const zona = document.getElementById('impresion-zona');
+        if (zona) {
+            zona.innerHTML = generarHtmlTicket(ventaActualComprobante);
             window.print();
-        } catch(e) { console.error(e); }
+        }
+    }
+
+    function ejecutarDescargaDesdeModal() {
+        if (!ventaActualComprobante) return;
+        descargarTicket(ventaActualComprobante.id);
     }
 
     async function imprimirCierreCaja() {
@@ -2189,6 +2277,157 @@
             </div>
         `;
         window.print();
+    }
+
+    async function descargarCierreCaja() {
+        playSound('magic');
+        const nodo = document.getElementById('tesoreria-sucursal').value;
+        const efe = document.getElementById('tesoreria-efectivo').innerText;
+        const ban = document.getElementById('tesoreria-bancos').innerText;
+        const gas = document.getElementById('tesoreria-gastos').innerText;
+        const uti = document.getElementById('tesoreria-utilidad').innerText;
+        const fechaStr = new Date().toLocaleString('es-CL') + ' - OPERADOR: ' + (rolUsuario || 'ADMIN');
+
+        const tempDiv = document.createElement('div');
+        tempDiv.style.width = '480px';
+        tempDiv.style.padding = '25px';
+        tempDiv.style.background = '#ffffff';
+        tempDiv.style.color = '#000000';
+        tempDiv.style.fontFamily = "'Rajdhani', sans-serif";
+        tempDiv.innerHTML = `
+            <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 20px;">
+                <h2 style="font-family:'Orbitron', sans-serif; font-weight:900; margin:0; font-size: 22px; color:#000;">BATIDOS RAÍCES</h2>
+                <h3 style="font-family:'Orbitron', sans-serif; font-size: 15px; margin: 4px 0 0; color:#333;">REPORTE DE CIERRE Y BALANCE DE TURNO</h3>
+                <h4 style="font-size: 13px; margin: 3px 0 0; color:#555;">NODO: ${nodo.toUpperCase()}</h4>
+                <p style="font-size:11px; margin-top:5px; color:#777;">FECHA Y HORA: ${fechaStr}</p>
+            </div>
+
+            <table style="width:100%; border:2px solid #000; border-collapse:collapse; font-size:14px; margin-bottom:25px;">
+                <tr style="border-bottom:1px solid #999;"><td style="font-weight:bold; padding:8px;">INGRESOS EN EFECTIVO (CAJA BASE)</td><td style="text-align:right; padding:8px;">${efe}</td></tr>
+                <tr style="border-bottom:1px solid #999;"><td style="font-weight:bold; padding:8px;">INGRESOS VÍA BANCOS / DIGITALES</td><td style="text-align:right; padding:8px;">${ban}</td></tr>
+                <tr style="border-bottom:1px solid #999; color:red;"><td style="font-weight:bold; padding:8px;">TOTAL EGRESOS Y GASTOS (DEBE)</td><td style="text-align:right; padding:8px; font-weight:bold;">${gas}</td></tr>
+                <tr style="background:#eee;"><td style="font-weight:bold; padding:8px; font-size:15px;">UTILIDAD NETA DEL TURNO (HABER)</td><td style="text-align:right; font-weight:bold; padding:8px; font-size:15px;">${uti}</td></tr>
+            </table>
+
+            <div style="margin-top: 40px; text-align:center;">
+                <p style="margin:0;">____________________________________</p>
+                <p style="font-size:12px; font-weight:bold; margin-top:5px;">FIRMA RESPONSABLE (OPERADOR CAJA)</p>
+                <p style="font-size:10px; color:#777;">Comprobante emitido por Núcleo Pandora ERP</p>
+            </div>
+        `;
+
+        const opt = {
+            margin: [5, 5, 5, 5],
+            filename: `Balance_Turno_${nodo}_${new Date().toISOString().slice(0,10)}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, logging: false },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        if (typeof html2pdf !== 'undefined') {
+            html2pdf().set(opt).from(tempDiv).save();
+        } else {
+            imprimirCierreCaja();
+        }
+    }
+
+    async function descargarLibroContable() {
+        playSound('magic');
+        const nodo = document.getElementById('tesoreria-sucursal').value;
+        try {
+            const resVentas = await fetch('/api/ventas');
+            const dataVentas = await resVentas.json();
+
+            const resGastos = await fetch(`/api/finanzas/gastos/todos/${nodo}`);
+            const dataGastos = await resGastos.json();
+
+            let movimientos = [];
+            dataVentas.forEach(v => {
+                if (v.pais !== nodo) return;
+                movimientos.push({
+                    fecha: new Date(v.fecha || new Date()),
+                    tipo: 'INGRESO VENTA',
+                    concepto: 'OP#' + v.id + ' (' + (v.medioPago || 'Efectivo') + ')',
+                    entrada: v.total,
+                    salida: 0
+                });
+            });
+
+            dataGastos.forEach(g => {
+                movimientos.push({
+                    fecha: new Date(g.fecha || new Date()),
+                    tipo: 'EGRESO OPERATIVO',
+                    concepto: g.concepto,
+                    entrada: 0,
+                    salida: g.monto
+                });
+            });
+
+            movimientos.sort((a,b) => a.fecha - b.fecha);
+
+            let htmlMovs = '';
+            let balance = 0;
+            movimientos.forEach(m => {
+                balance += (m.entrada - m.salida);
+                htmlMovs += `<tr style="border-bottom:1px solid #ccc; font-size:12px;">
+                    <td style="padding:6px;">${m.fecha.toLocaleDateString()} ${m.fecha.toLocaleTimeString()}</td>
+                    <td style="padding:6px;"><b>${m.tipo}</b></td>
+                    <td style="padding:6px;">${m.concepto}</td>
+                    <td style="text-align:right; padding:6px; color:green;">${m.entrada > 0 ? formatMoney(m.entrada, nodo) : '-'}</td>
+                    <td style="text-align:right; padding:6px; color:red;">${m.salida > 0 ? formatMoney(m.salida, nodo) : '-'}</td>
+                    <td style="text-align:right; padding:6px; font-weight:bold;">${formatMoney(balance, nodo)}</td>
+                </tr>`;
+            });
+
+            const tempDiv = document.createElement('div');
+            tempDiv.style.width = '750px';
+            tempDiv.style.padding = '25px';
+            tempDiv.style.background = '#ffffff';
+            tempDiv.style.color = '#000000';
+            tempDiv.style.fontFamily = "'Rajdhani', sans-serif";
+            tempDiv.innerHTML = `
+                <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:15px; margin-bottom:20px;">
+                    <h1 style="font-family:'Orbitron', sans-serif; font-size:24px; margin:0; color:#000;">LIBRO CONTABLE Y MAYOR EMPRESARIAL</h1>
+                    <h3 style="font-family:'Orbitron', sans-serif; font-size:16px; margin:5px 0; color:#333;">SISTEMA RAÍCES ERP - NODO ${nodo.toUpperCase()}</h3>
+                    <p style="font-size:12px; margin:0; color:#666;">Descargado el: ${new Date().toLocaleString('es-CL')}</p>
+                </div>
+
+                <table style="width:100%; border-collapse:collapse; margin-top:15px;">
+                    <thead>
+                        <tr style="background:#eee; border-bottom:2px solid #000; font-size:12px;">
+                            <th style="text-align:left; padding:8px;">FECHA</th>
+                            <th style="text-align:left; padding:8px;">TIPO ORIGEN</th>
+                            <th style="text-align:left; padding:8px;">DETALLE DE LA OPERACIÓN</th>
+                            <th style="text-align:right; padding:8px;">INGRESOS (+)</th>
+                            <th style="text-align:right; padding:8px;">EGRESOS (-)</th>
+                            <th style="text-align:right; padding:8px;">SALDO VITAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>${htmlMovs}</tbody>
+                </table>
+
+                <div style="margin-top:25px; border-top:2px solid #000; padding-top:10px; text-align:right;">
+                    <h3 style="font-family:'Orbitron', sans-serif; font-size:18px; margin:0;">BALANCE FINAL: ${formatMoney(balance, nodo)}</h3>
+                </div>
+            `;
+
+            const opt = {
+                margin: [5, 5, 5, 5],
+                filename: `Libro_Mayor_${nodo}_${new Date().toISOString().slice(0,10)}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+
+            if (typeof html2pdf !== 'undefined') {
+                html2pdf().set(opt).from(tempDiv).save();
+            } else {
+                abrirLibroContable();
+            }
+        } catch(e) {
+            console.error(e);
+            alert("Error al descargar Libro Mayor.");
+        }
     }
 
     async function abrirLibroContable() {
@@ -4117,5 +4356,33 @@
     }
 
 </script>
+
+<!-- MODAL INTERACTIVO DE COMPROBANTE (IMPRIMIR Y DESCARGAR) -->
+<div class="modal fade" id="modalComprobanteTicket" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content" style="background: rgba(10, 15, 25, 0.98); border: 2px solid var(--p-cyan); box-shadow: 0 0 35px rgba(0,229,255,0.45); border-radius: 16px;">
+            <div class="modal-header border-bottom border-secondary d-flex justify-content-between align-items-center py-2 px-3">
+                <h5 class="modal-title font-orbitron text-info fw-bold fs-6 mb-0">
+                    <i class="bi bi-receipt me-2"></i> COMPROBANTE DE VENTA
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-3">
+                <div class="d-flex justify-content-center gap-2 mb-3">
+                    <button type="button" class="btn btn-sm btn-outline-info font-orbitron fw-bold px-3 py-2" onclick="ejecutarImpresionDesdeModal()">
+                        <i class="bi bi-printer-fill me-1"></i> IMPRIMIR
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success font-orbitron fw-bold px-3 py-2 text-dark" onclick="ejecutarDescargaDesdeModal()">
+                        <i class="bi bi-download me-1"></i> DESCARGAR PDF
+                    </button>
+                </div>
+                <div id="contenedor-ticket-preview" class="p-3 rounded shadow" style="background: #ffffff; color: #000000; font-family: 'Rajdhani', sans-serif; max-height: 520px; overflow-y: auto;">
+                    <!-- Se inyecta dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
