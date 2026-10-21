@@ -2197,6 +2197,174 @@
         }
     }
 
+    function mostrarAvisoDescarga(mensaje, tipo = 'info') {
+        let toast = document.getElementById('toast-descarga-global');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast-descarga-global';
+            toast.style.position = 'fixed';
+            toast.style.bottom = '25px';
+            toast.style.right = '25px';
+            toast.style.zIndex = '999999';
+            toast.style.maxWidth = '420px';
+            toast.style.padding = '14px 20px';
+            toast.style.borderRadius = '12px';
+            toast.style.fontSize = '14px';
+            toast.style.fontWeight = 'bold';
+            toast.style.fontFamily = "'Rajdhani', sans-serif";
+            toast.style.boxShadow = '0 10px 30px rgba(0,0,0,0.85)';
+            toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            document.body.appendChild(toast);
+        }
+
+        if (tipo === 'success') {
+            toast.style.background = '#00ffa6';
+            toast.style.color = '#000000';
+            toast.style.border = '2px solid #ffffff';
+        } else if (tipo === 'error') {
+            toast.style.background = '#ff0055';
+            toast.style.color = '#ffffff';
+            toast.style.border = '2px solid #ffffff';
+        } else {
+            toast.style.background = '#00e5ff';
+            toast.style.color = '#000000';
+            toast.style.border = '2px solid #ffffff';
+        }
+
+        toast.innerHTML = mensaje;
+        toast.style.display = 'block';
+        toast.style.opacity = '1';
+
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => { toast.style.display = 'none'; }, 350);
+        }, 8000);
+    }
+
+    async function procesarDescargaDocumento(htmlContent, nombreArchivo, formato = 'a4', orientacion = 'portrait', anchoContenedor = '420px') {
+        mostrarAvisoDescarga(`<i class="bi bi-hourglass-split me-2"></i> Generando archivo <b>${nombreArchivo}</b> para descarga...`, 'info');
+
+        // Contenedor temporal en el DOM para cálculo de medidas reales de renderizado
+        const wrapper = document.createElement('div');
+        wrapper.id = 'pdf-render-sandbox';
+        wrapper.style.position = 'fixed';
+        wrapper.style.top = '0';
+        wrapper.style.left = '0';
+        wrapper.style.width = anchoContenedor;
+        wrapper.style.background = '#ffffff';
+        wrapper.style.color = '#000000';
+        wrapper.style.zIndex = '-99999';
+        wrapper.style.overflow = 'visible';
+        wrapper.style.boxSizing = 'border-box';
+        wrapper.innerHTML = htmlContent;
+        document.body.appendChild(wrapper);
+
+        let completado = false;
+
+        try {
+            if (typeof html2pdf !== 'undefined') {
+                const opt = {
+                    margin: [6, 6, 6, 6],
+                    filename: nombreArchivo,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        scrollX: 0,
+                        scrollY: 0
+                    },
+                    jsPDF: {
+                        unit: 'mm',
+                        format: formato,
+                        orientation: orientacion
+                    }
+                };
+
+                try {
+                    const worker = html2pdf().set(opt).from(wrapper);
+                    const blob = await worker.output('blob');
+                    if (blob && blob.size > 0) {
+                        const blobUrl = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = blobUrl;
+                        a.download = nombreArchivo;
+                        document.body.appendChild(a);
+                        a.click();
+                        setTimeout(() => {
+                            if (a.parentNode) a.parentNode.removeChild(a);
+                            URL.revokeObjectURL(blobUrl);
+                        }, 4000);
+                        completado = true;
+                    } else {
+                        await worker.save();
+                        completado = true;
+                    }
+                } catch (blobErr) {
+                    console.warn("Fallo worker.output('blob'), probando worker.save():", blobErr);
+                    await html2pdf().set(opt).from(wrapper).save();
+                    completado = true;
+                }
+            }
+        } catch (ePdf) {
+            console.error("Fallo durante generación de PDF con html2pdf:", ePdf);
+        }
+
+        // Respaldo de descarga inmediata como archivo HTML imprimible/autónomo si falla html2pdf
+        if (!completado) {
+            try {
+                const fallbackHtml = `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>${nombreArchivo}</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #fff; color: #000; font-family: 'Rajdhani', sans-serif; }
+        @media print { body { padding: 0; } }
+    </style>
+</head>
+<body>
+    ${htmlContent}
+    <script>
+        window.onload = function() {
+            setTimeout(function() { window.print(); }, 500);
+        };
+    <\/script>
+</body>
+</html>`;
+                const fallbackBlob = new Blob([fallbackHtml], { type: 'text/html;charset=utf-8' });
+                const blobUrl = URL.createObjectURL(fallbackBlob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = blobUrl;
+                a.download = nombreArchivo.replace(/\.pdf$/i, '') + '.html';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    if (a.parentNode) a.parentNode.removeChild(a);
+                    URL.revokeObjectURL(blobUrl);
+                }, 4000);
+                completado = true;
+            } catch (errFallback) {
+                console.error("Fallo fallback de descarga:", errFallback);
+            }
+        }
+
+        // Limpiar elemento del DOM
+        if (wrapper.parentNode) {
+            wrapper.parentNode.removeChild(wrapper);
+        }
+
+        if (completado) {
+            mostrarAvisoDescarga(`<i class="bi bi-check-circle-fill me-2"></i> ¡Comprobante <b>"${nombreArchivo}"</b> descargado!<br><span style="font-size:12px; font-weight:normal;">Revisa tu carpeta de <b>Descargas (Downloads)</b> del equipo o el icono de descargas del navegador.</span>`, 'success');
+        } else {
+            mostrarAvisoDescarga(`<i class="bi bi-exclamation-triangle-fill me-2"></i> No se pudo descargar automáticamente. Abriendo impresión...`, 'error');
+            imprimirTicket(ventaActualComprobante ? ventaActualComprobante.id : null);
+        }
+    }
+
     async function descargarTicket(idVenta) {
         playSound('magic');
         try {
@@ -2205,28 +2373,12 @@
             const v = ventas.find(x => x.id === idVenta);
             if(!v) return alert('Operación no encontrada.');
 
-            const tempDiv = document.createElement('div');
-            tempDiv.style.width = '320px';
-            tempDiv.style.margin = '0 auto';
-            tempDiv.innerHTML = generarHtmlTicket(v);
-
             const nombrePdf = `Comprobante_OP-${v.id}_${(v.pais || 'Raices')}.pdf`;
-
-            if (typeof html2pdf !== 'undefined') {
-                const opt = {
-                    margin: [4, 4, 4, 4],
-                    filename: nombrePdf,
-                    image: { type: 'jpeg', quality: 0.98 },
-                    html2canvas: { scale: 2, useCORS: true, logging: false },
-                    jsPDF: { unit: 'mm', format: [90, 220], orientation: 'portrait' }
-                };
-                html2pdf().set(opt).from(tempDiv).save();
-            } else {
-                imprimirTicket(idVenta);
-            }
+            const html = generarHtmlTicket(v);
+            await procesarDescargaDocumento(html, nombrePdf, 'a4', 'portrait', '380px');
         } catch(e) {
             console.error(e);
-            alert("Error al descargar comprobante.");
+            mostrarAvisoDescarga("Error al descargar comprobante.", "error");
         }
     }
 
@@ -2288,47 +2440,32 @@
         const uti = document.getElementById('tesoreria-utilidad').innerText;
         const fechaStr = new Date().toLocaleString('es-CL') + ' - OPERADOR: ' + (rolUsuario || 'ADMIN');
 
-        const tempDiv = document.createElement('div');
-        tempDiv.style.width = '480px';
-        tempDiv.style.padding = '25px';
-        tempDiv.style.background = '#ffffff';
-        tempDiv.style.color = '#000000';
-        tempDiv.style.fontFamily = "'Rajdhani', sans-serif";
-        tempDiv.innerHTML = `
-            <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 20px;">
-                <h2 style="font-family:'Orbitron', sans-serif; font-weight:900; margin:0; font-size: 22px; color:#000;">BATIDOS RAÍCES</h2>
-                <h3 style="font-family:'Orbitron', sans-serif; font-size: 15px; margin: 4px 0 0; color:#333;">REPORTE DE CIERRE Y BALANCE DE TURNO</h3>
-                <h4 style="font-size: 13px; margin: 3px 0 0; color:#555;">NODO: ${nodo.toUpperCase()}</h4>
-                <p style="font-size:11px; margin-top:5px; color:#777;">FECHA Y HORA: ${fechaStr}</p>
-            </div>
+        const html = `
+            <div style="background:#ffffff; color:#000000; padding:25px; font-family:'Rajdhani', sans-serif;">
+                <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 20px;">
+                    <h2 style="font-family:'Orbitron', sans-serif; font-weight:900; margin:0; font-size: 22px; color:#000;">BATIDOS RAÍCES</h2>
+                    <h3 style="font-family:'Orbitron', sans-serif; font-size: 15px; margin: 4px 0 0; color:#333;">REPORTE DE CIERRE Y BALANCE DE TURNO</h3>
+                    <h4 style="font-size: 13px; margin: 3px 0 0; color:#555;">NODO: ${nodo.toUpperCase()}</h4>
+                    <p style="font-size:11px; margin-top:5px; color:#777;">FECHA Y HORA: ${fechaStr}</p>
+                </div>
 
-            <table style="width:100%; border:2px solid #000; border-collapse:collapse; font-size:14px; margin-bottom:25px;">
-                <tr style="border-bottom:1px solid #999;"><td style="font-weight:bold; padding:8px;">INGRESOS EN EFECTIVO (CAJA BASE)</td><td style="text-align:right; padding:8px;">${efe}</td></tr>
-                <tr style="border-bottom:1px solid #999;"><td style="font-weight:bold; padding:8px;">INGRESOS VÍA BANCOS / DIGITALES</td><td style="text-align:right; padding:8px;">${ban}</td></tr>
-                <tr style="border-bottom:1px solid #999; color:red;"><td style="font-weight:bold; padding:8px;">TOTAL EGRESOS Y GASTOS (DEBE)</td><td style="text-align:right; padding:8px; font-weight:bold;">${gas}</td></tr>
-                <tr style="background:#eee;"><td style="font-weight:bold; padding:8px; font-size:15px;">UTILIDAD NETA DEL TURNO (HABER)</td><td style="text-align:right; font-weight:bold; padding:8px; font-size:15px;">${uti}</td></tr>
-            </table>
+                <table style="width:100%; border:2px solid #000; border-collapse:collapse; font-size:14px; margin-bottom:25px;">
+                    <tr style="border-bottom:1px solid #999;"><td style="font-weight:bold; padding:8px; color:#000;">INGRESOS EN EFECTIVO (CAJA BASE)</td><td style="text-align:right; padding:8px; color:#000;">${efe}</td></tr>
+                    <tr style="border-bottom:1px solid #999;"><td style="font-weight:bold; padding:8px; color:#000;">INGRESOS VÍA BANCOS / DIGITALES</td><td style="text-align:right; padding:8px; color:#000;">${ban}</td></tr>
+                    <tr style="border-bottom:1px solid #999; color:red;"><td style="font-weight:bold; padding:8px; color:red;">TOTAL EGRESOS Y GASTOS (DEBE)</td><td style="text-align:right; padding:8px; font-weight:bold; color:red;">${gas}</td></tr>
+                    <tr style="background:#eee;"><td style="font-weight:bold; padding:8px; font-size:15px; color:#000;">UTILIDAD NETA DEL TURNO (HABER)</td><td style="text-align:right; font-weight:bold; padding:8px; font-size:15px; color:#000;">${uti}</td></tr>
+                </table>
 
-            <div style="margin-top: 40px; text-align:center;">
-                <p style="margin:0;">____________________________________</p>
-                <p style="font-size:12px; font-weight:bold; margin-top:5px;">FIRMA RESPONSABLE (OPERADOR CAJA)</p>
-                <p style="font-size:10px; color:#777;">Comprobante emitido por Núcleo Pandora ERP</p>
+                <div style="margin-top: 40px; text-align:center;">
+                    <p style="margin:0; color:#000;">____________________________________</p>
+                    <p style="font-size:12px; font-weight:bold; margin-top:5px; color:#000;">FIRMA RESPONSABLE (OPERADOR CAJA)</p>
+                    <p style="font-size:10px; color:#777;">Comprobante emitido por Núcleo Pandora ERP</p>
+                </div>
             </div>
         `;
 
-        const opt = {
-            margin: [5, 5, 5, 5],
-            filename: `Balance_Turno_${nodo}_${new Date().toISOString().slice(0,10)}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        if (typeof html2pdf !== 'undefined') {
-            html2pdf().set(opt).from(tempDiv).save();
-        } else {
-            imprimirCierreCaja();
-        }
+        const nombrePdf = `Balance_Turno_${nodo}_${new Date().toISOString().slice(0,10)}.pdf`;
+        await procesarDescargaDocumento(html, nombrePdf, 'a4', 'portrait', '500px');
     }
 
     async function descargarLibroContable() {
@@ -2369,64 +2506,49 @@
             let balance = 0;
             movimientos.forEach(m => {
                 balance += (m.entrada - m.salida);
-                htmlMovs += `<tr style="border-bottom:1px solid #ccc; font-size:12px;">
-                    <td style="padding:6px;">${m.fecha.toLocaleDateString()} ${m.fecha.toLocaleTimeString()}</td>
-                    <td style="padding:6px;"><b>${m.tipo}</b></td>
-                    <td style="padding:6px;">${m.concepto}</td>
+                htmlMovs += `<tr style="border-bottom:1px solid #ccc; font-size:12px; color:#000;">
+                    <td style="padding:6px; color:#000;">${m.fecha.toLocaleDateString()} ${m.fecha.toLocaleTimeString()}</td>
+                    <td style="padding:6px; color:#000;"><b>${m.tipo}</b></td>
+                    <td style="padding:6px; color:#000;">${m.concepto}</td>
                     <td style="text-align:right; padding:6px; color:green;">${m.entrada > 0 ? formatMoney(m.entrada, nodo) : '-'}</td>
                     <td style="text-align:right; padding:6px; color:red;">${m.salida > 0 ? formatMoney(m.salida, nodo) : '-'}</td>
-                    <td style="text-align:right; padding:6px; font-weight:bold;">${formatMoney(balance, nodo)}</td>
+                    <td style="text-align:right; padding:6px; font-weight:bold; color:#000;">${formatMoney(balance, nodo)}</td>
                 </tr>`;
             });
 
-            const tempDiv = document.createElement('div');
-            tempDiv.style.width = '750px';
-            tempDiv.style.padding = '25px';
-            tempDiv.style.background = '#ffffff';
-            tempDiv.style.color = '#000000';
-            tempDiv.style.fontFamily = "'Rajdhani', sans-serif";
-            tempDiv.innerHTML = `
-                <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:15px; margin-bottom:20px;">
-                    <h1 style="font-family:'Orbitron', sans-serif; font-size:24px; margin:0; color:#000;">LIBRO CONTABLE Y MAYOR EMPRESARIAL</h1>
-                    <h3 style="font-family:'Orbitron', sans-serif; font-size:16px; margin:5px 0; color:#333;">SISTEMA RAÍCES ERP - NODO ${nodo.toUpperCase()}</h3>
-                    <p style="font-size:12px; margin:0; color:#666;">Descargado el: ${new Date().toLocaleString('es-CL')}</p>
-                </div>
+            const html = `
+                <div style="background:#ffffff; color:#000000; padding:25px; font-family:'Rajdhani', sans-serif;">
+                    <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:15px; margin-bottom:20px;">
+                        <h1 style="font-family:'Orbitron', sans-serif; font-size:24px; margin:0; color:#000;">LIBRO CONTABLE Y MAYOR EMPRESARIAL</h1>
+                        <h3 style="font-family:'Orbitron', sans-serif; font-size:16px; margin:5px 0; color:#333;">SISTEMA RAÍCES ERP - NODO ${nodo.toUpperCase()}</h3>
+                        <p style="font-size:12px; margin:0; color:#666;">Descargado el: ${new Date().toLocaleString('es-CL')}</p>
+                    </div>
 
-                <table style="width:100%; border-collapse:collapse; margin-top:15px;">
-                    <thead>
-                        <tr style="background:#eee; border-bottom:2px solid #000; font-size:12px;">
-                            <th style="text-align:left; padding:8px;">FECHA</th>
-                            <th style="text-align:left; padding:8px;">TIPO ORIGEN</th>
-                            <th style="text-align:left; padding:8px;">DETALLE DE LA OPERACIÓN</th>
-                            <th style="text-align:right; padding:8px;">INGRESOS (+)</th>
-                            <th style="text-align:right; padding:8px;">EGRESOS (-)</th>
-                            <th style="text-align:right; padding:8px;">SALDO VITAL</th>
-                        </tr>
-                    </thead>
-                    <tbody>${htmlMovs}</tbody>
-                </table>
+                    <table style="width:100%; border-collapse:collapse; margin-top:15px;">
+                        <thead>
+                            <tr style="background:#eee; border-bottom:2px solid #000; font-size:12px; color:#000;">
+                                <th style="text-align:left; padding:8px; color:#000;">FECHA</th>
+                                <th style="text-align:left; padding:8px; color:#000;">TIPO ORIGEN</th>
+                                <th style="text-align:left; padding:8px; color:#000;">DETALLE DE LA OPERACIÓN</th>
+                                <th style="text-align:right; padding:8px; color:#000;">INGRESOS (+)</th>
+                                <th style="text-align:right; padding:8px; color:#000;">EGRESOS (-)</th>
+                                <th style="text-align:right; padding:8px; color:#000;">SALDO VITAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>${htmlMovs}</tbody>
+                    </table>
 
-                <div style="margin-top:25px; border-top:2px solid #000; padding-top:10px; text-align:right;">
-                    <h3 style="font-family:'Orbitron', sans-serif; font-size:18px; margin:0;">BALANCE FINAL: ${formatMoney(balance, nodo)}</h3>
+                    <div style="margin-top:25px; border-top:2px solid #000; padding-top:10px; text-align:right;">
+                        <h3 style="font-family:'Orbitron', sans-serif; font-size:18px; margin:0; color:#000;">BALANCE FINAL: ${formatMoney(balance, nodo)}</h3>
+                    </div>
                 </div>
             `;
 
-            const opt = {
-                margin: [5, 5, 5, 5],
-                filename: `Libro_Mayor_${nodo}_${new Date().toISOString().slice(0,10)}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true, logging: false },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-            };
-
-            if (typeof html2pdf !== 'undefined') {
-                html2pdf().set(opt).from(tempDiv).save();
-            } else {
-                abrirLibroContable();
-            }
+            const nombrePdf = `Libro_Mayor_${nodo}_${new Date().toISOString().slice(0,10)}.pdf`;
+            await procesarDescargaDocumento(html, nombrePdf, 'a4', 'landscape', '900px');
         } catch(e) {
             console.error(e);
-            alert("Error al descargar Libro Mayor.");
+            mostrarAvisoDescarga("Error al descargar Libro Mayor.", "error");
         }
     }
 
