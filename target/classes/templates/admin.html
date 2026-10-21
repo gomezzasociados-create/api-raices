@@ -710,17 +710,21 @@
                                             <label class="form-label-neon" style="color:var(--p-warning)">Reserva Stock (Porciones)</label>
                                             <input type="number" id="armatubatido-stock" class="form-control" placeholder="Cant. porciones">
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <label class="form-label-neon" style="color:var(--p-warning)">Precio / Porción ($)</label>
                                             <input type="number" id="armatubatido-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 1000">
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">URL Imagen</label>
+                                            <input type="text" id="armatubatido-imagen" class="form-control" placeholder="https://... (opcional)">
+                                        </div>
+                                        <div class="col-md-2">
                                             <label class="form-label-neon" style="color:var(--p-warning)">Nodo Destino</label>
                                             <select id="armatubatido-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')">
                                                 <option value="Antofagasta">Antofagasta</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <button class="btn btn-bio w-100 py-2 fs-5 font-orbitron" style="background: var(--p-warning); color: #000;" onclick="guardarInsumo('armatubatido')">
                                                 <i class="bi bi-plus-circle-fill me-2"></i> GUARDAR / ACTUALIZAR PORCIÓN
                                             </button>
@@ -730,6 +734,7 @@
                                         <table class="table text-center align-middle m-0">
                                             <thead class="table-dark">
                                                 <tr>
+                                                    <th style="width: 60px;">IMG</th>
                                                     <th>INGREDIENTE</th>
                                                     <th>SUBCATEGORÍA</th>
                                                     <th>NODO_BASE</th>
@@ -2358,8 +2363,10 @@
                 else if (isShot) colorBadge = 'color:var(--p-magenta); border-color:var(--p-magenta); box-shadow:0 0 10px var(--p-magenta);';
 
                 let dosisTdHtml = isArmaTuBatido ? `<td class="text-info fw-bold fs-5">${i.cantidadPorcion || 1} ${i.medida || 'gr'}</td>` : '';
+                let imgTdHtml = isArmaTuBatido ? `<td><img src="${i.imagen || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'}" class="rounded border border-warning" style="width: 38px; height: 38px; object-fit: cover;" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'"></td>` : '';
 
                 const row = `<tr>
+                    ${imgTdHtml}
                     <td class="fw-bold text-white fs-5">${i.nombre}</td>
                     <td><span class="badge-categoria" style="${colorBadge}">${(i.subcategoria || i.categoria || 'Pulpas').toUpperCase()}</span></td>
                     <td class="text-white">${i.sucursal}</td>
@@ -2411,6 +2418,7 @@
                 if (document.getElementById('armatubatido-stock')) document.getElementById('armatubatido-stock').value = ins.unidadActual || 0;
                 if (document.getElementById('armatubatido-sucursal')) document.getElementById('armatubatido-sucursal').value = ins.sucursal;
                 if (document.getElementById('armatubatido-precio')) document.getElementById('armatubatido-precio').value = ins.precio || 0;
+                if (document.getElementById('armatubatido-imagen')) document.getElementById('armatubatido-imagen').value = ins.imagen || '';
             } else if(cat.includes('vaso') || cat.includes('packaging')) {
                 document.getElementById('vaso-id').value = ins.idInsumo;
                 document.getElementById('vaso-nombre').value = ins.nombre;
@@ -2440,7 +2448,7 @@
     }
 
     function guardarInsumo(tipo) {
-        let id, nombre, cat, subcat, uni, stock, suc, precioVal, dosisVal;
+        let id, nombre, cat, subcat, uni, stock, suc, precioVal, dosisVal, imgVal = '';
         if(tipo==='armatubatido') {
             id = document.getElementById('armatubatido-id').value; 
             nombre = document.getElementById('armatubatido-nombre').value; 
@@ -2451,6 +2459,7 @@
             stock=document.getElementById('armatubatido-stock').value; 
             suc=document.getElementById('armatubatido-sucursal').value;
             precioVal = normalizarPrecioCLP(document.getElementById('armatubatido-precio').value);
+            imgVal = document.getElementById('armatubatido-imagen') ? document.getElementById('armatubatido-imagen').value.trim() : '';
         } else if(tipo==='pulpas'){ 
             id = document.getElementById('ins-id').value; 
             nombre = document.getElementById('ins-nombre').value; 
@@ -2493,6 +2502,7 @@
         };
         if(dosisVal !== undefined && dosisVal !== null) { payload.cantidadPorcion = dosisVal; }
         if(id) { payload.idInsumo = parseInt(id); }
+        if(imgVal) { payload.imagen = imgVal; }
 
         fetch('/api/insumos/guardar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
         .then(async (res) => {
@@ -2509,6 +2519,7 @@
             if (document.getElementById('armatubatido-dosis')) document.getElementById('armatubatido-dosis').value=''; 
             if (document.getElementById('armatubatido-stock')) document.getElementById('armatubatido-stock').value='';
             if (document.getElementById('armatubatido-precio')) document.getElementById('armatubatido-precio').value='';
+            if (document.getElementById('armatubatido-imagen')) document.getElementById('armatubatido-imagen').value='';
             if (document.getElementById('ins-nombre')) document.getElementById('ins-nombre').value=''; 
             if (document.getElementById('ins-stock')) document.getElementById('ins-stock').value='';
             if (document.getElementById('vaso-nombre')) document.getElementById('vaso-nombre').value=''; 

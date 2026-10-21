@@ -21,6 +21,8 @@ public class Insumo {
     // --- NUEVO: CLASIFICACIÓN DE BODEGA ---
     private String categoria;
     private String subcategoria; // Subcategoría para Arma tu Batido (Base, Semillas, Frutas, Vegetales, Suplementos, Frutos Secos)
+    @Column(columnDefinition = "TEXT")
+    private String imagen;
 
     private Double precio; // <--- RESTAURADO: PRECIO POR KILO/UNIDAD
 
@@ -67,4 +69,7 @@ public class Insumo {
 
     public Double getPrecio() { return precio; }
     public void setPrecio(Double precio) { this.precio = precio; }
+
+    public String getImagen() { return imagen; }
+    public void setImagen(String imagen) { this.imagen = imagen; }
 }
