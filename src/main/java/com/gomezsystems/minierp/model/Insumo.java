@@ -25,6 +25,7 @@ public class Insumo {
     private String imagen;
 
     private Double precio; // <--- RESTAURADO: PRECIO POR KILO/UNIDAD
+    private Double descuento = 0.0;
 
     // --- PARCHE DE COMPATIBILIDAD CON BD ANTIGUA ---
     @Column(name = "id_sucursal")
@@ -72,4 +73,7 @@ public class Insumo {
 
     public String getImagen() { return imagen; }
     public void setImagen(String imagen) { this.imagen = imagen; }
+
+    public Double getDescuento() { return descuento != null ? descuento : 0.0; }
+    public void setDescuento(Double descuento) { this.descuento = (descuento != null) ? descuento : 0.0; }
 }

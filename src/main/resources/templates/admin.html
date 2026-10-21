@@ -1030,6 +1030,7 @@
                                 <option value="500 mls">Elíxires (500 mls)</option>
                                 <option value="Packs">Pack de Pulpas</option>
                                 <option value="Shots">Shots</option>
+                                <option value="Arma tu Batido">Arma tu Batido</option>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -1078,7 +1079,7 @@
                             <button type="button" class="categoria-filtro-btn" data-cat="500 mls" onclick="filtrarCategoriaAcordeon('500 mls', this)">ELÍXIRES</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Packs" onclick="filtrarCategoriaAcordeon('Packs', this)">PACK DE PULPAS</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Shots" onclick="filtrarCategoriaAcordeon('Shots', this)">SHOTS</button>
-                            <button type="button" class="btn btn-sm btn-outline-warning font-orbitron fw-bold ms-1" onclick="irABodegaArmaTuBatido()" title="Ver y gestionar las porciones en la Bodega de Arma tu Batido"><i class="bi bi-sliders me-1"></i> BODEGA ARMA TU BATIDO</button>
+                            <button type="button" class="categoria-filtro-btn" data-cat="Arma tu Batido" onclick="filtrarCategoriaAcordeon('Arma tu Batido', this)">ARMA TU BATIDO</button>
                             
                             <div class="btn-group ms-1">
                                 <button type="button" class="btn btn-sm btn-outline-info" onclick="expandirTodosAcordeon()" title="Expandir Todos"><i class="bi bi-arrows-expand"></i></button>
@@ -3031,14 +3032,7 @@
         try {
             const res = await fetch('/api/productos/sucursal/' + suc);
             let data = await res.json();
-            // Filtrar productos comerciales para la Matriz Total (excluyendo insumos/porciones de bodega)
-            data = (data || []).filter(p => {
-                if (!p) return false;
-                const c = (p.categoria || '').toLowerCase();
-                const n = (p.nombre || '').toLowerCase();
-                return !c.includes('arma') && !c.includes('porcion') && !n.includes('porcion') && !n.includes('porción');
-            });
-            data = deduplicarProductos(data);
+            data = deduplicarProductos(data || []);
 
             const acordeonCont = document.getElementById('contenedor-catalogo-acordeon');
             const tb = document.getElementById('tabla-catalogo');
@@ -3073,14 +3067,17 @@
                 const catNorm = (catActual || '').toLowerCase();
                 const nomNorm = (p.nombre || '').toLowerCase();
                 const esPack = catNorm.includes('pack') || catNorm.includes('pulpa') || nomNorm.includes('pulpa');
-                const catMostrar = esPack ? 'Pack de Pulpas' : catActual;
+                const esArma = catNorm.includes('arma') || catNorm.includes('batido');
+                const esShot = catNorm.includes('shot');
+                const catMostrar = esPack ? 'Pack de Pulpas' : (esArma ? 'Arma tu Batido' : (esShot ? 'Shots' : 'Elíxires (500 mls)'));
 
                 let optionsCat = `
-                    <option value="500 mls" ${catActual==='500 mls' || (!esPack && !catNorm.includes('shot')) ? 'selected' : ''}>Elíxires (500 mls)</option>
+                    <option value="500 mls" ${catActual==='500 mls' || (!esPack && !esShot && !esArma) ? 'selected' : ''}>Elíxires (500 mls)</option>
                     <option value="Packs" ${esPack ? 'selected' : ''}>Pack de Pulpas</option>
-                    <option value="Shots" ${catNorm.includes('shot') ? 'selected' : ''}>Shots</option>
+                    <option value="Shots" ${esShot ? 'selected' : ''}>Shots</option>
+                    <option value="Arma tu Batido" ${esArma ? 'selected' : ''}>Arma tu Batido</option>
                 `;
-                if (catActual && !['500 mls', 'Packs', 'Shots'].includes(catActual) && !esPack) {
+                if (catActual && !['500 mls', 'Packs', 'Shots', 'Arma tu Batido'].includes(catActual) && !esPack && !esArma && !esShot) {
                     optionsCat += `<option value="${catActual}" selected>${catActual}</option>`;
                 }
 
@@ -3477,7 +3474,12 @@
                     coincideCat = cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa');
                 } else if (f === '500 mls') {
                     const esPackOPulpa = cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa');
-                    coincideCat = !esPackOPulpa && (cat.includes('500') || !cat);
+                    const esArma = cat.includes('arma') || cat.includes('batido');
+                    coincideCat = !esPackOPulpa && !esArma && (cat.includes('500') || !cat);
+                } else if (f.includes('arma') || f.includes('batido')) {
+                    coincideCat = cat.includes('arma') || cat.includes('batido');
+                } else if (f.includes('shot')) {
+                    coincideCat = cat.includes('shot');
                 } else {
                     coincideCat = cat.includes(f);
                 }

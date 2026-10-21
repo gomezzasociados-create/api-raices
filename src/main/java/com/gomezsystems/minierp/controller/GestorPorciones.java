@@ -81,8 +81,10 @@ public class GestorPorciones {
                     existente.setCategoria(insumo.getCategoria());
                     existente.setSubcategoria(insumo.getSubcategoria());
                     existente.setPrecio(insumo.getPrecio());
+                    if (insumo.getDescuento() != null) existente.setDescuento(insumo.getDescuento());
                     existente.setImagen(insumo.getImagen());
                     insumoRepository.save(existente);
+                    sincronizarProductoArmaTuBatido(existente);
                     return ResponseEntity.ok("Insumo actualizado");
                 }
             }
@@ -98,6 +100,7 @@ public class GestorPorciones {
                 mk.setActor(insumo.getActorAdmin() != null ? insumo.getActorAdmin() : "Desconocido");
                 kardexRepository.save(mk);
             }
+            sincronizarProductoArmaTuBatido(insumo);
             return ResponseEntity.ok("Insumo creado");
         } catch (Exception e) {
             System.err.println("GÓMEZ SYSTEMS - ERROR GRAVE BODEGA: " + e.getMessage());
@@ -224,5 +227,38 @@ public class GestorPorciones {
             }
         }
         return ResponseEntity.badRequest().body("Error al eliminar");
+    }
+    private void sincronizarProductoArmaTuBatido(Insumo insumo) {
+        if (insumo == null) return;
+        String catIns = insumo.getCategoria() != null ? insumo.getCategoria().toLowerCase() : "";
+        if (catIns.contains("arma") || catIns.contains("porciones")) {
+            try {
+                String nomIns = insumo.getNombre() != null ? insumo.getNombre().trim() : "";
+                if (nomIns.isEmpty()) return;
+                List<Producto> matchProds = productoRepository.findAll().stream()
+                    .filter(p -> p.getNombre() != null && p.getNombre().trim().equalsIgnoreCase(nomIns))
+                    .toList();
+                if (!matchProds.isEmpty()) {
+                    for (Producto p : matchProds) {
+                        if (insumo.getPrecio() != null) p.setPrecio(insumo.getPrecio());
+                        if (insumo.getDescuento() != null) p.setDescuento(insumo.getDescuento());
+                        if (insumo.getImagen() != null) p.setImagen(insumo.getImagen());
+                        if (insumo.getUnidadActual() != null) p.setStock((int) Math.round(insumo.getUnidadActual()));
+                        productoRepository.save(p);
+                    }
+                } else {
+                    Producto p = new Producto();
+                    p.setNombre(nomIns);
+                    p.setCategoria("Arma tu Batido");
+                    p.setPrecio(insumo.getPrecio() != null ? insumo.getPrecio() : 1000.0);
+                    p.setDescuento(insumo.getDescuento() != null ? insumo.getDescuento() : 0.0);
+                    p.setStock(insumo.getUnidadActual() != null ? (int) Math.round(insumo.getUnidadActual()) : 0);
+                    p.setSucursal(insumo.getSucursal() != null ? insumo.getSucursal() : "Antofagasta");
+                    p.setImagen(insumo.getImagen());
+                    p.setDescripcion("🌿 Ingrediente / Porción para Arma tu Batido (" + (insumo.getSubcategoria() != null ? insumo.getSubcategoria() : "General") + "). Conectado a Bodega.");
+                    productoRepository.save(p);
+                }
+            } catch (Exception ignored) {}
+        }
     }
 }
