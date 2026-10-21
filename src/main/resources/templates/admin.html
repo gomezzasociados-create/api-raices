@@ -1946,15 +1946,16 @@
 
             dataVentas.forEach(v => {
                 if (v.pais !== paisVenta || v.archivada) return;
-                let badgeEstado = v.estado === 'Pagado' ? `<span style="color:var(--p-bio-green); font-weight:900;"><i class="bi bi-shield-check"></i> PAGADO</span>` : `<span style="color:#ffdd00; font-weight:900;"><i class="bi bi-clock-history"></i> PENDIENTE</span>`;
-                let btnCobrar = v.estado !== 'Pagado' ? `<button class="btn btn-sm ms-1 border-0" style="background:var(--p-bio-green); color:#000;" onclick="cobrarVenta(${v.id})" title="Confirmar Pago y Descontar Bodega"><i class="bi bi-currency-dollar fw-bold"></i></button>` : '';
+                let badgeEstado = v.estado === 'Pagado' ? `<span style="color:var(--p-bio-green); font-weight:900;"><i class="bi bi-shield-check"></i> PAGADO</span>` : (v.estado === 'Cancelado' ? `<span class="text-danger fw-bold"><i class="bi bi-x-circle"></i> CANCELADO</span>` : `<span style="color:#ffdd00; font-weight:900;"><i class="bi bi-clock-history"></i> PENDIENTE</span>`);
+                let btnCobrar = v.estado !== 'Pagado' && v.estado !== 'Cancelado' ? `<button class="btn btn-sm ms-1 border-0" style="background:var(--p-bio-green); color:#000;" onclick="cobrarVenta(${v.id})" title="Confirmar Venta y Descontar Bodega (Vasos y Porciones)"><i class="bi bi-check-circle-fill fw-bold"></i></button>` : '';
+                let btnCancelar = v.estado !== 'Pagado' && v.estado !== 'Cancelado' ? `<button class="btn btn-sm btn-outline-danger ms-1 border-0" onclick="cancelarPedidoAdmin(${v.id})" title="Cancelar Pedido (NO descuenta stock de bodegas)"><i class="bi bi-x-circle-fill fs-5"></i></button>` : '';
 
                 tbVentas.innerHTML += `<tr>
                     <td class="text-white fw-bold">#OP-${v.id}</td>
                     <td>${v.origen}</td>
                     <td style="color:var(--p-cyan)">${v.medioPago || 'Por Definir'}</td>
                     <td class="text-money-green fw-bold">${formatMoney(v.total, v.pais)}</td>
-                    <td>${badgeEstado} <button class="btn btn-sm btn-outline-info ms-2 border-0" onclick="imprimirTicket(${v.id})" title="Imprimir Recibo"><i class="bi bi-printer fs-5"></i></button>${btnCobrar}</td>
+                    <td>${badgeEstado} <button class="btn btn-sm btn-outline-info ms-2 border-0" onclick="imprimirTicket(${v.id})" title="Imprimir Recibo"><i class="bi bi-printer fs-5"></i></button>${btnCobrar}${btnCancelar}</td>
                 </tr>`;
             });
 
@@ -1975,16 +1976,35 @@
     }
 
     async function cobrarVenta(id) {
-        if(confirm("¿Confirmas que el cliente ya pagó? (Esto descontará automáticamente los vasos y pulpas de la Bodega Botánica)")) {
+        if(confirm("¿Confirmar y cobrar venta? (Esto descontará de las bodegas las porciones de Arma tu Batido y los vasos de Packaging correspondientes)")) {
             playSound('cash');
             try {
                 const res = await fetch(`/api/ventas/${id}/pagar`, { method: 'PUT' });
                 if(res.ok) {
-                    alert("¡Pago confirmado! Inventario actualizado correctamente.");
+                    alert("¡Venta confirmada! Se han descontado los insumos y vasos de las bodegas correspondientes.");
+                    cargarTesoreria();
+                    cargarInsumos();
+                } else {
+                    const err = await res.text();
+                    alert("Error al confirmar venta: " + err);
+                }
+            } catch(e) {
+                alert("Fallo de conexión al núcleo.");
+            }
+        }
+    }
+
+    async function cancelarPedidoAdmin(id) {
+        if(confirm("¿Estás seguro de cancelar este pedido? (Al cancelarlo NO se descontará nada de las bodegas)")) {
+            playSound('error');
+            try {
+                const res = await fetch(`/api/ventas/${id}/cancelar`, { method: 'PUT' });
+                if(res.ok) {
+                    alert("Pedido cancelado exitosamente. No se descontó nada de las bodegas.");
                     cargarTesoreria();
                 } else {
                     const err = await res.text();
-                    alert("Error al confirmar pago: " + err);
+                    alert("Error al cancelar pedido: " + err);
                 }
             } catch(e) {
                 alert("Fallo de conexión al núcleo.");

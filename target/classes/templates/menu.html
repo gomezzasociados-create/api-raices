@@ -740,7 +740,7 @@
             }
         } catch(e) { console.error("Error al obtener datos de Bodega Arma tu Batido:", e); }
 
-        // 1. Cargar ingredientes de la Bodega Arma Tu Batido
+        // 1. Cargar EXCLUSIVAMENTE ingredientes de la Bodega Arma Tu Batido
         (insumosBase || []).forEach(ins => {
             if (!ins || !ins.nombre) return;
             const cat = normalizarStr(ins.categoria || '');
@@ -754,69 +754,11 @@
                     subcategoria: ins.subcategoria || obtenerSubcategoriaInsumo(ins),
                     categoria: ins.categoria,
                     precio: Math.round(precioPorc),
-                    unidadActual: (ins.unidadActual !== undefined && ins.unidadActual !== null) ? ins.unidadActual : 9999,
+                    unidadActual: (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0,
                     sizePorcion: porcionDosis,
                     medida: ins.medida || 'gr',
                     imagen: ins.imagen || ''
                 });
-            }
-        });
-
-        // 1.5. Cargar materias primas e insumos botánicos de Bodega (Pulpas, Shots, Caldos)
-        (insumosBase || []).forEach(ins => {
-            if (!ins || !ins.nombre) return;
-            const cat = normalizarStr(ins.categoria || '');
-            if (cat.includes('pulpa') || cat.includes('shot') || cat.includes('caldo')) {
-                const yaExiste = insumosArmado.some(i => normalizarStr(i.nombre) === normalizarStr(ins.nombre));
-                if (!yaExiste) {
-                    const porcionDosis = (ins.cantidadPorcion && ins.cantidadPorcion > 0) ? ins.cantidadPorcion : (ins.medida === 'und' ? 1 : 30);
-                    let stockTotal = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
-                    let porcionesDisponibles = (ins.medida === 'und') ? Math.floor(stockTotal) : Math.floor(stockTotal / porcionDosis);
-                    if (porcionesDisponibles < 0) porcionesDisponibles = 0;
-
-                    let precioPorc = 1000;
-                    if (ins.precio && ins.precio > 0) {
-                        if (ins.precio <= 2000) {
-                            precioPorc = Number(ins.precio);
-                        } else {
-                            precioPorc = Math.max(500, Math.round((Number(ins.precio) / 1000) * porcionDosis));
-                        }
-                    }
-
-                    insumosArmado.push({
-                        idInsumo: ins.idInsumo || ins.id,
-                        nombre: ins.nombre,
-                        subcategoria: ins.subcategoria || obtenerSubcategoriaInsumo(ins),
-                        categoria: ins.categoria,
-                        precio: Math.round(precioPorc),
-                        unidadActual: porcionesDisponibles,
-                        sizePorcion: porcionDosis,
-                        medida: ins.medida || 'gr',
-                        imagen: ins.imagen || ''
-                    });
-                }
-            }
-        });
-
-        // 2. Soporte integrado: Productos de Matriz Total con categoría 'Arma tu Batido'
-        (productosRaw || []).forEach(p => {
-            if (!p || !p.nombre) return;
-            const cat = normalizarStr(p.categoria || '');
-            if (cat.includes('arma tu batido') || cat.includes('batido')) {
-                const yaExiste = insumosArmado.some(i => normalizarStr(i.nombre) === normalizarStr(p.nombre));
-                if (!yaExiste) {
-                    insumosArmado.push({
-                        idInsumo: 'prod_' + p.id,
-                        nombre: p.nombre,
-                        subcategoria: obtenerSubcategoriaInsumo(p),
-                        categoria: 'Arma tu Batido',
-                        precio: Math.round(Number(p.precio) || 1000),
-                        unidadActual: (p.stock !== undefined && p.stock !== null) ? p.stock : 9999,
-                        sizePorcion: 1,
-                        medida: 'und',
-                        imagen: p.imagen || ''
-                    });
-                }
             }
         });
 
@@ -825,7 +767,7 @@
                 <div class="col-12 text-center text-white-50 py-5 font-orbitron">
                     <i class="bi bi-info-circle fs-1 text-warning d-block mb-3"></i>
                     <h4 class="text-warning mb-2">SIN PORCIONES EN BODEGA ARMA TU BATIDO</h4>
-                    <p class="fs-6 font-rajdhani text-white-50 max-w-600 mx-auto">Aún no hay porciones registradas en la <b>Bodega Arma Tu Batido</b> para el NODO ${nodo.toUpperCase()}. Puedes agregarlas desde el Administrador en la pestaña Bodega o Matriz Total.</p>
+                    <p class="fs-6 font-rajdhani text-white-50 max-w-600 mx-auto">Aún no hay porciones registradas en la <b>Bodega Arma Tu Batido</b> para el NODO ${nodo.toUpperCase()}. Puedes agregarlas desde el Administrador en la pestaña Bodega -> Bodega de Porciones.</p>
                 </div>`;
             return;
         }
@@ -1056,7 +998,7 @@
             let cant = porcionesArmado[id];
             if (cant > 0 && insumosInfoMap[id]) {
                 let info = insumosInfoMap[id];
-                let gastoReal = cant * (info.sizePorcion || 1);
+                let gastoReal = cant; // Cantidad exacta de porciones a descontar de Bodega Arma tu Batido
                 lista.push(`${cant}x ${info.nombre}`);
                 lineasReceta.push(`${info.nombre}:${gastoReal}`);
                 total += (cant * info.precio);
@@ -1070,7 +1012,8 @@
 
         let itemCustom = {
             id: 'custom_' + Date.now(),
-            nombre: 'Batido Armado: ' + lista.join(', '),
+            nombre: 'Batido Armado 500cc: ' + lista.join(', '),
+            categoria: 'Arma tu Batido',
             precio: total,
             recetaDetalle: lineasReceta.join('\n'),
             esCustom: true

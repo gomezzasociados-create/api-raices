@@ -2,9 +2,11 @@ package com.gomezsystems.minierp.service;
 
 import com.gomezsystems.minierp.model.Insumo;
 import com.gomezsystems.minierp.model.MovimientoKardex;
+import com.gomezsystems.minierp.model.Producto;
 import com.gomezsystems.minierp.model.Receta;
 import com.gomezsystems.minierp.repository.InsumoRepository;
 import com.gomezsystems.minierp.repository.KardexRepository;
+import com.gomezsystems.minierp.repository.ProductoRepository;
 import com.gomezsystems.minierp.repository.RecetaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,62 +29,114 @@ public class InventarioService {
     private KardexRepository kardexRepository;
 
     @Autowired
-    private com.gomezsystems.minierp.repository.ProductoRepository productoRepository;
+    private ProductoRepository productoRepository;
 
     @Transactional
     public void procesarVenta(Long idProductoVendido, int cantidadVendida, String actorCausa) {
 
+        Optional<Producto> prodOpt = productoRepository.findById(idProductoVendido);
+        if (!prodOpt.isPresent()) {
+            System.out.println("Aviso: El producto con ID " + idProductoVendido + " no existe.");
+            return;
+        }
+
+        Producto producto = prodOpt.get();
+        String catProd = producto.getCategoria() != null ? producto.getCategoria().toLowerCase() : "";
+        String nomProd = producto.getNombre() != null ? producto.getNombre().toLowerCase() : "";
+        boolean esBatido500 = catProd.contains("arma tu batido") || catProd.contains("batido") || catProd.contains("500") || nomProd.contains("batido") || nomProd.contains("500");
+        boolean esArmaTuBatido = catProd.contains("arma tu batido") || nomProd.contains("arma tu batido") || nomProd.contains("batido armado");
+
+        List<Insumo> insumosSucursal = insumoRepository.findBySucursal(producto.getSucursal());
+        if (insumosSucursal == null || insumosSucursal.isEmpty()) {
+            insumosSucursal = insumoRepository.findAll();
+        }
+
+        // 1. PROCESAR INGREDIENTES / RECETA
         List<Receta> ingredientes = recetaRepository.findByIdProducto(idProductoVendido);
 
         if (ingredientes.isEmpty()) {
-            // FALLBACK: Intentar leer desde recetaDetalle del Producto
-            Optional<com.gomezsystems.minierp.model.Producto> prodOpt = productoRepository.findById(idProductoVendido);
-            
-            if (prodOpt.isPresent()) {
-                com.gomezsystems.minierp.model.Producto producto = prodOpt.get();
-                if (producto.getRecetaDetalle() != null && !producto.getRecetaDetalle().trim().isEmpty()) {
-                    String[] lineas = producto.getRecetaDetalle().split("\\n");
-                    List<Insumo> insumosSucursal = insumoRepository.findBySucursal(producto.getSucursal());
-                    if (insumosSucursal == null || insumosSucursal.isEmpty()) {
-                        insumosSucursal = insumoRepository.findAll();
-                    }
+            // Lectura desde recetaDetalle del Producto (Arma tu Batido o productos dinámicos)
+            if (producto.getRecetaDetalle() != null && !producto.getRecetaDetalle().trim().isEmpty()) {
+                String[] lineas = producto.getRecetaDetalle().split("\\n");
+                
+                for (String linea : lineas) {
+                    String[] partes = linea.split(":");
+                    if (partes.length < 2) continue;
                     
-                    for (String linea : lineas) {
-                        String[] partes = linea.split(":");
-                        if (partes.length < 2) continue;
-                        
-                        String nombreLimpio = partes[0].trim().toLowerCase();
-                        double gasto = 0;
-                        try { 
-                            String cantClean = partes[1].replaceAll("[^0-9.]", "").trim();
-                            gasto = Double.parseDouble(cantClean); 
-                        } catch(Exception e) { 
-                            continue; 
-                        }
-                        
-                        for (Insumo ins : insumosSucursal) {
+                    String nombreLimpio = partes[0].trim().toLowerCase();
+                    double gasto = 0;
+                    try { 
+                        String cantClean = partes[1].replaceAll("[^0-9.]", "").trim();
+                        gasto = Double.parseDouble(cantClean); 
+                    } catch(Exception e) { 
+                        continue; 
+                    }
+                    if (gasto <= 0) continue;
+                    
+                    Insumo insumoMatch = null;
+                    // REGLA SAGRADA: Para "Arma tu Batido", buscar en la bodega de Arma tu Batido / Porciones
+                    for (Insumo ins : insumosSucursal) {
+                        String catIns = ins.getCategoria() != null ? ins.getCategoria().toLowerCase() : "";
+                        if (catIns.contains("arma tu batido") || catIns.contains("porciones")) {
                             String insNombre = ins.getNombre().toLowerCase().trim();
                             if (insNombre.equals(nombreLimpio) || insNombre.contains(nombreLimpio) || nombreLimpio.contains(insNombre)) {
-                                descontarInsumo(ins, gasto * cantidadVendida, actorCausa);
+                                insumoMatch = ins;
                                 break;
                             }
                         }
                     }
-                } else {
-                    System.out.println("Aviso: El producto con ID " + idProductoVendido + " no tiene receta registrada en detalle.");
+
+                    // Si no es Arma tu Batido y no se encontró, buscar en otras categorías que NO sean Pulpas
+                    // (Las pulpas se descuentan únicamente al ingresar producción en Génesis Producción)
+                    if (insumoMatch == null && !esArmaTuBatido) {
+                        for (Insumo ins : insumosSucursal) {
+                            String catIns = ins.getCategoria() != null ? ins.getCategoria().toLowerCase() : "";
+                            if (!catIns.contains("pulpa")) {
+                                String insNombre = ins.getNombre().toLowerCase().trim();
+                                if (insNombre.equals(nombreLimpio) || insNombre.contains(nombreLimpio) || nombreLimpio.contains(insNombre)) {
+                                    insumoMatch = ins;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (insumoMatch != null) {
+                        descontarInsumo(insumoMatch, gasto * cantidadVendida, actorCausa);
+                    } else {
+                        System.out.println("Aviso Venta: No se encontró insumo en bodega para '" + nombreLimpio + "' (No se descuenta de pulpas).");
+                    }
                 }
-            } else {
-                System.out.println("Aviso: El producto con ID " + idProductoVendido + " no existe.");
             }
-            return;
+        } else {
+            // Recetas pre-configuradas (excluyendo bodega de pulpas)
+            for (Receta receta : ingredientes) {
+                Optional<Insumo> insumoOpt = insumoRepository.findById(receta.getIdInsumo());
+                if (insumoOpt.isPresent()) {
+                    Insumo ins = insumoOpt.get();
+                    String catIns = ins.getCategoria() != null ? ins.getCategoria().toLowerCase() : "";
+                    if (!catIns.contains("pulpa")) {
+                        descontarInsumo(ins, receta.getCantidadNecesaria() * cantidadVendida, actorCausa);
+                    }
+                }
+            }
         }
 
-        for (Receta receta : ingredientes) {
-            Optional<Insumo> insumoOpt = insumoRepository.findById(receta.getIdInsumo());
-            if (insumoOpt.isPresent()) {
-                descontarInsumo(insumoOpt.get(), receta.getCantidadNecesaria() * cantidadVendida, actorCausa);
-            } else {
-                System.out.println("Error: No se encontró el insumo con ID " + receta.getIdInsumo());
+        // 2. DESCUENTO AUTOMÁTICO DE PACKAGING / VASOS AL VENDER UN BATIDO DE 500
+        if (esBatido500) {
+            for (Insumo ins : insumosSucursal) {
+                String catIns = ins.getCategoria() != null ? ins.getCategoria().toLowerCase() : "";
+                String subcatIns = ins.getSubcategoria() != null ? ins.getSubcategoria().toLowerCase() : "";
+                String nomIns = ins.getNombre() != null ? ins.getNombre().toLowerCase() : "";
+
+                boolean esPackaging = catIns.contains("vaso") || catIns.contains("packaging") || subcatIns.contains("packaging");
+                if (esPackaging) {
+                    if (nomIns.contains("vaso")) {
+                        descontarInsumo(ins, 1.0 * cantidadVendida, "Bodega Vasos (Batido 500cc): " + actorCausa);
+                    } else if (nomIns.contains("tapa")) {
+                        descontarInsumo(ins, 1.0 * cantidadVendida, "Bodega Tapas (Batido 500cc): " + actorCausa);
+                    }
+                }
             }
         }
     }

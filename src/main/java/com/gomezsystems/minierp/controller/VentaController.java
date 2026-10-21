@@ -82,10 +82,10 @@ public class VentaController {
                     }
                 }
 
-                // Si es un batido personalizado de "Arma tu Batido" sin ID existente o con receta personalizada
+                // Si es un batido personalizado de "Arma tu Batido" sin ID numérico existente en catálogo o con receta personalizada
                 if (prodReal == null) {
                     prodReal = new Producto();
-                    String nombreBatido = itemReq.get("nombre") != null ? itemReq.get("nombre").toString() : "Batido Personalizado";
+                    String nombreBatido = itemReq.get("nombre") != null ? itemReq.get("nombre").toString() : "Batido Personalizado 500cc";
                     prodReal.setNombre(nombreBatido);
                     prodReal.setCategoria("Arma tu Batido");
                     prodReal.setPrecio(pPrecio);
@@ -118,6 +118,7 @@ public class VentaController {
         }
 
         v.setTotal(sumTotal);
+        // IMPORTANTE: Se guarda en estado 'Pendiente'. NO se descuenta inventario hasta la confirmación de la venta.
         return ventaRepository.save(v);
     }
 
@@ -127,12 +128,14 @@ public class VentaController {
         Optional<Venta> ventaOpt = ventaRepository.findById(id);
         if (ventaOpt.isPresent()) {
             Venta v = ventaOpt.get();
-            if (!"Pagado".equals(v.getEstado())) {
+            if (!"Pagado".equalsIgnoreCase(v.getEstado())) {
                 v.setEstado("Pagado");
                 
+                // REGLA SAGRADA: Solo al confirmar la venta se descuentan las porciones de Arma tu Batido y los vasos
                 if (v.getDetalles() != null) {
                     for (DetalleVenta dv : v.getDetalles()) {
                         Producto prodReal = dv.getProducto();
+                        if (prodReal == null) continue;
                         
                         // Si es un pack, se reduce el stock base (1 * cantidad vendida)
                         if (prodReal.getCategoria() != null && prodReal.getCategoria().toLowerCase().contains("pack")) {
@@ -140,21 +143,47 @@ public class VentaController {
                             prodReal.setStock(stockActual - dv.getCantidad());
                             productoRepository.save(prodReal);
                         } else {
-                            // Para recetas, usamos el inventarioService que delega el inventario al RECETA repository 
-                            inventarioService.procesarVenta(prodReal.getId(), dv.getCantidad(), "Venta POS: " + v.getOrigen());
+                            // Para batidos y productos con receta:
+                            // InventarioService descuenta porciones de Bodega Arma tu Batido y vasos de Bodega Vasos
+                            inventarioService.procesarVenta(prodReal.getId(), dv.getCantidad(), "Venta Confirmada #" + v.getId() + " (" + v.getOrigen() + ")");
                         }
                     }
                 }
                 
                 ventaRepository.save(v);
-                return ResponseEntity.ok("Venta cobrada e inventario local actualizado.");
+                return ResponseEntity.ok("Venta confirmada exitosamente. Se descontaron los insumos correspondientes de las bodegas.");
             } else { 
-                return ResponseEntity.badRequest().body("Venta ya pagada."); 
+                return ResponseEntity.badRequest().body("Venta ya confirmada y pagada previamente."); 
             }
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Venta no encontrada");
     }
 
+    @PutMapping("/{id}/cancelar")
+    @Transactional
+    public ResponseEntity<String> cancelarVenta(@PathVariable Long id) {
+        Optional<Venta> ventaOpt = ventaRepository.findById(id);
+        if (ventaOpt.isPresent()) {
+            Venta v = ventaOpt.get();
+            if ("Pagado".equalsIgnoreCase(v.getEstado())) {
+                return ResponseEntity.badRequest().body("No se puede cancelar una venta que ya fue pagada y descontada de inventario.");
+            }
+            v.setEstado("Cancelado");
+            v.setArchivada(true);
+            ventaRepository.save(v);
+            return ResponseEntity.ok("Pedido cancelado exitosamente. No se descontó inventario de las bodegas.");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Venta no encontrada");
+    }
+
     @DeleteMapping("/{id}")
-    public void eliminarVenta(@PathVariable Long id) { ventaRepository.deleteById(id); }
+    @Transactional
+    public ResponseEntity<String> eliminarVenta(@PathVariable Long id) {
+        Optional<Venta> ventaOpt = ventaRepository.findById(id);
+        if (ventaOpt.isPresent()) {
+            ventaRepository.deleteById(id);
+            return ResponseEntity.ok("Venta eliminada del sistema.");
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Venta no encontrada");
+    }
 }
