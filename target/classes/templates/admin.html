@@ -212,6 +212,76 @@
             100% { transform: scale(1); }
         }
 
+        /* ESTILOS CATÁLOGO EN TARJETAS ACORDEÓN */
+        .catalogo-acordeon-item {
+            background: rgba(0, 7, 16, 0.92) !important;
+            border: 1px solid rgba(0, 229, 255, 0.25) !important;
+            border-radius: 12px !important;
+            margin-bottom: 14px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
+            transition: all 0.3s ease;
+        }
+        .catalogo-acordeon-item:hover {
+            border-color: var(--p-cyan) !important;
+            box-shadow: 0 8px 30px rgba(0, 229, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        .catalogo-acordeon-item .accordion-button {
+            background: linear-gradient(90deg, rgba(1, 16, 32, 0.95), rgba(0, 6, 14, 0.95)) !important;
+            color: #fff !important;
+            padding: 14px 18px;
+            box-shadow: none !important;
+            border: none !important;
+        }
+        .catalogo-acordeon-item .accordion-button:not(.collapsed) {
+            background: linear-gradient(90deg, rgba(255, 0, 234, 0.12), rgba(0, 229, 255, 0.08)) !important;
+            border-bottom: 1px solid rgba(255, 0, 234, 0.4) !important;
+            color: #fff !important;
+        }
+        .catalogo-acordeon-item .accordion-button::after {
+            filter: invert(1) drop-shadow(0 0 5px var(--p-cyan));
+            transition: transform 0.3s ease;
+        }
+        .catalogo-acordeon-item .accordion-body {
+            background: rgba(0, 3, 8, 0.98) !important;
+            border-top: 1px solid rgba(0, 229, 255, 0.2);
+            padding: 24px;
+        }
+        .badge-dto-pill {
+            background: linear-gradient(135deg, #ff0055, #ff5500);
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'Orbitron';
+            font-size: 0.8rem;
+            font-weight: 900;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+        }
+        .categoria-filtro-btn {
+            background: rgba(0, 15, 30, 0.8);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-family: 'Orbitron';
+            font-size: 0.8rem;
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+        .categoria-filtro-btn:hover {
+            border-color: var(--p-cyan);
+            color: #fff;
+            background: rgba(0, 229, 255, 0.15);
+        }
+        .categoria-filtro-btn.active {
+            background: rgba(255, 0, 234, 0.25);
+            border-color: var(--p-magenta);
+            color: #fff;
+            box-shadow: var(--magenta-glow);
+            font-weight: 700;
+        }
+
         @media print {
             body { background: #fff !important; color: #000 !important; }
             body * { visibility: hidden; }
@@ -946,7 +1016,46 @@
                     </div>
                 </div>
 
-                <div class="table-container p-0 border-0 bg-transparent box-shadow-none">
+                <!-- BARRA DE HERRAMIENTAS Y FILTRADO DEL CATÁLOGO -->
+                <div class="table-container mb-3 p-3" style="border: 1px solid rgba(0, 229, 255, 0.3);">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-lg-5 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark text-info border-info"><i class="bi bi-search"></i></span>
+                                <input type="text" id="filtro-busqueda-matriz" class="form-control" placeholder="Buscar por nombre, categoría o descripción..." oninput="filtrarCatalogoAcordeon()">
+                                <button class="btn btn-outline-secondary text-white-50" type="button" onclick="document.getElementById('filtro-busqueda-matriz').value=''; filtrarCatalogoAcordeon();" title="Limpiar"><i class="bi bi-x-lg"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 col-md-6 d-flex justify-content-md-end align-items-center gap-2 flex-wrap">
+                            <span class="text-white-50 small font-orbitron d-none d-xl-inline">FILTRAR:</span>
+                            <button type="button" class="categoria-filtro-btn active" data-cat="TODAS" onclick="filtrarCategoriaAcordeon('TODAS', this)">TODOS</button>
+                            <button type="button" class="categoria-filtro-btn" data-cat="500 mls" onclick="filtrarCategoriaAcordeon('500 mls', this)">ELÍXIRES</button>
+                            <button type="button" class="categoria-filtro-btn" data-cat="Packs" onclick="filtrarCategoriaAcordeon('Packs', this)">PACKS</button>
+                            <button type="button" class="categoria-filtro-btn" data-cat="Shots" onclick="filtrarCategoriaAcordeon('Shots', this)">SHOTS</button>
+                            <button type="button" class="categoria-filtro-btn" data-cat="Arma tu Batido" onclick="filtrarCategoriaAcordeon('Arma tu Batido', this)">ARMA TU BATIDO</button>
+                            
+                            <div class="btn-group ms-1">
+                                <button type="button" class="btn btn-sm btn-outline-info" onclick="expandirTodosAcordeon()" title="Expandir Todos"><i class="bi bi-arrows-expand"></i></button>
+                                <button type="button" class="btn btn-sm btn-outline-info" onclick="colapsarTodosAcordeon()" title="Colapsar Todos"><i class="bi bi-arrows-collapse"></i></button>
+                            </div>
+
+                            <div class="btn-group ms-1" role="group">
+                                <button type="button" class="btn btn-sm btn-bio active" id="btn-vista-acordeon" onclick="cambiarVistaCatalogo('acordeon')" title="Vista Tarjetas Acordeón"><i class="bi bi-grid-fill me-1"></i> TARJETAS</button>
+                                <button type="button" class="btn btn-sm btn-outline-info" id="btn-vista-tabla" onclick="cambiarVistaCatalogo('tabla')" title="Vista Tabla Clásica"><i class="bi bi-table me-1"></i> TABLA</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top border-secondary flex-wrap gap-2">
+                        <small class="text-white-50 font-orbitron" id="contador-catalogo-matriz">CARGANDO ELÍXIRES...</small>
+                        <small class="text-info font-orbitron"><i class="bi bi-info-circle me-1"></i> Haz clic en cualquier tarjeta para desplegar el editor a detalle</small>
+                    </div>
+                </div>
+
+                <!-- CONTENEDOR 1: CATÁLOGO EN TARJETAS ACORDEÓN (VISTA PRINCIPAL) -->
+                <div id="contenedor-catalogo-acordeon" class="accordion mb-4"></div>
+
+                <!-- CONTENEDOR 2: VISTA TABLA CLÁSICA (TOGGLEABLE) -->
+                <div id="contenedor-catalogo-tabla" class="table-container p-0 border-0 bg-transparent box-shadow-none" style="display: none;">
                     <div class="table-responsive">
                         <table class="table text-center align-middle m-0" style="min-width: 1100px;">
                             <thead class="table-dark">
@@ -2698,7 +2807,9 @@
         } catch(e) {} 
     }
 
-    // --- CATÁLOGO ---
+    // --- CATÁLOGO EN TARJETAS ACORDEÓN ---
+    let categoriaFiltroMatriz = 'TODAS';
+
     async function cargarCatalogo() {
         const suc = document.getElementById('filtro-sucursal-catalogo').value;
         const esSupremo = (rolUsuario === 'SUPREMO');
@@ -2707,10 +2818,31 @@
             const res = await fetch('/api/productos/sucursal/' + suc);
             let data = await res.json();
             data = deduplicarProductos(data);
-            const tb = document.getElementById('tabla-catalogo'); tb.innerHTML='';
 
-            data.forEach(p => {
-                const imgTag = p.imagen ? `<img src="${p.imagen}" class="img-preview" id="img-display-${p.id}">` : `<i class="bi bi-file-image fs-1 text-muted" id="img-display-${p.id}"></i>`;
+            const acordeonCont = document.getElementById('contenedor-catalogo-acordeon');
+            const tb = document.getElementById('tabla-catalogo');
+            if (acordeonCont) acordeonCont.innerHTML = '';
+            if (tb) tb.innerHTML = '';
+
+            if (!data || data.length === 0) {
+                if (acordeonCont) {
+                    acordeonCont.innerHTML = `
+                        <div class="p-5 text-center text-white-50 font-orbitron border border-info rounded" style="background: rgba(0,0,0,0.6);">
+                            <i class="bi bi-inbox fs-1 d-block mb-3 text-info"></i>
+                            NO HAY PRODUCTOS EN LA MATRIZ PARA ESTA SUCURSAL.<br>
+                            <small class="text-white-50">Registra un nuevo producto arriba o inyecta un archivo CSV.</small>
+                        </div>`;
+                }
+                const contador = document.getElementById('contador-catalogo-matriz');
+                if (contador) contador.innerText = '0 ELÍXIRES REGISTRADOS';
+                return;
+            }
+
+            data.forEach((p, idx) => {
+                const precioNorm = normalizarPrecioCLP(p.precio || 0);
+                const dtoVal = (p.descuento && p.descuento > 0) ? Math.min(Math.round(p.descuento), 100) : 0;
+                const precioFinal = dtoVal > 0 ? Math.round(precioNorm * (1 - dtoVal / 100)) : precioNorm;
+                const imgUrl = p.imagen && p.imagen.trim() !== '' ? p.imagen : 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
 
                 const attrReadonly = esSupremo ? '' : 'readonly';
                 const classInput = esSupremo ? 'input-matriz' : 'input-matriz border-0 text-white-50 pointer-events-none';
@@ -2727,43 +2859,315 @@
                     optionsCat += `<option value="${catActual}" selected>${catActual}</option>`;
                 }
 
-                const colComandos = esSupremo ? `
-                    <button class="btn btn-bio px-3 py-2 me-1 mb-1" onclick="actualizarProducto(${p.id})" title="Sobreescribir Matriz"><i class="bi bi-cloud-check-fill fs-5"></i></button>
-                    <button class="btn btn-outline-danger px-3 py-2 border-0 mb-1" onclick="eliminarProducto(${p.id})" title="Purgar"><i class="bi bi-trash3-fill fs-5"></i></button>
-                ` : `<span class="badge bg-dark border border-danger text-danger p-2 font-orbitron"><i class="bi bi-lock-fill"></i> DENEGADO</span>`;
-
-                tb.innerHTML += `<tr id="fila-prod-${p.id}">
-                    <td class="align-middle text-center">${imgTag}</td>
-                    <td class="align-middle">
-                        <input type="text" id="img-prod-${p.id}" value="${p.imagen || ''}" class="${classInput} w-100 text-info" style="font-size: 0.85rem; max-width: 150px;" placeholder="https://..." ${attrReadonly}>
-                    </td>
-                    <td class="align-middle">
-                        <input type="text" id="nombre-prod-${p.id}" value="${p.nombre}" class="${classInput} w-100 fw-bold fs-5 text-center" ${attrReadonly}>
-                    </td>
-                    <td class="align-middle">
-                        <select id="cat-prod-${p.id}" class="form-select bg-dark text-warning border-warning fw-bold fs-6 text-center" ${esSupremo ? '' : 'disabled'}>
-                            ${optionsCat}
-                        </select>
-                    </td>
-                    <td class="align-middle">
-                        <textarea id="desc-prod-${p.id}" class="${classInput} w-100" style="font-size: 0.9rem; min-width: 250px; height: 65px;" placeholder="Escribe la biología del producto aquí..." ${attrReadonly}>${p.descripcion || ''}</textarea>
-                    </td>
-                    <td class="align-middle text-white">${p.sucursal}</td>
-                    <td class="align-middle">
-                        <input type="number" id="precio-prod-${p.id}" value="${normalizarPrecioCLP(p.precio || 0)}" class="${classPrecio} text-center fw-bold fs-4" style="max-width:120px;" ${attrReadonly}>
-                    </td>
-                    <td class="align-middle">
-                        <div class="d-flex align-items-center justify-content-center">
-                            <input type="number" id="desc-prod-${p.id}" value="${p.descuento || 0}" min="0" max="100" class="${classInput} text-center text-info fw-bold fs-5" style="max-width:70px;" ${attrReadonly} onchange="actualizarProducto(${p.id})">
-                            <span class="text-info fw-bold ms-1">%</span>
+                // 1. RENDERIZAR EN TARJETA ACORDEÓN (VISTA PRINCIPAL DETALLADA)
+                if (acordeonCont) {
+                    const precioHeaderHtml = dtoVal > 0 ? `
+                        <div class="text-end">
+                            <s class="text-white-50 d-block small font-orbitron" id="header-precio-orig-${p.id}">$${precioNorm.toLocaleString('es-CL')}</s>
+                            <span class="text-money-green fw-bold fs-4 font-orbitron" id="header-precio-final-${p.id}">$${precioFinal.toLocaleString('es-CL')}</span>
                         </div>
-                    </td>
-                    <td class="align-middle">
-                        ${colComandos}
-                    </td>
-                </tr>`;
+                        <span class="badge-dto-pill" id="header-badge-dto-${p.id}">-${dtoVal}% OFF</span>
+                    ` : `
+                        <span class="text-money-green fw-bold fs-4 font-orbitron" id="header-precio-final-${p.id}">$${precioNorm.toLocaleString('es-CL')}</span>
+                    `;
+
+                    acordeonCont.innerHTML += `
+                        <div class="accordion-item catalogo-acordeon-item" id="item-prod-${p.id}" data-id="${p.id}" data-categoria="${catActual}" data-nombre="${(p.nombre || '').toLowerCase()}">
+                            <div class="accordion-header" id="heading-${p.id}">
+                                <div class="accordion-button collapsed d-flex justify-content-between align-items-center py-2 px-3"
+                                     data-bs-toggle="collapse"
+                                     data-bs-target="#collapse-${p.id}"
+                                     aria-expanded="false"
+                                     aria-controls="collapse-${p.id}"
+                                     style="cursor: pointer;">
+                                    
+                                    <!-- IZQUIERDA: FOTO MINIATURA Y DATOS PRINCIPALES -->
+                                    <div class="d-flex align-items-center gap-3 flex-grow-1 overflow-hidden me-2">
+                                        <img src="${imgUrl}" 
+                                             class="rounded-3 border border-info flex-shrink-0" 
+                                             id="thumb-header-${p.id}" 
+                                             style="width: 52px; height: 52px; object-fit: cover;"
+                                             onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">
+                                        <div class="overflow-hidden">
+                                            <div class="fw-bold font-orbitron fs-5 text-white text-truncate" id="header-nombre-${p.id}">
+                                                ${p.nombre}
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
+                                                <span class="badge badge-categoria" id="header-cat-${p.id}">${catActual}</span>
+                                                <span class="badge bg-dark border border-cyan text-info" style="font-size:0.75rem;"><i class="bi bi-geo-alt me-1"></i>${p.sucursal || 'Antofagasta'}</span>
+                                                <span class="badge bg-dark border border-success text-success" style="font-size:0.75rem;" id="header-stock-${p.id}"><i class="bi bi-box-seam me-1"></i>Stock: ${p.stock || 0}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- CENTRO/DERECHA: PRECIOS Y DESCUENTO -->
+                                    <div class="d-flex align-items-center gap-3 me-3 flex-shrink-0" id="header-precio-box-${p.id}">
+                                        ${precioHeaderHtml}
+                                    </div>
+
+                                    <!-- INDICADOR EXPANDIR / EDITAR -->
+                                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                        <span class="btn btn-sm btn-outline-info border-0 d-none d-sm-inline font-orbitron" style="font-size:0.8rem;">
+                                            <i class="bi bi-sliders me-1"></i> EDITAR
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CUERPO ACORDEÓN: EDITOR TOTALMENTE A DETALLE -->
+                            <div id="collapse-${p.id}" class="accordion-collapse collapse" aria-labelledby="heading-${p.id}">
+                                <div class="accordion-body">
+                                    <div class="row g-3">
+                                        <!-- COLUMNA 1: IMAGEN Y PREVIEW -->
+                                        <div class="col-lg-3 col-md-4 text-center">
+                                            <label class="form-label-neon small mb-1"><i class="bi bi-image me-1"></i> VISTA PREVIA IMAGEN</label>
+                                            <div class="p-2 border border-info rounded mb-2 d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.8); min-height: 180px;">
+                                                <img src="${imgUrl}" id="preview-img-${p.id}" class="img-fluid rounded" style="max-height: 170px; object-fit: contain;" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">
+                                            </div>
+                                            <label class="form-label-neon small mb-1">URL de la Imagen</label>
+                                            <input type="text" id="img-prod-${p.id}" value="${p.imagen || ''}" class="form-control form-control-sm text-info bg-dark" placeholder="https://..." oninput="actualizarPreviewImg(${p.id})" ${attrReadonly}>
+                                        </div>
+
+                                        <!-- COLUMNA 2: DATOS COMERCIALES & PARAMETROS -->
+                                        <div class="col-lg-5 col-md-8">
+                                            <div class="row g-2">
+                                                <div class="col-12">
+                                                    <label class="form-label-neon"><i class="bi bi-tag me-1"></i> Nombre del Producto / Elíxir</label>
+                                                    <input type="text" id="nombre-prod-${p.id}" value="${p.nombre}" class="form-control fw-bold fs-5 text-white bg-dark" ${attrReadonly}>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label-neon">Categoría</label>
+                                                    <select id="cat-prod-${p.id}" class="form-select bg-dark text-warning border-warning fw-bold" ${esSupremo ? '' : 'disabled'}>
+                                                        ${optionsCat}
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label-neon">Nodo / Sucursal</label>
+                                                    <input type="text" id="sucursal-prod-${p.id}" value="${p.sucursal || 'Antofagasta'}" class="form-control bg-dark text-white fw-bold" ${attrReadonly}>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label-neon text-warning">Precio Base ($ CLP)</label>
+                                                    <input type="number" id="precio-prod-${p.id}" value="${precioNorm}" class="form-control text-warning fw-bold fs-5 bg-dark" oninput="calcularPrecioFinalAcordeon(${p.id})" ${attrReadonly}>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label-neon text-info">% Descuento Web</label>
+                                                    <div class="input-group">
+                                                        <input type="number" id="desc-prod-${p.id}" value="${p.descuento || 0}" min="0" max="100" class="form-control text-info fw-bold fs-5 bg-dark" oninput="calcularPrecioFinalAcordeon(${p.id})" ${attrReadonly}>
+                                                        <span class="input-group-text bg-dark text-info border-info">%</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label-neon text-success">Stock en Bodega</label>
+                                                    <input type="number" id="stock-prod-${p.id}" value="${p.stock || 0}" class="form-control text-success fw-bold fs-5 bg-dark" ${attrReadonly}>
+                                                </div>
+                                                <div class="col-12 mt-2">
+                                                    <div class="p-3 rounded border border-warning-subtle" style="background: rgba(255, 215, 0, 0.04);">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span class="text-white-50 font-orbitron small">VENTA EN CATÁLOGO VIRTUAL:</span>
+                                                            <span id="resumen-precio-${p.id}" class="fw-bold font-orbitron fs-5 text-money-green">
+                                                                $${precioFinal.toLocaleString('es-CL')} CLP
+                                                                ${dtoVal > 0 ? `<small class="text-danger ms-2">(-${dtoVal}% OFF)</small>` : ''}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- COLUMNA 3: DESCRIPCIÓN & ACCIONES -->
+                                        <div class="col-lg-4 col-md-12 d-flex flex-column justify-content-between">
+                                            <div>
+                                                <label class="form-label-neon"><i class="bi bi-file-text me-1"></i> Biología / Descripción & Propiedades</label>
+                                                <textarea id="desc-prod-${p.id}" class="form-control bg-dark text-white" rows="6" placeholder="Escribe la composición, beneficios para la salud e instrucciones..." ${attrReadonly}>${p.descripcion || ''}</textarea>
+                                            </div>
+
+                                            <div class="d-flex gap-2 mt-3 pt-2 border-top border-secondary">
+                                                ${esSupremo ? `
+                                                    <button class="btn btn-bio flex-grow-1 py-2 fw-bold" onclick="actualizarProducto(${p.id})" id="btn-save-${p.id}">
+                                                        <i class="bi bi-cloud-check-fill me-1"></i> GUARDAR CAMBIOS
+                                                    </button>
+                                                    <button class="btn btn-outline-danger px-3 py-2" onclick="eliminarProducto(${p.id})" title="Purgar Producto">
+                                                        <i class="bi bi-trash3-fill fs-5"></i>
+                                                    </button>
+                                                ` : `
+                                                    <span class="badge bg-dark border border-danger text-danger p-2 font-orbitron w-100 text-center"><i class="bi bi-lock-fill"></i> MODO LECTURA</span>
+                                                `}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 2. RENDERIZAR EN TABLA CLÁSICA (COMPATIBILIDAD VISTA ALTERNATIVA)
+                if (tb) {
+                    const imgTag = p.imagen ? `<img src="${p.imagen}" class="img-preview" id="img-display-${p.id}">` : `<i class="bi bi-file-image fs-1 text-muted" id="img-display-${p.id}"></i>`;
+                    const colComandos = esSupremo ? `
+                        <button class="btn btn-bio px-3 py-2 me-1 mb-1" onclick="actualizarProducto(${p.id})" title="Sobreescribir Matriz"><i class="bi bi-cloud-check-fill fs-5"></i></button>
+                        <button class="btn btn-outline-danger px-3 py-2 border-0 mb-1" onclick="eliminarProducto(${p.id})" title="Purgar"><i class="bi bi-trash3-fill fs-5"></i></button>
+                    ` : `<span class="badge bg-dark border border-danger text-danger p-2 font-orbitron"><i class="bi bi-lock-fill"></i> DENEGADO</span>`;
+
+                    tb.innerHTML += `<tr id="fila-prod-${p.id}">
+                        <td class="align-middle text-center">${imgTag}</td>
+                        <td class="align-middle">
+                            <input type="text" id="img-prod-tabla-${p.id}" value="${p.imagen || ''}" class="${classInput} w-100 text-info" style="font-size: 0.85rem; max-width: 150px;" placeholder="https://..." ${attrReadonly}>
+                        </td>
+                        <td class="align-middle">
+                            <input type="text" id="nombre-prod-tabla-${p.id}" value="${p.nombre}" class="${classInput} w-100 fw-bold fs-5 text-center" ${attrReadonly}>
+                        </td>
+                        <td class="align-middle">
+                            <select id="cat-prod-tabla-${p.id}" class="form-select bg-dark text-warning border-warning fw-bold fs-6 text-center" ${esSupremo ? '' : 'disabled'}>
+                                ${optionsCat}
+                            </select>
+                        </td>
+                        <td class="align-middle">
+                            <textarea id="desc-prod-tabla-${p.id}" class="${classInput} w-100" style="font-size: 0.9rem; min-width: 250px; height: 65px;" placeholder="Escribe la biología del producto aquí..." ${attrReadonly}>${p.descripcion || ''}</textarea>
+                        </td>
+                        <td class="align-middle text-white">${p.sucursal}</td>
+                        <td class="align-middle">
+                            <input type="number" id="precio-prod-tabla-${p.id}" value="${precioNorm}" class="${classPrecio} text-center fw-bold fs-4" style="max-width:120px;" ${attrReadonly}>
+                        </td>
+                        <td class="align-middle">
+                            <div class="d-flex align-items-center justify-content-center">
+                                <input type="number" id="desc-prod-tabla-${p.id}" value="${p.descuento || 0}" min="0" max="100" class="${classInput} text-center text-info fw-bold fs-5" style="max-width:70px;" ${attrReadonly} onchange="actualizarProducto(${p.id})">
+                                <span class="text-info fw-bold ms-1">%</span>
+                            </div>
+                        </td>
+                        <td class="align-middle">
+                            ${colComandos}
+                        </td>
+                    </tr>`;
+                }
             });
+
+            filtrarCatalogoAcordeon();
+
         } catch(e) { console.error("Error al cargar el catálogo:", e); }
+    }
+
+    function actualizarPreviewImg(id) {
+        const input = document.getElementById(`img-prod-${id}`);
+        const imgPreview = document.getElementById(`preview-img-${id}`);
+        const thumbHeader = document.getElementById(`thumb-header-${id}`);
+        const imgTable = document.getElementById(`img-display-${id}`);
+        if (input) {
+            const url = input.value.trim() || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+            if (imgPreview) imgPreview.src = url;
+            if (thumbHeader) thumbHeader.src = url;
+            if (imgTable && imgTable.tagName === 'IMG') imgTable.src = url;
+        }
+    }
+
+    function calcularPrecioFinalAcordeon(id) {
+        const inputPrecio = document.getElementById(`precio-prod-${id}`) || document.getElementById(`precio-prod-tabla-${id}`);
+        const inputDesc = document.getElementById(`desc-prod-${id}`) || document.getElementById(`desc-prod-tabla-${id}`);
+        if (!inputPrecio || !inputDesc) return;
+
+        const precio = normalizarPrecioCLP(inputPrecio.value || 0);
+        const desc = Math.min(Math.max(parseFloat(inputDesc.value) || 0, 0), 100);
+        const precioFinal = desc > 0 ? Math.round(precio * (1 - desc / 100)) : precio;
+
+        // Resumen dentro de la tarjeta
+        const resumenEl = document.getElementById(`resumen-precio-${id}`);
+        if (resumenEl) {
+            resumenEl.innerHTML = `$${precioFinal.toLocaleString('es-CL')} CLP ${desc > 0 ? `<small class="text-danger ms-2">(-${Math.round(desc)}% OFF)</small>` : ''}`;
+        }
+
+        // Header de la tarjeta
+        const headerPrecioBox = document.getElementById(`header-precio-box-${id}`);
+        if (headerPrecioBox) {
+            if (desc > 0) {
+                headerPrecioBox.innerHTML = `
+                    <div class="text-end">
+                        <s class="text-white-50 d-block small font-orbitron">$${precio.toLocaleString('es-CL')}</s>
+                        <span class="text-money-green fw-bold fs-4 font-orbitron">$${precioFinal.toLocaleString('es-CL')}</span>
+                    </div>
+                    <span class="badge-dto-pill">-${Math.round(desc)}% OFF</span>
+                `;
+            } else {
+                headerPrecioBox.innerHTML = `<span class="text-money-green fw-bold fs-4 font-orbitron">$${precio.toLocaleString('es-CL')}</span>`;
+            }
+        }
+    }
+
+    function filtrarCategoriaAcordeon(cat, btn) {
+        categoriaFiltroMatriz = cat;
+        document.querySelectorAll('.categoria-filtro-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        filtrarCatalogoAcordeon();
+    }
+
+    function filtrarCatalogoAcordeon() {
+        const query = (document.getElementById('filtro-busqueda-matriz')?.value || '').toLowerCase().trim();
+        const items = document.querySelectorAll('.catalogo-acordeon-item');
+        let visibles = 0;
+
+        items.forEach(item => {
+            const nom = item.getAttribute('data-nombre') || '';
+            const cat = item.getAttribute('data-categoria') || '';
+            const desc = (item.querySelector('textarea')?.value || '').toLowerCase();
+
+            const coincideTexto = !query || nom.includes(query) || cat.toLowerCase().includes(query) || desc.includes(query);
+            let coincideCat = true;
+            if (categoriaFiltroMatriz !== 'TODAS') {
+                coincideCat = cat.toLowerCase().includes(categoriaFiltroMatriz.toLowerCase());
+            }
+
+            if (coincideTexto && coincideCat) {
+                item.style.display = '';
+                visibles++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        const contador = document.getElementById('contador-catalogo-matriz');
+        if (contador) {
+            contador.innerText = `MOSTRANDO ${visibles} DE ${items.length} ELÍXIRES EN MATRIZ`;
+        }
+    }
+
+    function expandirTodosAcordeon() {
+        document.querySelectorAll('#contenedor-catalogo-acordeon .accordion-collapse').forEach(el => {
+            el.classList.add('show');
+            const btn = el.previousElementSibling?.querySelector('.accordion-button');
+            if (btn) {
+                btn.classList.remove('collapsed');
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        });
+    }
+
+    function colapsarTodosAcordeon() {
+        document.querySelectorAll('#contenedor-catalogo-acordeon .accordion-collapse').forEach(el => {
+            el.classList.remove('show');
+            const btn = el.previousElementSibling?.querySelector('.accordion-button');
+            if (btn) {
+                btn.classList.add('collapsed');
+                btn.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+
+    function cambiarVistaCatalogo(vista) {
+        const contenedorAcordeon = document.getElementById('contenedor-catalogo-acordeon');
+        const contenedorTabla = document.getElementById('contenedor-catalogo-tabla');
+        const btnAcordeon = document.getElementById('btn-vista-acordeon');
+        const btnTabla = document.getElementById('btn-vista-tabla');
+
+        if (vista === 'acordeon') {
+            if (contenedorAcordeon) contenedorAcordeon.style.display = 'block';
+            if (contenedorTabla) contenedorTabla.style.display = 'none';
+            if (btnAcordeon) { btnAcordeon.classList.add('active', 'btn-bio'); btnAcordeon.classList.remove('btn-outline-info'); }
+            if (btnTabla) { btnTabla.classList.remove('active', 'btn-bio'); btnTabla.classList.add('btn-outline-info'); }
+        } else {
+            if (contenedorAcordeon) contenedorAcordeon.style.display = 'none';
+            if (contenedorTabla) contenedorTabla.style.display = 'block';
+            if (btnTabla) { btnTabla.classList.add('active', 'btn-bio'); btnTabla.classList.remove('btn-outline-info'); }
+            if (btnAcordeon) { btnAcordeon.classList.remove('active', 'btn-bio'); btnAcordeon.classList.add('btn-outline-info'); }
+        }
     }
 
     async function guardarNuevoProducto() {
@@ -2808,40 +3212,131 @@
 
     async function actualizarProducto(id) {
         playSound('click');
-        const nuevoNombre = document.getElementById(`nombre-prod-${id}`).value;
-        const nuevaCategoria = document.getElementById(`cat-prod-${id}`).value;
-        const nuevoPrecio = normalizarPrecioCLP(document.getElementById(`precio-prod-${id}`).value);
-        const nuevoDescuento = parseFloat(document.getElementById(`desc-prod-${id}`).value) || 0;
-        const nuevaImagen = document.getElementById(`img-prod-${id}`).value;
-        const nuevaDesc = document.getElementById(`desc-prod-${id}`).value;
+        const nuevoNombre = document.getElementById(`nombre-prod-${id}`)?.value 
+            || document.getElementById(`nombre-prod-tabla-${id}`)?.value || '';
+        const nuevaCategoria = document.getElementById(`cat-prod-${id}`)?.value 
+            || document.getElementById(`cat-prod-tabla-${id}`)?.value || '';
+        const nuevoPrecio = normalizarPrecioCLP(
+            document.getElementById(`precio-prod-${id}`)?.value 
+            || document.getElementById(`precio-prod-tabla-${id}`)?.value || 0
+        );
+        const nuevoDescuento = parseFloat(
+            document.getElementById(`desc-prod-${id}`)?.value 
+            || document.getElementById(`desc-prod-tabla-${id}`)?.value || 0
+        ) || 0;
+        const nuevaImagen = document.getElementById(`img-prod-${id}`)?.value 
+            || document.getElementById(`img-prod-tabla-${id}`)?.value || '';
+        const nuevaDesc = document.getElementById(`desc-prod-${id}`)?.value 
+            || document.getElementById(`desc-prod-tabla-${id}`)?.value || '';
+        const stockInput = document.getElementById(`stock-prod-${id}`);
+        const nuevoStock = stockInput ? (parseInt(stockInput.value) || 0) : undefined;
+        const sucursalInput = document.getElementById(`sucursal-prod-${id}`);
+        const nuevaSucursal = sucursalInput ? sucursalInput.value.trim() : undefined;
+
+        if (!nuevoNombre) {
+            alert("El producto debe tener un nombre válido.");
+            return;
+        }
 
         try {
+            const bodyPayload = {
+                nombre: nuevoNombre,
+                categoria: nuevaCategoria,
+                precio: nuevoPrecio,
+                descuento: nuevoDescuento,
+                imagen: nuevaImagen,
+                descripcion: nuevaDesc
+            };
+            if (nuevoStock !== undefined) bodyPayload.stock = nuevoStock;
+            if (nuevaSucursal) bodyPayload.sucursal = nuevaSucursal;
+
             const res = await fetch(`/api/productos/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    nombre: nuevoNombre,
-                    categoria: nuevaCategoria,
-                    precio: nuevoPrecio,
-                    descuento: nuevoDescuento,
-                    imagen: nuevaImagen,
-                    descripcion: nuevaDesc
-                })
+                body: JSON.stringify(bodyPayload)
             });
-            if(res.ok) {
+
+            if (res.ok) {
+                // Actualizar atributos de la tarjeta para búsqueda y filtros
+                const item = document.getElementById(`item-prod-${id}`);
+                if (item) {
+                    item.setAttribute('data-nombre', nuevoNombre.toLowerCase());
+                    item.setAttribute('data-categoria', nuevaCategoria);
+                    item.style.borderColor = "var(--p-bio-green)";
+                    item.style.boxShadow = "0 0 35px var(--p-bio-green)";
+                    setTimeout(() => {
+                        item.style.borderColor = "";
+                        item.style.boxShadow = "";
+                    }, 1200);
+                }
+
+                // Actualizar encabezado del acordeón
+                const thumbHeader = document.getElementById(`thumb-header-${id}`);
+                if (thumbHeader && nuevaImagen) thumbHeader.src = nuevaImagen;
+
+                const headerNombre = document.getElementById(`header-nombre-${id}`);
+                if (headerNombre) headerNombre.innerText = nuevoNombre;
+
+                const headerCat = document.getElementById(`header-cat-${id}`);
+                if (headerCat) headerCat.innerText = nuevaCategoria;
+
+                const headerStock = document.getElementById(`header-stock-${id}`);
+                if (headerStock && nuevoStock !== undefined) {
+                    headerStock.innerHTML = `<i class="bi bi-box-seam me-1"></i>Stock: ${nuevoStock}`;
+                }
+
+                // Sincronizar recálculo de precios
+                calcularPrecioFinalAcordeon(id);
+
+                // Si hay vista tabla, sincronizar inputs
+                const tNombre = document.getElementById(`nombre-prod-tabla-${id}`);
+                if (tNombre) tNombre.value = nuevoNombre;
+                const tCat = document.getElementById(`cat-prod-tabla-${id}`);
+                if (tCat) tCat.value = nuevaCategoria;
+                const tPrecio = document.getElementById(`precio-prod-tabla-${id}`);
+                if (tPrecio) tPrecio.value = nuevoPrecio;
+                const tDesc = document.getElementById(`desc-prod-tabla-${id}`);
+                if (tDesc) tDesc.value = nuevoDescuento;
+                const tImg = document.getElementById(`img-prod-tabla-${id}`);
+                if (tImg) tImg.value = nuevaImagen;
+                const tTxt = document.getElementById(`desc-prod-tabla-${id}`);
+                if (tTxt) tTxt.value = nuevaDesc;
                 const imgDisp = document.getElementById(`img-display-${id}`);
-                if(imgDisp && nuevaImagen) {
-                    if(imgDisp.tagName === 'I') {
+                if (imgDisp && nuevaImagen) {
+                    if (imgDisp.tagName === 'I') {
                         imgDisp.outerHTML = `<img src="${nuevaImagen}" class="img-preview" id="img-display-${id}">`;
                     } else {
                         imgDisp.src = nuevaImagen;
                     }
                 }
                 const fila = document.getElementById(`fila-prod-${id}`);
-                fila.style.boxShadow = "inset 0 0 30px var(--p-bio-green)";
-                setTimeout(() => fila.style.boxShadow = "", 1000);
+                if (fila) {
+                    fila.style.boxShadow = "inset 0 0 30px var(--p-bio-green)";
+                    setTimeout(() => fila.style.boxShadow = "", 1000);
+                }
+
+                // Feedback botón Guardar
+                const btnSave = document.getElementById(`btn-save-${id}`);
+                if (btnSave) {
+                    const origHtml = btnSave.innerHTML;
+                    btnSave.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i> ¡CAMBIOS GUARDADOS!`;
+                    btnSave.style.background = "var(--p-bio-green)";
+                    btnSave.style.color = "#000";
+                    setTimeout(() => {
+                        btnSave.innerHTML = origHtml;
+                        btnSave.style.background = "";
+                        btnSave.style.color = "";
+                    }, 1800);
+                }
+
+                playSound('success');
+            } else {
+                playSound('error');
             }
-        } catch(e) { playSound('error'); }
+        } catch(e) {
+            console.error("Error al actualizar producto:", e);
+            playSound('error');
+        }
     }
 
     async function eliminarProducto(id) {
@@ -2857,6 +3352,9 @@
                 }
                 const fila = document.getElementById(`fila-prod-${id}`);
                 if (fila) fila.remove();
+                const itemAcordeon = document.getElementById(`item-prod-${id}`);
+                if (itemAcordeon) itemAcordeon.remove();
+                filtrarCatalogoAcordeon();
                 await cargarProduccion();
                 playSound('success');
             } catch(e) { console.error("Error al purgar", e); }
