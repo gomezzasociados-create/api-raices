@@ -12,8 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import com.gomezsystems.minierp.service.WhatsAppNotificationService;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ public class VentaController {
     @Autowired private VentaRepository ventaRepository;
     @Autowired private ProductoRepository productoRepository;
     @Autowired private InventarioService inventarioService;
+    @Autowired(required = false) private WhatsAppNotificationService whatsAppNotificationService;
 
     @GetMapping
     public List<Venta> listarVentas() { return ventaRepository.findAll(); }
@@ -119,7 +122,55 @@ public class VentaController {
 
         v.setTotal(sumTotal);
         // IMPORTANTE: Se guarda en estado 'Pendiente'. NO se descuenta inventario hasta la confirmación de la venta.
-        return ventaRepository.save(v);
+        Venta ventaGuardada = ventaRepository.save(v);
+
+        // Notificación inmediata al Administrador vía WhatsApp al realizarse la compra
+        if (whatsAppNotificationService != null) {
+            try {
+                String clienteNombre = ventaGuardada.getNombreCliente() != null && !ventaGuardada.getNombreCliente().isBlank()
+                        ? ventaGuardada.getNombreCliente() : "Cliente General";
+                String clienteTelefono = "No registrado";
+                String clienteDireccion = "No registrada";
+
+                if (payload.containsKey("cliente") && payload.get("cliente") instanceof Map) {
+                    Map<?, ?> cMap = (Map<?, ?>) payload.get("cliente");
+                    if (cMap.get("telefono") != null && !cMap.get("telefono").toString().isBlank()) {
+                        clienteTelefono = cMap.get("telefono").toString().trim();
+                    }
+                    if (cMap.get("direccion") != null && !cMap.get("direccion").toString().isBlank()) {
+                        clienteDireccion = cMap.get("direccion").toString().trim();
+                    }
+                }
+
+                List<String> itemsResumen = new ArrayList<>();
+                if (ventaGuardada.getDetalles() != null) {
+                    for (DetalleVenta dv : ventaGuardada.getDetalles()) {
+                        String prodNom = (dv.getProducto() != null && dv.getProducto().getNombre() != null)
+                                ? dv.getProducto().getNombre() : "Producto";
+                        int cant = dv.getCantidad() != null ? dv.getCantidad() : 1;
+                        double sub = dv.getSubtotal() != null ? dv.getSubtotal() : 0.0;
+                        itemsResumen.add(String.format("• %dx %s ($%,.0f)", cant, prodNom, sub));
+                    }
+                }
+
+                whatsAppNotificationService.enviarNotificacionNuevaVenta(
+                    ventaGuardada.getId(),
+                    clienteNombre,
+                    clienteTelefono,
+                    clienteDireccion,
+                    ventaGuardada.getPais(),
+                    ventaGuardada.getOrigen(),
+                    ventaGuardada.getMedioPago(),
+                    ventaGuardada.getTotal(),
+                    ventaGuardada.getEstado(),
+                    itemsResumen
+                );
+            } catch (Exception eNotif) {
+                System.err.println("⚠️ Error al disparar notificación de venta por WhatsApp: " + eNotif.getMessage());
+            }
+        }
+
+        return ventaGuardada;
     }
 
     @PutMapping("/{id}/pagar")
@@ -151,6 +202,22 @@ public class VentaController {
                 }
                 
                 ventaRepository.save(v);
+
+                // Notificación al Administrador sobre pago confirmado e inventario descontado
+                if (whatsAppNotificationService != null) {
+                    try {
+                        whatsAppNotificationService.enviarNotificacionPagoConfirmado(
+                            v.getId(),
+                            v.getNombreCliente(),
+                            v.getPais(),
+                            v.getMedioPago(),
+                            v.getTotal()
+                        );
+                    } catch (Exception eNotif) {
+                        System.err.println("⚠️ Error al notificar pago confirmado por WhatsApp: " + eNotif.getMessage());
+                    }
+                }
+
                 return ResponseEntity.ok("Venta confirmada exitosamente. Se descontaron los insumos correspondientes de las bodegas.");
             } else { 
                 return ResponseEntity.badRequest().body("Venta ya confirmada y pagada previamente."); 

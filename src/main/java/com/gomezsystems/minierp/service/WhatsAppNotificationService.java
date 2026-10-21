@@ -9,7 +9,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -54,6 +58,100 @@ public class WhatsAppNotificationService {
             "📍 *Sucursal:* %s\n\n" +
             "⚠️ Por favor reabastecer este insumo en el sistema a la brevedad.",
             insumoNombre, stockActual, medidaStr, sucursalStr
+        );
+
+        return enviarMensaje(adminWhatsappNumber, mensaje);
+    }
+
+    /**
+     * Envía notificación inmediata por WhatsApp al Administrador cuando se realiza una nueva compra/venta.
+     */
+    public CompletableFuture<Boolean> enviarNotificacionNuevaVenta(
+            Long idVenta,
+            String clienteNombre,
+            String clienteTelefono,
+            String clienteDireccion,
+            String sucursal,
+            String origen,
+            String medioPago,
+            Double total,
+            String estado,
+            List<String> itemsResumen
+    ) {
+        String sucursalStr = (sucursal != null && !sucursal.isBlank()) ? sucursal : "Casa Matriz";
+        String origenStr = (origen != null && !origen.isBlank()) ? origen : "Web";
+        String medioPagoStr = (medioPago != null && !medioPago.isBlank()) ? medioPago : "No especificado";
+        String estadoStr = (estado != null && !estado.isBlank()) ? estado.toUpperCase() : "PENDIENTE";
+        String nombreStr = (clienteNombre != null && !clienteNombre.isBlank()) ? clienteNombre : "Cliente General";
+        String telStr = (clienteTelefono != null && !clienteTelefono.isBlank()) ? clienteTelefono : "No registrado";
+        String dirStr = (clienteDireccion != null && !clienteDireccion.isBlank()) ? clienteDireccion : "No registrada";
+        double totalVal = total != null ? total : 0.0;
+
+        StringBuilder itemsSb = new StringBuilder();
+        if (itemsResumen != null && !itemsResumen.isEmpty()) {
+            for (String item : itemsResumen) {
+                itemsSb.append(item).append("\n");
+            }
+        } else {
+            itemsSb.append("• Sin items especificados\n");
+        }
+
+        String fechaStr = LocalDateTime.now(ZoneId.of("America/Santiago")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+
+        String mensaje = String.format(
+            "🛒 *¡NUEVA COMPRA REGISTRADA! // RAÍCES* 🌿\n" +
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+            "📋 *Orden:* #OP-%d\n" +
+            "📅 *Fecha:* %s\n" +
+            "📍 *Sucursal / Nodo:* %s\n" +
+            "🌐 *Origen:* %s\n" +
+            "💳 *Medio de Pago:* %s\n" +
+            "📊 *Estado:* %s\n\n" +
+            "👤 *DATOS DEL CLIENTE:*\n" +
+            "• *Nombre:* %s\n" +
+            "• *Teléfono:* %s\n" +
+            "• *Dirección:* %s\n\n" +
+            "📦 *DETALLE DE PRODUCTOS:*\n%s\n" +
+            "💰 *TOTAL:* $%,.0f CLP\n" +
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+            "🔔 _Notificación automática enviada a Administración._",
+            idVenta, fechaStr, sucursalStr, origenStr, medioPagoStr, estadoStr,
+            nombreStr, telStr, dirStr,
+            itemsSb.toString().trim(), totalVal
+        );
+
+        return enviarMensaje(adminWhatsappNumber, mensaje);
+    }
+
+    /**
+     * Envía notificación cuando una venta es confirmada/cobrada y se descuenta el inventario.
+     */
+    public CompletableFuture<Boolean> enviarNotificacionPagoConfirmado(
+            Long idVenta,
+            String clienteNombre,
+            String sucursal,
+            String medioPago,
+            Double total
+    ) {
+        String sucursalStr = (sucursal != null && !sucursal.isBlank()) ? sucursal : "Casa Matriz";
+        String medioPagoStr = (medioPago != null && !medioPago.isBlank()) ? medioPago : "Efectivo";
+        String nombreStr = (clienteNombre != null && !clienteNombre.isBlank()) ? clienteNombre : "Cliente General";
+        double totalVal = total != null ? total : 0.0;
+        String fechaStr = LocalDateTime.now(ZoneId.of("America/Santiago")).format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+
+        String mensaje = String.format(
+            "✅ *PAGO CONFIRMADO // RAÍCES* 🌿\n" +
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+            "📋 *Orden:* #OP-%d\n" +
+            "📅 *Fecha:* %s\n" +
+            "👤 *Cliente:* %s\n" +
+            "📍 *Sucursal:* %s\n" +
+            "💳 *Medio de Pago:* %s\n" +
+            "💰 *Total Cobrado:* $%,.0f CLP\n" +
+            "📦 *Inventario:* Porciones y vasos descontados de bodega.\n" +
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+            "🔔 _Estado de orden actualizado a PAGADO._",
+            idVenta, fechaStr, nombreStr, sucursalStr, medioPagoStr, totalVal
         );
 
         return enviarMensaje(adminWhatsappNumber, mensaje);
