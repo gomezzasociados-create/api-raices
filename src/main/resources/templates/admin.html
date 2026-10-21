@@ -3323,7 +3323,10 @@
                     coincideCat = cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa');
                 } else if (f === '500 mls') {
                     const esPackOPulpa = cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa');
-                    coincideCat = !esPackOPulpa && (cat.includes('500') || !cat);
+                    const esArmaTuBatido = cat.includes('arma') || cat.includes('batido');
+                    coincideCat = !esPackOPulpa && !esArmaTuBatido && (cat.includes('500') || !cat);
+                } else if (f.includes('arma') || f.includes('batido')) {
+                    coincideCat = cat.includes('arma') || cat.includes('batido');
                 } else {
                     coincideCat = cat.includes(f);
                 }

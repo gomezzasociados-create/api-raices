@@ -79,7 +79,38 @@ public class DataInitializer implements CommandLineRunner {
                     }
                 }
             }
-        } catch (Throwable t) {
+        
+            // 3. SINCRONIZAR INSUMOS DE ARMA TU BATIDO EN LA MATRIZ TOTAL DE PRODUCTOS
+            try {
+                List<Insumo> insumosArmado = insumoRepository.findAll();
+                for (Insumo ins : insumosArmado) {
+                    String cat = ins.getCategoria() != null ? ins.getCategoria().toLowerCase() : "";
+                    if (cat.contains("arma tu batido") || cat.contains("porciones")) {
+                        String nombre = ins.getNombre() != null ? ins.getNombre().trim() : "";
+                        if (nombre.isEmpty()) continue;
+                        String sucursal = ins.getSucursal() != null ? ins.getSucursal().trim() : "Antofagasta";
+                        boolean yaExiste = repository.findAll().stream().anyMatch(p -> 
+                            p.getNombre() != null && p.getNombre().trim().equalsIgnoreCase(nombre) &&
+                            p.getSucursal() != null && p.getSucursal().trim().equalsIgnoreCase(sucursal)
+                        );
+                        if (!yaExiste) {
+                            Producto p = new Producto();
+                            p.setNombre(nombre);
+                            p.setCategoria("Arma tu Batido");
+                            p.setPrecio(ins.getPrecio() != null ? ins.getPrecio() : 1000.0);
+                            p.setStock(ins.getUnidadActual() != null ? (int) Math.round(ins.getUnidadActual()) : 0);
+                            p.setSucursal(sucursal);
+                            p.setImagen(ins.getImagen());
+                            p.setDescripcion("🌿 Ingrediente / Porción para Arma tu Batido (" + (ins.getSubcategoria() != null ? ins.getSubcategoria() : "General") + "). Conectado a Bodega.");
+                            p.setDescuento(0.0);
+                            repository.save(p);
+                        }
+                    }
+                }
+            } catch (Throwable t) {
+                System.err.println("Aviso al sincronizar Arma tu Batido con productos: " + t.getMessage());
+            }
+} catch (Throwable t) {
             System.err.println("Aviso en DataInitializer (limpieza de productos): " + t.getMessage());
         }
 
