@@ -146,6 +146,15 @@ public class InventarioService {
         if (nuevoStock < 0) {
             System.out.println("¡ALERTA ROJA! El insumo " + insumo.getNombre() + " quedó en negativo.");
         }
+        
+        // Alerta específica para Administrador en Bodega de Vasos 500 mls
+        String catIns = insumo.getCategoria() != null ? insumo.getCategoria().toLowerCase() : "";
+        if (catIns.contains("vaso") || catIns.contains("packaging")) {
+            if (nuevoStock <= 50) {
+                System.out.println("⚠️ [AVISO ADMINISTRADOR - BODEGA VASOS 500 MLS] Umbral bajo detectado en '" + insumo.getNombre() + "': " + nuevoStock + " " + insumo.getMedida() + " restantes.");
+            }
+        }
+
         insumo.setUnidadActual(nuevoStock);
         insumoRepository.save(insumo);
 

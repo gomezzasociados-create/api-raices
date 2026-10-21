@@ -357,6 +357,26 @@
         </div>
     </div>
 
+    <!-- BANNER DE ALERTA CRÍTICA: BODEGA DE VASOS 500 MLS -->
+    <div id="banner-alerta-vasos" class="container-fluid mt-3" style="display: none;">
+        <div class="alert alert-danger border-danger bg-dark text-white d-flex justify-content-between align-items-center p-3 rounded-3" style="box-shadow: 0 0 25px rgba(255,0,85,0.4); border: 2px solid #ff0055;">
+            <div class="d-flex align-items-center">
+                <div class="me-3 text-center">
+                    <i class="bi bi-exclamation-triangle-fill text-danger fs-1" style="filter: drop-shadow(0 0 8px red);"></i>
+                </div>
+                <div>
+                    <h5 class="font-orbitron fw-bold text-danger mb-1" style="letter-spacing:1px;">
+                        <i class="bi bi-cup-straw me-2"></i> AVISO PARA EL ADMINISTRADOR: UMBRAL BAJO EN BODEGA DE VASOS 500 MLS
+                    </h5>
+                    <div id="texto-alerta-vasos" class="font-rajdhani fs-6 text-white-50"></div>
+                </div>
+            </div>
+            <button class="btn btn-outline-danger fw-bold font-orbitron px-3 py-2 text-nowrap ms-3" onclick="irABodegaVasos()">
+                <i class="bi bi-arrow-right-circle-fill me-1"></i> REVISAR BODEGA VASOS
+            </button>
+        </div>
+    </div>
+
     <div class="container-fluid px-4 pb-5 mt-4">
         <ul class="nav nav-pills nav-fill mb-4 table-container p-3" id="pills-tab" role="tablist">
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-produccion" type="button" onclick="cargarProduccion(); playSound('click')"><i class="bi bi-droplet-half me-1"></i> GÉNESIS (PRODUCCIÓN)</button></li>
@@ -586,13 +606,15 @@
 
                     <div class="accordion-item bg-transparent border-0 mb-4">
                         <h2 class="accordion-header" id="headingVasos">
-                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVasos" aria-expanded="false" aria-controls="collapseVasos" style="background: rgba(0,255,255,0.05); border: 1px solid var(--p-cyan); color: var(--p-cyan); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
-                                <i class="bi bi-cup-straw me-2"></i> SUMINISTROS FÍSICOS: VASOS Y PACKAGING
+                            <button class="accordion-button collapsed font-orbitron fw-bold d-flex justify-content-between align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVasos" aria-expanded="false" aria-controls="collapseVasos" style="background: rgba(0,255,255,0.05); border: 1px solid var(--p-cyan); color: var(--p-cyan); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
+                                <span><i class="bi bi-cup-straw me-2"></i> SUMINISTROS FÍSICOS: VASOS Y PACKAGING (500 MLS)</span>
+                                <span id="badge-alerta-vasos" class="ms-2"></span>
                             </button>
                         </h2>
                         <div id="collapseVasos" class="accordion-collapse collapse" aria-labelledby="headingVasos" data-bs-parent="#accordionInventario">
                             <div class="accordion-body p-0 pt-3">
                                 <div class="table-container mb-0" style="border-top: 3px solid var(--p-cyan);">
+                                    <div id="alerta-vasos-detalle-box"></div>
                                     <div class="d-flex justify-content-end mb-1 mt-2">
                                         <div class="p-2 border rounded" style="border-color: var(--p-cyan) !important; background: rgba(0,255,255,0.1); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
                                             <span style="color:var(--p-cyan); font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
@@ -2334,6 +2356,7 @@
             let totalVasos = 0;
             let totalShots = 0;
             let totalArmaTuBatido = 0;
+            let alertasVasos500 = [];
 
             data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).forEach(i => {
                 const sucIns = normalizarStr(i.sucursal || '');
@@ -2370,7 +2393,20 @@
                 }
                 
                 if (isArmaTuBatido) { /* Sumado arriba */ }
-                else if (isVaso) { totalVasos += valorInsumo; }
+                else if (isVaso) { 
+                    totalVasos += valorInsumo; 
+                    if (stockTotal <= 50) {
+                        alertasVasos500.push({
+                            id: i.idInsumo,
+                            nombre: i.nombre,
+                            stock: stockTotal,
+                            medida: i.medida || 'und',
+                            sucursal: i.sucursal,
+                            esAgotado: stockTotal <= 0,
+                            esCritico: stockTotal > 0 && stockTotal <= 10
+                        });
+                    }
+                }
                 else if (isShot) { totalShots += valorInsumo; }
                 else { totalPulpas += valorInsumo; }
 
@@ -2456,7 +2492,72 @@
             const tbVArmaTuBatido = document.getElementById('total-valor-armatubatido');
             if (tbVArmaTuBatido) tbVArmaTuBatido.innerText = formatMoney(totalArmaTuBatido, sucMuestraArmaTuBatido);
 
+            // GESTIÓN DE ALERTAS DE UMBRAL BAJO EXCLUSIVO PARA BODEGA DE VASOS 500 MLS
+            procesarAlertasVasosAdmin(alertasVasos500);
+
         } catch(e) { console.error('Error cargando insumos:', e); }
+    }
+
+    function procesarAlertasVasosAdmin(alertas) {
+        const banner = document.getElementById('banner-alerta-vasos');
+        const txtBanner = document.getElementById('texto-alerta-vasos');
+        const badgeHeader = document.getElementById('badge-alerta-vasos');
+        const detalleBox = document.getElementById('alerta-vasos-detalle-box');
+
+        if (!alertas || alertas.length === 0) {
+            if (banner) banner.style.display = 'none';
+            if (badgeHeader) badgeHeader.innerHTML = `<span class="badge bg-success bg-opacity-25 text-info fs-7 border border-info"><i class="bi bi-shield-check me-1"></i> STOCK ÓPTIMO</span>`;
+            if (detalleBox) detalleBox.innerHTML = '';
+            return;
+        }
+
+        // Si hay insumos en umbral bajo en la Bodega de Vasos 500 mls:
+        if (banner) banner.style.display = 'block';
+
+        let listaPillsHtml = alertas.map(a => {
+            if (a.esAgotado) {
+                return `<span class="badge bg-danger text-white px-2 py-1 fs-7 font-orbitron border border-white" style="box-shadow: 0 0 10px red;"><i class="bi bi-x-circle-fill me-1"></i> ${a.nombre}: AGOTADO (0 ${a.medida})</span>`;
+            } else if (a.esCritico) {
+                return `<span class="badge bg-warning text-dark px-2 py-1 fs-7 font-orbitron fw-bold border border-warning" style="box-shadow: 0 0 10px #ffdd00;"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${a.nombre}: ¡CRÍTICO (${a.stock} ${a.medida})!</span>`;
+            } else {
+                return `<span class="badge bg-info text-dark px-2 py-1 fs-7 font-orbitron fw-bold border border-info"><i class="bi bi-bell-fill me-1"></i> ${a.nombre}: UMBRAL BAJO (${a.stock} ${a.medida})</span>`;
+            }
+        }).join(' ');
+
+        if (txtBanner) {
+            txtBanner.innerHTML = `Atención Administrador: Se han detectado <b>${alertas.length} insumo(s)</b> en umbral de seguridad bajo: ${listaPillsHtml}`;
+        }
+
+        if (badgeHeader) {
+            badgeHeader.innerHTML = `<span class="badge bg-danger text-white fs-7 font-orbitron px-2 py-1 border border-white" style="box-shadow: 0 0 12px red;"><i class="bi bi-exclamation-octagon-fill me-1"></i> ¡${alertas.length} EN UMBRAL BAJO!</span>`;
+        }
+
+        if (detalleBox) {
+            detalleBox.innerHTML = `
+                <div class="alert alert-danger border-danger bg-dark text-white p-3 mb-3 d-flex align-items-center justify-content-between rounded-3" style="box-shadow: 0 0 20px rgba(255,0,0,0.3); border-width: 2px;">
+                    <div>
+                        <h6 class="text-danger fw-bold font-orbitron mb-1 fs-6">
+                            <i class="bi bi-exclamation-octagon-fill me-2"></i> MENSAJE PARA EL ADMINISTRADOR: BODEGA DE VASOS 500 MLS
+                        </h6>
+                        <p class="mb-2 font-rajdhani text-white-50 fs-6">Los siguientes insumos de packaging para batidos de 500 mls han alcanzado o cruzado el umbral mínimo permitido (50 unidades). Por favor reabastecer a la brevedad:</p>
+                        <div class="d-flex flex-wrap gap-2">${listaPillsHtml}</div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    function irABodegaVasos() {
+        const tabBtn = document.querySelector('button[data-bs-target="#tab-inventario"]');
+        if (tabBtn) tabBtn.click();
+        const collapseVasos = document.getElementById('collapseVasos');
+        if (collapseVasos && !collapseVasos.classList.contains('show')) {
+            const bsCollapse = new bootstrap.Collapse(collapseVasos, { toggle: true });
+        }
+        setTimeout(() => {
+            const heading = document.getElementById('headingVasos');
+            if (heading) heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
     }
 
     function editarInsumo(id) {
