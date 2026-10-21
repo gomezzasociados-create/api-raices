@@ -537,6 +537,11 @@
                 if(res.ok) { productosRaw = await res.json(); }
             }
             if(Array.isArray(productosRaw)) {
+                productosRaw = productosRaw.filter(p => {
+                    const cat = (p.categoria || '').toLowerCase();
+                    const nom = (p.nombre || '').toLowerCase();
+                    return !cat.includes('personalizado') && !cat.includes('custom') && !nom.startsWith('batido armado') && !nom.startsWith('batido personalizado');
+                });
                 productosRaw.forEach(p => {
                     let num = Number(p.precio) || 0;
                     if (num > 0 && num <= 100) num = num * 1000;

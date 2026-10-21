@@ -90,7 +90,7 @@ public class VentaController {
                     prodReal = new Producto();
                     String nombreBatido = itemReq.get("nombre") != null ? itemReq.get("nombre").toString() : "Batido Personalizado 500cc";
                     prodReal.setNombre(nombreBatido);
-                    prodReal.setCategoria("Arma tu Batido");
+                    prodReal.setCategoria("Personalizado"); // Categoría interna para Tesorería (no se guarda en el catálogo)
                     prodReal.setPrecio(pPrecio);
                     prodReal.setSucursal(v.getPais());
                     if (itemReq.get("recetaDetalle") != null) {

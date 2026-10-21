@@ -27,7 +27,9 @@ public class ProductoController {
 
     @GetMapping
     public List<Producto> listarTodos() {
-        return productoRepository.findAll();
+        return productoRepository.findAll().stream()
+                .filter(this::esProductoCatalogoValido)
+                .toList();
     }
 
     @GetMapping("/sucursal/{nombreSucursal}")
@@ -36,7 +38,27 @@ public class ProductoController {
         if (lista.isEmpty()) {
             lista = productoRepository.findAll();
         }
-        return lista;
+        return lista.stream()
+                .filter(this::esProductoCatalogoValido)
+                .toList();
+    }
+
+    /**
+     * Regla: Los batidos que los usuarios arman pertenecen exclusivamente a Tesorería
+     * (órdenes y tickets de venta) y NUNCA deben mostrarse en el catálogo de productos.
+     */
+    private boolean esProductoCatalogoValido(Producto p) {
+        if (p == null) return false;
+        String cat = p.getCategoria() != null ? p.getCategoria().trim().toLowerCase() : "";
+        String nom = p.getNombre() != null ? p.getNombre().trim().toLowerCase() : "";
+
+        if (cat.contains("personalizado") || cat.contains("custom") || cat.contains("tesoreria")) {
+            return false;
+        }
+        if (nom.startsWith("batido armado") || nom.startsWith("batido personalizado")) {
+            return false;
+        }
+        return true;
     }
 
     @PostMapping

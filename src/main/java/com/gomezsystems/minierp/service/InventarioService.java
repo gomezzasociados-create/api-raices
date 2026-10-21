@@ -47,7 +47,7 @@ public class InventarioService {
         String catProd = producto.getCategoria() != null ? producto.getCategoria().toLowerCase() : "";
         String nomProd = producto.getNombre() != null ? producto.getNombre().toLowerCase() : "";
         boolean esBatido500 = catProd.contains("arma tu batido") || catProd.contains("batido") || catProd.contains("500") || nomProd.contains("batido") || nomProd.contains("500");
-        boolean esArmaTuBatido = catProd.contains("arma tu batido") || nomProd.contains("arma tu batido") || nomProd.contains("batido armado");
+        boolean esArmaTuBatido = catProd.contains("arma tu batido") || catProd.contains("personalizado") || nomProd.contains("arma tu batido") || nomProd.contains("batido armado") || nomProd.contains("batido personalizado");
 
         List<Insumo> insumosSucursal = insumoRepository.findBySucursal(producto.getSucursal());
         if (insumosSucursal == null || insumosSucursal.isEmpty()) {

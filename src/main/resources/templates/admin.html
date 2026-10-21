@@ -2104,10 +2104,14 @@
             if(!v) return alert('Operación no encontrada.');
 
             let itemsHtml = '';
-            v.productos.forEach(p => {
+            const listaItems = (v.productos && v.productos.length > 0) ? v.productos : (v.detalles || []);
+            listaItems.forEach(item => {
+                const prodNom = item.nombre || (item.producto ? item.producto.nombre : 'Producto');
+                const precio = item.precio || item.subtotal || 0;
+                const cant = item.cantidad || 1;
                 itemsHtml += `<tr>
-                    <td style="text-align:left; border:none; border-bottom:1px solid #ccc; padding:4px 0;">${p.nombre}</td>
-                    <td style="text-align:right; border:none; border-bottom:1px solid #ccc; padding:4px 0;">${formatMoney(p.precio, v.pais)}</td>
+                    <td style="text-align:left; border:none; border-bottom:1px solid #ccc; padding:4px 0;">${cant > 1 ? cant + 'x ' : ''}${prodNom}</td>
+                    <td style="text-align:right; border:none; border-bottom:1px solid #ccc; padding:4px 0;">${formatMoney(precio, v.pais)}</td>
                 </tr>`;
             });
 
@@ -3032,7 +3036,11 @@
         try {
             const res = await fetch('/api/productos/sucursal/' + suc);
             let data = await res.json();
-            data = deduplicarProductos(data || []);
+            data = deduplicarProductos(data || []).filter(p => {
+                const cat = (p.categoria || '').toLowerCase();
+                const nom = (p.nombre || '').toLowerCase();
+                return !cat.includes('personalizado') && !cat.includes('custom') && !nom.startsWith('batido armado') && !nom.startsWith('batido personalizado');
+            });
 
             const acordeonCont = document.getElementById('contenedor-catalogo-acordeon');
             const tb = document.getElementById('tabla-catalogo');

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "ventas")
@@ -39,6 +41,27 @@ public class Venta {
     public void addDetalle(DetalleVenta detalle) {
         detalles.add(detalle);
         detalle.setVenta(this);
+    }
+
+    /**
+     * Propiedad serializada en JSON para Tesorería, impresión de tickets y reportes históricos.
+     * Mapea los productos vendidos (incluidos batidos personalizados armados) sin contaminar el catálogo.
+     */
+    @Transient
+    public List<Map<String, Object>> getProductos() {
+        List<Map<String, Object>> list = new ArrayList<>();
+        if (detalles != null) {
+            for (DetalleVenta dv : detalles) {
+                Map<String, Object> map = new HashMap<>();
+                String nom = (dv.getProducto() != null && dv.getProducto().getNombre() != null)
+                        ? dv.getProducto().getNombre() : "Producto";
+                map.put("nombre", nom);
+                map.put("precio", dv.getSubtotal() != null ? dv.getSubtotal() : 0.0);
+                map.put("cantidad", dv.getCantidad() != null ? dv.getCantidad() : 1);
+                list.add(map);
+            }
+        }
+        return list;
     }
 
     // Getters y Setters
