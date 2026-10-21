@@ -762,6 +762,42 @@
             }
         });
 
+        // 1.5. Cargar materias primas e insumos botánicos de Bodega (Pulpas, Shots, Caldos)
+        (insumosBase || []).forEach(ins => {
+            if (!ins || !ins.nombre) return;
+            const cat = normalizarStr(ins.categoria || '');
+            if (cat.includes('pulpa') || cat.includes('shot') || cat.includes('caldo')) {
+                const yaExiste = insumosArmado.some(i => normalizarStr(i.nombre) === normalizarStr(ins.nombre));
+                if (!yaExiste) {
+                    const porcionDosis = (ins.cantidadPorcion && ins.cantidadPorcion > 0) ? ins.cantidadPorcion : (ins.medida === 'und' ? 1 : 30);
+                    let stockTotal = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
+                    let porcionesDisponibles = (ins.medida === 'und') ? Math.floor(stockTotal) : Math.floor(stockTotal / porcionDosis);
+                    if (porcionesDisponibles < 0) porcionesDisponibles = 0;
+
+                    let precioPorc = 1000;
+                    if (ins.precio && ins.precio > 0) {
+                        if (ins.precio <= 2000) {
+                            precioPorc = Number(ins.precio);
+                        } else {
+                            precioPorc = Math.max(500, Math.round((Number(ins.precio) / 1000) * porcionDosis));
+                        }
+                    }
+
+                    insumosArmado.push({
+                        idInsumo: ins.idInsumo || ins.id,
+                        nombre: ins.nombre,
+                        subcategoria: ins.subcategoria || obtenerSubcategoriaInsumo(ins),
+                        categoria: ins.categoria,
+                        precio: Math.round(precioPorc),
+                        unidadActual: porcionesDisponibles,
+                        sizePorcion: porcionDosis,
+                        medida: ins.medida || 'gr',
+                        imagen: ins.imagen || ''
+                    });
+                }
+            }
+        });
+
         // 2. Soporte integrado: Productos de Matriz Total con categoría 'Arma tu Batido'
         (productosRaw || []).forEach(p => {
             if (!p || !p.nombre) return;

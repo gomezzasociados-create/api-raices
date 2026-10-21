@@ -566,15 +566,16 @@
                                         <input type="hidden" id="ins-id">
                                         <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Cód. Botánico</label><input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Pulpa de Mango"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Subcategoría</label><select id="ins-subcategoria" class="form-select"><option value="Base">Base</option><option value="Semillas">Semillas</option><option value="Frutas">Frutas</option><option value="Vegetales">Vegetales</option><option value="Suplementos">Suplementos</option><option value="Frutos Secos">Frutos Secos</option><option value="Especias">Especias</option><option value="Endulzantes">Endulzantes</option><option value="Estabilizantes">Estabilizantes</option><option value="Grasas">Grasas</option><option value="Proteínas">Proteínas</option><option value="Cereales">Cereales</option></select></div>
-                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Métrica</label><select id="ins-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
+                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-bio-green)">Métrica</label><select id="ins-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
                                         <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/KG ($)</label><input type="number" id="ins-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 3200"></div>
+                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">URL Imagen</label><input type="text" id="ins-imagen" class="form-control" placeholder="https://..."></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
                                         <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background:var(--p-bio-green); color:#000;" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg fs-4"></i></button></div>
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table text-center align-middle m-0">
-                                            <thead class="table-dark"><tr><th>BIOLOGÍA_PULPA</th><th>ETIQUETA</th><th>NODO_BASE</th><th>VOLUMEN_ACTUAL</th><th>VALOR/KG</th><th>VALOR_TOTAL</th><th>ACCIONES</th></tr></thead>
+                                            <thead class="table-dark"><tr><th style="width: 50px;">IMG</th><th>BIOLOGÍA_PULPA</th><th>ETIQUETA</th><th>NODO_BASE</th><th>VOLUMEN_ACTUAL</th><th>VALOR/KG</th><th>VALOR_TOTAL</th><th>ACCIONES</th></tr></thead>
                                             <tbody id="tabla-pulpas"></tbody>
                                         </table>
                                     </div>
@@ -601,15 +602,16 @@
                                     <div class="row g-3 mb-4 mt-1">
                                         <input type="hidden" id="vaso-id">
                                         <div class="col-md-3"><label class="form-label-neon">Elemento Físico</label><input type="text" id="vaso-nombre" class="form-control"></div>
-                                        <div class="col-md-2"><label class="form-label-neon">Métrica</label><select id="vaso-unidad" class="form-select"><option value="und">Unidades</option><option value="mls">Mililitros</option><option value="gr">Gramos</option></select></div>
-                                        <div class="col-md-2"><label class="form-label-neon">Volumen</label><input type="number" id="vaso-stock" class="form-control"></div>
+                                        <div class="col-md-1"><label class="form-label-neon">Métrica</label><select id="vaso-unidad" class="form-select"><option value="und">Unidades</option><option value="mls">Mililitros</option><option value="gr">Gramos</option></select></div>
+                                        <div class="col-md-1"><label class="form-label-neon">Volumen</label><input type="number" id="vaso-stock" class="form-control"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UND ($)</label><input type="number" id="vaso-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 250"></div>
-                                        <div class="col-md-3"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
+                                        <div class="col-md-3"><label class="form-label-neon">URL Imagen</label><input type="text" id="vaso-imagen" class="form-control" placeholder="https://..."></div>
+                                        <div class="col-md-2"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
                                         <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-cyan); color: #000;" onclick="guardarInsumo('vasos')"><i class="bi bi-plus-lg fs-4"></i></button></div>
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table text-center align-middle m-0">
-                                            <thead class="table-dark"><tr><th>ELEMENTO_FÍSICO</th><th>FAMILIA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>VALOR/UND</th><th>VALOR_TOTAL</th><th>RECICLAR</th></tr></thead>
+                                            <thead class="table-dark"><tr><th style="width: 50px;">IMG</th><th>ELEMENTO_FÍSICO</th><th>FAMILIA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>VALOR/UND</th><th>VALOR_TOTAL</th><th>RECICLAR</th></tr></thead>
                                             <tbody id="tabla-vasos"></tbody>
                                         </table>
                                     </div>
@@ -638,15 +640,16 @@
                                         <input type="hidden" id="shot-id">
                                         <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-magenta)">Elemento / Extracto</label><input type="text" id="shot-nombre" class="form-control"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Subcategoría</label><select id="shot-subcategoria" class="form-select"><option value="Suplementos">Suplementos</option><option value="Base">Base</option><option value="Especias">Especias</option><option value="Frutas">Frutas</option><option value="Vegetales">Vegetales</option><option value="Endulzantes">Endulzantes</option></select></div>
-                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Métrica</label><select id="shot-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
+                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-magenta)">Métrica</label><select id="shot-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
                                         <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-magenta)">Volumen</label><input type="number" id="shot-stock" class="form-control"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UNIT ($)</label><input type="number" id="shot-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 2500"></div>
+                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-magenta)">URL Imagen</label><input type="text" id="shot-imagen" class="form-control" placeholder="https://..."></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Nodo Destino</label><select id="shot-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
                                         <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-magenta); color: #fff;" onclick="guardarInsumo('shots')"><i class="bi bi-plus-lg fs-4"></i></button></div>
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table text-center align-middle m-0">
-                                            <thead class="table-dark"><tr><th>ELEMENTO_SHOT_CALDO</th><th>ETIQUETA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>VALOR/UNIT</th><th>VALOR_TOTAL</th><th>ACCIONES</th></tr></thead>
+                                            <thead class="table-dark"><tr><th style="width: 50px;">IMG</th><th>ELEMENTO_SHOT_CALDO</th><th>ETIQUETA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>VALOR/UNIT</th><th>VALOR_TOTAL</th><th>ACCIONES</th></tr></thead>
                                             <tbody id="tabla-shots"></tbody>
                                         </table>
                                     </div>
@@ -2351,10 +2354,34 @@
                 else if (isShot) { totalShots += valorInsumo; }
                 else { totalPulpas += valorInsumo; }
 
-                let stockDisplay = (i.unidadActual || 0).toFixed(2);
-                let stockHTML = `<span class="text-warning fw-bold fs-4" style="text-shadow:0 0 10px #ffdd00;">${stockDisplay} <span class="fs-6 text-white-50">${isArmaTuBatido ? 'porc' : (i.medida || 'gr')}</span></span>`;
-                if ((!isVaso && !isArmaTuBatido && i.unidadActual < 500) || (isVaso && i.unidadActual < 50) || (isArmaTuBatido && i.unidadActual < 10)) {
-                    stockHTML = `<span class="text-danger fw-bold fs-4" style="text-shadow:0 0 15px red;"><i class="bi bi-exclamation-triangle-fill me-1"></i>${stockDisplay} <span class="fs-6 text-danger">${isArmaTuBatido ? 'porc' : (i.medida || 'gr')}</span></span>`;
+                let stockHTML = '';
+                if (stockTotal <= 0) {
+                    stockHTML = `<span class="badge bg-danger text-white fs-6 font-orbitron px-2 py-1"><i class="bi bi-x-circle-fill me-1"></i> AGOTADO (0)</span>`;
+                } else if (isArmaTuBatido) {
+                    if (stockTotal <= 10) {
+                        stockHTML = `<span class="badge bg-warning text-dark fs-6 font-orbitron px-2 py-1 fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ¡ÚLTIMAS ${Math.floor(stockTotal)} porc!</span>`;
+                    } else {
+                        stockHTML = `<span class="text-warning fw-bold fs-4">${Math.floor(stockTotal)} <span class="fs-6 text-white-50">porc</span></span>`;
+                    }
+                } else if (isVaso) {
+                    if (stockTotal <= 10) {
+                        stockHTML = `<span class="badge bg-warning text-dark fs-6 font-orbitron px-2 py-1 fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ¡ÚLTIMAS ${Math.floor(stockTotal)} und!</span>`;
+                    } else {
+                        stockHTML = `<span class="text-info fw-bold fs-4">${Math.floor(stockTotal)} <span class="fs-6 text-white-50">und</span></span>`;
+                    }
+                } else if (isShot) {
+                    if (stockTotal <= 10) {
+                        stockHTML = `<span class="badge bg-warning text-dark fs-6 font-orbitron px-2 py-1 fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ¡ÚLTIMAS ${stockTotal.toFixed(0)} ${i.medida || 'und'}!</span>`;
+                    } else {
+                        stockHTML = `<span class="fw-bold fs-4" style="color:var(--p-magenta) !important;">${stockTotal.toFixed(1)} <span class="fs-6 text-white-50">${i.medida || 'mls'}</span></span>`;
+                    }
+                } else {
+                    let porcEquiv = (i.medida === 'gr' || i.medida === 'mls') ? Math.floor(stockTotal / (i.cantidadPorcion || 30)) : Math.floor(stockTotal);
+                    if (stockTotal <= 10 || porcEquiv <= 10) {
+                        stockHTML = `<span class="badge bg-warning text-dark fs-6 font-orbitron px-2 py-1 fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ¡ÚLTIMAS ${porcEquiv} porc! (${stockTotal.toFixed(0)} ${i.medida || 'gr'})</span>`;
+                    } else {
+                        stockHTML = `<span class="fw-bold fs-4" style="color:var(--p-bio-green);">${stockTotal.toFixed(0)} <span class="fs-6 text-white-50">${i.medida || 'gr'}</span></span>`;
+                    }
                 }
 
                 let colorBadge = 'color:var(--p-bio-green); border-color:var(--p-bio-green); box-shadow:0 0 10px var(--p-bio-green);';
@@ -2362,8 +2389,15 @@
                 else if (isVaso) colorBadge = 'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan);';
                 else if (isShot) colorBadge = 'color:var(--p-magenta); border-color:var(--p-magenta); box-shadow:0 0 10px var(--p-magenta);';
 
+                let defaultFallback = 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+                if (isVaso) defaultFallback = 'https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?auto=format&fit=crop&w=350&q=80';
+                else if (isShot) defaultFallback = 'https://images.unsplash.com/photo-1514733670139-4d87a1941d55?auto=format&fit=crop&w=350&q=80';
+                else if (!isArmaTuBatido) defaultFallback = 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80';
+
+                const urlInsumoImg = (i.imagen && i.imagen.trim().startsWith('http')) ? i.imagen.trim() : defaultFallback;
+                let borderImg = isArmaTuBatido ? 'border-warning' : (isVaso ? 'border-info' : (isShot ? 'border-danger' : 'border-success'));
+                let imgTdHtml = `<td><img src="${urlInsumoImg}" class="rounded border ${borderImg}" style="width: 38px; height: 38px; object-fit: cover;" onerror="this.src='${defaultFallback}'"></td>`;
                 let dosisTdHtml = isArmaTuBatido ? `<td class="text-info fw-bold fs-5">${i.cantidadPorcion || 1} ${i.medida || 'gr'}</td>` : '';
-                let imgTdHtml = isArmaTuBatido ? `<td><img src="${i.imagen || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'}" class="rounded border border-warning" style="width: 38px; height: 38px; object-fit: cover;" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'"></td>` : '';
 
                 const row = `<tr>
                     ${imgTdHtml}
@@ -2426,6 +2460,7 @@
                 document.getElementById('vaso-stock').value = ins.unidadActual;
                 document.getElementById('vaso-sucursal').value = ins.sucursal;
                 document.getElementById('vaso-precio').value = ins.precio || 0;
+                if (document.getElementById('vaso-imagen')) document.getElementById('vaso-imagen').value = ins.imagen || '';
             } else if(cat.includes('shot') || cat.includes('caldo')) {
                 document.getElementById('shot-id').value = ins.idInsumo;
                 document.getElementById('shot-nombre').value = ins.nombre;
@@ -2434,6 +2469,7 @@
                 document.getElementById('shot-stock').value = ins.unidadActual;
                 document.getElementById('shot-sucursal').value = ins.sucursal;
                 document.getElementById('shot-precio').value = ins.precio || 0;
+                if (document.getElementById('shot-imagen')) document.getElementById('shot-imagen').value = ins.imagen || '';
             } else {
                 document.getElementById('ins-id').value = ins.idInsumo;
                 document.getElementById('ins-nombre').value = ins.nombre;
@@ -2442,6 +2478,7 @@
                 document.getElementById('ins-stock').value = ins.unidadActual;
                 document.getElementById('ins-sucursal').value = ins.sucursal;
                 document.getElementById('ins-precio').value = ins.precio || 0;
+                if (document.getElementById('ins-imagen')) document.getElementById('ins-imagen').value = ins.imagen || '';
             }
             window.scrollTo({top:0, behavior:'smooth'});
         }
@@ -2469,6 +2506,7 @@
             stock=document.getElementById('ins-stock').value; 
             suc=document.getElementById('ins-sucursal').value;
             precioVal = normalizarPrecioCLP(document.getElementById('ins-precio').value);
+            imgVal = document.getElementById('ins-imagen') ? document.getElementById('ins-imagen').value.trim() : '';
         } else if(tipo==='vasos') { 
             id = document.getElementById('vaso-id').value; 
             nombre = document.getElementById('vaso-nombre').value; 
@@ -2478,6 +2516,7 @@
             stock=document.getElementById('vaso-stock').value; 
             suc=document.getElementById('vaso-sucursal').value;
             precioVal = normalizarPrecioCLP(document.getElementById('vaso-precio').value);
+            imgVal = document.getElementById('vaso-imagen') ? document.getElementById('vaso-imagen').value.trim() : '';
         } else if(tipo==='shots') {
             id = document.getElementById('shot-id').value; 
             nombre = document.getElementById('shot-nombre').value; 
@@ -2487,6 +2526,7 @@
             stock=document.getElementById('shot-stock').value; 
             suc=document.getElementById('shot-sucursal').value;
             precioVal = normalizarPrecioCLP(document.getElementById('shot-precio').value);
+            imgVal = document.getElementById('shot-imagen') ? document.getElementById('shot-imagen').value.trim() : '';
         }
         if(!nombre) return alert("Ingresa al menos el nombre del insumo.");
 
@@ -2520,6 +2560,9 @@
             if (document.getElementById('armatubatido-stock')) document.getElementById('armatubatido-stock').value='';
             if (document.getElementById('armatubatido-precio')) document.getElementById('armatubatido-precio').value='';
             if (document.getElementById('armatubatido-imagen')) document.getElementById('armatubatido-imagen').value='';
+            if (document.getElementById('ins-imagen')) document.getElementById('ins-imagen').value='';
+            if (document.getElementById('vaso-imagen')) document.getElementById('vaso-imagen').value='';
+            if (document.getElementById('shot-imagen')) document.getElementById('shot-imagen').value='';
             if (document.getElementById('ins-nombre')) document.getElementById('ins-nombre').value=''; 
             if (document.getElementById('ins-stock')) document.getElementById('ins-stock').value='';
             if (document.getElementById('vaso-nombre')) document.getElementById('vaso-nombre').value=''; 
