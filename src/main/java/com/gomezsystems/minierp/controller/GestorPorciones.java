@@ -82,7 +82,7 @@ public class GestorPorciones {
                     existente.setSubcategoria(insumo.getSubcategoria());
                     existente.setPrecio(insumo.getPrecio());
                     if (insumo.getDescuento() != null) existente.setDescuento(insumo.getDescuento());
-                    existente.setImagen(insumo.getImagen());
+                    if (insumo.getImagen() != null && !insumo.getImagen().isBlank()) existente.setImagen(insumo.getImagen().trim());
                     insumoRepository.save(existente);
                     sincronizarProductoArmaTuBatido(existente);
                     return ResponseEntity.ok("Insumo actualizado");
@@ -107,6 +107,19 @@ public class GestorPorciones {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error BD Bodega: " + e.getMessage());
         }
+    }
+
+    @PutMapping("/{id}/imagen")
+    public ResponseEntity<String> actualizarImagenInsumo(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String nuevaImagen = body.get("imagen");
+        return insumoRepository.findById(id).map(ins -> {
+            if (nuevaImagen != null && !nuevaImagen.isBlank()) {
+                ins.setImagen(nuevaImagen.trim());
+                insumoRepository.save(ins);
+                sincronizarProductoArmaTuBatido(ins);
+            }
+            return ResponseEntity.ok("Imagen de insumo actualizada exitosamente");
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
@@ -242,7 +255,7 @@ public class GestorPorciones {
                     for (Producto p : matchProds) {
                         if (insumo.getPrecio() != null) p.setPrecio(insumo.getPrecio());
                         if (insumo.getDescuento() != null) p.setDescuento(insumo.getDescuento());
-                        if (insumo.getImagen() != null) p.setImagen(insumo.getImagen());
+                        if (insumo.getImagen() != null && !insumo.getImagen().isBlank()) p.setImagen(insumo.getImagen().trim());
                         if (insumo.getUnidadActual() != null) p.setStock((int) Math.round(insumo.getUnidadActual()));
                         productoRepository.save(p);
                     }

@@ -104,7 +104,7 @@ public class ProductoController {
                         if (ins.getNombre() != null && ins.getNombre().trim().equalsIgnoreCase(nomProd)) {
                             if (nuevoProducto.getPrecio() != null) ins.setPrecio(nuevoProducto.getPrecio());
                             if (nuevoProducto.getDescuento() != null) ins.setDescuento(nuevoProducto.getDescuento());
-                            if (nuevoProducto.getImagen() != null) ins.setImagen(nuevoProducto.getImagen());
+                            if (nuevoProducto.getImagen() != null && !nuevoProducto.getImagen().isBlank()) ins.setImagen(nuevoProducto.getImagen().trim());
                             if (nuevoProducto.getStock() != null) ins.setUnidadActual(nuevoProducto.getStock().doubleValue());
                             insumoRepository.save(ins);
                         }

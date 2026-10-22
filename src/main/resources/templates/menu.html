@@ -860,10 +860,10 @@
         const grid = document.getElementById('grid-menu'); const nodo = document.getElementById('sucursal-activa').value;
         grid.innerHTML = '<div class="col-12 text-center text-white py-5">Sincronizando con el Núcleo...</div>';
         try {
-            let res = await fetch('/api/productos/sucursal/' + nodo);
+            let res = await fetch('/api/productos/sucursal/' + nodo + '?_t=' + Date.now(), { cache: 'no-store' });
             if(res.ok) { productosRaw = await res.json(); } else { productosRaw = []; }
             if(!productosRaw || productosRaw.length === 0) {
-                res = await fetch('/api/productos');
+                res = await fetch('/api/productos?_t=' + Date.now(), { cache: 'no-store' });
                 if(res.ok) { productosRaw = await res.json(); }
             }
             if(Array.isArray(productosRaw)) {
@@ -888,7 +888,7 @@
 
     async function cargarBadgesCategorias() {
         try {
-            const res = await fetch('/api/categorias/badges');
+            const res = await fetch('/api/categorias/badges?_t=' + Date.now(), { cache: 'no-store' });
             if (res.ok) {
                 categoriaBadgesConfig = await res.json();
             }
@@ -1167,10 +1167,10 @@
         let insumosArmado = [];
 
         try {
-            let resI = await fetch('/api/insumos/sucursal/' + nodo);
+            let resI = await fetch('/api/insumos/sucursal/' + nodo + '?_t=' + Date.now(), { cache: 'no-store' });
             if (resI.ok) insumosBase = await resI.json();
             if (!insumosBase || insumosBase.length === 0) {
-                resI = await fetch('/api/insumos/todos');
+                resI = await fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' });
                 if (resI.ok) insumosBase = await resI.json();
             }
         } catch(e) { console.error("Error al obtener datos de Bodega Arma tu Batido:", e); }

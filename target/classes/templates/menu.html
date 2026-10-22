@@ -99,7 +99,23 @@
         }
         @keyframes scrollScanlines { from { background-position: 0 0; } to { background-position: 0 100vh; } }
 
-        .fireflies { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .video-fondo-catalogo {
+            position: fixed; top: 50%; left: 50%;
+            min-width: 100vw; min-height: 100vh;
+            width: auto; height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            z-index: 0; pointer-events: none;
+        }
+
+        .video-fondo-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(1, 15, 8, 0.4), rgba(1, 15, 8, 0.72));
+            z-index: 1; pointer-events: none;
+        }
+
+        .fireflies { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
         .firefly { position: absolute; border-radius: 50%; opacity: 0; animation: float-up linear infinite, parpadeo ease-in-out infinite alternate; }
         @keyframes float-up { 0% { transform: translateY(105vh) translateX(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(-15vh) translateX(50px); opacity: 0; } }
         @keyframes parpadeo { 0% { opacity: 0.3; } 100% { opacity: 1; } }
@@ -143,8 +159,279 @@
             margin-top: 5px; margin-bottom: 15px; text-transform: uppercase;
         }
 
-        .contenedor-categorias { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 20px 0 30px; z-index: 10; position: relative; }
-        .categoria-badge { background: rgba(10, 5, 2, 0.85); color: rgba(255,255,255,0.9); padding: 10px 20px; border-radius: 8px; border: 2px solid rgba(255,215,0,0.4); font-weight: 700; letter-spacing: 2px; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; text-transform: uppercase; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        .contenedor-categorias { display: flex; flex-wrap: wrap; gap: 20px 14px; justify-content: center; margin: 34px 0 30px; z-index: 10; position: relative; }
+        .categoria-badge { 
+            position: relative; 
+            background: rgba(10, 5, 2, 0.88); 
+            color: rgba(255,255,255,0.9); 
+            padding: 12px 22px; 
+            border-radius: 10px; 
+            border: 2px solid rgba(255,215,0,0.4); 
+            font-weight: 700; 
+            letter-spacing: 2px; 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: 0.82rem; 
+            text-transform: uppercase; 
+            cursor: pointer; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.8); 
+            backdrop-filter: blur(5px); 
+            transition: all 0.25s ease;
+        }
+        .categoria-badge:hover {
+            border-color: var(--bio-oro);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.9), 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+
+        /* ========================================================= */
+        /* CINTA / LISTÓN NEÓN REAL SOBRE CATEGORÍAS (ALTO IMPACTO) */
+        /* ========================================================= */
+        .liston-categoria-neon {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 3px 18px;
+            border-radius: 4px;
+            font-family: 'Orbitron', sans-serif !important;
+            font-size: 0.70rem !important;
+            font-weight: 900 !important;
+            letter-spacing: 2px !important;
+            text-transform: uppercase !important;
+            white-space: nowrap !important;
+            z-index: 100 !important;
+            pointer-events: none !important;
+            line-height: 1.2 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.9) !important;
+        }
+
+        /* Puntas de cinta / listón estilo banderín diamantado */
+        .liston-categoria-neon::before,
+        .liston-categoria-neon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 7px;
+            height: 7px;
+            transform: translateY(-50%) rotate(45deg);
+            z-index: 1;
+        }
+        .liston-categoria-neon::before { left: -4px; }
+        .liston-categoria-neon::after { right: -4px; }
+
+        /* MAGENTA (FUCSIA ELÉCTRICO NEÓN) */
+        .liston-neon-magenta,
+        .neon-magenta {
+            background: #0d0111 !important;
+            border: 2px solid #ff00ea !important;
+            box-shadow: 
+                0 0 10px #ff00ea, 
+                0 0 25px rgba(255, 0, 234, 0.7), 
+                inset 0 0 8px rgba(255, 0, 234, 0.4),
+                0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonMagenta 1.8s infinite alternate !important;
+        }
+        .liston-neon-magenta,
+        .neon-magenta,
+        .liston-neon-magenta *,
+        .neon-magenta * {
+            color: #ff33db !important;
+            text-shadow: 
+                0 0 2px #ffffff, 
+                0 0 8px #ff00ea, 
+                0 0 18px #ff00ea, 
+                0 0 32px #d000ff !important;
+        }
+        .liston-neon-magenta::before,
+        .liston-neon-magenta::after,
+        .neon-magenta::before,
+        .neon-magenta::after {
+            background: #ff00ea !important;
+            box-shadow: 0 0 8px #ff00ea !important;
+        }
+        @keyframes pulsoNeonMagenta {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 8px #ff00ea, 0 0 18px rgba(255, 0, 234, 0.6), inset 0 0 6px rgba(255, 0, 234, 0.3), 0 4px 10px rgba(0,0,0,0.95);
+                text-shadow: 0 0 2px #fff, 0 0 6px #ff00ea, 0 0 14px #ff00ea;
+            }
+            100% {
+                transform: translateX(-50%) scale(1.06);
+                box-shadow: 0 0 16px #ff00ea, 0 0 35px rgba(255, 0, 234, 0.95), inset 0 0 12px rgba(255, 0, 234, 0.5), 0 4px 12px rgba(0,0,0,0.95);
+                text-shadow: 0 0 3px #fff, 0 0 10px #ff00ea, 0 0 24px #ff00ea, 0 0 40px #d000ff;
+            }
+        }
+
+        /* ORO (DORADO / FUEGO OFERTAS) */
+        .liston-neon-oro,
+        .neon-oro {
+            background: #140d00 !important;
+            border: 2px solid #ffd700 !important;
+            box-shadow: 
+                0 0 10px #ffd700, 
+                0 0 25px rgba(255, 215, 0, 0.7), 
+                inset 0 0 8px rgba(255, 215, 0, 0.4),
+                0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonOro 1.8s infinite alternate !important;
+        }
+        .liston-neon-oro,
+        .neon-oro,
+        .liston-neon-oro *,
+        .neon-oro * {
+            color: #ffe600 !important;
+            text-shadow: 
+                0 0 2px #ffffff, 
+                0 0 8px #ffd700, 
+                0 0 18px #ff9900, 
+                0 0 32px #ff5500 !important;
+        }
+        .liston-neon-oro::before,
+        .liston-neon-oro::after,
+        .neon-oro::before,
+        .neon-oro::after {
+            background: #ffd700 !important;
+            box-shadow: 0 0 8px #ffd700 !important;
+        }
+        @keyframes pulsoNeonOro {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 8px #ffd700, 0 0 18px rgba(255, 215, 0, 0.6), inset 0 0 6px rgba(255, 215, 0, 0.3), 0 4px 10px rgba(0,0,0,0.95);
+                text-shadow: 0 0 2px #fff, 0 0 6px #ffd700, 0 0 14px #ff9900;
+            }
+            100% {
+                transform: translateX(-50%) scale(1.06);
+                box-shadow: 0 0 16px #ffd700, 0 0 35px rgba(255, 215, 0, 0.95), inset 0 0 12px rgba(255, 215, 0, 0.5), 0 4px 12px rgba(0,0,0,0.95);
+                text-shadow: 0 0 3px #fff, 0 0 10px #ffd700, 0 0 24px #ff9900, 0 0 40px #ff3300;
+            }
+        }
+
+        /* CYAN (AQUA ELÉCTRICO) */
+        .liston-neon-cyan,
+        .neon-cyan {
+            background: #001018 !important;
+            border: 2px solid #00f0ff !important;
+            box-shadow: 
+                0 0 10px #00f0ff, 
+                0 0 25px rgba(0, 240, 255, 0.7), 
+                inset 0 0 8px rgba(0, 240, 255, 0.4),
+                0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonCyan 1.8s infinite alternate !important;
+        }
+        .liston-neon-cyan,
+        .neon-cyan,
+        .liston-neon-cyan *,
+        .neon-cyan * {
+            color: #00f0ff !important;
+            text-shadow: 
+                0 0 2px #ffffff, 
+                0 0 8px #00f0ff, 
+                0 0 18px #00aaff, 
+                0 0 32px #0066ff !important;
+        }
+        .liston-neon-cyan::before,
+        .liston-neon-cyan::after,
+        .neon-cyan::before,
+        .neon-cyan::after {
+            background: #00f0ff !important;
+            box-shadow: 0 0 8px #00f0ff !important;
+        }
+        @keyframes pulsoNeonCyan {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 8px #00f0ff, 0 0 18px rgba(0, 240, 255, 0.6), inset 0 0 6px rgba(0, 240, 255, 0.3), 0 4px 10px rgba(0,0,0,0.95);
+            }
+            100% {
+                transform: translateX(-50%) scale(1.06);
+                box-shadow: 0 0 16px #00f0ff, 0 0 35px rgba(0, 240, 255, 0.95), inset 0 0 12px rgba(0, 240, 255, 0.5), 0 4px 12px rgba(0,0,0,0.95);
+            }
+        }
+
+        /* VERDE (BIO NEÓN) */
+        .liston-neon-verde,
+        .neon-verde {
+            background: #001509 !important;
+            border: 2px solid #00ff88 !important;
+            box-shadow: 
+                0 0 10px #00ff88, 
+                0 0 25px rgba(0, 255, 136, 0.7), 
+                inset 0 0 8px rgba(0, 255, 136, 0.4),
+                0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonVerde 1.8s infinite alternate !important;
+        }
+        .liston-neon-verde,
+        .neon-verde,
+        .liston-neon-verde *,
+        .neon-verde * {
+            color: #00ff88 !important;
+            text-shadow: 
+                0 0 2px #ffffff, 
+                0 0 8px #00ff88, 
+                0 0 18px #00cc66, 
+                0 0 32px #008833 !important;
+        }
+        .liston-neon-verde::before,
+        .liston-neon-verde::after,
+        .neon-verde::before,
+        .neon-verde::after {
+            background: #00ff88 !important;
+            box-shadow: 0 0 8px #00ff88 !important;
+        }
+        @keyframes pulsoNeonVerde {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 8px #00ff88, 0 0 18px rgba(0, 255, 136, 0.6);
+            }
+            100% {
+                transform: translateX(-50%) scale(1.06);
+                box-shadow: 0 0 16px #00ff88, 0 0 35px rgba(0, 255, 136, 0.95);
+            }
+        }
+
+        /* ROJO (ALERTA / FLASH) */
+        .liston-neon-rojo,
+        .neon-rojo {
+            background: #180005 !important;
+            border: 2px solid #ff1744 !important;
+            box-shadow: 
+                0 0 10px #ff1744, 
+                0 0 25px rgba(255, 23, 68, 0.7), 
+                inset 0 0 8px rgba(255, 23, 68, 0.4),
+                0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonRojo 1.8s infinite alternate !important;
+        }
+        .liston-neon-rojo,
+        .neon-rojo,
+        .liston-neon-rojo *,
+        .neon-rojo * {
+            color: #ff3355 !important;
+            text-shadow: 
+                0 0 2px #ffffff, 
+                0 0 8px #ff1744, 
+                0 0 18px #ff0033, 
+                0 0 32px #990000 !important;
+        }
+        .liston-neon-rojo::before,
+        .liston-neon-rojo::after,
+        .neon-rojo::before,
+        .neon-rojo::after {
+            background: #ff1744 !important;
+            box-shadow: 0 0 8px #ff1744 !important;
+        }
+        @keyframes pulsoNeonRojo {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 8px #ff1744, 0 0 18px rgba(255, 23, 68, 0.6);
+            }
+            100% {
+                transform: translateX(-50%) scale(1.06);
+                box-shadow: 0 0 16px #ff1744, 0 0 35px rgba(255, 23, 68, 0.95);
+            }
+        }
+
         .categoria-badge.active { background: rgba(255, 215, 0, 0.2); color: var(--bio-oro); border-color: var(--bio-oro); box-shadow: var(--resplandor-divino); }
 
         .item-tarjeta { position: relative; z-index: 1; transition: z-index 0.2s; }
@@ -166,7 +453,9 @@
         @keyframes flotar { from { transform: translateY(5px); } to { transform: translateY(-5px); } }
 
         .nombre-prod { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: #fff; text-transform: uppercase; margin-bottom: 2px; text-shadow: 0 3px 8px #000, 0 0 15px rgba(0,0,0,0.9); text-align: center; position: relative; z-index: 25; }
-        .precio-prod { font-family: 'Orbitron', sans-serif; color: var(--bio-oro); font-weight: 900; font-size: 1.4rem; text-shadow: 0 3px 8px #000, 0 0 15px rgba(0,0,0,0.9); text-align: center; position: relative; z-index: 25; }
+        .info-prod-box { position: relative; z-index: 25; text-align: center; width: 100%; }
+        .precio-container { position: relative; z-index: 25; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+        .precio-prod { font-family: 'Orbitron', sans-serif; color: var(--bio-oro); font-weight: 900; font-size: 1.4rem; text-shadow: 0 3px 8px #000, 0 0 15px rgba(0,0,0,0.9); text-align: center; position: relative; z-index: 25; line-height: 1.1; }
 
         .btn-info-flip { position: absolute; top: 10px; right: 10px; background: rgba(5, 2, 0, 0.85); color: var(--bio-oro); border: 1px solid var(--bio-oro); width: auto; padding: 6px 14px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; z-index: 30; box-shadow: 0 5px 10px rgba(0,0,0,0.8); backdrop-filter: blur(5px); cursor: pointer; transition: 0.3s; }
         .btn-info-flip:hover { background: var(--bio-oro); color: #000; }
@@ -192,12 +481,42 @@
             0% { transform: scale(1); box-shadow: 0 4px 15px rgba(255, 0, 85, 0.6); }
             100% { transform: scale(1.06); box-shadow: 0 4px 25px rgba(255, 85, 0, 0.9); }
         }
+        .precio-original-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(10, 5, 2, 0.85);
+            padding: 2px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 75, 75, 0.4);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+            margin-bottom: 2px;
+            position: relative;
+            z-index: 26;
+        }
+        .precio-original-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: #ff4d6d;
+            letter-spacing: 0.8px;
+        }
         .precio-original {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.88rem;
+            color: rgba(255, 255, 255, 0.75);
             text-decoration: line-through;
-            font-weight: 600;
+
+            text-decoration-color: #ff3355;
+            text-decoration-thickness: 1.5px;
+            font-weight: 700;
+            position: relative;
+            z-index: 26;
+            text-shadow: 0 2px 4px #000;
+
+
+
         }
 
         .btn-extraer { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.3) 100%); color: var(--bio-oro); border: 1px solid var(--bio-oro); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.6); position: relative; z-index: 25;}
@@ -286,6 +605,12 @@
 </head>
 <body>
 
+<video id="video-fondo-catalogo" class="video-fondo-catalogo" autoplay loop muted playsinline poster="https://res.cloudinary.com/doi0o3hlr/image/upload/q_auto,f_auto,w_1000/v1774759858/Gemini_Generated_Image_2ocvdw2ocvdw2ocv_ixqdsz.png">
+    <source src="fondo-catalogo.mp4" type="video/mp4">
+    <source src="/fondo-catalogo.mp4" type="video/mp4">
+</video>
+<div class="video-fondo-overlay"></div>
+
 <div id="destello-luz"></div>
 <div class="scanlines"></div>
 
@@ -328,10 +653,10 @@
 
     <div id="display-nodo-actual" class="badge-nodo-actual">🇨🇱 NODO ANTOFAGASTA</div>
     <input type="hidden" id="sucursal-activa" value="Antofagasta"> <div class="contenedor-categorias">
-    <button class="categoria-badge active" onclick="filtrar('500 mls', this)">Elíxires</button>
-    <button class="categoria-badge" onclick="filtrar('Packs', this)">Pack de Pulpas</button>
-    <button class="categoria-badge" onclick="filtrar('Arma tu Batido', this)">Arma tu Batido</button>
-    <button class="categoria-badge" onclick="filtrar('Shots', this)">Shots</button>
+    <button class="categoria-badge active" onclick="filtrar('500 mls', this)" data-cat="500 mls"><span class="liston-categoria-neon" id="badge-cat-500-mls" style="display:none;"></span>Elíxires</button>
+    <button class="categoria-badge" onclick="filtrar('Packs', this)" data-cat="Packs"><span class="liston-categoria-neon" id="badge-cat-Packs" style="display:none;"></span>Pack de Pulpas</button>
+    <button class="categoria-badge" onclick="filtrar('Arma tu Batido', this)" data-cat="Arma tu Batido"><span class="liston-categoria-neon" id="badge-cat-Arma-tu-Batido" style="display:none;"></span>Arma tu Batido</button>
+    <button class="categoria-badge" onclick="filtrar('Shots', this)" data-cat="Shots"><span class="liston-categoria-neon liston-neon-magenta neon-magenta" id="badge-cat-Shots"><i class="bi bi-clock-history me-1"></i>PRÓXIMAMENTE</span>Shots</button>
 </div>
 
     <div class="container px-2">
@@ -464,6 +789,11 @@
 
         puerta.classList.add('efecto-wow-puerta');
 
+        const vidFondo = document.getElementById('video-fondo-catalogo');
+        if (vidFondo && vidFondo.paused) {
+            vidFondo.play().catch(e => console.warn("Video background play:", e));
+        }
+
         mainAudio.play().catch(e => {
             console.error("Música bloquedada", e);
             document.getElementById('icono-audio').className = 'bi bi-volume-mute-fill';
@@ -530,10 +860,10 @@
         const grid = document.getElementById('grid-menu'); const nodo = document.getElementById('sucursal-activa').value;
         grid.innerHTML = '<div class="col-12 text-center text-white py-5">Sincronizando con el Núcleo...</div>';
         try {
-            let res = await fetch('/api/productos/sucursal/' + nodo);
+            let res = await fetch('/api/productos/sucursal/' + nodo + '?_t=' + Date.now(), { cache: 'no-store' });
             if(res.ok) { productosRaw = await res.json(); } else { productosRaw = []; }
             if(!productosRaw || productosRaw.length === 0) {
-                res = await fetch('/api/productos');
+                res = await fetch('/api/productos?_t=' + Date.now(), { cache: 'no-store' });
                 if(res.ok) { productosRaw = await res.json(); }
             }
             if(Array.isArray(productosRaw)) {
@@ -550,8 +880,93 @@
                 });
             }
             renderizar();
-        } catch (e) { productosRaw = []; renderizar(); }
+            aplicarBadgesCategorias();
+        } catch (e) { productosRaw = []; renderizar(); aplicarBadgesCategorias(); }
     }
+
+    let categoriaBadgesConfig = [];
+
+    async function cargarBadgesCategorias() {
+        try {
+            const res = await fetch('/api/categorias/badges?_t=' + Date.now(), { cache: 'no-store' });
+            if (res.ok) {
+                categoriaBadgesConfig = await res.json();
+            }
+        } catch(e) {
+            console.warn("No se pudieron cargar badges de categorías desde API:", e);
+        }
+        aplicarBadgesCategorias();
+    }
+
+    function aplicarBadgesCategorias() {
+        const catMap = {
+            '500 mls': document.getElementById('badge-cat-500-mls'),
+            'Packs': document.getElementById('badge-cat-Packs'),
+            'Arma tu Batido': document.getElementById('badge-cat-Arma-tu-Batido'),
+            'Shots': document.getElementById('badge-cat-Shots')
+        };
+
+        const configMap = {};
+        if (Array.isArray(categoriaBadgesConfig)) {
+            categoriaBadgesConfig.forEach(b => { configMap[b.categoriaKey] = b; });
+        }
+
+        // Evaluar ofertas automáticamente en base a productos cargados
+        const ofertasPorCat = {};
+        if (Array.isArray(productosRaw)) {
+            productosRaw.forEach(p => {
+                const c = p.categoria || '';
+                const dto = Number(p.descuento) || 0;
+                if (dto > 0) {
+                    if (!ofertasPorCat[c] || dto > ofertasPorCat[c]) {
+                        ofertasPorCat[c] = dto;
+                    }
+                }
+            });
+        }
+
+        for (const [key, span] of Object.entries(catMap)) {
+            if (!span) continue;
+            const cfg = configMap[key];
+
+            let activo = cfg ? cfg.activo : (key === 'Shots');
+            let texto = cfg ? (cfg.texto || '').trim() : (key === 'Shots' ? 'PRÓXIMAMENTE' : '');
+            let color = cfg ? (cfg.color || 'neon-magenta') : (key === 'Shots' ? 'neon-magenta' : 'neon-oro');
+            let autoOferta = cfg ? cfg.autoOferta : true;
+
+            // Si está activo pero sin texto manual, verificar auto-oferta
+            if (activo && !texto && autoOferta) {
+                const maxDto = ofertasPorCat[key];
+                if (maxDto && maxDto > 0) {
+                    texto = `¡OFERTA -${Math.round(maxDto)}%!`;
+                    color = color || 'neon-oro';
+                }
+            }
+
+            if (activo && texto) {
+                const colClase = color.startsWith('liston-') ? color : `liston-${color}`;
+                span.className = `liston-categoria-neon ${colClase} ${color}`;
+                let icono = '';
+                const txtUpper = texto.toUpperCase();
+                if (txtUpper.includes('PROX') || txtUpper.includes('PRONTO')) {
+                    icono = '<i class="bi bi-clock-history me-1"></i>';
+                } else if (txtUpper.includes('OFERTA') || txtUpper.includes('PROMO') || txtUpper.includes('%')) {
+                    icono = '<i class="bi bi-tag-fill me-1"></i>';
+                } else if (txtUpper.includes('NUEVO') || txtUpper.includes('NEW')) {
+                    icono = '<i class="bi bi-stars me-1"></i>';
+                } else if (txtUpper.includes('POPULAR') || txtUpper.includes('TOP')) {
+                    icono = '<i class="bi bi-fire me-1"></i>';
+                }
+                span.innerHTML = `${icono}${texto}`;
+                span.style.display = 'inline-flex';
+            } else {
+                span.style.display = 'none';
+            }
+        }
+    }
+
+    // Llamada inicial para cargar badges de inmediato
+    cargarBadgesCategorias();
 
     let porcionesArmado = {};
     let insumosInfoMap = {};
@@ -614,11 +1029,16 @@
 
             const badgeDto = tieneDto ? `<div class="badge-descuento">-${dto}% OFF</div>` : '';
             const precioHtml = tieneDto
-                ? `<div class="d-flex align-items-center justify-content-center gap-2">
-                       <span class="precio-original">${simboloActual}${precioBase.toLocaleString('es-CL')}</span>
-                       <span class="precio-prod">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span>
+                ? `<div class="precio-container">
+                       <div class="precio-original-wrap">
+                           <span class="precio-original-label">ANTES</span>
+                           <span class="precio-original">${simboloActual}${precioBase.toLocaleString('es-CL')}</span>
+                       </div>
+                       <div class="precio-prod">${simboloActual}${precioFinal.toLocaleString('es-CL')}</div>
                    </div>`
-                : `<div class="precio-prod">${simboloActual}${precioBase.toLocaleString('es-CL')}</div>`;
+                : `<div class="precio-container">
+                       <div class="precio-prod">${simboloActual}${precioBase.toLocaleString('es-CL')}</div>
+                   </div>`;
 
             const esVideo = img && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(img.trim());
             const mediaTag = esVideo 
@@ -634,7 +1054,7 @@
                                 ${badgeDto}
                                 <button class="btn-info-flip" onclick="event.stopPropagation(); flip('${p.id}')">INFORMACIÓN <i class="bi bi-info-circle ms-2"></i></button>
                                 <div class="img-zona">${mediaTag}</div>
-                                <div><div class="nombre-prod text-truncate">${p.nombre}</div>${precioHtml}</div>
+                                <div class="info-prod-box"><div class="nombre-prod text-truncate">${p.nombre}</div>${precioHtml}</div>
                                 <button class="btn-extraer mt-3" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase})">EXTRAER</button>
                             </div>
                             <div class="card-back">
@@ -747,10 +1167,10 @@
         let insumosArmado = [];
 
         try {
-            let resI = await fetch('/api/insumos/sucursal/' + nodo);
+            let resI = await fetch('/api/insumos/sucursal/' + nodo + '?_t=' + Date.now(), { cache: 'no-store' });
             if (resI.ok) insumosBase = await resI.json();
             if (!insumosBase || insumosBase.length === 0) {
-                resI = await fetch('/api/insumos/todos');
+                resI = await fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' });
                 if (resI.ok) insumosBase = await resI.json();
             }
         } catch(e) { console.error("Error al obtener datos de Bodega Arma tu Batido:", e); }

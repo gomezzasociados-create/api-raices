@@ -16,6 +16,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="/jspdf.umd.min.js"></script>
+    <script>
+        if (typeof window.jspdf === 'undefined') {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script>');
+        }
+    </script>
 
     <style>
         :root {
@@ -282,12 +288,208 @@
             font-weight: 700;
         }
 
+        /* PREVIEW DE LISTONES NEÓN EN ADMIN */
+        .categoria-badge-preview {
+            background: rgba(10, 5, 2, 0.95);
+            color: rgba(255,255,255,0.9);
+            padding: 8px 18px;
+            border-radius: 8px;
+            border: 2px solid rgba(255,215,0,0.5);
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+        }
+        .liston-categoria-neon {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 3px 16px;
+            border-radius: 4px;
+            font-family: 'Orbitron', sans-serif !important;
+            font-size: 0.68rem !important;
+            font-weight: 900 !important;
+            letter-spacing: 1.8px !important;
+            text-transform: uppercase !important;
+            white-space: nowrap !important;
+            z-index: 10 !important;
+            line-height: 1.2 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 5px !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.9) !important;
+        }
+
+        .liston-categoria-neon::before,
+        .liston-categoria-neon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 6px;
+            height: 6px;
+            transform: translateY(-50%) rotate(45deg);
+            z-index: 1;
+        }
+        .liston-categoria-neon::before { left: -3px; }
+        .liston-categoria-neon::after { right: -3px; }
+
+        .liston-neon-magenta,
+        .neon-magenta {
+            background: #0d0111 !important;
+            border: 2px solid #ff00ea !important;
+            box-shadow: 0 0 10px #ff00ea, 0 0 25px rgba(255, 0, 234, 0.7), inset 0 0 8px rgba(255, 0, 234, 0.4), 0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonMagentaAdmin 1.8s infinite alternate !important;
+        }
+        .liston-neon-magenta,
+        .neon-magenta,
+        .liston-neon-magenta *,
+        .neon-magenta * {
+            color: #ff33db !important;
+            text-shadow: 0 0 2px #ffffff, 0 0 8px #ff00ea, 0 0 18px #ff00ea, 0 0 32px #d000ff !important;
+        }
+        .liston-neon-magenta::before,
+        .liston-neon-magenta::after,
+        .neon-magenta::before,
+        .neon-magenta::after {
+            background: #ff00ea !important;
+            box-shadow: 0 0 8px #ff00ea !important;
+        }
+        @keyframes pulsoNeonMagentaAdmin {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 8px #ff00ea, 0 0 18px rgba(255, 0, 234, 0.6); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 16px #ff00ea, 0 0 35px rgba(255, 0, 234, 0.95); }
+        }
+
+        .liston-neon-cyan,
+        .neon-cyan {
+            background: #001018 !important;
+            border: 2px solid #00f0ff !important;
+            box-shadow: 0 0 10px #00f0ff, 0 0 25px rgba(0, 240, 255, 0.7), inset 0 0 8px rgba(0, 240, 255, 0.4), 0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonCyanAdmin 1.8s infinite alternate !important;
+        }
+        .liston-neon-cyan,
+        .neon-cyan,
+        .liston-neon-cyan *,
+        .neon-cyan * {
+            color: #00f0ff !important;
+            text-shadow: 0 0 2px #ffffff, 0 0 8px #00f0ff, 0 0 18px #00aaff, 0 0 32px #0066ff !important;
+        }
+        .liston-neon-cyan::before,
+        .liston-neon-cyan::after,
+        .neon-cyan::before,
+        .neon-cyan::after {
+            background: #00f0ff !important;
+            box-shadow: 0 0 8px #00f0ff !important;
+        }
+        @keyframes pulsoNeonCyanAdmin {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 8px #00f0ff, 0 0 18px rgba(0, 240, 255, 0.6); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 16px #00f0ff, 0 0 35px rgba(0, 240, 255, 0.95); }
+        }
+
+        .liston-neon-oro,
+        .neon-oro {
+            background: #140d00 !important;
+            border: 2px solid #ffd700 !important;
+            box-shadow: 0 0 10px #ffd700, 0 0 25px rgba(255, 215, 0, 0.7), inset 0 0 8px rgba(255, 215, 0, 0.4), 0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonOroAdmin 1.8s infinite alternate !important;
+        }
+        .liston-neon-oro,
+        .neon-oro,
+        .liston-neon-oro *,
+        .neon-oro * {
+            color: #ffe600 !important;
+            text-shadow: 0 0 2px #ffffff, 0 0 8px #ffd700, 0 0 18px #ff9900, 0 0 32px #ff5500 !important;
+        }
+        .liston-neon-oro::before,
+        .liston-neon-oro::after,
+        .neon-oro::before,
+        .neon-oro::after {
+            background: #ffd700 !important;
+            box-shadow: 0 0 8px #ffd700 !important;
+        }
+        @keyframes pulsoNeonOroAdmin {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 8px #ffd700, 0 0 18px rgba(255, 215, 0, 0.6); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 16px #ffd700, 0 0 35px rgba(255, 215, 0, 0.95); }
+        }
+
+        .liston-neon-verde,
+        .neon-verde {
+            background: #001509 !important;
+            border: 2px solid #00ff88 !important;
+            box-shadow: 0 0 10px #00ff88, 0 0 25px rgba(0, 255, 136, 0.7), inset 0 0 8px rgba(0, 255, 136, 0.4), 0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonVerdeAdmin 1.8s infinite alternate !important;
+        }
+        .liston-neon-verde,
+        .neon-verde,
+        .liston-neon-verde *,
+        .neon-verde * {
+            color: #00ff88 !important;
+            text-shadow: 0 0 2px #ffffff, 0 0 8px #00ff88, 0 0 18px #00cc66, 0 0 32px #008833 !important;
+        }
+        .liston-neon-verde::before,
+        .liston-neon-verde::after,
+        .neon-verde::before,
+        .neon-verde::after {
+            background: #00ff88 !important;
+            box-shadow: 0 0 8px #00ff88 !important;
+        }
+        @keyframes pulsoNeonVerdeAdmin {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 8px #00ff88, 0 0 18px rgba(0, 255, 136, 0.6); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 16px #00ff88, 0 0 35px rgba(0, 255, 136, 0.95); }
+        }
+
+        .liston-neon-rojo,
+        .neon-rojo {
+            background: #180005 !important;
+            border: 2px solid #ff1744 !important;
+            box-shadow: 0 0 10px #ff1744, 0 0 25px rgba(255, 23, 68, 0.7), inset 0 0 8px rgba(255, 23, 68, 0.4), 0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonRojoAdmin 1.8s infinite alternate !important;
+        }
+        .liston-neon-rojo,
+        .neon-rojo,
+        .liston-neon-rojo *,
+        .neon-rojo * {
+            color: #ff3355 !important;
+            text-shadow: 0 0 2px #ffffff, 0 0 8px #ff1744, 0 0 18px #ff0033, 0 0 32px #990000 !important;
+        }
+        .liston-neon-rojo::before,
+        .liston-neon-rojo::after,
+        .neon-rojo::before,
+        .neon-rojo::after {
+            background: #ff1744 !important;
+            box-shadow: 0 0 8px #ff1744 !important;
+        }
+        @keyframes pulsoNeonRojoAdmin {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 8px #ff1744, 0 0 18px rgba(255, 23, 68, 0.6); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 16px #ff1744, 0 0 35px rgba(255, 23, 68, 0.95); }
+        }
+
+        #impresion-zona {
+            display: none !important;
+        }
+
         @media print {
             body { background: #fff !important; color: #000 !important; }
-            body * { visibility: hidden; }
-            #app-dashboard, .hex-grid, .spores, .navbar-raices, .scanlines, #login-screen, .btn-mic-flotante, .processing-overlay { display: none !important; }
-            #impresion-zona, #impresion-zona * { visibility: visible; }
-            #impresion-zona { position: absolute; left: 0; top: 0; width: 100%; color: #000 !important; background: #fff !important; text-shadow: none !important; font-family: 'Rajdhani', sans-serif; padding: 10px; }
+            body * { visibility: hidden !important; }
+            #app-dashboard, .hex-grid, .spores, .navbar-raices, .scanlines, #login-screen, .btn-mic-flotante, .processing-overlay, .modal, .modal-backdrop { display: none !important; }
+            #impresion-zona {
+                display: block !important;
+                visibility: visible !important;
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                color: #000 !important;
+                background: #fff !important;
+                text-shadow: none !important;
+                font-family: 'Rajdhani', sans-serif !important;
+                padding: 10px !important;
+                z-index: 9999999 !important;
+            }
+            #impresion-zona * { visibility: visible !important; }
             .ticket-print { max-width: 300px; margin: 0 auto; text-align: center; border-bottom: 2px dashed #000; padding-bottom: 20px;}
             .libro-print { max-width: 100%; }
             table { width: 100%; border-collapse: collapse; margin-top:15px; color:#000 !important; background: #fff !important;}
@@ -299,7 +501,7 @@
     </style>
 </head>
 <body onclick="initAudio()" onkeydown="initAudio()">
-<div id="impresion-zona"></div>
+<div id="impresion-zona" style="display: none !important;"></div>
 
 
 <div class="hex-grid"></div>
@@ -501,8 +703,10 @@
                     </div>
 
                     <div class="text-end mb-4 d-flex justify-content-end gap-2 flex-wrap">
-                        <button class="btn btn-outline-info font-orbitron fw-bold" onclick="abrirLibroContable()"><i class="bi bi-journal-text me-2"></i> LIBRO CONTABLE Y MAYOR</button>
-                        <button class="btn btn-outline-light font-orbitron fw-bold" onclick="imprimirCierreCaja()"><i class="bi bi-printer me-2"></i> IMPRIMIR BALANCE ACTUAL</button>
+                        <button class="btn btn-outline-info font-orbitron fw-bold" onclick="abrirLibroContable()"><i class="bi bi-journal-text me-2"></i> LIBRO CONTABLE</button>
+                        <button class="btn btn-outline-primary font-orbitron fw-bold" onclick="descargarLibroContable()" title="Descargar Libro Mayor en PDF"><i class="bi bi-file-earmark-pdf me-2"></i> DESCARGAR LIBRO</button>
+                        <button class="btn btn-outline-light font-orbitron fw-bold" onclick="imprimirCierreCaja()"><i class="bi bi-printer me-2"></i> IMPRIMIR BALANCE</button>
+                        <button class="btn btn-outline-success font-orbitron fw-bold" onclick="descargarCierreCaja()" title="Descargar Balance de Turno en PDF"><i class="bi bi-download me-2"></i> DESCARGAR BALANCE</button>
                         <button class="btn" style="background:var(--p-warning); color:#000; font-family:'Orbitron'; font-weight:bold;" onclick="ejecutarCierreAdmin()"><i class="bi bi-safe me-2"></i> EJECUTAR CIERRE ADMIN (RESET)</button>
                     </div>
                 </div>
@@ -1001,6 +1205,25 @@
                         </select>
                     </div>
 
+                    <!-- PANEL DE CONTROL DE LISTONES Y AVISOS NEÓN DE CATEGORÍAS -->
+                    <div class="p-3 mb-4 rounded-3" style="background: rgba(5, 10, 15, 0.85); border: 2px solid var(--p-warning); box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h5 class="fw-bold font-orbitron m-0 fs-5 text-warning" style="text-shadow: 0 0 10px rgba(255,215,0,0.5);">
+                                    <i class="bi bi-tag-fill me-2"></i> LISTONES Y AVISOS NEÓN SOBRE CATEGORÍAS (CATÁLOGO)
+                                </h5>
+                                <small class="text-white-50 font-rajdhani">Configura la frase que quieras (ej: <b>PRÓXIMAMENTE</b> para Shots, o <b>OFERTA</b>, <b>2x1</b>, <b>PROMO</b>). Si dejas el texto vacío con Auto-Oferta, el sistema detecta ofertas automáticamente.</small>
+                            </div>
+                            <button class="btn btn-warning text-dark font-orbitron fw-bold px-3 py-2 shadow" onclick="guardarBadgesCategoriasAdmin()">
+                                <i class="bi bi-check-circle-fill me-1"></i> GUARDAR LISTONES
+                            </button>
+                        </div>
+
+                        <div class="row g-3" id="contenedor-admin-badges-categorias">
+                            <!-- Inyectado dinámicamente -->
+                        </div>
+                    </div>
+
                     <div class="upload-zone" id="drop-zone" onclick="document.getElementById('massive-upload').click()">
                         <i class="bi bi-filetype-csv" id="upload-icon"></i>
                         <h3 class="mt-3 font-orbitron fw-bold text-white" style="letter-spacing: 2px; text-shadow: 0 0 10px #fff;">PORTAL DE CARGA MASIVA (CSV)</h3>
@@ -1279,6 +1502,9 @@
     window.addEventListener('DOMContentLoaded', () => {
         const inputFecha = document.getElementById('prod-fecha');
         if(inputFecha) inputFecha.valueAsDate = new Date();
+        const zonaImp = document.getElementById('impresion-zona');
+        if(zonaImp) zonaImp.innerHTML = '';
+        document.querySelectorAll('#pdf-render-sandbox').forEach(el => el.remove());
     });
 
     const normalizarStr = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : '';
@@ -1394,7 +1620,7 @@
     async function cargarProductosSelect() {
         try {
             const suc = document.getElementById('prod-sucursal').value;
-            const res = await fetch('/api/productos');
+            const res = await fetch('/api/productos?_t=' + Date.now(), { cache: 'no-store' });
             catalogoGlobal = await res.json();
             const select = document.getElementById('prod-item');
             select.innerHTML = '<option value="">-- Seleccione Genética --</option>';
@@ -1462,7 +1688,7 @@
             listaLotes.forEach(l => { lotesProduccion[l.idProducto] = l; });
 
             // 2. Cargar productos
-            const res = await fetch('/api/productos');
+            const res = await fetch('/api/productos?_t=' + Date.now(), { cache: 'no-store' });
             let data = await res.json();
 
             // Filtrar solo pulpas/packs para el Génesis de Producción y deduplicar por nombre
@@ -1996,7 +2222,7 @@
                     <td>${v.origen}</td>
                     <td style="color:var(--p-cyan)">${v.medioPago || 'Por Definir'}</td>
                     <td class="text-money-green fw-bold">${formatMoney(v.total, v.pais)}</td>
-                    <td>${badgeEstado} <button class="btn btn-sm btn-outline-info ms-2 border-0" onclick="imprimirTicket(${v.id})" title="Imprimir Recibo"><i class="bi bi-printer fs-5"></i></button>${btnCobrar}${btnCancelar}</td>
+                    <td>${badgeEstado} <button class="btn btn-sm btn-outline-info ms-2 border-0" onclick="imprimirTicket(${v.id})" title="Ver e Imprimir Recibo"><i class="bi bi-printer fs-5"></i></button> <button class="btn btn-sm btn-outline-success ms-1 border-0" onclick="descargarTicket(${v.id})" title="Descargar Comprobante (PDF)"><i class="bi bi-download fs-5"></i></button>${btnCobrar}${btnCancelar}</td>
                 </tr>`;
             });
 
@@ -2095,6 +2321,75 @@
         return '$' + Math.round(num).toLocaleString('es-CL');
     }
 
+    let ventaActualComprobante = null;
+
+    function generarHtmlTicket(v) {
+        let itemsHtml = '';
+        const listaItems = (v.productos && v.productos.length > 0) ? v.productos : (v.detalles || []);
+        listaItems.forEach(item => {
+            const prodNom = item.nombre || (item.producto ? item.producto.nombre : 'Producto');
+            const precio = item.precio || item.subtotal || 0;
+            const cant = item.cantidad || 1;
+            itemsHtml += `<tr>
+                <td style="text-align:left; border:none; border-bottom:1px solid #ddd; padding:5px 0; font-size:12px; color:#111;">
+                    ${cant > 1 ? `<b>${cant}x</b> ` : ''}${prodNom}
+                </td>
+                <td style="text-align:right; border:none; border-bottom:1px solid #ddd; padding:5px 0; font-size:12px; font-weight:bold; color:#111;">
+                    ${formatMoney(precio, v.pais)}
+                </td>
+            </tr>`;
+        });
+
+        const fechaFormateada = v.fecha ? new Date(v.fecha).toLocaleString('es-CL') : new Date().toLocaleString('es-CL');
+        const clienteStr = v.nombreCliente && v.nombreCliente.trim() !== '' ? v.nombreCliente.toUpperCase() : 'CLIENTE GENERAL';
+        const medioPagoStr = v.medioPago ? v.medioPago.toUpperCase() : 'POR DEFINIR';
+        const origenStr = v.origen ? v.origen.toUpperCase() : 'WEB';
+        const estadoStr = v.estado ? v.estado.toUpperCase() : 'PENDIENTE';
+
+        return `
+            <div class="ticket-print font-orbitron" style="background:#ffffff; color:#000000; padding:15px; width:100%; max-width:320px; margin:0 auto; font-family:'Rajdhani', sans-serif;">
+                <div style="text-align:center; border-bottom:2px dashed #000; padding-bottom:10px; margin-bottom:12px;">
+                    <h2 style="font-family:'Orbitron', sans-serif; font-weight:900; margin:0; font-size:20px; color:#000;">BATIDOS RAÍCES</h2>
+                    <p style="font-size:11px; margin:2px 0 0; color:#444;">SISTEMA ERP · NODO ${(v.pais || 'ANTOFAGASTA').toUpperCase()}</p>
+                    <div style="display:inline-block; margin-top:6px; padding:2px 8px; border:1px solid #000; font-weight:bold; font-size:11px; border-radius:3px;">
+                        COMPROBANTE ELECTRÓNICO
+                    </div>
+                </div>
+
+                <div style="text-align:left; margin-bottom:12px; font-size:12px; line-height:1.4; color:#222;">
+                    <div><b>ORDEN:</b> #OP-${v.id}</div>
+                    <div><b>FECHA:</b> ${fechaFormateada}</div>
+                    <div><b>CLIENTE:</b> ${clienteStr}</div>
+                    <div><b>CANAL:</b> ${origenStr}</div>
+                    <div><b>MEDIO PAGO:</b> ${medioPagoStr}</div>
+                    <div><b>ESTADO:</b> ${estadoStr}</div>
+                </div>
+
+                <table style="width:100%; border-collapse:collapse; margin-bottom:12px;">
+                    <thead>
+                        <tr style="border-bottom:2px solid #000;">
+                            <th style="text-align:left; padding:4px 0; font-size:11px; color:#000;">DETALLE</th>
+                            <th style="text-align:right; padding:4px 0; font-size:11px; color:#000;">IMPORTE</th>
+                        </tr>
+                    </thead>
+                    <tbody>${itemsHtml}</tbody>
+                </table>
+
+                <div style="border-top:2px solid #000; padding-top:6px; margin-top:8px; text-align:right;">
+                    <div style="font-size:17px; font-weight:900; font-family:'Orbitron', sans-serif; color:#000;">
+                        TOTAL: ${formatMoney(v.total, v.pais)}
+                    </div>
+                    <div style="font-size:10px; color:#666; margin-top:2px;">(IVA Incluido / Base Legal Exenta)</div>
+                </div>
+
+                <div style="margin-top:20px; text-align:center; border-top:1px dashed #777; padding-top:10px; font-size:11px; color:#444;">
+                    <div style="font-weight:bold;">¡GRACIAS POR PREFERIR BATIDOS RAÍCES!</div>
+                    <div style="font-size:10px; color:#777; margin-top:2px;">Conserve este comprobante para respaldo contable.</div>
+                </div>
+            </div>
+        `;
+    }
+
     async function imprimirTicket(idVenta) {
         playSound('magic');
         try {
@@ -2103,57 +2398,209 @@
             const v = ventas.find(x => x.id === idVenta);
             if(!v) return alert('Operación no encontrada.');
 
-            let itemsHtml = '';
-            const listaItems = (v.productos && v.productos.length > 0) ? v.productos : (v.detalles || []);
-            listaItems.forEach(item => {
-                const prodNom = item.nombre || (item.producto ? item.producto.nombre : 'Producto');
-                const precio = item.precio || item.subtotal || 0;
-                const cant = item.cantidad || 1;
-                itemsHtml += `<tr>
-                    <td style="text-align:left; border:none; border-bottom:1px solid #ccc; padding:4px 0;">${cant > 1 ? cant + 'x ' : ''}${prodNom}</td>
-                    <td style="text-align:right; border:none; border-bottom:1px solid #ccc; padding:4px 0;">${formatMoney(precio, v.pais)}</td>
-                </tr>`;
-            });
+            ventaActualComprobante = v;
+            const html = generarHtmlTicket(v);
 
-            const zona = document.getElementById('impresion-zona');
-            zona.innerHTML = `
-                <div class="ticket-print font-orbitron">
-                    <h2 style="font-weight:900; margin-bottom:0;">BATIDOS RAÍCES</h2>
-                    <p style="font-size:12px; margin-top:2px;">SISTEMA ERP · NODO ${v.pais.toUpperCase()}</p>
-                    <p style="font-size:12px; border-bottom:1px solid #000; padding-bottom:5px;">
-                        TICKET ORIGINAL CLIENTE
-                    </p>
-                    <div style="text-align:left; margin-bottom:10px; font-size:13px;">
-                        <b>FECHA:</b> ${v.fecha ? new Date(v.fecha).toLocaleString() : new Date().toLocaleString()}<br>
-                        <b>ORDEN:</b> #OP-${v.id}<br>
-                        <b>ORIGEN:</b> ${v.origen.toUpperCase()}<br>
-                        <b>PAGO:</b> ${v.medioPago ? v.medioPago.toUpperCase() : 'PENDIENTE'}
-                    </div>
+            // SOLO inyectar en el visor preview del modal interactivo
+            const prev = document.getElementById('contenedor-ticket-preview');
+            if (prev) prev.innerHTML = html;
 
-                    <table style="width:100%; font-size:13px; margin-bottom:10px; border:none;">
-                        <thead>
-                            <tr>
-                                <th style="text-align:left; border:none; border-bottom:2px solid #000;">PRODUCTO</th>
-                                <th style="text-align:right; border:none; border-bottom:2px solid #000;">IMPORTE</th>
-                            </tr>
-                        </thead>
-                        <tbody>${itemsHtml}</tbody>
-                    </table>
+            const modalEl = document.getElementById('modalComprobanteTicket');
+            if (modalEl) {
+                const m = bootstrap.Modal.getOrCreateInstance(modalEl);
+                m.show();
+            } else {
+                const zona = document.getElementById('impresion-zona');
+                if (zona) {
+                    zona.innerHTML = html;
+                    window.print();
+                    setTimeout(() => { zona.innerHTML = ''; }, 1000);
+                }
+            }
+        } catch(e) { 
+            console.error(e);
+            alert("Error al cargar comprobante.");
+        }
+    }
 
-                    <div style="text-align:right; font-size:16px; font-weight:bold; margin-top:10px;">
-                        TOTAL BRUTO: ${formatMoney(v.total, v.pais)}
-                    </div>
-                    <div style="text-align:right; font-size:12px; margin-top:5px; color:#555 !important;">
-                        (IVA Incluido / Base Legal Exenta)
-                    </div>
+    function mostrarAvisoDescarga(mensaje, tipo = 'info') {
+        let toast = document.getElementById('toast-descarga-global');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast-descarga-global';
+            toast.style.position = 'fixed';
+            toast.style.bottom = '25px';
+            toast.style.right = '25px';
+            toast.style.zIndex = '999999';
+            toast.style.maxWidth = '420px';
+            toast.style.padding = '14px 20px';
+            toast.style.borderRadius = '12px';
+            toast.style.fontSize = '14px';
+            toast.style.fontWeight = 'bold';
+            toast.style.fontFamily = "'Rajdhani', sans-serif";
+            toast.style.boxShadow = '0 10px 30px rgba(0,0,0,0.85)';
+            toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            document.body.appendChild(toast);
+        }
 
-                    <p style="font-size:12px; margin-top:20px; font-weight:bold;">
-                        ¡GRACIAS POR PREFERIR BATIDOS RAÍCES!
-                    </p>
-                </div>
-            `;
+        if (tipo === 'success') {
+            toast.style.background = '#00ffa6';
+            toast.style.color = '#000000';
+            toast.style.border = '2px solid #ffffff';
+        } else if (tipo === 'error') {
+            toast.style.background = '#ff0055';
+            toast.style.color = '#ffffff';
+            toast.style.border = '2px solid #ffffff';
+        } else {
+            toast.style.background = '#00e5ff';
+            toast.style.color = '#000000';
+            toast.style.border = '2px solid #ffffff';
+        }
+
+        toast.innerHTML = mensaje;
+        toast.style.display = 'block';
+        toast.style.opacity = '1';
+
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => { toast.style.display = 'none'; }, 350);
+        }, 8000);
+    }
+
+    function descargarArchivoBlob(contenido, nombreArchivo, mimeType = 'text/html') {
+        const blob = new Blob([contenido], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = nombreArchivo;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+            if (a.parentNode) a.parentNode.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 2000);
+    }
+
+    async function descargarTicket(idVenta) {
+        playSound('magic');
+        try {
+            mostrarAvisoDescarga("Generando comprobante PDF...", "info");
+            let v = null;
+            if (ventaActualComprobante && ventaActualComprobante.id == idVenta) {
+                v = ventaActualComprobante;
+            } else {
+                const res = await fetch('/api/ventas');
+                const ventas = await res.json();
+                v = ventas.find(x => x.id == idVenta);
+            }
+            if (!v) return alert('Operación no encontrada.');
+
+            const nombrePdf = `Comprobante_OP-${v.id}_${(v.pais || 'Raices')}.pdf`;
+            const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (typeof jsPDF !== 'undefined' ? jsPDF : null);
+
+            if (jsPDFClass) {
+                const items = (v.productos && v.productos.length > 0) ? v.productos : (v.detalles || []);
+                const dynamicHeight = Math.max(140, 115 + (items.length * 10));
+                const doc = new jsPDFClass({ unit: 'mm', format: [80, dynamicHeight] });
+
+                let y = 10;
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(13);
+                doc.text('BATIDOS RAICES', 40, y, { align: 'center' });
+                y += 5;
+
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(7.5);
+                doc.text('SISTEMA ERP · NODO ' + (v.pais || 'ANTOFAGASTA').toUpperCase(), 40, y, { align: 'center' });
+                y += 4;
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8);
+                doc.text('COMPROBANTE ELECTRONICO', 40, y, { align: 'center' });
+                y += 2;
+                doc.setLineWidth(0.3);
+                doc.setLineDashPattern([1, 1], 0);
+                doc.line(6, y, 74, y);
+                y += 5;
+
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(7.5);
+                doc.text('ORDEN: #OP-' + v.id, 6, y); y += 4;
+                const fechaStr = v.fecha ? new Date(v.fecha).toLocaleString('es-CL') : new Date().toLocaleString('es-CL');
+                doc.text('FECHA: ' + fechaStr, 6, y); y += 4;
+                doc.text('CLIENTE: ' + (v.nombreCliente || 'CLIENTE GENERAL').toUpperCase(), 6, y); y += 4;
+                doc.text('CANAL: ' + (v.origen || 'WEB').toUpperCase(), 6, y); y += 4;
+                doc.text('MEDIO PAGO: ' + (v.medioPago || 'EFECTIVO').toUpperCase(), 6, y); y += 4;
+                doc.text('ESTADO: ' + (v.estado || 'PAGADO').toUpperCase(), 6, y); y += 3;
+
+                doc.line(6, y, 74, y);
+                y += 4;
+                doc.setFont('helvetica', 'bold');
+                doc.text('DETALLE', 6, y);
+                doc.text('IMPORTE', 74, y, { align: 'right' });
+                y += 2;
+                doc.line(6, y, 74, y);
+                y += 4;
+
+                doc.setFont('helvetica', 'normal');
+                items.forEach(it => {
+                    const cant = it.cantidad || 1;
+                    const prodNom = it.nombre || (it.producto ? it.producto.nombre : 'Producto');
+                    const desc = (cant > 1 ? cant + 'x ' : '') + prodNom;
+                    const precio = formatMoney(it.precio || it.subtotal || 0, v.pais);
+                    const lines = doc.splitTextToSize(desc, 46);
+                    doc.text(lines, 6, y);
+                    doc.text(precio, 74, y, { align: 'right' });
+                    y += (lines.length * 3.8) + 1.5;
+                });
+
+                doc.line(6, y, 74, y);
+                y += 5;
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(10);
+                doc.text('TOTAL: ' + formatMoney(v.total, v.pais), 74, y, { align: 'right' });
+                y += 4;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(6.5);
+                doc.text('(IVA Incluido / Base Legal Exenta)', 74, y, { align: 'right' });
+                y += 4;
+                doc.line(6, y, 74, y);
+                y += 5;
+
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(7.5);
+                doc.text('¡GRACIAS POR PREFERIR BATIDOS RAICES!', 40, y, { align: 'center' });
+                y += 3.5;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(6.5);
+                doc.text('Conserve este comprobante para respaldo contable.', 40, y, { align: 'center' });
+
+                doc.save(nombrePdf);
+                mostrarAvisoDescarga(`¡Comprobante "${nombrePdf}" descargado con éxito!`, 'success');
+            } else {
+                descargarArchivoBlob(generarHtmlTicket(v), nombrePdf.replace('.pdf', '.html'), 'text/html');
+                mostrarAvisoDescarga(`¡Comprobante descargado en tu dispositivo!`, 'success');
+            }
+        } catch(e) {
+            console.error(e);
+            mostrarAvisoDescarga("Error al descargar comprobante: " + (e.message || e), "error");
+        }
+    }
+
+    function ejecutarImpresionDesdeModal() {
+        if (!ventaActualComprobante) return;
+        const zona = document.getElementById('impresion-zona');
+        if (zona) {
+            zona.innerHTML = generarHtmlTicket(ventaActualComprobante);
             window.print();
-        } catch(e) { console.error(e); }
+            setTimeout(() => { zona.innerHTML = ''; }, 1000);
+        }
+    }
+
+    function ejecutarDescargaDesdeModal() {
+        if (!ventaActualComprobante) return;
+        descargarTicket(ventaActualComprobante.id);
     }
 
     async function imprimirCierreCaja() {
@@ -2189,6 +2636,235 @@
             </div>
         `;
         window.print();
+        setTimeout(() => { zona.innerHTML = ''; }, 1000);
+    }
+
+    async function descargarCierreCaja() {
+        playSound('magic');
+        try {
+            mostrarAvisoDescarga("Generando Balance de Turno...", "info");
+            const nodo = document.getElementById('tesoreria-sucursal').value;
+            const efe = document.getElementById('tesoreria-efectivo').innerText;
+            const ban = document.getElementById('tesoreria-bancos').innerText;
+            const gas = document.getElementById('tesoreria-gastos').innerText;
+            const uti = document.getElementById('tesoreria-utilidad').innerText;
+            const fechaStr = new Date().toLocaleString('es-CL') + ' - OPERADOR: ' + (rolUsuario || 'ADMIN');
+            const nombrePdf = `Balance_Turno_${nodo}_${new Date().toISOString().slice(0,10)}.pdf`;
+
+            const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (typeof jsPDF !== 'undefined' ? jsPDF : null);
+
+            if (jsPDFClass) {
+                const doc = new jsPDFClass({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+                let y = 25;
+
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(18);
+                doc.text('BATIDOS RAICES', 105, y, { align: 'center' });
+                y += 7;
+
+                doc.setFontSize(12);
+                doc.text('REPORTE DE CIERRE Y BALANCE DE TURNO', 105, y, { align: 'center' });
+                y += 6;
+
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(10);
+                doc.text('NODO: ' + nodo.toUpperCase(), 105, y, { align: 'center' });
+                y += 5;
+                doc.text('FECHA Y HORA: ' + fechaStr, 105, y, { align: 'center' });
+                y += 8;
+
+                doc.setLineWidth(0.5);
+                doc.line(20, y, 190, y);
+                y += 12;
+
+                // Tabla de balances
+                doc.rect(20, y, 170, 48);
+
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(10);
+                doc.text('CONCEPTO', 25, y + 8);
+                doc.text('MONTO', 185, y + 8, { align: 'right' });
+                doc.line(20, y + 12, 190, y + 12);
+
+                doc.setFont('helvetica', 'normal');
+                doc.text('INGRESOS EN EFECTIVO (CAJA BASE)', 25, y + 20);
+                doc.text(efe, 185, y + 20, { align: 'right' });
+
+                doc.text('INGRESOS VIA BANCOS / DIGITALES', 25, y + 28);
+                doc.text(ban, 185, y + 28, { align: 'right' });
+
+                doc.setTextColor(200, 0, 0);
+                doc.text('TOTAL EGRESOS Y GASTOS (DEBE)', 25, y + 36);
+                doc.text(gas, 185, y + 36, { align: 'right' });
+
+                doc.setTextColor(0, 0, 0);
+                doc.setFillColor(240, 240, 240);
+                doc.rect(20, y + 40, 170, 8, 'F');
+                doc.setFont('helvetica', 'bold');
+                doc.text('UTILIDAD NETA DEL TURNO (HABER)', 25, y + 46);
+                doc.text(uti, 185, y + 46, { align: 'right' });
+
+                // Firma
+                y += 85;
+                doc.setFont('helvetica', 'normal');
+                doc.text('____________________________________', 105, y, { align: 'center' });
+                y += 6;
+                doc.setFont('helvetica', 'bold');
+                doc.text('FIRMA RESPONSABLE (OPERADOR CAJA)', 105, y, { align: 'center' });
+                y += 5;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+                doc.text('Comprobante emitido por Nucleo Pandora ERP', 105, y, { align: 'center' });
+
+                doc.save(nombrePdf);
+                mostrarAvisoDescarga(`¡Balance "${nombrePdf}" descargado con éxito!`, 'success');
+            } else {
+                imprimirCierreCaja();
+            }
+        } catch(e) {
+            console.error(e);
+            mostrarAvisoDescarga("Error al descargar balance: " + (e.message || e), "error");
+        }
+    }
+
+    async function descargarLibroContable() {
+        playSound('magic');
+        const nodo = document.getElementById('tesoreria-sucursal').value;
+        try {
+            mostrarAvisoDescarga("Generando Libro Mayor...", "info");
+            const resVentas = await fetch('/api/ventas');
+            const dataVentas = await resVentas.json();
+
+            const resGastos = await fetch(`/api/finanzas/gastos/todos/${nodo}`);
+            const dataGastos = await resGastos.json();
+
+            let movimientos = [];
+            dataVentas.forEach(v => {
+                if (v.pais !== nodo) return;
+                movimientos.push({
+                    fecha: new Date(v.fecha || new Date()),
+                    tipo: 'INGRESO VENTA',
+                    concepto: 'OP#' + v.id + ' (' + (v.medioPago || 'Efectivo') + ')',
+                    entrada: v.total,
+                    salida: 0
+                });
+            });
+
+            dataGastos.forEach(g => {
+                movimientos.push({
+                    fecha: new Date(g.fecha || new Date()),
+                    tipo: 'EGRESO OPERATIVO',
+                    concepto: g.concepto,
+                    entrada: 0,
+                    salida: g.monto
+                });
+            });
+
+            movimientos.sort((a,b) => a.fecha - b.fecha);
+
+            const nombrePdf = `Libro_Mayor_${nodo}_${new Date().toISOString().slice(0,10)}.pdf`;
+            const jsPDFClass = (window.jspdf && window.jspdf.jsPDF) ? window.jspdf.jsPDF : (typeof jsPDF !== 'undefined' ? jsPDF : null);
+
+            if (jsPDFClass) {
+                const doc = new jsPDFClass({ unit: 'mm', format: 'a4', orientation: 'landscape' });
+                let y = 18;
+
+                const drawHeader = () => {
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(15);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text('LIBRO CONTABLE Y MAYOR EMPRESARIAL', 148, y, { align: 'center' });
+                    y += 6;
+                    doc.setFontSize(10);
+                    doc.text('SISTEMA RAICES ERP - NODO ' + nodo.toUpperCase(), 148, y, { align: 'center' });
+                    y += 5;
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(8);
+                    doc.text('Descargado el: ' + new Date().toLocaleString('es-CL'), 148, y, { align: 'center' });
+                    y += 6;
+
+                    doc.setLineWidth(0.4);
+                    doc.line(15, y, 282, y);
+                    y += 6;
+
+                    // Table header
+                    doc.setFillColor(235, 235, 235);
+                    doc.rect(15, y - 4, 267, 8, 'F');
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(8);
+                    doc.text('FECHA', 18, y + 1);
+                    doc.text('TIPO ORIGEN', 60, y + 1);
+                    doc.text('DETALLE DE LA OPERACION', 110, y + 1);
+                    doc.text('INGRESOS (+)', 205, y + 1, { align: 'right' });
+                    doc.text('EGRESOS (-)', 245, y + 1, { align: 'right' });
+                    doc.text('SALDO VITAL', 280, y + 1, { align: 'right' });
+                    y += 7;
+                };
+
+                drawHeader();
+
+                let balance = 0;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(7.5);
+
+                movimientos.forEach(m => {
+                    if (y > 185) {
+                        doc.addPage();
+                        y = 18;
+                        drawHeader();
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(7.5);
+                    }
+
+                    balance += (m.entrada - m.salida);
+                    const fechaStr = m.fecha.toLocaleDateString() + ' ' + m.fecha.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    doc.setTextColor(0, 0, 0);
+                    doc.text(fechaStr, 18, y);
+                    doc.text(m.tipo, 60, y);
+                    doc.text(doc.splitTextToSize(m.concepto, 80)[0], 110, y);
+
+                    if (m.entrada > 0) {
+                        doc.setTextColor(0, 150, 0);
+                        doc.text(formatMoney(m.entrada, nodo), 205, y, { align: 'right' });
+                    } else {
+                        doc.setTextColor(120, 120, 120);
+                        doc.text('-', 205, y, { align: 'right' });
+                    }
+
+                    if (m.salida > 0) {
+                        doc.setTextColor(200, 0, 0);
+                        doc.text(formatMoney(m.salida, nodo), 245, y, { align: 'right' });
+                    } else {
+                        doc.setTextColor(120, 120, 120);
+                        doc.text('-', 245, y, { align: 'right' });
+                    }
+
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text(formatMoney(balance, nodo), 280, y, { align: 'right' });
+                    doc.setFont('helvetica', 'normal');
+
+                    y += 5.5;
+                    doc.setLineWidth(0.1);
+                    doc.setDrawColor(210, 210, 210);
+                    doc.line(15, y - 1.5, 282, y - 1.5);
+                });
+
+                y += 4;
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(11);
+                doc.setTextColor(0, 0, 0);
+                doc.text('BALANCE FINAL: ' + formatMoney(balance, nodo), 280, y, { align: 'right' });
+
+                doc.save(nombrePdf);
+                mostrarAvisoDescarga(`¡Libro Mayor "${nombrePdf}" descargado con éxito!`, 'success');
+            } else {
+                abrirLibroContable();
+            }
+        } catch(e) {
+            console.error(e);
+            mostrarAvisoDescarga("Error al descargar Libro Mayor: " + (e.message || e), "error");
+        }
     }
 
     async function abrirLibroContable() {
@@ -2272,6 +2948,7 @@
                 </div>
             `;
             window.print();
+            setTimeout(() => { zona.innerHTML = ''; }, 1000);
         } catch(e) {
             alert('Error generando libro contable: ' + e);
         }
@@ -2367,7 +3044,7 @@
     // --- INSUMOS (BODEGAS: PULPAS, VASOS, SHOTS/CALDOS, ARMA TU BATIDO) ---
     async function cargarInsumos() {
         try {
-            const res = await fetch('/api/insumos/todos');
+            const res = await fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' });
             const data = await res.json();
             insMem = data;
             const tbPulpas = document.getElementById('tabla-pulpas'); if(tbPulpas) tbPulpas.innerHTML='';
@@ -2474,9 +3151,14 @@
                 else if (isShot) defaultFallback = 'https://images.unsplash.com/photo-1514733670139-4d87a1941d55?auto=format&fit=crop&w=350&q=80';
                 else if (!isArmaTuBatido) defaultFallback = 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80';
 
-                const urlInsumoImg = (i.imagen && i.imagen.trim().startsWith('http')) ? i.imagen.trim() : defaultFallback;
+                const urlInsumoImg = (i.imagen && i.imagen.trim() !== '') ? i.imagen.trim() : defaultFallback;
                 let borderImg = isArmaTuBatido ? 'border-warning' : (isVaso ? 'border-info' : (isShot ? 'border-danger' : 'border-success'));
-                let imgTdHtml = `<td><img src="${urlInsumoImg}" class="rounded border ${borderImg}" style="width: 38px; height: 38px; object-fit: cover;" onerror="this.src='${defaultFallback}'"></td>`;
+                let imgTdHtml = `<td>
+                    <div class="position-relative d-inline-block">
+                        <img src="${urlInsumoImg}" id="img-insumo-${i.idInsumo}" class="rounded border ${borderImg}" style="width: 44px; height: 44px; object-fit: cover; cursor: pointer;" title="Cambiar foto de este insumo" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" onerror="this.src='${defaultFallback}'">
+                        <button type="button" class="btn btn-sm btn-dark position-absolute bottom-0 end-0 p-0 rounded-circle text-warning border border-warning" style="width: 18px; height: 18px; line-height: 16px; font-size: 10px;" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Tomar foto"><i class="bi bi-camera-fill"></i></button>
+                    </div>
+                </td>`;
                 let dosisTdHtml = isArmaTuBatido ? `<td class="text-info fw-bold fs-5">${i.cantidadPorcion || 1} ${i.medida || 'gr'}</td>` : '';
 
                 const row = `<tr>
@@ -2489,8 +3171,9 @@
                     <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
                     <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
                     <td>
-                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})"><i class="bi bi-pencil-square fs-3"></i></button>
-                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})"><i class="bi bi-trash3-fill fs-3"></i></button>
+                        <button class="btn btn-sm text-warning border-0 me-1" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Cambiar foto de este insumo"><i class="bi bi-camera-fill fs-4"></i></button>
+                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})" title="Editar"><i class="bi bi-pencil-square fs-3"></i></button>
+                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})" title="Eliminar"><i class="bi bi-trash3-fill fs-3"></i></button>
                     </td>
                 </tr>`;
 
@@ -2782,7 +3465,10 @@
     // --- RECETAS DE PULPAS, VASOS Y SHOTS/CALDOS ---
     async function prepararRecetas() { 
         try { 
-            const [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]); 
+            const [rP, rI] = await Promise.all([
+                fetch('/api/productos?_t=' + Date.now(), { cache: 'no-store' }), 
+                fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' })
+            ]); 
             const productos = await rP.json(); 
             const insumos = await rI.json(); 
             insMem = insumos; // <-- CRUCIAL PARA CALCULAR PRECIO
@@ -3029,12 +3715,171 @@
     // --- CATÁLOGO EN TARJETAS ACORDEÓN ---
     let categoriaFiltroMatriz = 'TODAS';
 
+    let adminBadgesCategorias = [];
+
+    async function cargarBadgesCategoriasAdmin() {
+        const contenedor = document.getElementById('contenedor-admin-badges-categorias');
+        if (!contenedor) return;
+        try {
+            const res = await fetch('/api/categorias/badges?_t=' + Date.now(), { cache: 'no-store' });
+            if (res.ok) {
+                adminBadgesCategorias = await res.json();
+            }
+        } catch(e) {
+            console.warn("Error cargando badges en admin:", e);
+        }
+
+        if (!adminBadgesCategorias || adminBadgesCategorias.length === 0) {
+            adminBadgesCategorias = [
+                { categoriaKey: '500 mls', categoriaNombre: 'Elíxires', texto: '', color: 'neon-oro', activo: true, autoOferta: true },
+                { categoriaKey: 'Packs', categoriaNombre: 'Pack de Pulpas', texto: '', color: 'neon-oro', activo: true, autoOferta: true },
+                { categoriaKey: 'Arma tu Batido', categoriaNombre: 'Arma tu Batido', texto: '', color: 'neon-cyan', activo: true, autoOferta: true },
+                { categoriaKey: 'Shots', categoriaNombre: 'Shots', texto: 'PRÓXIMAMENTE', color: 'neon-magenta', activo: true, autoOferta: false }
+            ];
+        }
+
+        renderizarAdminBadgesCategorias();
+    }
+
+    function renderizarAdminBadgesCategorias() {
+        const contenedor = document.getElementById('contenedor-admin-badges-categorias');
+        if (!contenedor) return;
+        contenedor.innerHTML = '';
+
+        adminBadgesCategorias.forEach((b, idx) => {
+            const color = b.color || 'neon-magenta';
+            const texto = b.texto || '';
+            const activoChecked = b.activo !== false ? 'checked' : '';
+            const autoChecked = b.autoOferta !== false ? 'checked' : '';
+
+            contenedor.innerHTML += `
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-between" style="background: rgba(10, 15, 25, 0.9); border: 1px solid rgba(0, 229, 255, 0.3); box-shadow: 0 4px 15px rgba(0,0,0,0.6);">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary border-opacity-25">
+                                <span class="fw-bold font-orbitron text-white fs-6">${b.categoriaNombre}</span>
+                                <div class="form-check form-switch m-0">
+                                    <input class="form-check-input" type="checkbox" id="switch-activo-${idx}" ${activoChecked} onchange="actualizarPreviewBadgeAdmin(${idx})">
+                                    <label class="form-check-label text-white-50 small font-orbitron" for="switch-activo-${idx}">Activo</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label-neon small" style="color: var(--p-cyan);">Frase / Texto Neón:</label>
+                                <input type="text" class="form-control form-control-sm font-orbitron" id="input-texto-${idx}" value="${texto}" placeholder="Ej: PRÓXIMAMENTE, OFERTA..." oninput="actualizarPreviewBadgeAdmin(${idx})">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label-neon small" style="color: var(--p-magenta);">Estilo / Color Neón:</label>
+                                <select class="form-select form-select-sm font-orbitron" id="select-color-${idx}" onchange="actualizarPreviewBadgeAdmin(${idx})">
+                                    <option value="neon-magenta" ${color === 'neon-magenta' ? 'selected' : ''}>🟣 Neón Magenta (Fucsia)</option>
+                                    <option value="neon-cyan" ${color === 'neon-cyan' ? 'selected' : ''}>🔵 Neón Cyan (Aqua)</option>
+                                    <option value="neon-oro" ${color === 'neon-oro' ? 'selected' : ''}>🟡 Neón Oro (Dorado)</option>
+                                    <option value="neon-verde" ${color === 'neon-verde' ? 'selected' : ''}>🟢 Neón Verde (Bio)</option>
+                                    <option value="neon-rojo" ${color === 'neon-rojo' ? 'selected' : ''}>🔴 Neón Rojo (Alerta)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="check-auto-${idx}" ${autoChecked} onchange="actualizarPreviewBadgeAdmin(${idx})">
+                                <label class="form-check-label text-white-50 small font-rajdhani" for="check-auto-${idx}">
+                                    Auto-detectar ofertas si está vacío
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- VISTA PREVIA EN VIVO -->
+                        <div class="pt-2 border-top border-secondary border-opacity-25 text-center">
+                            <small class="text-white-50 d-block font-rajdhani mb-2" style="font-size:0.75rem;">VISTA PREVIA:</small>
+                            <div class="d-inline-block position-relative my-2">
+                                <span id="preview-badge-${idx}" class="liston-categoria-neon ${color} ${color.startsWith('liston-') ? color : 'liston-' + color}" style="${activoChecked ? 'display:inline-flex;' : 'display:none;'}">
+                                    ${(() => {
+                                        const label = texto || (autoChecked ? '¡OFERTA!' : '');
+                                        let icono = '<i class="bi bi-tag-fill me-1"></i>';
+                                        if (/proximamente|próximamente/i.test(label)) icono = '<i class="bi bi-clock-history me-1"></i>';
+                                        else if (/oferta|promo|descuento|sale|rebaja/i.test(label)) icono = '<i class="bi bi-fire me-1"></i>';
+                                        else if (/nuevo|new/i.test(label)) icono = '<i class="bi bi-stars me-1"></i>';
+                                        return `${icono}${label}`;
+                                    })()}
+                                </span>
+                                <div class="categoria-badge-preview">
+                                    ${b.categoriaNombre}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    }
+
+    function actualizarPreviewBadgeAdmin(idx) {
+        const sw = document.getElementById(`switch-activo-${idx}`);
+        const txtInput = document.getElementById(`input-texto-${idx}`);
+        const colSelect = document.getElementById(`select-color-${idx}`);
+        const autoCheck = document.getElementById(`check-auto-${idx}`);
+        const preview = document.getElementById(`preview-badge-${idx}`);
+
+        if (!preview) return;
+
+        const activo = sw && sw.checked;
+        const txt = (txtInput ? txtInput.value : '').trim();
+        const col = colSelect ? colSelect.value : 'neon-magenta';
+        const auto = autoCheck && autoCheck.checked;
+
+        if (activo) {
+            preview.style.display = 'inline-flex';
+            const colClase = col.startsWith('liston-') ? col : `liston-${col}`;
+            preview.className = `liston-categoria-neon ${colClase} ${col}`;
+            const label = txt || (auto ? '¡OFERTA!' : '');
+            let icono = '<i class="bi bi-tag-fill me-1"></i>';
+            if (/proximamente|próximamente/i.test(label)) icono = '<i class="bi bi-clock-history me-1"></i>';
+            else if (/oferta|promo|descuento|sale|rebaja/i.test(label)) icono = '<i class="bi bi-fire me-1"></i>';
+            else if (/nuevo|new/i.test(label)) icono = '<i class="bi bi-stars me-1"></i>';
+            preview.innerHTML = `${icono}${label}`;
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+
+    async function guardarBadgesCategoriasAdmin() {
+        try {
+            adminBadgesCategorias.forEach((b, idx) => {
+                const sw = document.getElementById(`switch-activo-${idx}`);
+                const txtInput = document.getElementById(`input-texto-${idx}`);
+                const colSelect = document.getElementById(`select-color-${idx}`);
+                const autoCheck = document.getElementById(`check-auto-${idx}`);
+
+                if (sw) b.activo = sw.checked;
+                if (txtInput) b.texto = txtInput.value.trim();
+                if (colSelect) b.color = colSelect.value;
+                if (autoCheck) b.autoOferta = autoCheck.checked;
+            });
+
+            const res = await fetch('/api/categorias/badges', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(adminBadgesCategorias)
+            });
+
+            if (res.ok) {
+                playSound('cash');
+                alert("¡Listones y avisos neón guardados con éxito! Los cambios ya se reflejan en el catálogo.");
+            } else {
+                alert("Error al guardar listones en el servidor.");
+            }
+        } catch(e) {
+            console.error(e);
+            alert("Error de red al guardar listones: " + e.message);
+        }
+    }
+
     async function cargarCatalogo() {
+        cargarBadgesCategoriasAdmin();
         const suc = document.getElementById('filtro-sucursal-catalogo').value;
         const esSupremo = (rolUsuario === 'SUPREMO');
 
         try {
-            const res = await fetch('/api/productos/sucursal/' + suc);
+            const res = await fetch('/api/productos/sucursal/' + suc + '?_t=' + Date.now(), { cache: 'no-store' });
             let data = await res.json();
             data = deduplicarProductos(data || []).filter(p => {
                 const cat = (p.categoria || '').toLowerCase();
@@ -3395,30 +4240,121 @@
         }
     }
 
+    // OPTIMIZADOR Y COMPRESOR DE IMÁGENES A DATA-URL PERMANENTE (POSTGRESQL TEXT)
+    // Permite que las fotos vivan dentro de la base de datos y se sincronicen 100% entre móvil y PC sin depender de discos temporales
+    function optimizarImagenADataURL(file, maxDimension = 800, quality = 0.85) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxDimension || h > maxDimension) {
+                        if (w > h) {
+                            h = Math.round((h * maxDimension) / w);
+                            w = maxDimension;
+                        } else {
+                            w = Math.round((w * maxDimension) / h);
+                            h = maxDimension;
+                        }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    let dataUrl = canvas.toDataURL('image/webp', quality);
+                    if (!dataUrl.startsWith('data:image/webp')) {
+                        dataUrl = canvas.toDataURL('image/jpeg', quality);
+                    }
+                    resolve(dataUrl);
+                };
+                img.onerror = () => reject(new Error('No se pudo decodificar la imagen'));
+                img.src = e.target.result;
+            };
+            reader.onerror = () => reject(new Error('Error de lectura de archivo'));
+            reader.readAsDataURL(file);
+        });
+    }
+
+    let insumoIdParaFoto = null;
+    function iniciarSubidaFotoInsumo(idInsumo) {
+        insumoIdParaFoto = idInsumo;
+        let fileInput = document.getElementById('input-foto-rapida-insumo');
+        if (!fileInput) {
+            fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.id = 'input-foto-rapida-insumo';
+            fileInput.accept = 'image/*';
+            fileInput.className = 'd-none';
+            fileInput.onchange = procesarFotoRapidaInsumo;
+            document.body.appendChild(fileInput);
+        }
+        fileInput.value = '';
+        fileInput.click();
+    }
+
+    async function procesarFotoRapidaInsumo(e) {
+        const file = e.target?.files?.[0];
+        if (!file || !insumoIdParaFoto) return;
+        const idInsumo = insumoIdParaFoto;
+        try {
+            const dataUrl = await optimizarImagenADataURL(file, 800, 0.85);
+            // Guardar inmediatamente en PostgreSQL (memoria del sistema permanente)
+            const res = await fetch(`/api/insumos/${idInsumo}/imagen`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ imagen: dataUrl })
+            });
+            if (res.ok) {
+                const imgEl = document.getElementById(`img-insumo-${idInsumo}`);
+                if (imgEl) imgEl.src = dataUrl;
+                if (document.getElementById('armatubatido-id')?.value == idInsumo) {
+                    if (document.getElementById('armatubatido-imagen')) document.getElementById('armatubatido-imagen').value = dataUrl;
+                }
+                playSound('cash');
+                alert('✅ ¡Foto guardada en la base de datos! Ya está sincronizada para todos los dispositivos (móvil y PC).');
+                cargarInsumos();
+            } else {
+                alert('⚠️ Error al guardar en el servidor: ' + res.statusText);
+            }
+        } catch (err) {
+            console.error('Error procesando foto rápida:', err);
+            alert('❌ Error al procesar imagen: ' + err.message);
+        }
+    }
+
     async function subirMultimediaArmaTuBatido(inputElement) {
         const file = inputElement.files?.[0];
         if (!file) return;
 
         const btn = document.getElementById('btn-upload-armatubatido');
         const originalText = btn ? btn.innerHTML : '';
-        if (btn) btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-
-        const formData = new FormData();
-        formData.append('file', file);
+        if (btn) btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Subiendo...';
 
         try {
-            const res = await fetch('/api/media/subir', { method: 'POST', body: formData });
-            if (res.ok) {
-                const data = await res.json();
-                const input = document.getElementById('armatubatido-imagen');
-                if (input) input.value = data.url;
-                alert(`✅ Imagen/video asignado: ${data.url}`);
+            // Optimizar a Data-URL permanente para que quede en la base de datos del sistema
+            const dataUrl = await optimizarImagenADataURL(file, 800, 0.85);
+            const input = document.getElementById('armatubatido-imagen');
+            if (input) input.value = dataUrl;
+
+            const idInsumo = document.getElementById('armatubatido-id')?.value;
+            if (idInsumo) {
+                // Auto-guardar inmediatamente si se está editando una porción
+                await fetch(`/api/insumos/${idInsumo}/imagen`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imagen: dataUrl })
+                });
+                playSound('cash');
+                alert('✅ ¡Foto asignada y guardada en el sistema para todos los dispositivos!');
+                cargarInsumos();
             } else {
-                const err = await res.json();
-                alert(`⚠️ Error: ${err.error || res.statusText}`);
+                alert('✅ Foto cargada con éxito. Ahora pulsa "GUARDAR / ACTUALIZAR PORCIÓN".');
             }
         } catch (e) {
-            alert('Error al subir: ' + e.message);
+            alert('Error al procesar foto: ' + e.message);
         } finally {
             if (btn) btn.innerHTML = originalText;
             inputElement.value = '';
@@ -4117,5 +5053,33 @@
     }
 
 </script>
+
+<!-- MODAL INTERACTIVO DE COMPROBANTE (IMPRIMIR Y DESCARGAR) -->
+<div class="modal fade" id="modalComprobanteTicket" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content" style="background: rgba(10, 15, 25, 0.98); border: 2px solid var(--p-cyan); box-shadow: 0 0 35px rgba(0,229,255,0.45); border-radius: 16px;">
+            <div class="modal-header border-bottom border-secondary d-flex justify-content-between align-items-center py-2 px-3">
+                <h5 class="modal-title font-orbitron text-info fw-bold fs-6 mb-0">
+                    <i class="bi bi-receipt me-2"></i> COMPROBANTE DE VENTA
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-3">
+                <div class="d-flex justify-content-center gap-2 mb-3">
+                    <button type="button" class="btn btn-sm btn-outline-info font-orbitron fw-bold px-3 py-2" onclick="ejecutarImpresionDesdeModal()">
+                        <i class="bi bi-printer-fill me-1"></i> IMPRIMIR
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success font-orbitron fw-bold px-3 py-2 text-dark" onclick="ejecutarDescargaDesdeModal()">
+                        <i class="bi bi-download me-1"></i> DESCARGAR PDF
+                    </button>
+                </div>
+                <div id="contenedor-ticket-preview" class="p-3 rounded shadow" style="background: #ffffff; color: #000000; font-family: 'Rajdhani', sans-serif; max-height: 520px; overflow-y: auto;">
+                    <!-- Se inyecta dinámicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

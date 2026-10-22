@@ -1620,7 +1620,7 @@
     async function cargarProductosSelect() {
         try {
             const suc = document.getElementById('prod-sucursal').value;
-            const res = await fetch('/api/productos');
+            const res = await fetch('/api/productos?_t=' + Date.now(), { cache: 'no-store' });
             catalogoGlobal = await res.json();
             const select = document.getElementById('prod-item');
             select.innerHTML = '<option value="">-- Seleccione Genética --</option>';
@@ -1688,7 +1688,7 @@
             listaLotes.forEach(l => { lotesProduccion[l.idProducto] = l; });
 
             // 2. Cargar productos
-            const res = await fetch('/api/productos');
+            const res = await fetch('/api/productos?_t=' + Date.now(), { cache: 'no-store' });
             let data = await res.json();
 
             // Filtrar solo pulpas/packs para el Génesis de Producción y deduplicar por nombre
@@ -3044,7 +3044,7 @@
     // --- INSUMOS (BODEGAS: PULPAS, VASOS, SHOTS/CALDOS, ARMA TU BATIDO) ---
     async function cargarInsumos() {
         try {
-            const res = await fetch('/api/insumos/todos');
+            const res = await fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' });
             const data = await res.json();
             insMem = data;
             const tbPulpas = document.getElementById('tabla-pulpas'); if(tbPulpas) tbPulpas.innerHTML='';
@@ -3151,9 +3151,14 @@
                 else if (isShot) defaultFallback = 'https://images.unsplash.com/photo-1514733670139-4d87a1941d55?auto=format&fit=crop&w=350&q=80';
                 else if (!isArmaTuBatido) defaultFallback = 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80';
 
-                const urlInsumoImg = (i.imagen && i.imagen.trim().startsWith('http')) ? i.imagen.trim() : defaultFallback;
+                const urlInsumoImg = (i.imagen && i.imagen.trim() !== '') ? i.imagen.trim() : defaultFallback;
                 let borderImg = isArmaTuBatido ? 'border-warning' : (isVaso ? 'border-info' : (isShot ? 'border-danger' : 'border-success'));
-                let imgTdHtml = `<td><img src="${urlInsumoImg}" class="rounded border ${borderImg}" style="width: 38px; height: 38px; object-fit: cover;" onerror="this.src='${defaultFallback}'"></td>`;
+                let imgTdHtml = `<td>
+                    <div class="position-relative d-inline-block">
+                        <img src="${urlInsumoImg}" id="img-insumo-${i.idInsumo}" class="rounded border ${borderImg}" style="width: 44px; height: 44px; object-fit: cover; cursor: pointer;" title="Cambiar foto de este insumo" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" onerror="this.src='${defaultFallback}'">
+                        <button type="button" class="btn btn-sm btn-dark position-absolute bottom-0 end-0 p-0 rounded-circle text-warning border border-warning" style="width: 18px; height: 18px; line-height: 16px; font-size: 10px;" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Tomar foto"><i class="bi bi-camera-fill"></i></button>
+                    </div>
+                </td>`;
                 let dosisTdHtml = isArmaTuBatido ? `<td class="text-info fw-bold fs-5">${i.cantidadPorcion || 1} ${i.medida || 'gr'}</td>` : '';
 
                 const row = `<tr>
@@ -3166,8 +3171,9 @@
                     <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
                     <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
                     <td>
-                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})"><i class="bi bi-pencil-square fs-3"></i></button>
-                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})"><i class="bi bi-trash3-fill fs-3"></i></button>
+                        <button class="btn btn-sm text-warning border-0 me-1" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Cambiar foto de este insumo"><i class="bi bi-camera-fill fs-4"></i></button>
+                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})" title="Editar"><i class="bi bi-pencil-square fs-3"></i></button>
+                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})" title="Eliminar"><i class="bi bi-trash3-fill fs-3"></i></button>
                     </td>
                 </tr>`;
 
@@ -3459,7 +3465,10 @@
     // --- RECETAS DE PULPAS, VASOS Y SHOTS/CALDOS ---
     async function prepararRecetas() { 
         try { 
-            const [rP, rI] = await Promise.all([fetch('/api/productos'), fetch('/api/insumos/todos')]); 
+            const [rP, rI] = await Promise.all([
+                fetch('/api/productos?_t=' + Date.now(), { cache: 'no-store' }), 
+                fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' })
+            ]); 
             const productos = await rP.json(); 
             const insumos = await rI.json(); 
             insMem = insumos; // <-- CRUCIAL PARA CALCULAR PRECIO
@@ -3712,7 +3721,7 @@
         const contenedor = document.getElementById('contenedor-admin-badges-categorias');
         if (!contenedor) return;
         try {
-            const res = await fetch('/api/categorias/badges');
+            const res = await fetch('/api/categorias/badges?_t=' + Date.now(), { cache: 'no-store' });
             if (res.ok) {
                 adminBadgesCategorias = await res.json();
             }
@@ -3870,7 +3879,7 @@
         const esSupremo = (rolUsuario === 'SUPREMO');
 
         try {
-            const res = await fetch('/api/productos/sucursal/' + suc);
+            const res = await fetch('/api/productos/sucursal/' + suc + '?_t=' + Date.now(), { cache: 'no-store' });
             let data = await res.json();
             data = deduplicarProductos(data || []).filter(p => {
                 const cat = (p.categoria || '').toLowerCase();
@@ -4231,30 +4240,121 @@
         }
     }
 
+    // OPTIMIZADOR Y COMPRESOR DE IMÁGENES A DATA-URL PERMANENTE (POSTGRESQL TEXT)
+    // Permite que las fotos vivan dentro de la base de datos y se sincronicen 100% entre móvil y PC sin depender de discos temporales
+    function optimizarImagenADataURL(file, maxDimension = 800, quality = 0.85) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    let w = img.width;
+                    let h = img.height;
+                    if (w > maxDimension || h > maxDimension) {
+                        if (w > h) {
+                            h = Math.round((h * maxDimension) / w);
+                            w = maxDimension;
+                        } else {
+                            w = Math.round((w * maxDimension) / h);
+                            h = maxDimension;
+                        }
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    let dataUrl = canvas.toDataURL('image/webp', quality);
+                    if (!dataUrl.startsWith('data:image/webp')) {
+                        dataUrl = canvas.toDataURL('image/jpeg', quality);
+                    }
+                    resolve(dataUrl);
+                };
+                img.onerror = () => reject(new Error('No se pudo decodificar la imagen'));
+                img.src = e.target.result;
+            };
+            reader.onerror = () => reject(new Error('Error de lectura de archivo'));
+            reader.readAsDataURL(file);
+        });
+    }
+
+    let insumoIdParaFoto = null;
+    function iniciarSubidaFotoInsumo(idInsumo) {
+        insumoIdParaFoto = idInsumo;
+        let fileInput = document.getElementById('input-foto-rapida-insumo');
+        if (!fileInput) {
+            fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.id = 'input-foto-rapida-insumo';
+            fileInput.accept = 'image/*';
+            fileInput.className = 'd-none';
+            fileInput.onchange = procesarFotoRapidaInsumo;
+            document.body.appendChild(fileInput);
+        }
+        fileInput.value = '';
+        fileInput.click();
+    }
+
+    async function procesarFotoRapidaInsumo(e) {
+        const file = e.target?.files?.[0];
+        if (!file || !insumoIdParaFoto) return;
+        const idInsumo = insumoIdParaFoto;
+        try {
+            const dataUrl = await optimizarImagenADataURL(file, 800, 0.85);
+            // Guardar inmediatamente en PostgreSQL (memoria del sistema permanente)
+            const res = await fetch(`/api/insumos/${idInsumo}/imagen`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ imagen: dataUrl })
+            });
+            if (res.ok) {
+                const imgEl = document.getElementById(`img-insumo-${idInsumo}`);
+                if (imgEl) imgEl.src = dataUrl;
+                if (document.getElementById('armatubatido-id')?.value == idInsumo) {
+                    if (document.getElementById('armatubatido-imagen')) document.getElementById('armatubatido-imagen').value = dataUrl;
+                }
+                playSound('cash');
+                alert('✅ ¡Foto guardada en la base de datos! Ya está sincronizada para todos los dispositivos (móvil y PC).');
+                cargarInsumos();
+            } else {
+                alert('⚠️ Error al guardar en el servidor: ' + res.statusText);
+            }
+        } catch (err) {
+            console.error('Error procesando foto rápida:', err);
+            alert('❌ Error al procesar imagen: ' + err.message);
+        }
+    }
+
     async function subirMultimediaArmaTuBatido(inputElement) {
         const file = inputElement.files?.[0];
         if (!file) return;
 
         const btn = document.getElementById('btn-upload-armatubatido');
         const originalText = btn ? btn.innerHTML : '';
-        if (btn) btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
-
-        const formData = new FormData();
-        formData.append('file', file);
+        if (btn) btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Subiendo...';
 
         try {
-            const res = await fetch('/api/media/subir', { method: 'POST', body: formData });
-            if (res.ok) {
-                const data = await res.json();
-                const input = document.getElementById('armatubatido-imagen');
-                if (input) input.value = data.url;
-                alert(`✅ Imagen/video asignado: ${data.url}`);
+            // Optimizar a Data-URL permanente para que quede en la base de datos del sistema
+            const dataUrl = await optimizarImagenADataURL(file, 800, 0.85);
+            const input = document.getElementById('armatubatido-imagen');
+            if (input) input.value = dataUrl;
+
+            const idInsumo = document.getElementById('armatubatido-id')?.value;
+            if (idInsumo) {
+                // Auto-guardar inmediatamente si se está editando una porción
+                await fetch(`/api/insumos/${idInsumo}/imagen`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ imagen: dataUrl })
+                });
+                playSound('cash');
+                alert('✅ ¡Foto asignada y guardada en el sistema para todos los dispositivos!');
+                cargarInsumos();
             } else {
-                const err = await res.json();
-                alert(`⚠️ Error: ${err.error || res.statusText}`);
+                alert('✅ Foto cargada con éxito. Ahora pulsa "GUARDAR / ACTUALIZAR PORCIÓN".');
             }
         } catch (e) {
-            alert('Error al subir: ' + e.message);
+            alert('Error al procesar foto: ' + e.message);
         } finally {
             if (btn) btn.innerHTML = originalText;
             inputElement.value = '';
