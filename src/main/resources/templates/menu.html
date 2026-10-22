@@ -99,7 +99,23 @@
         }
         @keyframes scrollScanlines { from { background-position: 0 0; } to { background-position: 0 100vh; } }
 
-        .fireflies { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .video-fondo-catalogo {
+            position: fixed; top: 50%; left: 50%;
+            min-width: 100vw; min-height: 100vh;
+            width: auto; height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            z-index: 0; pointer-events: none;
+        }
+
+        .video-fondo-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(1, 15, 8, 0.4), rgba(1, 15, 8, 0.72));
+            z-index: 1; pointer-events: none;
+        }
+
+        .fireflies { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
         .firefly { position: absolute; border-radius: 50%; opacity: 0; animation: float-up linear infinite, parpadeo ease-in-out infinite alternate; }
         @keyframes float-up { 0% { transform: translateY(105vh) translateX(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(-15vh) translateX(50px); opacity: 0; } }
         @keyframes parpadeo { 0% { opacity: 0.3; } 100% { opacity: 1; } }
@@ -318,6 +334,12 @@
 </head>
 <body>
 
+<video id="video-fondo-catalogo" class="video-fondo-catalogo" autoplay loop muted playsinline poster="https://res.cloudinary.com/doi0o3hlr/image/upload/q_auto,f_auto,w_1000/v1774759858/Gemini_Generated_Image_2ocvdw2ocvdw2ocv_ixqdsz.png">
+    <source src="fondo-catalogo.mp4" type="video/mp4">
+    <source src="/fondo-catalogo.mp4" type="video/mp4">
+</video>
+<div class="video-fondo-overlay"></div>
+
 <div id="destello-luz"></div>
 <div class="scanlines"></div>
 
@@ -495,6 +517,11 @@
         textosInicio.style.opacity = '0';
 
         puerta.classList.add('efecto-wow-puerta');
+
+        const vidFondo = document.getElementById('video-fondo-catalogo');
+        if (vidFondo && vidFondo.paused) {
+            vidFondo.play().catch(e => console.warn("Video background play:", e));
+        }
 
         mainAudio.play().catch(e => {
             console.error("Música bloquedada", e);
