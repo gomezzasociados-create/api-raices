@@ -159,7 +159,7 @@
             margin-top: 5px; margin-bottom: 15px; text-transform: uppercase;
         }
 
-        .contenedor-categorias { display: flex; flex-wrap: wrap; gap: 18px 14px; justify-content: center; margin: 25px 0 30px; z-index: 10; position: relative; }
+        .contenedor-categorias { display: flex; flex-wrap: wrap; gap: 20px 14px; justify-content: center; margin: 34px 0 30px; z-index: 10; position: relative; }
         .categoria-badge { 
             position: relative; 
             background: rgba(10, 5, 2, 0.88); 
@@ -183,89 +183,92 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.9), 0 0 15px rgba(255, 215, 0, 0.3);
         }
 
-        /* LISTONES Y LETRAS NEÓN SOBRE CATEGORÍAS */
+        /* ========================================================= */
+        /* LISTONES Y LETRAS NEÓN SOBRE CATEGORÍAS (ALTO IMPACTO) */
+        /* ========================================================= */
         .liston-categoria-neon {
             position: absolute;
-            top: -12px;
+            top: -16px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.62rem;
-            font-weight: 900;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            white-space: nowrap;
-            z-index: 5;
-            pointer-events: none;
-            line-height: 1.3;
+            padding: 3px 14px;
+            border-radius: 20px;
+            font-family: 'Orbitron', sans-serif !important;
+            font-size: 0.72rem !important;
+            font-weight: 900 !important;
+            letter-spacing: 1.8px !important;
+            text-transform: uppercase !important;
+            white-space: nowrap !important;
+            z-index: 100 !important;
+            pointer-events: none !important;
+            line-height: 1.2 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 5px !important;
+            border: 2px solid #ffffff !important;
         }
 
         .liston-neon-magenta {
-            background: rgba(20, 0, 15, 0.95);
-            color: #ff00ea;
-            border: 1px solid #ff00ea;
-            box-shadow: 0 0 10px rgba(255, 0, 234, 0.7), inset 0 0 6px rgba(255, 0, 234, 0.4);
-            text-shadow: 0 0 5px #ff00ea, 0 0 10px #ff00ea;
-            animation: pulsoNeonMagenta 2s infinite alternate;
+            background: linear-gradient(135deg, #ff007f 0%, #aa00ff 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 15px #ff00ea, 0 0 35px rgba(255, 0, 234, 0.9), 0 4px 15px rgba(0,0,0,0.95) !important;
+            text-shadow: 0 0 4px #ffffff, 0 0 12px #ff00ea, 0 0 22px #ff00ea !important;
+            animation: pulsoNeonMagenta 1.6s infinite alternate !important;
         }
         @keyframes pulsoNeonMagenta {
-            0% { box-shadow: 0 0 8px rgba(255, 0, 234, 0.6); }
-            100% { box-shadow: 0 0 16px rgba(255, 0, 234, 0.95), 0 0 25px rgba(255, 0, 234, 0.6); transform: translateX(-50%) scale(1.05); }
-        }
-
-        .liston-neon-cyan {
-            background: rgba(0, 15, 25, 0.95);
-            color: #00f0ff;
-            border: 1px solid #00f0ff;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.7), inset 0 0 6px rgba(0, 240, 255, 0.4);
-            text-shadow: 0 0 5px #00f0ff, 0 0 10px #00f0ff;
-            animation: pulsoNeonCyan 2s infinite alternate;
-        }
-        @keyframes pulsoNeonCyan {
-            0% { box-shadow: 0 0 8px rgba(0, 240, 255, 0.6); }
-            100% { box-shadow: 0 0 16px rgba(0, 240, 255, 0.95), 0 0 25px rgba(0, 240, 255, 0.6); transform: translateX(-50%) scale(1.05); }
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 12px #ff00ea, 0 0 25px rgba(255, 0, 234, 0.8); }
+            100% { transform: translateX(-50%) scale(1.08); box-shadow: 0 0 25px #ff00ea, 0 0 45px rgba(255, 0, 234, 1), 0 0 65px rgba(255, 0, 234, 0.7); }
         }
 
         .liston-neon-oro {
-            background: rgba(25, 15, 0, 0.95);
-            color: #ffd700;
-            border: 1px solid #ffd700;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.7), inset 0 0 6px rgba(255, 215, 0, 0.4);
-            text-shadow: 0 0 5px #ffd700, 0 0 10px #ff9900;
-            animation: pulsoNeonOro 2s infinite alternate;
+            background: linear-gradient(135deg, #ff9900 0%, #ff3300 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 15px #ff9900, 0 0 35px rgba(255, 153, 0, 0.9), 0 4px 15px rgba(0,0,0,0.95) !important;
+            text-shadow: 0 0 4px #ffffff, 0 0 12px #ff9900, 0 0 22px #ff5500 !important;
+            animation: pulsoNeonOro 1.6s infinite alternate !important;
         }
         @keyframes pulsoNeonOro {
-            0% { box-shadow: 0 0 8px rgba(255, 215, 0, 0.6); }
-            100% { box-shadow: 0 0 16px rgba(255, 215, 0, 0.95), 0 0 25px rgba(255, 153, 0, 0.6); transform: translateX(-50%) scale(1.05); }
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 12px #ff9900, 0 0 25px rgba(255, 153, 0, 0.8); }
+            100% { transform: translateX(-50%) scale(1.08); box-shadow: 0 0 25px #ff9900, 0 0 45px rgba(255, 153, 0, 1), 0 0 65px rgba(255, 100, 0, 0.7); }
+        }
+
+        .liston-neon-cyan {
+            background: linear-gradient(135deg, #00d4ff 0%, #0055ff 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 15px #00f0ff, 0 0 35px rgba(0, 240, 255, 0.9), 0 4px 15px rgba(0,0,0,0.95) !important;
+            text-shadow: 0 0 4px #ffffff, 0 0 12px #00f0ff, 0 0 22px #0077ff !important;
+            animation: pulsoNeonCyan 1.6s infinite alternate !important;
+        }
+        @keyframes pulsoNeonCyan {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 12px #00f0ff, 0 0 25px rgba(0, 240, 255, 0.8); }
+            100% { transform: translateX(-50%) scale(1.08); box-shadow: 0 0 25px #00f0ff, 0 0 45px rgba(0, 240, 255, 1), 0 0 65px rgba(0, 200, 255, 0.7); }
         }
 
         .liston-neon-verde {
-            background: rgba(0, 20, 8, 0.95);
-            color: #00ff88;
-            border: 1px solid #00ff88;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.7), inset 0 0 6px rgba(0, 255, 136, 0.4);
-            text-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88;
-            animation: pulsoNeonVerde 2s infinite alternate;
+            background: linear-gradient(135deg, #00ff88 0%, #009944 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 15px #00ff88, 0 0 35px rgba(0, 255, 136, 0.9), 0 4px 15px rgba(0,0,0,0.95) !important;
+            text-shadow: 0 0 4px #ffffff, 0 0 12px #00ff88, 0 0 22px #009944 !important;
+            animation: pulsoNeonVerde 1.6s infinite alternate !important;
         }
         @keyframes pulsoNeonVerde {
-            0% { box-shadow: 0 0 8px rgba(0, 255, 136, 0.6); }
-            100% { box-shadow: 0 0 16px rgba(0, 255, 136, 0.95), 0 0 25px rgba(0, 255, 136, 0.6); transform: translateX(-50%) scale(1.05); }
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 12px #00ff88, 0 0 25px rgba(0, 255, 136, 0.8); }
+            100% { transform: translateX(-50%) scale(1.08); box-shadow: 0 0 25px #00ff88, 0 0 45px rgba(0, 255, 136, 1); }
         }
 
         .liston-neon-rojo {
-            background: rgba(25, 0, 0, 0.95);
-            color: #ff3355;
-            border: 1px solid #ff3355;
-            box-shadow: 0 0 10px rgba(255, 51, 85, 0.7), inset 0 0 6px rgba(255, 51, 85, 0.4);
-            text-shadow: 0 0 5px #ff3355, 0 0 10px #ff3355;
-            animation: pulsoNeonRojo 2s infinite alternate;
+            background: linear-gradient(135deg, #ff0055 0%, #cc0000 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 15px #ff0055, 0 0 35px rgba(255, 0, 85, 0.9), 0 4px 15px rgba(0,0,0,0.95) !important;
+            text-shadow: 0 0 4px #ffffff, 0 0 12px #ff0055, 0 0 22px #ff0000 !important;
+            animation: pulsoNeonRojo 1.6s infinite alternate !important;
         }
         @keyframes pulsoNeonRojo {
-            0% { box-shadow: 0 0 8px rgba(255, 51, 85, 0.6); }
-            100% { box-shadow: 0 0 16px rgba(255, 51, 85, 0.95), 0 0 25px rgba(255, 51, 85, 0.6); transform: translateX(-50%) scale(1.05); }
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 12px #ff0055, 0 0 25px rgba(255, 0, 85, 0.8); }
+            100% { transform: translateX(-50%) scale(1.08); box-shadow: 0 0 25px #ff0055, 0 0 45px rgba(255, 0, 85, 1); }
         }
+
         .categoria-badge.active { background: rgba(255, 215, 0, 0.2); color: var(--bio-oro); border-color: var(--bio-oro); box-shadow: var(--resplandor-divino); }
 
         .item-tarjeta { position: relative; z-index: 1; transition: z-index 0.2s; }
@@ -490,7 +493,7 @@
     <button class="categoria-badge active" onclick="filtrar('500 mls', this)" data-cat="500 mls"><span class="liston-categoria-neon" id="badge-cat-500-mls" style="display:none;"></span>Elíxires</button>
     <button class="categoria-badge" onclick="filtrar('Packs', this)" data-cat="Packs"><span class="liston-categoria-neon" id="badge-cat-Packs" style="display:none;"></span>Pack de Pulpas</button>
     <button class="categoria-badge" onclick="filtrar('Arma tu Batido', this)" data-cat="Arma tu Batido"><span class="liston-categoria-neon" id="badge-cat-Arma-tu-Batido" style="display:none;"></span>Arma tu Batido</button>
-    <button class="categoria-badge" onclick="filtrar('Shots', this)" data-cat="Shots"><span class="liston-categoria-neon liston-neon-magenta" id="badge-cat-Shots">PRÓXIMAMENTE</span>Shots</button>
+    <button class="categoria-badge" onclick="filtrar('Shots', this)" data-cat="Shots"><span class="liston-categoria-neon liston-neon-magenta" id="badge-cat-Shots"><i class="bi bi-clock-history me-1"></i>PRÓXIMAMENTE</span>Shots</button>
 </div>
 
     <div class="container px-2">
@@ -779,8 +782,19 @@
 
             if (activo && texto) {
                 span.className = `liston-categoria-neon ${color}`;
-                span.innerText = texto;
-                span.style.display = 'inline-block';
+                let icono = '';
+                const txtUpper = texto.toUpperCase();
+                if (txtUpper.includes('PROX') || txtUpper.includes('PRONTO')) {
+                    icono = '<i class="bi bi-clock-history me-1"></i>';
+                } else if (txtUpper.includes('OFERTA') || txtUpper.includes('PROMO') || txtUpper.includes('%')) {
+                    icono = '<i class="bi bi-tag-fill me-1"></i>';
+                } else if (txtUpper.includes('NUEVO') || txtUpper.includes('NEW')) {
+                    icono = '<i class="bi bi-stars me-1"></i>';
+                } else if (txtUpper.includes('POPULAR') || txtUpper.includes('TOP')) {
+                    icono = '<i class="bi bi-fire me-1"></i>';
+                }
+                span.innerHTML = `${icono}${texto}`;
+                span.style.display = 'inline-flex';
             } else {
                 span.style.display = 'none';
             }

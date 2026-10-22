@@ -304,54 +304,79 @@
         }
         .liston-categoria-neon {
             position: absolute;
-            top: -10px;
+            top: -14px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.58rem;
-            font-weight: 900;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            white-space: nowrap;
-            z-index: 5;
-            line-height: 1.3;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-family: 'Orbitron', sans-serif !important;
+            font-size: 0.68rem !important;
+            font-weight: 900 !important;
+            letter-spacing: 1.5px !important;
+            text-transform: uppercase !important;
+            white-space: nowrap !important;
+            z-index: 10 !important;
+            line-height: 1.2 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 4px !important;
+            border: 2px solid #ffffff !important;
         }
         .liston-neon-magenta {
-            background: rgba(20, 0, 15, 0.95);
-            color: #ff00ea;
-            border: 1px solid #ff00ea;
-            box-shadow: 0 0 10px rgba(255, 0, 234, 0.7), inset 0 0 6px rgba(255, 0, 234, 0.4);
-            text-shadow: 0 0 5px #ff00ea, 0 0 10px #ff00ea;
+            background: linear-gradient(135deg, #ff007f 0%, #aa00ff 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 12px #ff00ea, 0 0 25px rgba(255, 0, 234, 0.8), 0 3px 8px rgba(0,0,0,0.8) !important;
+            text-shadow: 0 0 4px #ffffff, 0 0 10px #ff00ea !important;
+            animation: pulsoNeonMagentaAdmin 1.6s infinite alternate !important;
+        }
+        @keyframes pulsoNeonMagentaAdmin {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px #ff00ea, 0 0 20px rgba(255, 0, 234, 0.8); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 20px #ff00ea, 0 0 35px rgba(255, 0, 234, 1); }
         }
         .liston-neon-cyan {
-            background: rgba(0, 15, 25, 0.95);
-            color: #00f0ff;
-            border: 1px solid #00f0ff;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.7), inset 0 0 6px rgba(0, 240, 255, 0.4);
-            text-shadow: 0 0 5px #00f0ff, 0 0 10px #00f0ff;
+            background: linear-gradient(135deg, #00d4ff 0%, #0055ff 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 12px #00f0ff, 0 0 25px rgba(0, 240, 255, 0.8), 0 3px 8px rgba(0,0,0,0.8) !important;
+            text-shadow: 0 0 4px #ffffff, 0 0 10px #00f0ff !important;
+            animation: pulsoNeonCyanAdmin 1.6s infinite alternate !important;
+        }
+        @keyframes pulsoNeonCyanAdmin {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px #00f0ff, 0 0 20px rgba(0, 240, 255, 0.8); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 20px #00f0ff, 0 0 35px rgba(0, 240, 255, 1); }
         }
         .liston-neon-oro {
-            background: rgba(25, 15, 0, 0.95);
-            color: #ffd700;
-            border: 1px solid #ffd700;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.7), inset 0 0 6px rgba(255, 215, 0, 0.4);
-            text-shadow: 0 0 5px #ffd700, 0 0 10px #ff9900;
+            background: linear-gradient(135deg, #ff9900 0%, #ff3300 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 12px #ff9900, 0 0 25px rgba(255, 153, 0, 0.8), 0 3px 8px rgba(0,0,0,0.8) !important;
+            text-shadow: 0 0 4px #ffffff, 0 0 10px #ff9900 !important;
+            animation: pulsoNeonOroAdmin 1.6s infinite alternate !important;
+        }
+        @keyframes pulsoNeonOroAdmin {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px #ff9900, 0 0 20px rgba(255, 153, 0, 0.8); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 20px #ff9900, 0 0 35px rgba(255, 153, 0, 1); }
         }
         .liston-neon-verde {
-            background: rgba(0, 20, 8, 0.95);
-            color: #00ff88;
-            border: 1px solid #00ff88;
-            box-shadow: 0 0 10px rgba(0, 255, 136, 0.7), inset 0 0 6px rgba(0, 255, 136, 0.4);
-            text-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88;
+            background: linear-gradient(135deg, #00ff88 0%, #009944 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 12px #00ff88, 0 0 25px rgba(0, 255, 136, 0.8), 0 3px 8px rgba(0,0,0,0.8) !important;
+            text-shadow: 0 0 4px #ffffff, 0 0 10px #00ff88 !important;
+            animation: pulsoNeonVerdeAdmin 1.6s infinite alternate !important;
+        }
+        @keyframes pulsoNeonVerdeAdmin {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px #00ff88, 0 0 20px rgba(0, 255, 136, 0.8); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 20px #00ff88, 0 0 35px rgba(0, 255, 136, 1); }
         }
         .liston-neon-rojo {
-            background: rgba(25, 0, 0, 0.95);
-            color: #ff3355;
-            border: 1px solid #ff3355;
-            box-shadow: 0 0 10px rgba(255, 51, 85, 0.7), inset 0 0 6px rgba(255, 51, 85, 0.4);
-            text-shadow: 0 0 5px #ff3355, 0 0 10px #ff3355;
+            background: linear-gradient(135deg, #ff0055 0%, #cc0000 100%) !important;
+            color: #ffffff !important;
+            box-shadow: 0 0 12px #ff0055, 0 0 25px rgba(255, 0, 85, 0.8), 0 3px 8px rgba(0,0,0,0.8) !important;
+            text-shadow: 0 0 4px #ffffff, 0 0 10px #ff0055 !important;
+            animation: pulsoNeonRojoAdmin 1.6s infinite alternate !important;
+        }
+        @keyframes pulsoNeonRojoAdmin {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px #ff0055, 0 0 20px rgba(255, 0, 85, 0.8); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 20px #ff0055, 0 0 35px rgba(255, 0, 85, 1); }
         }
 
         #impresion-zona {
@@ -3670,8 +3695,15 @@
                         <div class="pt-2 border-top border-secondary border-opacity-25 text-center">
                             <small class="text-white-50 d-block font-rajdhani mb-2" style="font-size:0.75rem;">VISTA PREVIA:</small>
                             <div class="d-inline-block position-relative my-2">
-                                <span id="preview-badge-${idx}" class="liston-categoria-neon ${color}" style="${activoChecked ? '' : 'display:none;'}">
-                                    ${texto || (autoChecked ? '¡OFERTA!' : '')}
+                                <span id="preview-badge-${idx}" class="liston-categoria-neon ${color}" style="${activoChecked ? 'display:inline-flex;' : 'display:none;'}">
+                                    ${(() => {
+                                        const label = texto || (autoChecked ? '¡OFERTA!' : '');
+                                        let icono = '<i class="bi bi-tag-fill me-1"></i>';
+                                        if (/proximamente|próximamente/i.test(label)) icono = '<i class="bi bi-clock-history me-1"></i>';
+                                        else if (/oferta|promo|descuento|sale|rebaja/i.test(label)) icono = '<i class="bi bi-fire me-1"></i>';
+                                        else if (/nuevo|new/i.test(label)) icono = '<i class="bi bi-stars me-1"></i>';
+                                        return `${icono}${label}`;
+                                    })()}
                                 </span>
                                 <div class="categoria-badge-preview">
                                     ${b.categoriaNombre}
@@ -3698,9 +3730,14 @@
         const auto = autoCheck && autoCheck.checked;
 
         if (activo) {
-            preview.style.display = 'inline-block';
+            preview.style.display = 'inline-flex';
             preview.className = `liston-categoria-neon ${col}`;
-            preview.innerText = txt || (auto ? '¡OFERTA!' : '');
+            const label = txt || (auto ? '¡OFERTA!' : '');
+            let icono = '<i class="bi bi-tag-fill me-1"></i>';
+            if (/proximamente|próximamente/i.test(label)) icono = '<i class="bi bi-clock-history me-1"></i>';
+            else if (/oferta|promo|descuento|sale|rebaja/i.test(label)) icono = '<i class="bi bi-fire me-1"></i>';
+            else if (/nuevo|new/i.test(label)) icono = '<i class="bi bi-stars me-1"></i>';
+            preview.innerHTML = `${icono}${label}`;
         } else {
             preview.style.display = 'none';
         }
