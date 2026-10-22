@@ -166,7 +166,9 @@
         @keyframes flotar { from { transform: translateY(5px); } to { transform: translateY(-5px); } }
 
         .nombre-prod { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: #fff; text-transform: uppercase; margin-bottom: 2px; text-shadow: 0 3px 8px #000, 0 0 15px rgba(0,0,0,0.9); text-align: center; position: relative; z-index: 25; }
-        .precio-prod { font-family: 'Orbitron', sans-serif; color: var(--bio-oro); font-weight: 900; font-size: 1.4rem; text-shadow: 0 3px 8px #000, 0 0 15px rgba(0,0,0,0.9); text-align: center; position: relative; z-index: 25; }
+        .info-prod-box { position: relative; z-index: 25; text-align: center; width: 100%; }
+        .precio-container { position: relative; z-index: 25; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+        .precio-prod { font-family: 'Orbitron', sans-serif; color: var(--bio-oro); font-weight: 900; font-size: 1.4rem; text-shadow: 0 3px 8px #000, 0 0 15px rgba(0,0,0,0.9); text-align: center; position: relative; z-index: 25; line-height: 1.1; }
 
         .btn-info-flip { position: absolute; top: 10px; right: 10px; background: rgba(5, 2, 0, 0.85); color: var(--bio-oro); border: 1px solid var(--bio-oro); width: auto; padding: 6px 14px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; z-index: 30; box-shadow: 0 5px 10px rgba(0,0,0,0.8); backdrop-filter: blur(5px); cursor: pointer; transition: 0.3s; }
         .btn-info-flip:hover { background: var(--bio-oro); color: #000; }
@@ -192,12 +194,42 @@
             0% { transform: scale(1); box-shadow: 0 4px 15px rgba(255, 0, 85, 0.6); }
             100% { transform: scale(1.06); box-shadow: 0 4px 25px rgba(255, 85, 0, 0.9); }
         }
+        .precio-original-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(10, 5, 2, 0.85);
+            padding: 2px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 75, 75, 0.4);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+            margin-bottom: 2px;
+            position: relative;
+            z-index: 26;
+        }
+        .precio-original-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: #ff4d6d;
+            letter-spacing: 0.8px;
+        }
         .precio-original {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.88rem;
+            color: rgba(255, 255, 255, 0.75);
             text-decoration: line-through;
-            font-weight: 600;
+
+            text-decoration-color: #ff3355;
+            text-decoration-thickness: 1.5px;
+            font-weight: 700;
+            position: relative;
+            z-index: 26;
+            text-shadow: 0 2px 4px #000;
+
+
+
         }
 
         .btn-extraer { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.3) 100%); color: var(--bio-oro); border: 1px solid var(--bio-oro); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.6); position: relative; z-index: 25;}
@@ -614,11 +646,16 @@
 
             const badgeDto = tieneDto ? `<div class="badge-descuento">-${dto}% OFF</div>` : '';
             const precioHtml = tieneDto
-                ? `<div class="d-flex align-items-center justify-content-center gap-2">
-                       <span class="precio-original">${simboloActual}${precioBase.toLocaleString('es-CL')}</span>
-                       <span class="precio-prod">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span>
+                ? `<div class="precio-container">
+                       <div class="precio-original-wrap">
+                           <span class="precio-original-label">ANTES</span>
+                           <span class="precio-original">${simboloActual}${precioBase.toLocaleString('es-CL')}</span>
+                       </div>
+                       <div class="precio-prod">${simboloActual}${precioFinal.toLocaleString('es-CL')}</div>
                    </div>`
-                : `<div class="precio-prod">${simboloActual}${precioBase.toLocaleString('es-CL')}</div>`;
+                : `<div class="precio-container">
+                       <div class="precio-prod">${simboloActual}${precioBase.toLocaleString('es-CL')}</div>
+                   </div>`;
 
             const esVideo = img && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(img.trim());
             const mediaTag = esVideo 
@@ -634,7 +671,7 @@
                                 ${badgeDto}
                                 <button class="btn-info-flip" onclick="event.stopPropagation(); flip('${p.id}')">INFORMACIÓN <i class="bi bi-info-circle ms-2"></i></button>
                                 <div class="img-zona">${mediaTag}</div>
-                                <div><div class="nombre-prod text-truncate">${p.nombre}</div>${precioHtml}</div>
+                                <div class="info-prod-box"><div class="nombre-prod text-truncate">${p.nombre}</div>${precioHtml}</div>
                                 <button class="btn-extraer mt-3" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase})">EXTRAER</button>
                             </div>
                             <div class="card-back">
