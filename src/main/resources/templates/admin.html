@@ -16,7 +16,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="/html2pdf.bundle.min.js"></script>
+    <script>
+        if (typeof html2pdf === 'undefined') {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>');
+        }
+    </script>
 
     <style>
         :root {
@@ -2265,22 +2270,36 @@
         }, 8000);
     }
 
-    async function procesarDescargaDocumento(htmlContent, nombreArchivo, formato = 'a4', orientacion = 'portrait', anchoContenedor = '420px') {
-        mostrarAvisoDescarga(`<i class="bi bi-hourglass-split me-2"></i> Generando archivo <b>${nombreArchivo}</b> para tu dispositivo...`, 'info');
+    async function procesarDescargaDocumento(htmlContent, nombreArchivo, formato = 'a4', orientacion = 'portrait', anchoContenedor = '360px') {
+        mostrarAvisoDescarga(`<i class="bi bi-hourglass-split me-2"></i> Generando archivo <b>${nombreArchivo}</b>...`, 'info');
 
-        // Limpiar inmediatamente cualquier rastro en pantalla
-        document.querySelectorAll('#pdf-render-sandbox').forEach(el => el.remove());
-        const zonaImp = document.getElementById('impresion-zona');
-        if (zonaImp) zonaImp.innerHTML = '';
+        // Contenedor 100% oculto en pantalla para cálculo de renderizado de html2pdf
+        const hiddenWrapper = document.createElement('div');
+        hiddenWrapper.style.position = 'fixed';
+        hiddenWrapper.style.top = '0';
+        hiddenWrapper.style.left = '0';
+        hiddenWrapper.style.width = '0px';
+        hiddenWrapper.style.height = '0px';
+        hiddenWrapper.style.overflow = 'hidden';
+        hiddenWrapper.style.opacity = '1';
+        hiddenWrapper.style.pointerEvents = 'none';
+        hiddenWrapper.style.zIndex = '-999999';
+
+        const renderBox = document.createElement('div');
+        renderBox.style.width = anchoContenedor;
+        renderBox.style.minWidth = anchoContenedor;
+        renderBox.style.maxWidth = anchoContenedor;
+        renderBox.style.backgroundColor = '#ffffff';
+        renderBox.style.color = '#000000';
+        renderBox.style.boxSizing = 'border-box';
+        renderBox.style.padding = '15px';
+        renderBox.style.fontFamily = "'Rajdhani', Arial, sans-serif";
+        renderBox.innerHTML = htmlContent;
+
+        hiddenWrapper.appendChild(renderBox);
+        document.body.appendChild(hiddenWrapper);
 
         let completado = false;
-
-        // Construir HTML autocontenido para el motor PDF sin tocar el DOM visible de la pantalla
-        const styledHtml = `
-            <div style="font-family:'Rajdhani', Arial, sans-serif; background:#ffffff; color:#000000; width:${anchoContenedor}; padding:20px; box-sizing:border-box; margin:0 auto;">
-                ${htmlContent}
-            </div>
-        `;
 
         try {
             if (typeof html2pdf !== 'undefined') {
@@ -2300,15 +2319,43 @@
                     }
                 };
 
-                // html2pdf().from(string) procesa el documento en memoria virtual aislada sin agregarlo al fondo de la pantalla
-                await html2pdf().from(styledHtml).set(opt).save();
-                completado = true;
+                try {
+                    const worker = html2pdf().set(opt).from(renderBox);
+                    const pdfBlob = await worker.outputPdf('blob');
+                    if (pdfBlob && pdfBlob.size > 0) {
+                        const blobUrl = URL.createObjectURL(pdfBlob);
+                        const link = document.createElement('a');
+                        link.style.display = 'none';
+                        link.href = blobUrl;
+                        link.download = nombreArchivo;
+                        document.body.appendChild(link);
+                        link.click();
+                        setTimeout(() => {
+                            if (link.parentNode) link.parentNode.removeChild(link);
+                            URL.revokeObjectURL(blobUrl);
+                        }, 3000);
+                        completado = true;
+                    }
+                } catch (errBlob) {
+                    console.warn("Fallo worker.outputPdf('blob'), intentando save():", errBlob);
+                }
+
+                if (!completado) {
+                    await html2pdf().set(opt).from(renderBox).save();
+                    completado = true;
+                }
+            } else {
+                console.warn("Librería html2pdf no encontrada en window.");
             }
         } catch (ePdf) {
-            console.error("Fallo durante generación de PDF con html2pdf:", ePdf);
+            console.error("Error al generar PDF:", ePdf);
+        } finally {
+            if (hiddenWrapper.parentNode) {
+                hiddenWrapper.parentNode.removeChild(hiddenWrapper);
+            }
         }
 
-        // Respaldo de descarga inmediata hacia el dispositivo mediante Blob invisible
+        // Respaldo garantizado si falla la compilación de PDF
         if (!completado) {
             try {
                 const fallbackHtml = `<!DOCTYPE html>
@@ -2322,7 +2369,9 @@
     </style>
 </head>
 <body>
-    ${styledHtml}
+    <div style="max-width:${anchoContenedor}; margin:0 auto;">
+        ${htmlContent}
+    </div>
     <script>
         window.onload = function() {
             setTimeout(function() { window.print(); }, 400);
@@ -2332,14 +2381,14 @@
 </html>`;
                 const fallbackBlob = new Blob([fallbackHtml], { type: 'text/html;charset=utf-8' });
                 const blobUrl = URL.createObjectURL(fallbackBlob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = blobUrl;
-                a.download = nombreArchivo.replace(/\.pdf$/i, '') + '.html';
-                document.body.appendChild(a);
-                a.click();
+                const link = document.createElement('a');
+                link.style.display = 'none';
+                link.href = blobUrl;
+                link.download = nombreArchivo.replace(/\.pdf$/i, '') + '.html';
+                document.body.appendChild(link);
+                link.click();
                 setTimeout(() => {
-                    if (a.parentNode) a.parentNode.removeChild(a);
+                    if (link.parentNode) link.parentNode.removeChild(link);
                     URL.revokeObjectURL(blobUrl);
                 }, 3000);
                 completado = true;
@@ -2349,26 +2398,31 @@
         }
 
         if (completado) {
-            mostrarAvisoDescarga(`<i class="bi bi-check-circle-fill me-2"></i> ¡Archivo <b>"${nombreArchivo}"</b> descargado en tu dispositivo!<br><span style="font-size:12px; font-weight:normal;">Búscalo en la carpeta <b>Descargas (Downloads)</b> de este dispositivo.</span>`, 'success');
+            mostrarAvisoDescarga(`<i class="bi bi-check-circle-fill me-2"></i> ¡Descargado en tu dispositivo! Archivo: <b>"${nombreArchivo}"</b>.<br><span style="font-size:12px; font-weight:normal;">Búscalo en la carpeta <b>Descargas (Downloads)</b> de este dispositivo.</span>`, 'success');
         } else {
-            mostrarAvisoDescarga(`<i class="bi bi-exclamation-triangle-fill me-2"></i> No se pudo procesar la descarga.`, 'error');
+            mostrarAvisoDescarga(`<i class="bi bi-exclamation-triangle-fill me-2"></i> Error: no se pudo descargar el archivo.`, 'error');
         }
     }
 
     async function descargarTicket(idVenta) {
         playSound('magic');
         try {
-            const res = await fetch('/api/ventas');
-            const ventas = await res.json();
-            const v = ventas.find(x => x.id === idVenta);
+            let v = null;
+            if (ventaActualComprobante && ventaActualComprobante.id == idVenta) {
+                v = ventaActualComprobante;
+            } else {
+                const res = await fetch('/api/ventas');
+                const ventas = await res.json();
+                v = ventas.find(x => x.id == idVenta);
+            }
             if(!v) return alert('Operación no encontrada.');
 
             const nombrePdf = `Comprobante_OP-${v.id}_${(v.pais || 'Raices')}.pdf`;
             const html = generarHtmlTicket(v);
-            await procesarDescargaDocumento(html, nombrePdf, 'a4', 'portrait', '380px');
+            await procesarDescargaDocumento(html, nombrePdf, 'a4', 'portrait', '360px');
         } catch(e) {
             console.error(e);
-            mostrarAvisoDescarga("Error al descargar comprobante.", "error");
+            mostrarAvisoDescarga("Error al descargar comprobante: " + (e.message || e), "error");
         }
     }
 
