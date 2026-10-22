@@ -288,6 +288,72 @@
             font-weight: 700;
         }
 
+        /* PREVIEW DE LISTONES NEÓN EN ADMIN */
+        .categoria-badge-preview {
+            background: rgba(10, 5, 2, 0.95);
+            color: rgba(255,255,255,0.9);
+            padding: 8px 18px;
+            border-radius: 8px;
+            border: 2px solid rgba(255,215,0,0.5);
+            font-weight: 700;
+            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+        }
+        .liston-categoria-neon {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.58rem;
+            font-weight: 900;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            z-index: 5;
+            line-height: 1.3;
+        }
+        .liston-neon-magenta {
+            background: rgba(20, 0, 15, 0.95);
+            color: #ff00ea;
+            border: 1px solid #ff00ea;
+            box-shadow: 0 0 10px rgba(255, 0, 234, 0.7), inset 0 0 6px rgba(255, 0, 234, 0.4);
+            text-shadow: 0 0 5px #ff00ea, 0 0 10px #ff00ea;
+        }
+        .liston-neon-cyan {
+            background: rgba(0, 15, 25, 0.95);
+            color: #00f0ff;
+            border: 1px solid #00f0ff;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.7), inset 0 0 6px rgba(0, 240, 255, 0.4);
+            text-shadow: 0 0 5px #00f0ff, 0 0 10px #00f0ff;
+        }
+        .liston-neon-oro {
+            background: rgba(25, 15, 0, 0.95);
+            color: #ffd700;
+            border: 1px solid #ffd700;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.7), inset 0 0 6px rgba(255, 215, 0, 0.4);
+            text-shadow: 0 0 5px #ffd700, 0 0 10px #ff9900;
+        }
+        .liston-neon-verde {
+            background: rgba(0, 20, 8, 0.95);
+            color: #00ff88;
+            border: 1px solid #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.7), inset 0 0 6px rgba(0, 255, 136, 0.4);
+            text-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88;
+        }
+        .liston-neon-rojo {
+            background: rgba(25, 0, 0, 0.95);
+            color: #ff3355;
+            border: 1px solid #ff3355;
+            box-shadow: 0 0 10px rgba(255, 51, 85, 0.7), inset 0 0 6px rgba(255, 51, 85, 0.4);
+            text-shadow: 0 0 5px #ff3355, 0 0 10px #ff3355;
+        }
+
         #impresion-zona {
             display: none !important;
         }
@@ -1024,6 +1090,25 @@
                         <select id="filtro-sucursal-catalogo" class="form-select auth-select w-auto fw-bold fs-5" style="color:var(--p-cyan) !important; border: 2px solid var(--p-cyan);" onchange="cargarCatalogo()">
                             <option value="Antofagasta">NODO ANTOFAGASTA</option>
                         </select>
+                    </div>
+
+                    <!-- PANEL DE CONTROL DE LISTONES Y AVISOS NEÓN DE CATEGORÍAS -->
+                    <div class="p-3 mb-4 rounded-3" style="background: rgba(5, 10, 15, 0.85); border: 2px solid var(--p-warning); box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h5 class="fw-bold font-orbitron m-0 fs-5 text-warning" style="text-shadow: 0 0 10px rgba(255,215,0,0.5);">
+                                    <i class="bi bi-tag-fill me-2"></i> LISTONES Y AVISOS NEÓN SOBRE CATEGORÍAS (CATÁLOGO)
+                                </h5>
+                                <small class="text-white-50 font-rajdhani">Configura la frase que quieras (ej: <b>PRÓXIMAMENTE</b> para Shots, o <b>OFERTA</b>, <b>2x1</b>, <b>PROMO</b>). Si dejas el texto vacío con Auto-Oferta, el sistema detecta ofertas automáticamente.</small>
+                            </div>
+                            <button class="btn btn-warning text-dark font-orbitron fw-bold px-3 py-2 shadow" onclick="guardarBadgesCategoriasAdmin()">
+                                <i class="bi bi-check-circle-fill me-1"></i> GUARDAR LISTONES
+                            </button>
+                        </div>
+
+                        <div class="row g-3" id="contenedor-admin-badges-categorias">
+                            <!-- Inyectado dinámicamente -->
+                        </div>
                     </div>
 
                     <div class="upload-zone" id="drop-zone" onclick="document.getElementById('massive-upload').click()">
@@ -3508,7 +3593,153 @@
     // --- CATÁLOGO EN TARJETAS ACORDEÓN ---
     let categoriaFiltroMatriz = 'TODAS';
 
+    let adminBadgesCategorias = [];
+
+    async function cargarBadgesCategoriasAdmin() {
+        const contenedor = document.getElementById('contenedor-admin-badges-categorias');
+        if (!contenedor) return;
+        try {
+            const res = await fetch('/api/categorias/badges');
+            if (res.ok) {
+                adminBadgesCategorias = await res.json();
+            }
+        } catch(e) {
+            console.warn("Error cargando badges en admin:", e);
+        }
+
+        if (!adminBadgesCategorias || adminBadgesCategorias.length === 0) {
+            adminBadgesCategorias = [
+                { categoriaKey: '500 mls', categoriaNombre: 'Elíxires', texto: '', color: 'neon-oro', activo: true, autoOferta: true },
+                { categoriaKey: 'Packs', categoriaNombre: 'Pack de Pulpas', texto: '', color: 'neon-oro', activo: true, autoOferta: true },
+                { categoriaKey: 'Arma tu Batido', categoriaNombre: 'Arma tu Batido', texto: '', color: 'neon-cyan', activo: true, autoOferta: true },
+                { categoriaKey: 'Shots', categoriaNombre: 'Shots', texto: 'PRÓXIMAMENTE', color: 'neon-magenta', activo: true, autoOferta: false }
+            ];
+        }
+
+        renderizarAdminBadgesCategorias();
+    }
+
+    function renderizarAdminBadgesCategorias() {
+        const contenedor = document.getElementById('contenedor-admin-badges-categorias');
+        if (!contenedor) return;
+        contenedor.innerHTML = '';
+
+        adminBadgesCategorias.forEach((b, idx) => {
+            const color = b.color || 'neon-magenta';
+            const texto = b.texto || '';
+            const activoChecked = b.activo !== false ? 'checked' : '';
+            const autoChecked = b.autoOferta !== false ? 'checked' : '';
+
+            contenedor.innerHTML += `
+                <div class="col-12 col-md-6 col-xl-3">
+                    <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-between" style="background: rgba(10, 15, 25, 0.9); border: 1px solid rgba(0, 229, 255, 0.3); box-shadow: 0 4px 15px rgba(0,0,0,0.6);">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom border-secondary border-opacity-25">
+                                <span class="fw-bold font-orbitron text-white fs-6">${b.categoriaNombre}</span>
+                                <div class="form-check form-switch m-0">
+                                    <input class="form-check-input" type="checkbox" id="switch-activo-${idx}" ${activoChecked} onchange="actualizarPreviewBadgeAdmin(${idx})">
+                                    <label class="form-check-label text-white-50 small font-orbitron" for="switch-activo-${idx}">Activo</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label-neon small" style="color: var(--p-cyan);">Frase / Texto Neón:</label>
+                                <input type="text" class="form-control form-control-sm font-orbitron" id="input-texto-${idx}" value="${texto}" placeholder="Ej: PRÓXIMAMENTE, OFERTA..." oninput="actualizarPreviewBadgeAdmin(${idx})">
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label-neon small" style="color: var(--p-magenta);">Estilo / Color Neón:</label>
+                                <select class="form-select form-select-sm font-orbitron" id="select-color-${idx}" onchange="actualizarPreviewBadgeAdmin(${idx})">
+                                    <option value="neon-magenta" ${color === 'neon-magenta' ? 'selected' : ''}>🟣 Neón Magenta (Fucsia)</option>
+                                    <option value="neon-cyan" ${color === 'neon-cyan' ? 'selected' : ''}>🔵 Neón Cyan (Aqua)</option>
+                                    <option value="neon-oro" ${color === 'neon-oro' ? 'selected' : ''}>🟡 Neón Oro (Dorado)</option>
+                                    <option value="neon-verde" ${color === 'neon-verde' ? 'selected' : ''}>🟢 Neón Verde (Bio)</option>
+                                    <option value="neon-rojo" ${color === 'neon-rojo' ? 'selected' : ''}>🔴 Neón Rojo (Alerta)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="check-auto-${idx}" ${autoChecked} onchange="actualizarPreviewBadgeAdmin(${idx})">
+                                <label class="form-check-label text-white-50 small font-rajdhani" for="check-auto-${idx}">
+                                    Auto-detectar ofertas si está vacío
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- VISTA PREVIA EN VIVO -->
+                        <div class="pt-2 border-top border-secondary border-opacity-25 text-center">
+                            <small class="text-white-50 d-block font-rajdhani mb-2" style="font-size:0.75rem;">VISTA PREVIA:</small>
+                            <div class="d-inline-block position-relative my-2">
+                                <span id="preview-badge-${idx}" class="liston-categoria-neon ${color}" style="${activoChecked ? '' : 'display:none;'}">
+                                    ${texto || (autoChecked ? '¡OFERTA!' : '')}
+                                </span>
+                                <div class="categoria-badge-preview">
+                                    ${b.categoriaNombre}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    }
+
+    function actualizarPreviewBadgeAdmin(idx) {
+        const sw = document.getElementById(`switch-activo-${idx}`);
+        const txtInput = document.getElementById(`input-texto-${idx}`);
+        const colSelect = document.getElementById(`select-color-${idx}`);
+        const autoCheck = document.getElementById(`check-auto-${idx}`);
+        const preview = document.getElementById(`preview-badge-${idx}`);
+
+        if (!preview) return;
+
+        const activo = sw && sw.checked;
+        const txt = (txtInput ? txtInput.value : '').trim();
+        const col = colSelect ? colSelect.value : 'neon-magenta';
+        const auto = autoCheck && autoCheck.checked;
+
+        if (activo) {
+            preview.style.display = 'inline-block';
+            preview.className = `liston-categoria-neon ${col}`;
+            preview.innerText = txt || (auto ? '¡OFERTA!' : '');
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+
+    async function guardarBadgesCategoriasAdmin() {
+        try {
+            adminBadgesCategorias.forEach((b, idx) => {
+                const sw = document.getElementById(`switch-activo-${idx}`);
+                const txtInput = document.getElementById(`input-texto-${idx}`);
+                const colSelect = document.getElementById(`select-color-${idx}`);
+                const autoCheck = document.getElementById(`check-auto-${idx}`);
+
+                if (sw) b.activo = sw.checked;
+                if (txtInput) b.texto = txtInput.value.trim();
+                if (colSelect) b.color = colSelect.value;
+                if (autoCheck) b.autoOferta = autoCheck.checked;
+            });
+
+            const res = await fetch('/api/categorias/badges', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(adminBadgesCategorias)
+            });
+
+            if (res.ok) {
+                playSound('cash');
+                alert("¡Listones y avisos neón guardados con éxito! Los cambios ya se reflejan en el catálogo.");
+            } else {
+                alert("Error al guardar listones en el servidor.");
+            }
+        } catch(e) {
+            console.error(e);
+            alert("Error de red al guardar listones: " + e.message);
+        }
+    }
+
     async function cargarCatalogo() {
+        cargarBadgesCategoriasAdmin();
         const suc = document.getElementById('filtro-sucursal-catalogo').value;
         const esSupremo = (rolUsuario === 'SUPREMO');
 
