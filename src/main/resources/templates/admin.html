@@ -307,12 +307,12 @@
             top: -14px;
             left: 50%;
             transform: translateX(-50%);
-            padding: 2px 12px;
-            border-radius: 20px;
+            padding: 3px 16px;
+            border-radius: 4px;
             font-family: 'Orbitron', sans-serif !important;
             font-size: 0.68rem !important;
             font-weight: 900 !important;
-            letter-spacing: 1.5px !important;
+            letter-spacing: 1.8px !important;
             text-transform: uppercase !important;
             white-space: nowrap !important;
             z-index: 10 !important;
@@ -320,63 +320,151 @@
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            gap: 4px !important;
-            border: 2px solid #ffffff !important;
+            gap: 5px !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.9) !important;
         }
-        .liston-neon-magenta {
-            background: linear-gradient(135deg, #ff007f 0%, #aa00ff 100%) !important;
-            color: #ffffff !important;
-            box-shadow: 0 0 12px #ff00ea, 0 0 25px rgba(255, 0, 234, 0.8), 0 3px 8px rgba(0,0,0,0.8) !important;
-            text-shadow: 0 0 4px #ffffff, 0 0 10px #ff00ea !important;
-            animation: pulsoNeonMagentaAdmin 1.6s infinite alternate !important;
+
+        .liston-categoria-neon::before,
+        .liston-categoria-neon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 6px;
+            height: 6px;
+            transform: translateY(-50%) rotate(45deg);
+            z-index: 1;
+        }
+        .liston-categoria-neon::before { left: -3px; }
+        .liston-categoria-neon::after { right: -3px; }
+
+        .liston-neon-magenta,
+        .neon-magenta {
+            background: #0d0111 !important;
+            border: 2px solid #ff00ea !important;
+            box-shadow: 0 0 10px #ff00ea, 0 0 25px rgba(255, 0, 234, 0.7), inset 0 0 8px rgba(255, 0, 234, 0.4), 0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonMagentaAdmin 1.8s infinite alternate !important;
+        }
+        .liston-neon-magenta,
+        .neon-magenta,
+        .liston-neon-magenta *,
+        .neon-magenta * {
+            color: #ff33db !important;
+            text-shadow: 0 0 2px #ffffff, 0 0 8px #ff00ea, 0 0 18px #ff00ea, 0 0 32px #d000ff !important;
+        }
+        .liston-neon-magenta::before,
+        .liston-neon-magenta::after,
+        .neon-magenta::before,
+        .neon-magenta::after {
+            background: #ff00ea !important;
+            box-shadow: 0 0 8px #ff00ea !important;
         }
         @keyframes pulsoNeonMagentaAdmin {
-            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px #ff00ea, 0 0 20px rgba(255, 0, 234, 0.8); }
-            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 20px #ff00ea, 0 0 35px rgba(255, 0, 234, 1); }
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 8px #ff00ea, 0 0 18px rgba(255, 0, 234, 0.6); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 16px #ff00ea, 0 0 35px rgba(255, 0, 234, 0.95); }
         }
-        .liston-neon-cyan {
-            background: linear-gradient(135deg, #00d4ff 0%, #0055ff 100%) !important;
-            color: #ffffff !important;
-            box-shadow: 0 0 12px #00f0ff, 0 0 25px rgba(0, 240, 255, 0.8), 0 3px 8px rgba(0,0,0,0.8) !important;
-            text-shadow: 0 0 4px #ffffff, 0 0 10px #00f0ff !important;
-            animation: pulsoNeonCyanAdmin 1.6s infinite alternate !important;
+
+        .liston-neon-cyan,
+        .neon-cyan {
+            background: #001018 !important;
+            border: 2px solid #00f0ff !important;
+            box-shadow: 0 0 10px #00f0ff, 0 0 25px rgba(0, 240, 255, 0.7), inset 0 0 8px rgba(0, 240, 255, 0.4), 0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonCyanAdmin 1.8s infinite alternate !important;
+        }
+        .liston-neon-cyan,
+        .neon-cyan,
+        .liston-neon-cyan *,
+        .neon-cyan * {
+            color: #00f0ff !important;
+            text-shadow: 0 0 2px #ffffff, 0 0 8px #00f0ff, 0 0 18px #00aaff, 0 0 32px #0066ff !important;
+        }
+        .liston-neon-cyan::before,
+        .liston-neon-cyan::after,
+        .neon-cyan::before,
+        .neon-cyan::after {
+            background: #00f0ff !important;
+            box-shadow: 0 0 8px #00f0ff !important;
         }
         @keyframes pulsoNeonCyanAdmin {
-            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px #00f0ff, 0 0 20px rgba(0, 240, 255, 0.8); }
-            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 20px #00f0ff, 0 0 35px rgba(0, 240, 255, 1); }
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 8px #00f0ff, 0 0 18px rgba(0, 240, 255, 0.6); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 16px #00f0ff, 0 0 35px rgba(0, 240, 255, 0.95); }
         }
-        .liston-neon-oro {
-            background: linear-gradient(135deg, #ff9900 0%, #ff3300 100%) !important;
-            color: #ffffff !important;
-            box-shadow: 0 0 12px #ff9900, 0 0 25px rgba(255, 153, 0, 0.8), 0 3px 8px rgba(0,0,0,0.8) !important;
-            text-shadow: 0 0 4px #ffffff, 0 0 10px #ff9900 !important;
-            animation: pulsoNeonOroAdmin 1.6s infinite alternate !important;
+
+        .liston-neon-oro,
+        .neon-oro {
+            background: #140d00 !important;
+            border: 2px solid #ffd700 !important;
+            box-shadow: 0 0 10px #ffd700, 0 0 25px rgba(255, 215, 0, 0.7), inset 0 0 8px rgba(255, 215, 0, 0.4), 0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonOroAdmin 1.8s infinite alternate !important;
+        }
+        .liston-neon-oro,
+        .neon-oro,
+        .liston-neon-oro *,
+        .neon-oro * {
+            color: #ffe600 !important;
+            text-shadow: 0 0 2px #ffffff, 0 0 8px #ffd700, 0 0 18px #ff9900, 0 0 32px #ff5500 !important;
+        }
+        .liston-neon-oro::before,
+        .liston-neon-oro::after,
+        .neon-oro::before,
+        .neon-oro::after {
+            background: #ffd700 !important;
+            box-shadow: 0 0 8px #ffd700 !important;
         }
         @keyframes pulsoNeonOroAdmin {
-            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px #ff9900, 0 0 20px rgba(255, 153, 0, 0.8); }
-            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 20px #ff9900, 0 0 35px rgba(255, 153, 0, 1); }
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 8px #ffd700, 0 0 18px rgba(255, 215, 0, 0.6); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 16px #ffd700, 0 0 35px rgba(255, 215, 0, 0.95); }
         }
-        .liston-neon-verde {
-            background: linear-gradient(135deg, #00ff88 0%, #009944 100%) !important;
-            color: #ffffff !important;
-            box-shadow: 0 0 12px #00ff88, 0 0 25px rgba(0, 255, 136, 0.8), 0 3px 8px rgba(0,0,0,0.8) !important;
-            text-shadow: 0 0 4px #ffffff, 0 0 10px #00ff88 !important;
-            animation: pulsoNeonVerdeAdmin 1.6s infinite alternate !important;
+
+        .liston-neon-verde,
+        .neon-verde {
+            background: #001509 !important;
+            border: 2px solid #00ff88 !important;
+            box-shadow: 0 0 10px #00ff88, 0 0 25px rgba(0, 255, 136, 0.7), inset 0 0 8px rgba(0, 255, 136, 0.4), 0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonVerdeAdmin 1.8s infinite alternate !important;
+        }
+        .liston-neon-verde,
+        .neon-verde,
+        .liston-neon-verde *,
+        .neon-verde * {
+            color: #00ff88 !important;
+            text-shadow: 0 0 2px #ffffff, 0 0 8px #00ff88, 0 0 18px #00cc66, 0 0 32px #008833 !important;
+        }
+        .liston-neon-verde::before,
+        .liston-neon-verde::after,
+        .neon-verde::before,
+        .neon-verde::after {
+            background: #00ff88 !important;
+            box-shadow: 0 0 8px #00ff88 !important;
         }
         @keyframes pulsoNeonVerdeAdmin {
-            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px #00ff88, 0 0 20px rgba(0, 255, 136, 0.8); }
-            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 20px #00ff88, 0 0 35px rgba(0, 255, 136, 1); }
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 8px #00ff88, 0 0 18px rgba(0, 255, 136, 0.6); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 16px #00ff88, 0 0 35px rgba(0, 255, 136, 0.95); }
         }
-        .liston-neon-rojo {
-            background: linear-gradient(135deg, #ff0055 0%, #cc0000 100%) !important;
-            color: #ffffff !important;
-            box-shadow: 0 0 12px #ff0055, 0 0 25px rgba(255, 0, 85, 0.8), 0 3px 8px rgba(0,0,0,0.8) !important;
-            text-shadow: 0 0 4px #ffffff, 0 0 10px #ff0055 !important;
-            animation: pulsoNeonRojoAdmin 1.6s infinite alternate !important;
+
+        .liston-neon-rojo,
+        .neon-rojo {
+            background: #180005 !important;
+            border: 2px solid #ff1744 !important;
+            box-shadow: 0 0 10px #ff1744, 0 0 25px rgba(255, 23, 68, 0.7), inset 0 0 8px rgba(255, 23, 68, 0.4), 0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonRojoAdmin 1.8s infinite alternate !important;
+        }
+        .liston-neon-rojo,
+        .neon-rojo,
+        .liston-neon-rojo *,
+        .neon-rojo * {
+            color: #ff3355 !important;
+            text-shadow: 0 0 2px #ffffff, 0 0 8px #ff1744, 0 0 18px #ff0033, 0 0 32px #990000 !important;
+        }
+        .liston-neon-rojo::before,
+        .liston-neon-rojo::after,
+        .neon-rojo::before,
+        .neon-rojo::after {
+            background: #ff1744 !important;
+            box-shadow: 0 0 8px #ff1744 !important;
         }
         @keyframes pulsoNeonRojoAdmin {
-            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px #ff0055, 0 0 20px rgba(255, 0, 85, 0.8); }
-            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 20px #ff0055, 0 0 35px rgba(255, 0, 85, 1); }
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 0 8px #ff1744, 0 0 18px rgba(255, 23, 68, 0.6); }
+            100% { transform: translateX(-50%) scale(1.06); box-shadow: 0 0 16px #ff1744, 0 0 35px rgba(255, 23, 68, 0.95); }
         }
 
         #impresion-zona {
@@ -3695,7 +3783,7 @@
                         <div class="pt-2 border-top border-secondary border-opacity-25 text-center">
                             <small class="text-white-50 d-block font-rajdhani mb-2" style="font-size:0.75rem;">VISTA PREVIA:</small>
                             <div class="d-inline-block position-relative my-2">
-                                <span id="preview-badge-${idx}" class="liston-categoria-neon ${color}" style="${activoChecked ? 'display:inline-flex;' : 'display:none;'}">
+                                <span id="preview-badge-${idx}" class="liston-categoria-neon ${color} ${color.startsWith('liston-') ? color : 'liston-' + color}" style="${activoChecked ? 'display:inline-flex;' : 'display:none;'}">
                                     ${(() => {
                                         const label = texto || (autoChecked ? '¡OFERTA!' : '');
                                         let icono = '<i class="bi bi-tag-fill me-1"></i>';
@@ -3731,7 +3819,8 @@
 
         if (activo) {
             preview.style.display = 'inline-flex';
-            preview.className = `liston-categoria-neon ${col}`;
+            const colClase = col.startsWith('liston-') ? col : `liston-${col}`;
+            preview.className = `liston-categoria-neon ${colClase} ${col}`;
             const label = txt || (auto ? '¡OFERTA!' : '');
             let icono = '<i class="bi bi-tag-fill me-1"></i>';
             if (/proximamente|próximamente/i.test(label)) icono = '<i class="bi bi-clock-history me-1"></i>';
