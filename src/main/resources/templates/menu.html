@@ -537,7 +537,7 @@
         .btn-disabled-pago { background: rgba(50, 50, 50, 0.5); color: rgba(255, 255, 255, 0.5); border: 1px dashed rgba(255, 255, 255, 0.3); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: not-allowed; }
 
         .back-titulo { font-family: 'Orbitron'; color: var(--bio-oro); font-size: 1rem; border-bottom: 1px solid var(--bio-oro); padding-bottom: 10px; margin-bottom: 15px; text-align: center;}
-        .back-desc { font-size: 0.95rem; color: #fff; line-height: 1.5; overflow-y: auto; text-align: left; padding-right: 5px; height: 160px; font-weight: 500;}
+        .back-desc { font-size: 0.95rem; color: #fff; line-height: 1.5; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; touch-action: pan-y !important; overscroll-behavior: contain; text-align: left; padding-right: 5px; height: 160px; font-weight: 500;}
         .btn-cerrar-flip { position: absolute; top: 10px; right: 10px; color: #fff; background: none; border: none; font-size: 1.5rem; opacity: 0.7; cursor: pointer;}
 
         .carrito-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 400px; background: rgba(10, 5, 2, 0.98); border: 2px solid var(--bio-oro); padding: 12px 20px; border-radius: 12px; display: none; justify-content: space-between; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.9); z-index: 1000; cursor: pointer;}
@@ -698,6 +698,210 @@
             text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
         }
 
+
+        /* ========================================================= */
+        /* MODAL DE VISTA AMPLIADA VERTICAL (PRODUCTOS E INSUMOS) */
+        /* ========================================================= */
+        .modal-ampliado-dialog {
+            max-width: 500px;
+            width: 95vw;
+            margin: 15px auto;
+            height: 92vh;
+            height: 92dvh;
+            display: flex;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .modal-ampliado-dialog {
+                width: 96vw !important;
+                max-width: 96vw !important;
+                margin: 8px auto !important;
+                height: 94vh !important;
+                height: 94dvh !important;
+            }
+        }
+
+        .modal-ampliado-content {
+            background: linear-gradient(180deg, #180d05 0%, #08120e 100%) !important;
+            background-image: url('https://www.transparenttextures.com/patterns/wood-burn-pattern.png'), linear-gradient(180deg, rgba(24, 13, 5, 0.98) 0%, rgba(8, 18, 14, 0.98) 100%) !important;
+            border: 2px solid var(--bio-oro) !important;
+            border-radius: 20px !important;
+            color: white !important;
+            box-shadow: 0 0 35px rgba(0, 240, 255, 0.35), 0 25px 60px rgba(0, 0, 0, 0.95), inset 0 0 35px rgba(0, 0, 0, 0.9) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            height: 100% !important;
+            max-height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+            position: relative;
+        }
+
+        #contenido-detalle-ampliado {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-height: 100%;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .enredadera-ampliada {
+            position: absolute;
+            top: -6px; left: -6px; right: -6px; bottom: -6px;
+            background-image: url('lianas-limpias.png');
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            pointer-events: none;
+            z-index: 12;
+            opacity: 0.55;
+        }
+
+        .btn-cerrar-ampliado {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(10, 5, 2, 0.88);
+            border: 1px solid var(--bio-oro);
+            color: var(--bio-oro);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            cursor: pointer;
+            z-index: 40;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+            transition: all 0.2s ease;
+        }
+        .btn-cerrar-ampliado:hover, .btn-cerrar-ampliado:active {
+            background: var(--bio-oro);
+            color: #000;
+            transform: scale(1.08);
+        }
+
+        .img-zona-ampliada {
+            width: 100%;
+            height: 220px;
+            min-height: 190px;
+            max-height: 240px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 20;
+            background: radial-gradient(circle at center, rgba(0, 240, 255, 0.15) 0%, rgba(0, 0, 0, 0.4) 80%);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.25);
+            padding: 12px;
+            flex-shrink: 0;
+        }
+
+        .img-ampliada {
+            max-width: 90%;
+            max-height: 95%;
+            object-fit: contain;
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.95));
+            animation: flotar 4s infinite alternate ease-in-out;
+        }
+
+        .cuerpo-scroll-ampliado {
+            flex: 1 1 auto !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y !important;
+            overscroll-behavior: contain !important;
+            min-height: 0 !important;
+            padding: 16px 20px;
+            position: relative;
+            z-index: 25;
+        }
+
+        .cuerpo-scroll-ampliado::-webkit-scrollbar {
+            width: 6px;
+        }
+        .cuerpo-scroll-ampliado::-webkit-scrollbar-track {
+            background: rgba(10, 5, 2, 0.6);
+            border-radius: 4px;
+        }
+        .cuerpo-scroll-ampliado::-webkit-scrollbar-thumb {
+            background: var(--bio-oro);
+            border-radius: 4px;
+        }
+
+        .nombre-prod-ampliado {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+            line-height: 1.2;
+        }
+
+        .precio-ampliado-box {
+            display: flex;
+            align-items: center;
+        }
+
+        .card-bio-info {
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .texto-descripcion-ampliada {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.12rem;
+            line-height: 1.65;
+            color: rgba(255, 255, 255, 0.92);
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .footer-accion-ampliado {
+            padding: 14px 20px;
+            background: rgba(8, 4, 2, 0.96);
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            position: relative;
+            z-index: 30;
+            flex-shrink: 0;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .btn-extraer-ampliado {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.18) 0%, rgba(255, 215, 0, 0.38) 100%);
+            color: var(--bio-oro);
+            border: 1.5px solid var(--bio-oro);
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.25);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.25s ease;
+        }
+        .btn-extraer-ampliado:hover, .btn-extraer-ampliado:active {
+            background: var(--bio-oro);
+            color: #000;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+        }
+        .precio-btn-extraer {
+            font-size: 1.25rem;
+            font-weight: 900;
+        }
     </style>
 </head>
 <body>
@@ -826,6 +1030,15 @@
             <div class="modal-footer border-0 pt-0 pb-4 px-3">
                 <div id="contenedor-botones-pago" class="w-100"></div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE VISTA AMPLIADA VERTICAL (PRODUCTOS E INSUMOS) -->
+<div class="modal fade" id="modalDetalleAmpliado" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-ampliado-dialog">
+        <div class="modal-content modal-ampliado-content">
+            <div id="contenido-detalle-ampliado"></div>
         </div>
     </div>
 </div>
@@ -972,7 +1185,7 @@
     // ==========================================
     // MOTOR DE CARGA EXPRESS INSTANTÁNEA (SWR + PRE-WARM CACHE)
     // ==========================================
-    let productosRaw = []; let carrito = []; let filtroActual = '500 mls'; let simboloActual = '$'; let modalCarritoCliente;
+    let productosRaw = []; let carrito = []; let filtroActual = '500 mls'; let simboloActual = '$'; let modalCarritoCliente; let modalDetalleAmpliado; let globalInsumosArmado = [];
     const FALLBACK_SMOOTHIE_IMG = 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80';
     const LOCAL_FALLBACK_IMG = 'default-batido.png';
     let categoriaBadgesConfig = [];
@@ -1001,6 +1214,8 @@
 
     window.addEventListener('DOMContentLoaded', () => { 
         modalCarritoCliente = new bootstrap.Modal(document.getElementById('modalCarritoCliente'));
+        const modalAmpEl = document.getElementById('modalDetalleAmpliado');
+        if (modalAmpEl) modalDetalleAmpliado = new bootstrap.Modal(modalAmpEl);
         // Pre-carga inmediata en segundo plano: al abrir la web, calentar memoria antes de que toque la puerta
         const nodo = document.getElementById('sucursal-activa')?.value || 'Antofagasta';
         hidratarDesdeCacheInstantaneo(nodo);
@@ -1220,18 +1435,18 @@
                 <div class="col-12 col-md-6 col-lg-4 col-xl-3 item-tarjeta">
                     <div class="card-escena" id="card-${p.id}">
                         <div class="card-flipper">
-                            <div class="card-front">
+                            <div class="card-front" onclick="abrirDetalleProducto('${p.id}')" style="cursor: pointer;">
                                 <div class="enredadera-magica"></div>
                                 ${badgeDto}
-                                <button class="btn-info-flip" onclick="event.stopPropagation(); flip('${p.id}')">INFORMACIÓN <i class="bi bi-info-circle ms-2"></i></button>
+                                <button class="btn-info-flip" onclick="event.stopPropagation(); abrirDetalleProducto('${p.id}')">INFORMACIÓN <i class="bi bi-info-circle ms-2"></i></button>
                                 <div class="img-zona">${mediaTag}</div>
                                 <div class="info-prod-box"><div class="nombre-prod text-truncate">${p.nombre}</div>${precioHtml}</div>
                                 <button class="btn-extraer" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase})">EXTRAER</button>
                             </div>
-                            <div class="card-back">
-                                <button class="btn-cerrar-flip" onclick="flip('${p.id}')"><i class="bi bi-x-lg"></i></button>
+                            <div class="card-back" onclick="event.stopPropagation(); abrirDetalleProducto('${p.id}')" style="cursor: pointer;">
+                                <button class="btn-cerrar-flip" onclick="event.stopPropagation(); flip('${p.id}')"><i class="bi bi-x-lg"></i></button>
                                 <div class="back-titulo">BIO-ANÁLISIS</div><div class="back-desc">${desc}</div>
-                                <button class="btn-extraer mt-auto" style="background:var(--bio-oro); color:#000;" onclick="flip('${p.id}')">CERRAR</button>
+                                <button class="btn-extraer mt-auto" style="background:var(--bio-oro); color:#000;" onclick="event.stopPropagation(); abrirDetalleProducto('${p.id}')">AMPLIAR INFORMACIÓN</button>
                             </div>
                         </div>
                     </div>
@@ -1383,6 +1598,7 @@
             }
         });
 
+        globalInsumosArmado = insumosArmado;
         if (insumosArmado.length === 0) {
             grid.innerHTML = `
                 <div class="col-12 text-center text-white-50 py-5 font-orbitron">
@@ -1523,7 +1739,8 @@
             htmlBuilder += `
                 <div class="col-6 col-md-4 col-lg-3 mb-3">
                     <div class="card-ingrediente-batido p-3 rounded-3 text-center h-100 d-flex flex-column justify-content-between position-relative ${esAgotado ? 'ingrediente-agotado' : (esUltimas ? 'ingrediente-ultimas' : '')}" 
-                         style="background: rgba(10, 14, 18, 0.92); ${bordeCard}; box-shadow: 0 5px 15px rgba(0,0,0,0.8); backdrop-filter: blur(8px);">
+                         onclick="abrirDetalleInsumo('${idInsClean}')"
+                         style="cursor: pointer; background: rgba(10, 14, 18, 0.92); ${bordeCard}; box-shadow: 0 5px 15px rgba(0,0,0,0.8); backdrop-filter: blur(8px);">
                         <div>
                             <!-- IMAGEN/VIDEO DEL INGREDIENTE -->
                             <div class="position-relative mb-2 overflow-hidden rounded-3 border ${bordeImg}" style="background: rgba(0,0,0,0.6); height: 125px;">
@@ -1581,6 +1798,22 @@
         
         const spanCant = document.getElementById(`cant-porc-${idInsumo}`);
         if (spanCant) spanCant.innerText = porcionesArmado[idInsumo];
+        const spanCantModal = document.getElementById(`cant-porc-modal-${idInsumo}`);
+        if (spanCantModal) spanCantModal.innerText = porcionesArmado[idInsumo];
+        const btnMinusModal = document.getElementById(`btn-minus-modal-${idInsumo}`);
+        if (btnMinusModal) {
+            btnMinusModal.disabled = (porcionesArmado[idInsumo] <= 0);
+            btnMinusModal.className = (porcionesArmado[idInsumo] <= 0)
+                ? 'btn btn-outline-secondary text-white-50 fw-bold px-3 py-1'
+                : 'btn btn-outline-warning text-warning fw-bold px-3 py-1';
+        }
+        const btnPlusModal = document.getElementById(`btn-plus-modal-${idInsumo}`);
+        if (btnPlusModal) {
+            btnPlusModal.disabled = (porcionesArmado[idInsumo] >= maxPorciones);
+            btnPlusModal.className = (porcionesArmado[idInsumo] >= maxPorciones)
+                ? 'btn btn-secondary text-white-50 fw-bold px-3 py-1 shadow-sm'
+                : 'btn btn-warning text-dark fw-bold px-3 py-1 shadow-sm';
+        }
         
         const btnPlus = document.getElementById(`btn-plus-${idInsumo}`);
         if (btnPlus) {
@@ -1669,6 +1902,281 @@
         porcionesArmado = {};
         insumosInfoMap = {};
         renderizar();
+    }
+
+    
+    function cerrarModalAmpliado() {
+        if (modalDetalleAmpliado) {
+            modalDetalleAmpliado.hide();
+        }
+    }
+
+    function obtenerDescripcionInsumo(ins) {
+        if (ins.descripcion && ins.descripcion.trim() !== '') {
+            return ins.descripcion.replace(/\n/g, '<br>');
+        }
+        const nom = (ins.nombre || '').toLowerCase();
+        const sub = (ins.subcategoria || obtenerSubcategoriaInsumo(ins)).toLowerCase();
+        
+        if (sub.includes('fruta') || nom.includes('piña') || nom.includes('fresa') || nom.includes('frutilla') || nom.includes('arándano') || nom.includes('platano') || nom.includes('mango') || nom.includes('manzana')) {
+            return "Fruta seleccionada en su punto óptimo de maduración natural. Aporta azúcares bio-compatibles de absorción gradual, alta concentración de vitamina C, polifenoles antioxidantes y fibra soluble para equilibrar la microbiota y potenciar el sabor de tu elíxir.";
+        }
+        if (sub.includes('vegetal') || nom.includes('espinaca') || nom.includes('apio') || nom.includes('pepino') || nom.includes('zanahoria') || nom.includes('remolacha') || nom.includes('betarraga')) {
+            return "Vegetal fresco prensado en frío de cultivo libre de pesticidas. Rico en clorofila viva, nitratos vasodilatadores naturales, potasio y micronutrientes alcalinizantes que favorecen la oxigenación celular, la detoxificación hepática y la vitalidad.";
+        }
+        if (sub.includes('semilla') || nom.includes('chía') || nom.includes('chia') || nom.includes('linaza') || nom.includes('sésamo')) {
+            return "Semilla bio-activa rica en ácidos grasos esenciales Omega 3 (ALA), fibra soluble formadora de mucílago prebiótico y calcio de origen vegetal. Apoya el tránsito digestivo regular y la salud cardiovascular.";
+        }
+        if (sub.includes('suplemento') || nom.includes('espirulina') || nom.includes('maca') || nom.includes('colágeno')) {
+            return "Superalimento funcional de alta densidad nutricional y biodisponibilidad. Brinda soporte adaptógeno contra la fatiga mental y física, antioxidantes enzimáticos y aminoácidos esenciales para la vitalidad diaria.";
+        }
+        if (sub.includes('proteína') || nom.includes('whey') || nom.includes('proteina')) {
+            return "Aislado proteico de rápida asimilación con perfil completo de aminoácidos ramificados (BCAA). Ideal para la regeneración miofibrilar, saciedad prolongada y síntesis tisular post-esfuerzo.";
+        }
+        if (sub.includes('seco') || nom.includes('nuez') || nom.includes('almendra') || nom.includes('maní')) {
+            return "Fruto seco de primera selección tostado suavemente sin aditivos. Fuente insustituible de grasas monoinsaturadas cardiosaludables, vitamina E liposoluble, magnesio y energía limpia de larga duración.";
+        }
+        if (sub.includes('especia') || nom.includes('jengibre') || nom.includes('cúrcuma') || nom.includes('canela')) {
+            return "Especia medicinal de acción termogénica y antiinflamatoria sistémica. Contiene fitoquímicos bio-activos que estimulan el fuego digestivo, modulan la respuesta inmune y revitalizan el metabolismo basal.";
+        }
+        if (sub.includes('base') || nom.includes('leche') || nom.includes('agua') || nom.includes('aloe')) {
+            return "Base bio-líquida pura y equilibrada. Garantiza la textura suave, la emulsión perfecta de los ingredientes y una hidratación profunda a nivel celular con electrolitos naturales.";
+        }
+        return "Ingrediente 100% puro y bio-seleccionado para tu formulación personalizada. Aporta pureza, frescura y sinergia nutricional a tu batido en RAÍCES.";
+    }
+
+    function abrirDetalleProducto(id) {
+        const p = (productosRaw || []).find(prod => String(prod.id) === String(id));
+        if (!p) return;
+
+        let desc = (p.descripcion || "Bio-fórmula natural y energizante preparada al momento para potenciar tu vitalidad celular.").replace(/\n/g, '<br>');
+        let img = (p.imagen && p.imagen.trim() !== '') ? p.imagen.trim() : FALLBACK_SMOOTHIE_IMG;
+        const precioBase = Number(p.precio) || 0;
+        const dto = (p.descuento && p.descuento > 0) ? Math.min(Math.round(p.descuento), 100) : 0;
+        const tieneDto = dto > 0;
+        const precioFinal = tieneDto ? Math.round(precioBase * (1 - dto / 100)) : precioBase;
+
+        const badgeDto = tieneDto ? `<span class="badge bg-danger font-orbitron fw-bold" style="letter-spacing:1px; box-shadow:0 0 10px rgba(220,53,69,0.8);"><i class="bi bi-tag-fill me-1"></i>-${dto}% OFF</span>` : '';
+        const badgeStock = (p.stock !== undefined && p.stock !== null)
+            ? (p.stock <= 0 
+                ? `<span class="badge bg-danger bg-opacity-75 font-orbitron"><i class="bi bi-x-circle me-1"></i>AGOTADO</span>`
+                : (p.stock <= 5 
+                    ? `<span class="badge bg-warning text-dark font-orbitron fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>¡ÚLTIMAS ${p.stock} UNID!</span>` 
+                    : `<span class="badge bg-success bg-opacity-75 font-orbitron"><i class="bi bi-check-circle me-1"></i>EN STOCK</span>`))
+            : `<span class="badge bg-success bg-opacity-75 font-orbitron"><i class="bi bi-check-circle me-1"></i>DISPONIBLE</span>`;
+
+        const precioHtmlAmpliado = tieneDto
+            ? `<div class="d-flex align-items-baseline gap-2">
+                   <span class="text-white-50 text-decoration-line-through font-orbitron" style="font-size: 1.05rem; text-decoration-color:#ff3355;">${simboloActual}${precioBase.toLocaleString('es-CL')}</span>
+                   <span class="font-orbitron fw-bold fs-3 text-warning" style="text-shadow: 0 0 15px rgba(255,215,0,0.6);">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span>
+               </div>`
+            : `<div class="font-orbitron fw-bold fs-3 text-warning" style="text-shadow: 0 0 15px rgba(255,215,0,0.6);">${simboloActual}${precioBase.toLocaleString('es-CL')}</div>`;
+
+        const esVideo = img && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(img.trim());
+        const mediaTag = esVideo
+            ? `<video src="${img}" class="img-ampliada" autoplay loop muted playsinline></video>`
+            : `<img src="${img}" class="img-ampliada" decoding="async" onerror="if(this.src!=='default-batido.png') this.src='default-batido.png';">`;
+
+        let formulaHtml = '';
+        if (p.recetaDetalle && p.recetaDetalle.trim() !== '') {
+            formulaHtml = `
+                <div class="card-bio-info p-3 rounded-3 mb-3" style="background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.25);">
+                    <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-info border-opacity-25">
+                        <i class="bi bi-flask text-info fs-5"></i>
+                        <span class="font-orbitron fw-bold text-info" style="font-size: 0.88rem; letter-spacing: 1px;">FÓRMULA & ALQUIMIA BIO-ACTIVA</span>
+                    </div>
+                    <div class="small text-white-50 font-rajdhani" style="font-size: 1.02rem; line-height: 1.5;">
+                        ${p.recetaDetalle.replace(/\n/g, '<br>')}
+                    </div>
+                </div>`;
+        }
+
+        const htmlContent = `
+            <div class="enredadera-ampliada"></div>
+            <button type="button" class="btn-cerrar-ampliado" onclick="cerrarModalAmpliado()" title="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="px-3 pt-3 pb-1 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
+                <span class="badge bg-dark border border-warning text-warning font-orbitron" style="font-size: 0.72rem; letter-spacing: 1px;">
+                    <i class="bi bi-tag-fill me-1"></i>${(p.categoria || 'ELÍXIR').toUpperCase()}
+                </span>
+                ${badgeDto}
+                ${badgeStock}
+            </div>
+
+            <div class="img-zona-ampliada">
+                ${mediaTag}
+            </div>
+
+            <div class="cuerpo-scroll-ampliado">
+                <h2 class="nombre-prod-ampliado mb-2">${p.nombre}</h2>
+                <div class="precio-ampliado-box mb-3">
+                    ${precioHtmlAmpliado}
+                </div>
+
+                <div class="card-bio-info p-3 rounded-3 mb-3">
+                    <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-warning border-opacity-25">
+                        <i class="bi bi-activity text-warning fs-5"></i>
+                        <span class="font-orbitron fw-bold text-warning" style="font-size: 0.9rem; letter-spacing: 1px;">BIO-ANÁLISIS & PROPIEDADES</span>
+                    </div>
+                    <div class="texto-descripcion-ampliada">
+                        ${desc}
+                    </div>
+                </div>
+
+                ${formulaHtml}
+
+                <div class="text-center text-white-50 small font-rajdhani mt-2 mb-1">
+                    <i class="bi bi-shield-check text-info me-1"></i> Formulación 100% viva, sin conservantes ni azúcares añadidos.
+                </div>
+            </div>
+
+            <div class="footer-accion-ampliado">
+                <button class="btn-extraer-ampliado w-100" onclick="agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase}); cerrarModalAmpliado();">
+                    <span class="d-flex align-items-center gap-2">
+                        <i class="bi bi-cart-plus-fill fs-5"></i>
+                        <span>EXTRAER AL PEDIDO</span>
+                    </span>
+                    <span class="precio-btn-extraer font-orbitron">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span>
+                </button>
+            </div>
+        `;
+
+        const contenedor = document.getElementById('contenido-detalle-ampliado');
+        if (contenedor) {
+            contenedor.innerHTML = htmlContent;
+            if (modalDetalleAmpliado) modalDetalleAmpliado.show();
+        }
+    }
+
+    function abrirDetalleInsumo(idInsumo) {
+        const ins = (globalInsumosArmado || []).find(i => String(i.idInsumo || i.id) === String(idInsumo));
+        if (!ins) return;
+
+        let idInsClean = String(ins.idInsumo || ins.id || 'ins').replace(/'/g, "\\'");
+        let cantPorc = porcionesArmado[idInsClean] || porcionesArmado[ins.idInsumo] || 0;
+        let precioBasePorc = ins.precio || 0;
+        let dtoPorc = (ins.descuento && ins.descuento > 0) ? Math.min(Math.round(ins.descuento), 100) : 0;
+        let precioFinalPorc = dtoPorc > 0 ? Math.round(precioBasePorc * (1 - dtoPorc / 100)) : precioBasePorc;
+        let sizePorcion = (ins.sizePorcion && Number(ins.sizePorcion) > 0) ? Number(ins.sizePorcion) : 1;
+        let stockRaw = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
+        let porcionesDisponibles = (sizePorcion > 1 && stockRaw >= sizePorcion && (ins.medida === 'gr' || ins.medida === 'mls'))
+            ? Math.floor(stockRaw / sizePorcion)
+            : Math.max(0, Math.floor(stockRaw));
+
+        const esAgotado = porcionesDisponibles <= 0;
+        const esUltimas = porcionesDisponibles > 0 && porcionesDisponibles <= 10;
+        let subcatLabel = (ins.subcategoria || obtenerSubcategoriaInsumo(ins)).toUpperCase();
+        let porcTexto = `${sizePorcion} ${ins.medida || 'gr'}`;
+        let nombreEscape = (ins.nombre || '').replace(/'/g, "\\'");
+        let imgUrl = obtenerImagenIngrediente(ins);
+
+        let ribbonDto = (dtoPorc > 0)
+            ? `<span class="badge bg-danger font-orbitron fw-bold" style="letter-spacing:1px; box-shadow:0 0 10px rgba(220,53,69,0.8);"><i class="bi bi-tag-fill me-1"></i>-${dtoPorc}% OFF</span>`
+            : '';
+
+        let badgeStock = '';
+        if (esAgotado) {
+            badgeStock = `<span class="badge bg-danger bg-opacity-75 font-orbitron"><i class="bi bi-x-circle me-1"></i>AGOTADO (0 DISP)</span>`;
+        } else if (esUltimas) {
+            badgeStock = `<span class="badge bg-warning text-dark font-orbitron fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>¡ÚLTIMAS ${porcionesDisponibles} PORCIONES!</span>`;
+        } else {
+            badgeStock = `<span class="badge bg-success bg-opacity-75 font-orbitron"><i class="bi bi-check-circle me-1"></i>EN STOCK (${porcionesDisponibles} DISP)</span>`;
+        }
+
+        const esVideoIng = imgUrl && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(imgUrl.trim());
+        const mediaIngTag = esVideoIng
+            ? `<video src="${imgUrl}" autoplay loop muted playsinline class="img-ampliada" style="object-fit: contain; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}"></video>`
+            : `<img src="${imgUrl}" alt="${ins.nombre}" decoding="async" class="img-ampliada" style="object-fit: contain; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}" onerror="if(this.src!=='default-batido.png') this.src='default-batido.png';">`;
+
+        let precioHtmlInsumo = (dtoPorc > 0)
+            ? `<div class="font-orbitron">
+                 <span class="text-white-50 text-decoration-line-through small me-1" style="font-size: 0.85rem; text-decoration-color:#ff3355;">${simboloActual}${precioBasePorc.toLocaleString('es-CL')}</span>
+                 <span class="text-warning fw-bold fs-4">${simboloActual}${precioFinalPorc.toLocaleString('es-CL')}</span>
+                 <span class="text-white-50 small d-block font-rajdhani">por porción</span>
+               </div>`
+            : `<div class="font-orbitron"><span class="text-warning fw-bold fs-4">${simboloActual}${precioBasePorc.toLocaleString('es-CL')}</span> <span class="text-white-50 small d-block font-rajdhani">por porción</span></div>`;
+
+        let descInsumo = obtenerDescripcionInsumo(ins);
+
+        const disMinus = cantPorc <= 0 ? 'disabled' : '';
+        const classMinus = cantPorc > 0 ? 'btn-outline-warning text-warning' : 'btn-outline-secondary text-white-50';
+        let btnMinusModal = `<button id="btn-minus-modal-${idInsClean}" class="btn ${classMinus} fw-bold px-3 py-1" style="border-radius: 8px; min-width: 42px; min-height: 40px; font-size: 1.2rem;" ${disMinus} onclick="modificarPorcionInsumo('${idInsClean}', -1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">-</button>`;
+
+        const disPlus = (esAgotado || cantPorc >= porcionesDisponibles) ? 'disabled' : '';
+        const classPlus = (!esAgotado && cantPorc < porcionesDisponibles) ? 'btn-warning text-dark' : 'btn-secondary text-white-50';
+        let btnPlusModal = `<button id="btn-plus-modal-${idInsClean}" class="btn ${classPlus} fw-bold px-3 py-1 shadow-sm" style="border-radius: 8px; min-width: 42px; min-height: 40px; font-size: 1.2rem;" ${disPlus} onclick="modificarPorcionInsumo('${idInsClean}', 1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">+</button>`;
+
+        const htmlContent = `
+            <div class="enredadera-ampliada"></div>
+            <button type="button" class="btn-cerrar-ampliado" onclick="cerrarModalAmpliado()" title="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="px-3 pt-3 pb-1 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
+                <span class="badge bg-dark border border-warning text-warning font-orbitron" style="font-size: 0.72rem; letter-spacing: 1px;">
+                    <i class="bi bi-cup-straw me-1"></i>ARMA TU BATIDO
+                </span>
+                <span class="badge bg-dark border border-info text-info font-orbitron" style="font-size: 0.72rem; letter-spacing: 1px;">
+                    ${subcatLabel}
+                </span>
+                ${ribbonDto}
+                ${badgeStock}
+            </div>
+
+            <div class="img-zona-ampliada">
+                ${mediaIngTag}
+            </div>
+
+            <div class="cuerpo-scroll-ampliado">
+                <h2 class="nombre-prod-ampliado mb-2">${ins.nombre}</h2>
+
+                <div class="d-flex align-items-center justify-content-between mb-3 p-3 rounded-3" style="background: rgba(0,0,0,0.55); border: 1px solid rgba(255,215,0,0.25);">
+                    <div>
+                        <span class="text-white-50 small d-block font-rajdhani fw-bold" style="letter-spacing:1px;">DOSIS / PORCIÓN:</span>
+                        <span class="text-info font-orbitron fw-bold" style="font-size: 1.05rem;">${porcTexto}</span>
+                    </div>
+                    <div class="text-end">
+                        ${precioHtmlInsumo}
+                    </div>
+                </div>
+
+                <div class="card-bio-info p-3 rounded-3 mb-3">
+                    <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-warning border-opacity-25">
+                        <i class="bi bi-flower1 text-warning fs-5"></i>
+                        <span class="font-orbitron fw-bold text-warning" style="font-size: 0.9rem; letter-spacing: 1px;">PROPIEDADES & APORTE VITAL</span>
+                    </div>
+                    <div class="texto-descripcion-ampliada">
+                        ${descInsumo}
+                    </div>
+                </div>
+
+                <div class="text-center text-white-50 small font-rajdhani mt-2 mb-1">
+                    <i class="bi bi-check2-circle text-warning me-1"></i> Selecciona la cantidad de porciones para tu fórmula personalizada.
+                </div>
+            </div>
+
+            <div class="footer-accion-ampliado">
+                <div class="d-flex align-items-center justify-content-between mb-2 px-1">
+                    <span class="font-orbitron text-white-50" style="font-size: 0.85rem; letter-spacing: 1px;">PORCIONES AÑADIDAS:</span>
+                    <div class="d-flex align-items-center gap-2">
+                        ${btnMinusModal}
+                        <span id="cant-porc-modal-${idInsClean}" class="fw-bold fs-3 text-white font-orbitron px-2">${cantPorc}</span>
+                        ${btnPlusModal}
+                    </div>
+                </div>
+                <button class="btn btn-warning w-100 py-2 fw-bold text-dark font-orbitron shadow-sm" onclick="cerrarModalAmpliado()" style="border-radius: 8px; letter-spacing: 1px;">
+                    <i class="bi bi-check-lg me-1"></i> ACEPTAR Y CONTINUAR
+                </button>
+            </div>
+        `;
+
+        const contenedor = document.getElementById('contenido-detalle-ampliado');
+        if (contenedor) {
+            contenedor.innerHTML = htmlContent;
+            if (modalDetalleAmpliado) modalDetalleAmpliado.show();
+        }
     }
 
     function flip(id) { document.getElementById(`card-${id}`).classList.toggle('flipped'); }
