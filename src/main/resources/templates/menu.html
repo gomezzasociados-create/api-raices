@@ -614,6 +614,86 @@
             .card-front, .card-back { backdrop-filter: none; box-shadow: 0 5px 15px rgba(0,0,0,0.9); border-radius: 8px;}
             body { background-attachment: scroll; }
         }
+    
+        /* ========================================================= */
+        /* CRÉDITOS Y AVISO PUBLICITARIO GÓMEZ SYSTEMS */
+        /* ========================================================= */
+        .footer-creditos-gomez {
+            background: radial-gradient(circle at center, rgba(0, 240, 255, 0.08) 0%, rgba(1, 18, 10, 0.88) 100%);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 16px;
+            padding: 24px 20px;
+            margin: 35px auto 85px auto;
+            max-width: 540px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 240, 255, 0.2);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            position: relative;
+            z-index: 20;
+        }
+        .footer-creditos-gomez .credito-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.65);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .link-gomez-systems {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.18), rgba(255, 215, 0, 0.18));
+            border: 2px solid var(--bio-aqua);
+            border-radius: 12px;
+            padding: 12px 24px;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.35), inset 0 0 12px rgba(0, 240, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            cursor: pointer;
+        }
+        .link-gomez-systems:hover, .link-gomez-systems:active {
+            color: #000000 !important;
+            background: linear-gradient(135deg, var(--bio-aqua), var(--bio-oro));
+            border-color: var(--bio-oro);
+            box-shadow: 0 0 35px var(--bio-aqua), 0 0 25px var(--bio-oro);
+            transform: translateY(-2px) scale(1.03);
+            text-shadow: none;
+        }
+        .link-gomez-systems .logo-gs-chip {
+            background: #000;
+            color: var(--bio-aqua);
+            border: 1px solid var(--bio-aqua);
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 0.85rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .link-gomez-systems:hover .logo-gs-chip {
+            background: #000000;
+            color: var(--bio-oro);
+            border-color: var(--bio-oro);
+        }
+        .footer-creditos-gomez .subtexto-gs {
+            font-family: 'Rajdhani', sans-serif;
+            color: rgba(255, 215, 0, 0.85);
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            margin-top: 12px;
+            margin-bottom: 0;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+        }
+
     </style>
 </head>
 <body>
@@ -673,7 +753,22 @@
 </div>
 
     <div class="container px-2">
-        <div id="grid-menu" class="row g-3 mb-5 pb-5"></div>
+                <div id="grid-menu" class="row g-3 mb-4"></div>
+
+        <!-- AVISO PUBLICITARIO Y CRÉDITOS GÓMEZ SYSTEMS (ENLACE VIVO) -->
+        <div class="footer-creditos-gomez">
+            <div class="credito-label">
+                <i class="bi bi-cpu-fill me-1 text-info"></i> TECNOLOGÍA & DESARROLLO POR
+            </div>
+            <a href="https://front.gomezsystems.online/" target="_blank" rel="noopener noreferrer" class="link-gomez-systems" title="Ir a Gómez Systems">
+                <span class="logo-gs-chip">GS</span>
+                <span>GÓMEZ SYSTEMS</span>
+                <i class="bi bi-box-arrow-up-right fs-6"></i>
+            </a>
+            <p class="subtexto-gs">
+                <i class="bi bi-stars me-1 text-warning"></i> Soluciones Digitales & Arquitectura de Software
+            </p>
+        </div>
     </div>
 </div>
 
