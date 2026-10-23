@@ -8,6 +8,11 @@ import org.springframework.stereotype.Component;
 import com.gomezsystems.minierp.repository.InsumoRepository;
 
 import com.gomezsystems.minierp.model.Insumo;
+import com.gomezsystems.minierp.model.ArticuloBlog;
+import com.gomezsystems.minierp.model.ComentarioComunidad;
+import com.gomezsystems.minierp.repository.ArticuloBlogRepository;
+import com.gomezsystems.minierp.repository.ComentarioComunidadRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @Component
@@ -15,6 +20,12 @@ public class DataInitializer implements CommandLineRunner {
 
     private final ProductoRepository repository;
     private final InsumoRepository insumoRepository;
+
+    @Autowired(required = false)
+    private ArticuloBlogRepository articuloBlogRepository;
+
+    @Autowired(required = false)
+    private ComentarioComunidadRepository comentarioRepository;
 
     public DataInitializer(ProductoRepository repository, InsumoRepository insumoRepository) {
         this.repository = repository;
@@ -410,6 +421,68 @@ public class DataInitializer implements CommandLineRunner {
             }
             System.out.println(">> GÓMEZ SYSTEMS: Insumos de Bodega inicializados con subcategorías correctamente para Antofagasta.");
         }
+
+        // 3. INICIALIZAR BLOG Y COMUNIDAD INTERACTIVA
+        try {
+            if (articuloBlogRepository != null && articuloBlogRepository.count() == 0) {
+                inicializarBlogYComunidad();
+            }
+        } catch (Exception e) {
+            System.err.println(">> Error al inicializar Blog y Comunidad: " + e.getMessage());
+        }
+    }
+
+    private void inicializarBlogYComunidad() {
+        if (articuloBlogRepository == null) return;
+        
+        ArticuloBlog art1 = new ArticuloBlog(
+            "El Secreto de la Prensada en Frío: Nutrición Celular Viva",
+            "Descubre por qué el método cold-press conserva hasta un 98% más de enzimas vivas y vitaminas que los métodos tradicionales.",
+            "La velocidad y la fricción térmica de las licuadoras convencionales oxidan los nutrientes más sensibles antes de que lleguen a tu organismo. En RAÍCES utilizamos tecnología de prensado en frío hidráulico, donde cada vegetal y fruta libera su esencia pura sin alterar su estructura molecular.\n\nAl consumir jugos y elíxires prensados en frío, tu sistema digestivo absorbe los fitonutrientes en menos de 20 minutos, recargando tus mitocondrias de energía limpia y alcalinizando tu medio celular.\n\n¡Experimenta la diferencia con nuestros Elíxires de 500 mls y siente la vitalidad real en cada sorbo!",
+            "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=800&q=80",
+            "Nutrición & Vitalidad",
+            "Equipo Científico RAÍCES"
+        );
+        art1.setLikes(38);
+        articuloBlogRepository.save(art1);
+
+        ArticuloBlog art2 = new ArticuloBlog(
+            "Arma tu Batido: La Nueva Era de la Bio-Personalización",
+            "Crea tu batido exacto eligiendo base líquida, frutas maduras, vegetales orgánicos, semillas activadas y adaptógenos.",
+            "Cada cuerpo es un universo único con requerimientos nutricionales específicos. Por eso creamos el módulo 'Arma tu Batido', una plataforma interactiva donde tú eres el alquimista.\n\nPuedes elegir desde bases hidratantes de leche vegetal o aloe vera, hasta superalimentos como chía mucilaginosa, maca andina, espirulina viva y proteína bio-asimilable.\n\nTodo conectado en tiempo real con nuestra bodega de insumos frescos para garantizar la máxima biodisponibilidad y frescura en tu preparación.",
+            "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80",
+            "Bio-Alquimia",
+            "Nutrición RAÍCES"
+        );
+        art2.setLikes(54);
+        articuloBlogRepository.save(art2);
+
+        ArticuloBlog art3 = new ArticuloBlog(
+            "Comunidad Activa: Tu Voz Define las Próximas Fórmulas",
+            "Queremos escuchar tus sugerencias, nuevos ingredientes que te gustaría ver en bodega y feedback para mejorar cada día.",
+            "En RAÍCES no solo servimos nutrición; construimos una comunidad comprometida con el bienestar consciente y la longevidad activa.\n\nEste espacio de blog y buzón comunitario fue diseñado para ti: déjanos tus peticiones de nuevos ingredientes, sugerencias para el servicio o comentarios sobre tu elíxir favorito.\n\n¡Leemos cada aporte y los más votados por la comunidad serán incorporados directamente a nuestro menú!",
+            "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
+            "Comunidad RAÍCES",
+            "Dirección de Innovación"
+        );
+        art3.setLikes(87);
+        articuloBlogRepository.save(art3);
+
+        if (comentarioRepository != null && comentarioRepository.count() == 0) {
+            ComentarioComunidad c1 = new ComentarioComunidad(art3.getId(), "Valentina M.", "PETICIÓN", "¡Me encantaría que agreguen Matcha ceremonial y leche de coco fresca a la bodega de Arma tu Batido!");
+            c1.setLikes(23);
+            comentarioRepository.save(c1);
+
+            ComentarioComunidad c2 = new ComentarioComunidad(art1.getId(), "Carlos D.", "SUGERENCIA", "Los Elíxires de 500 mls son increíbles. Sería genial poder programar entregas semanales recurrentes los lunes por la mañana.");
+            c2.setLikes(16);
+            comentarioRepository.save(c2);
+
+            ComentarioComunidad c3 = new ComentarioComunidad(art2.getId(), "Mariana Silva", "COMENTARIO", "El batido personalizado con remolacha, piña y jengibre me da una energía limpia para todo el día. ¡Felicitaciones por la calidad!");
+            c3.setLikes(11);
+            comentarioRepository.save(c3);
+        }
+
+        System.out.println(">> GÓMEZ SYSTEMS: Blog y Comunidad inicializados con artículos y comentarios interactivos.");
     }
 
     private void crearInsumoSiNoExiste(String nombre, Double stock, Number porcion, String medida, String sucursal, String cat, String subcat, Double precio) {

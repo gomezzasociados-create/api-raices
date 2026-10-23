@@ -1,5 +1,6 @@
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\config\WebConfig.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\controller\AuthController.java
+C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\controller\BlogComunidadController.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\controller\CategoriaBadgeController.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\controller\ClienteController.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\controller\DocumentoPdfController.java
@@ -15,8 +16,10 @@ C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\controller\RecetaCont
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\controller\VentaController.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\controller\VistasController.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\MinierpApplication.java
+C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\model\ArticuloBlog.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\model\CategoriaBadge.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\model\Cliente.java
+C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\model\ComentarioComunidad.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\model\DetalleVenta.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\model\DocumentoPdf.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\model\Gasto.java
@@ -27,8 +30,10 @@ C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\model\MovimientoKarde
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\model\Producto.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\model\Receta.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\model\Venta.java
+C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\repository\ArticuloBlogRepository.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\repository\CategoriaBadgeRepository.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\repository\ClienteRepository.java
+C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\repository\ComentarioComunidadRepository.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\repository\DetalleVentaRepository.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\repository\DocumentoPdfRepository.java
 C:\proyectos\RAICES\src\main\java\com\gomezsystems\minierp\repository\GastoRepository.java

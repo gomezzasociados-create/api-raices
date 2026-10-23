@@ -1,10 +1,15 @@
 com\gomezsystems\minierp\controller\CategoriaBadgeController.class
 com\gomezsystems\minierp\repository\DocumentoPdfRepository.class
+com\gomezsystems\minierp\model\ArticuloBlog.class
 com\gomezsystems\minierp\service\WhatsAppNotificationService.class
 com\gomezsystems\minierp\controller\DocumentoPdfController.class
 com\gomezsystems\minierp\controller\MediaUploadController.class
+com\gomezsystems\minierp\repository\ComentarioComunidadRepository.class
+com\gomezsystems\minierp\model\ComentarioComunidad.class
+com\gomezsystems\minierp\controller\BlogComunidadController.class
 com\gomezsystems\minierp\model\DocumentoPdf.class
 com\gomezsystems\minierp\repository\CategoriaBadgeRepository.class
 com\gomezsystems\minierp\model\CategoriaBadge.class
+com\gomezsystems\minierp\repository\ArticuloBlogRepository.class
 com\gomezsystems\minierp\config\WebConfig$1.class
 com\gomezsystems\minierp\config\WebConfig.class

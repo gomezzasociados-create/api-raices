@@ -1,11 +1,12 @@
 // sw.js - Service Worker Express Ultra-Rápido para RAÍCES
-const CACHE_NAME = 'raices-express-v2';
+const CACHE_NAME = 'raices-express-v3';
 
 const PRECACHE_ASSETS = [
     '/',
     '/manifest-menu.json',
     'puerta-magica.jpg',
     'lianas-limpias.png',
+    'default-batido.png',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
     'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css',

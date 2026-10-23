@@ -593,6 +593,7 @@
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-recetas" type="button" onclick="prepararRecetas(); playSound('click')"><i class="bi bi-flask me-1"></i> FÓRMULAS</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pdf" type="button" onclick="cargarDocumentosPdf(); playSound('click')"><i class="bi bi-file-earmark-pdf-fill me-1"></i> CENTRO PDF & RECETAS</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-precios" type="button" onclick="cargarCatalogo(); playSound('click')"><i class="bi bi-hdd-network me-1"></i> MATRIZ TOTAL</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-blog-admin" type="button" onclick="cargarBlogAdmin(); playSound('click')"><i class="bi bi-chat-heart-fill me-1"></i> COMUNIDAD & BLOG</button></li>
         </ul>
 
         <div class="tab-content" id="pills-tabContent">
@@ -1438,7 +1439,153 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- PESTAÑA: COMUNIDAD Y BLOG (ADMINISTRACIÓN) -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade" id="tab-blog-admin" role="tabpanel">
+                <!-- BANNER DE RESUMEN Y ACCIONES -->
+                <div class="table-container mb-4" style="border-top: 3px solid var(--p-magenta);">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div>
+                            <h4 class="font-orbitron fw-bold m-0" style="color: var(--p-magenta); text-shadow: var(--magenta-glow);">
+                                <i class="bi bi-chat-heart-fill me-2"></i> COMUNIDAD, SUGERENCIAS & BLOG INFORMATIVO
+                            </h4>
+                            <p class="text-white-50 font-rajdhani m-0 fs-6 mt-1">
+                                Modera aportes y peticiones de clientes de Antofagasta, y publica artículos científicos/nutricionales para el catálogo.
+                            </p>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-info font-orbitron" onclick="cargarBlogAdmin()">
+                                <i class="bi bi-arrow-clockwise me-1"></i> REFRESCAR
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- MÉTRICAS EN VIVO -->
+                    <div class="row g-3 mt-3">
+                        <div class="col-md-3">
+                            <div class="p-3 rounded text-center" style="background: rgba(0, 229, 255, 0.08); border: 1px solid rgba(0, 229, 255, 0.3);">
+                                <span class="font-orbitron small text-info text-uppercase d-block">Total Artículos</span>
+                                <h3 class="font-orbitron fw-bold text-white m-0 mt-1" id="kpi-articulos-count">0</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 rounded text-center" style="background: rgba(255, 0, 234, 0.08); border: 1px solid rgba(255, 0, 234, 0.3);">
+                                <span class="font-orbitron small text-magenta text-uppercase d-block">Peticiones de Sabor</span>
+                                <h3 class="font-orbitron fw-bold text-white m-0 mt-1" id="kpi-peticiones-count">0</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 rounded text-center" style="background: rgba(255, 215, 0, 0.08); border: 1px solid rgba(255, 215, 0, 0.3);">
+                                <span class="font-orbitron small text-warning text-uppercase d-block">Sugerencias Clientes</span>
+                                <h3 class="font-orbitron fw-bold text-white m-0 mt-1" id="kpi-sugerencias-count">0</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 rounded text-center" style="background: rgba(0, 255, 136, 0.08); border: 1px solid rgba(0, 255, 136, 0.3);">
+                                <span class="font-orbitron small text-success text-uppercase d-block">Total Votos / Likes</span>
+                                <h3 class="font-orbitron fw-bold text-white m-0 mt-1" id="kpi-likes-count">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- COLUMNA IZQUIERDA: GESTOR DE ARTÍCULOS DE BLOG -->
+                    <div class="col-lg-6">
+                        <div class="table-container mb-4" style="border-top: 3px solid var(--p-cyan);">
+                            <h5 class="fw-bold font-orbitron mb-3" style="color: var(--p-cyan); text-shadow: var(--border-glow);">
+                                <i class="bi bi-pencil-square me-2"></i> PUBLICAR NUEVO ARTÍCULO EN EL BLOG
+                            </h5>
+                            <form id="form-nuevo-articulo-blog" onsubmit="guardarArticuloBlogAdmin(event)">
+                                <div class="mb-3">
+                                    <label class="form-label-neon">Título del Artículo</label>
+                                    <input type="text" id="blog-input-titulo" class="form-control" placeholder="Ej: Poder Antioxidante del Maqui de la Patagonia" required>
+                                </div>
+                                <div class="row g-2 mb-3">
+                                    <div class="col-6">
+                                        <label class="form-label-neon">Categoría</label>
+                                        <select id="blog-input-categoria" class="form-select auth-select">
+                                            <option value="Nutrición">Nutrición & Salud</option>
+                                            <option value="Bienestar">Bienestar & Wellness</option>
+                                            <option value="Recetas">Recetas & Elíxires</option>
+                                            <option value="Guías">Guías & Consejos</option>
+                                            <option value="Comunidad">Comunidad RAÍCES</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label-neon">Firma / Autor</label>
+                                        <input type="text" id="blog-input-autor" class="form-control" value="Equipo Científico RAÍCES" placeholder="Autor">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-neon">URL Imagen / Portada (o archivo /img/)</label>
+                                    <input type="text" id="blog-input-imagen" class="form-control" placeholder="Ej: https://images.unsplash.com/... o /img/blog1.jpg">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-neon">Resumen Corto (se ve en la tarjeta)</label>
+                                    <textarea id="blog-input-resumen" rows="2" class="form-control" placeholder="Breve introducción para enganchar al lector en el catálogo..." required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-neon">Contenido Completo del Artículo</label>
+                                    <textarea id="blog-input-contenido" rows="5" class="form-control" placeholder="Desarrolla aquí todo el contenido del artículo, beneficios, evidencia científica o instrucciones paso a paso..." required></textarea>
+                                </div>
+                                <button type="submit" id="btn-publicar-articulo" class="btn btn-bio w-100 py-3 font-orbitron fw-bold">
+                                    <i class="bi bi-send-check-fill me-2"></i> PUBLICAR ARTÍCULO EN EL CATÁLOGO
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- LISTA DE ARTÍCULOS ACTIVOS -->
+                        <div class="table-container p-4">
+                            <h5 class="fw-bold font-orbitron mb-3 text-info">
+                                <i class="bi bi-journals me-2"></i> ARTÍCULOS PUBLICADOS (<span id="total-articulos-lista">0</span>)
+                            </h5>
+                            <div class="table-responsive" style="max-height: 480px; overflow-y: auto;">
+                                <table class="table text-center align-middle m-0">
+                                    <thead class="table-dark font-orbitron small">
+                                        <tr>
+                                            <th>CAT</th>
+                                            <th class="text-start">TÍTULO</th>
+                                            <th>LIKES</th>
+                                            <th>ACCIONES</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabla-articulos-blog-admin"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLUMNA DERECHA: BUZÓN Y MODERACIÓN COMUNITARIA -->
+                    <div class="col-lg-6">
+                        <div class="table-container p-4" style="border-top: 3px solid var(--p-warning);">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold font-orbitron m-0 text-warning" style="text-shadow: 0 0 10px rgba(255,215,0,0.5);">
+                                    <i class="bi bi-inbox-fill me-2"></i> BUZÓN COMUNITARIO (SUGERENCIAS Y PETICIONES)
+                                </h5>
+                                <select id="filtro-comunidad-admin" class="form-select auth-select w-auto py-1 font-orbitron small" onchange="renderizarComentariosAdmin()">
+                                    <option value="TODOS">Todos los tipos</option>
+                                    <option value="PETICION">Peticiones de Sabores</option>
+                                    <option value="SUGERENCIA">Sugerencias</option>
+                                    <option value="COMENTARIO">Comentarios generales</option>
+                                </select>
+                            </div>
+                            <p class="text-white-50 font-rajdhani small mb-3">
+                                Revisa en vivo lo que tus clientes están solicitando en el catálogo. Puedes borrar comentarios inapropiados o atender peticiones populares.
+                            </p>
+                            <div class="table-responsive" style="max-height: 820px; overflow-y: auto;">
+                                <div id="lista-comunidad-admin" class="d-flex flex-column gap-3">
+                                    <!-- Inyectado dinámicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
 
         </div>
     </div>
@@ -3146,7 +3293,7 @@
                 else if (isVaso) colorBadge = 'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan);';
                 else if (isShot) colorBadge = 'color:var(--p-magenta); border-color:var(--p-magenta); box-shadow:0 0 10px var(--p-magenta);';
 
-                let defaultFallback = 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+                let defaultFallback = 'default-batido.png';
                 if (isVaso) defaultFallback = 'https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?auto=format&fit=crop&w=350&q=80';
                 else if (isShot) defaultFallback = 'https://images.unsplash.com/photo-1514733670139-4d87a1941d55?auto=format&fit=crop&w=350&q=80';
                 else if (!isArmaTuBatido) defaultFallback = 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80';
@@ -3910,7 +4057,7 @@
                 const precioNorm = normalizarPrecioCLP(p.precio || 0);
                 const dtoVal = (p.descuento && p.descuento > 0) ? Math.min(Math.round(p.descuento), 100) : 0;
                 const precioFinal = dtoVal > 0 ? Math.round(precioNorm * (1 - dtoVal / 100)) : precioNorm;
-                const imgUrl = p.imagen && p.imagen.trim() !== '' ? p.imagen : 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+                const imgUrl = p.imagen && p.imagen.trim() !== '' ? p.imagen : 'default-batido.png';
 
                 const attrReadonly = esSupremo ? '' : 'readonly';
                 const classInput = esSupremo ? 'input-matriz' : 'input-matriz border-0 text-white-50 pointer-events-none';
@@ -4132,19 +4279,19 @@
     }
 
     function renderMediaThumbnail(url, id, sizeStyle = "width: 52px; height: 52px; object-fit: cover;") {
-        const safeUrl = (url && url.trim() !== '') ? url.trim() : 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+        const safeUrl = (url && url.trim() !== '') ? url.trim() : 'default-batido.png';
         if (esVideoUrl(safeUrl)) {
             return `<video src="${safeUrl}" autoplay loop muted playsinline class="rounded-3 border border-info flex-shrink-0" id="${id}" style="${sizeStyle}"></video>`;
         }
-        return `<img src="${safeUrl}" class="rounded-3 border border-info flex-shrink-0" id="${id}" style="${sizeStyle}" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">`;
+        return `<img src="${safeUrl}" class="rounded-3 border border-info flex-shrink-0" id="${id}" style="${sizeStyle}" onerror="this.src='default-batido.png'">`;
     }
 
     function renderMediaPreviewBox(url, id, maxHeight = "170px") {
-        const safeUrl = (url && url.trim() !== '') ? url.trim() : 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+        const safeUrl = (url && url.trim() !== '') ? url.trim() : 'default-batido.png';
         if (esVideoUrl(safeUrl)) {
             return `<video src="${safeUrl}" id="${id}" controls autoplay loop muted playsinline class="img-fluid rounded" style="max-height: ${maxHeight}; object-fit: contain; width: 100%;"></video>`;
         }
-        return `<img src="${safeUrl}" id="${id}" class="img-fluid rounded" style="max-height: ${maxHeight}; object-fit: contain;" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">`;
+        return `<img src="${safeUrl}" id="${id}" class="img-fluid rounded" style="max-height: ${maxHeight}; object-fit: contain;" onerror="this.src='default-batido.png'">`;
     }
 
     function actualizarPreviewImg(id) {
@@ -4153,7 +4300,7 @@
         const thumbHeaderBox = document.getElementById(`thumb-header-container-${id}`);
         const imgTable = document.getElementById(`img-display-${id}`);
         if (input) {
-            const url = input.value.trim() || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+            const url = input.value.trim() || 'default-batido.png';
             if (previewBox) {
                 previewBox.innerHTML = renderMediaPreviewBox(url, `preview-img-${id}`, "170px");
             }
@@ -4166,7 +4313,7 @@
                 } else if (imgTable.tagName === 'IMG') {
                     imgTable.src = url;
                 } else {
-                    imgTable.outerHTML = `<img src="${url}" class="img-preview" id="img-display-${id}" style="width:50px; height:50px; object-fit:cover;" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">`;
+                    imgTable.outerHTML = `<img src="${url}" class="img-preview" id="img-display-${id}" style="width:50px; height:50px; object-fit:cover;" onerror="this.src='default-batido.png'">`;
                 }
             }
         }
@@ -5046,7 +5193,254 @@
         }
     }
 
-    if ('serviceWorker' in navigator) {
+    
+    // ==========================================
+    // MÓDULO COMUNIDAD & BLOG (ADMIN)
+    // ==========================================
+    let blogArticulosCacheAdmin = [];
+    let blogComentariosCacheAdmin = [];
+
+    async function cargarBlogAdmin() {
+        try {
+            const [resArt, resCom] = await Promise.all([
+                fetch('/api/blog/articulos'),
+                fetch('/api/blog/comentarios')
+            ]);
+
+            if (resArt.ok) {
+                blogArticulosCacheAdmin = await resArt.json();
+            } else {
+                blogArticulosCacheAdmin = [];
+            }
+
+            if (resCom.ok) {
+                blogComentariosCacheAdmin = await resCom.json();
+            } else {
+                blogComentariosCacheAdmin = [];
+            }
+
+            actualizarMetricasBlogAdmin();
+            renderizarArticulosAdmin();
+            renderizarComentariosAdmin();
+        } catch (e) {
+            console.error('Error al cargar datos de blog y comunidad:', e);
+        }
+    }
+
+    function actualizarMetricasBlogAdmin() {
+        const elArt = document.getElementById('kpi-articulos-count');
+        const elPet = document.getElementById('kpi-peticiones-count');
+        const elSug = document.getElementById('kpi-sugerencias-count');
+        const elLik = document.getElementById('kpi-likes-count');
+
+        const peticiones = blogComentariosCacheAdmin.filter(c => (c.tipo || '').toUpperCase() === 'PETICION').length;
+        const sugerencias = blogComentariosCacheAdmin.filter(c => (c.tipo || '').toUpperCase() === 'SUGERENCIA').length;
+        
+        let totalLikes = 0;
+        blogArticulosCacheAdmin.forEach(a => totalLikes += (a.likes || 0));
+        blogComentariosCacheAdmin.forEach(c => totalLikes += (c.likes || 0));
+
+        if (elArt) elArt.innerText = blogArticulosCacheAdmin.length;
+        if (elPet) elPet.innerText = peticiones;
+        if (elSug) elSug.innerText = sugerencias;
+        if (elLik) elLik.innerText = totalLikes;
+
+        const elTotArt = document.getElementById('total-articulos-lista');
+        if (elTotArt) elTotArt.innerText = blogArticulosCacheAdmin.length;
+    }
+
+    function renderizarArticulosAdmin() {
+        const tbody = document.getElementById('tabla-articulos-blog-admin');
+        if (!tbody) return;
+
+        if (!blogArticulosCacheAdmin || blogArticulosCacheAdmin.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-white-50 py-4 font-rajdhani">No hay artículos publicados en el blog.</td></tr>';
+            return;
+        }
+
+        let html = '';
+        blogArticulosCacheAdmin.forEach(art => {
+            const cat = art.categoria || 'Nutrición';
+            html += `
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.08);">
+                    <td>
+                        <span class="badge bg-dark border border-info text-info font-orbitron" style="font-size: 0.7rem;">
+                            ${cat}
+                        </span>
+                    </td>
+                    <td class="text-start">
+                        <div class="fw-bold text-white font-rajdhani fs-6">${art.titulo}</div>
+                        <small class="text-white-50 font-rajdhani">${art.autor || 'Equipo RAÍCES'}</small>
+                    </td>
+                    <td>
+                        <span class="badge bg-dark border border-danger text-danger font-orbitron">
+                            <i class="bi bi-heart-fill me-1"></i>${art.likes || 0}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger font-orbitron" onclick="eliminarArticuloBlogAdmin(${art.id})" title="Eliminar Artículo">
+                            <i class="bi bi-trash3-fill"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+        tbody.innerHTML = html;
+    }
+
+    function renderizarComentariosAdmin() {
+        const cont = document.getElementById('lista-comunidad-admin');
+        if (!cont) return;
+
+        const filtroTipo = (document.getElementById('filtro-comunidad-admin') || {}).value || 'TODOS';
+        let lista = blogComentariosCacheAdmin;
+        if (filtroTipo !== 'TODOS') {
+            lista = lista.filter(c => (c.tipo || '').toUpperCase() === filtroTipo.toUpperCase());
+        }
+
+        if (!lista || lista.length === 0) {
+            cont.innerHTML = '<div class="p-4 text-center text-white-50 font-rajdhani">No hay aportes comunitarios en esta categoría.</div>';
+            return;
+        }
+
+        let html = '';
+        lista.forEach(c => {
+            const tipo = (c.tipo || 'COMENTARIO').toUpperCase();
+            let badgeClass = 'border-info text-info';
+            let iconTipo = 'bi-chat-dots-fill';
+            if (tipo === 'PETICION') {
+                badgeClass = 'border-warning text-warning';
+                iconTipo = 'bi-stars';
+            } else if (tipo === 'SUGERENCIA') {
+                badgeClass = 'border-success text-success';
+                iconTipo = 'bi-lightbulb-fill';
+            }
+
+            const fechaStr = c.fecha ? new Date(c.fecha).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '';
+
+            html += `
+                <div class="p-3 rounded" style="background: rgba(10, 20, 30, 0.7); border: 1px solid rgba(0, 229, 255, 0.2);">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-dark border ${badgeClass} font-orbitron" style="font-size: 0.7rem; letter-spacing: 0.8px;">
+                                <i class="bi ${iconTipo} me-1"></i>${tipo}
+                            </span>
+                            <span class="fw-bold text-white font-rajdhani">${c.nombre || 'Cliente Anónimo'}</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-dark border border-danger text-danger font-orbitron" style="font-size: 0.75rem;">
+                                <i class="bi bi-heart-fill me-1"></i>${c.likes || 0}
+                            </span>
+                            <button class="btn btn-sm btn-outline-danger font-orbitron px-2 py-0" onclick="eliminarComentarioBlogAdmin(${c.id})" title="Eliminar Propuesta">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-white-75 font-rajdhani fs-6 m-0" style="line-height: 1.4;">
+                        ${c.mensaje || ''}
+                    </p>
+                    <div class="text-end text-white-50 font-rajdhani mt-1" style="font-size: 0.75rem;">
+                        ${fechaStr}
+                    </div>
+                </div>
+            `;
+        });
+        cont.innerHTML = html;
+    }
+
+    async function guardarArticuloBlogAdmin(e) {
+        e.preventDefault();
+        const titulo = document.getElementById('blog-input-titulo').value.trim();
+        const categoria = document.getElementById('blog-input-categoria').value;
+        const autor = document.getElementById('blog-input-autor').value.trim() || 'Equipo RAÍCES';
+        const imagen = document.getElementById('blog-input-imagen').value.trim();
+        const resumen = document.getElementById('blog-input-resumen').value.trim();
+        const contenido = document.getElementById('blog-input-contenido').value.trim();
+
+        if (!titulo || !resumen || !contenido) {
+            playSound('error');
+            alert('Por favor completa todos los campos requeridos del artículo.');
+            return;
+        }
+
+        const payload = {
+            titulo,
+            categoria,
+            autor,
+            imagen,
+            resumen,
+            contenido,
+            likes: 0,
+            fijado: false
+        };
+
+        const btn = document.getElementById('btn-publicar-articulo');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>PUBLICANDO EN EL CATÁLOGO...';
+        }
+
+        try {
+            const res = await fetch('/api/blog/articulos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                playSound('success');
+                alert('✅ ¡Artículo publicado exitosamente en el catálogo!');
+                document.getElementById('form-nuevo-articulo-blog').reset();
+                document.getElementById('blog-input-autor').value = 'Equipo Científico RAÍCES';
+                cargarBlogAdmin();
+            } else {
+                playSound('error');
+                alert('Error al publicar el artículo.');
+            }
+        } catch (err) {
+            playSound('error');
+            alert('Fallo de conexión al publicar: ' + err.message);
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-send-check-fill me-2"></i> PUBLICAR ARTÍCULO EN EL CATÁLOGO';
+            }
+        }
+    }
+
+    async function eliminarArticuloBlogAdmin(id) {
+        if (!confirm('¿Seguro que deseas eliminar este artículo del blog del catálogo?')) return;
+        try {
+            const res = await fetch('/api/blog/articulos/' + id, { method: 'DELETE' });
+            if (res.ok) {
+                playSound('success');
+                alert('Artículo eliminado.');
+                cargarBlogAdmin();
+            } else {
+                alert('Error al eliminar el artículo.');
+            }
+        } catch (e) {
+            alert('Error de conexión al eliminar: ' + e.message);
+        }
+    }
+
+    async function eliminarComentarioBlogAdmin(id) {
+        if (!confirm('¿Seguro que deseas eliminar este aporte/comentario del buzón?')) return;
+        try {
+            const res = await fetch('/api/blog/comentarios/' + id, { method: 'DELETE' });
+            if (res.ok) {
+                playSound('success');
+                alert('Aporte eliminado.');
+                cargarBlogAdmin();
+            } else {
+                alert('Error al eliminar.');
+            }
+        } catch (e) {
+            alert('Error de conexión: ' + e.message);
+        }
+    }
+
+if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW Error:', err));
         });

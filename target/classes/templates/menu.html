@@ -450,18 +450,18 @@
         .item-tarjeta { position: relative; z-index: 1; transition: z-index 0.2s; }
         .item-tarjeta:hover { z-index: 100; }
 
-        .card-escena { perspective: 1000px; width: 100%; height: 400px; position: relative; margin-bottom: 20px; }
+        .card-escena { perspective: 1000px; width: 100%; height: 440px; position: relative; margin-bottom: 25px; }
         .card-flipper { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .card-escena.flipped .card-flipper { transform: rotateY(180deg); }
 
         .card-front, .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; border: 6px solid #3e2312; border-bottom-color: #1a0f07; border-right-color: #1a0f07; border-top-color: #5a361d; border-left-color: #5a361d; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.95), inset 0 0 30px rgba(0,0,0,0.9); backdrop-filter: blur(5px); }
-        .card-front { background: linear-gradient(rgba(20, 10, 2, 0.7), rgba(20, 10, 2, 0.9)), #180b06; padding: 20px 15px; justify-content: space-between; }
+        .card-front { background: linear-gradient(rgba(20, 10, 2, 0.7), rgba(20, 10, 2, 0.9)), #180b06; padding: 16px 14px 18px 14px; justify-content: space-between; display: flex; flex-direction: column; }
         .card-back { background: #0a0502; transform: rotateY(180deg); padding: 30px 20px; border-color: var(--bio-oro); }
 
         .enredadera-magica { position: absolute; top: -12px; left: -12px; right: -12px; bottom: -12px; background-image: url('lianas-limpias.png'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; pointer-events: none; z-index: 15; }
         .card-escena.flipped .enredadera-magica { opacity: 0; transition: opacity 0.3s; }
 
-        .img-zona { height: 180px; display: flex; justify-content: center; align-items: center; position: relative; z-index: 10; }
+        .img-zona { height: 165px; display: flex; justify-content: center; align-items: center; position: relative; z-index: 10; margin-top: 15px; margin-bottom: 5px; }
         .img-batido { width: 80%; height: 80%; object-fit: contain; z-index: 2; filter: drop-shadow(0 15px 25px rgba(0,0,0,1)); animation: flotar 4s infinite alternate ease-in-out; }
         @keyframes flotar { from { transform: translateY(5px); } to { transform: translateY(-5px); } }
 
@@ -532,12 +532,12 @@
 
         }
 
-        .btn-extraer { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.3) 100%); color: var(--bio-oro); border: 1px solid var(--bio-oro); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.6); position: relative; z-index: 25;}
+        .btn-extraer { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.3) 100%); color: var(--bio-oro); border: 1px solid var(--bio-oro); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.6); position: relative; z-index: 25; flex-shrink: 0 !important; margin-top: auto !important;}
 
         .btn-disabled-pago { background: rgba(50, 50, 50, 0.5); color: rgba(255, 255, 255, 0.5); border: 1px dashed rgba(255, 255, 255, 0.3); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: not-allowed; }
 
         .back-titulo { font-family: 'Orbitron'; color: var(--bio-oro); font-size: 1rem; border-bottom: 1px solid var(--bio-oro); padding-bottom: 10px; margin-bottom: 15px; text-align: center;}
-        .back-desc { font-size: 0.95rem; color: #fff; line-height: 1.5; overflow-y: auto; text-align: left; padding-right: 5px; height: 160px; font-weight: 500;}
+        .back-desc { font-size: 0.95rem; color: #fff; line-height: 1.5; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; touch-action: pan-y !important; overscroll-behavior: contain; text-align: left; padding-right: 5px; height: 160px; font-weight: 500;}
         .btn-cerrar-flip { position: absolute; top: 10px; right: 10px; color: #fff; background: none; border: none; font-size: 1.5rem; opacity: 0.7; cursor: pointer;}
 
         .carrito-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 400px; background: rgba(10, 5, 2, 0.98); border: 2px solid var(--bio-oro); padding: 12px 20px; border-radius: 12px; display: none; justify-content: space-between; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.9); z-index: 1000; cursor: pointer;}
@@ -611,7 +611,11 @@
         /* ========================================================= */
         /* OPTIMIZACIÓN INTELIGENTE PARA CELULARES (MANTIENE LA MAGIA LIGERA) */
         @media (max-width: 768px) {
-            .card-front, .card-back { backdrop-filter: none; box-shadow: 0 5px 15px rgba(0,0,0,0.9); border-radius: 8px;}
+            .card-front, .card-back { backdrop-filter: none; box-shadow: 0 5px 15px rgba(0,0,0,0.9); border-radius: 12px;}
+            .card-escena { height: 450px !important; margin-bottom: 25px !important; }
+            .img-zona { height: 160px !important; }
+            .card-ingrediente-batido { padding: 12px 8px !important; min-height: 280px !important; }
+            .btn-extraer { font-size: 0.85rem !important; padding: 10px !important; letter-spacing: 1px !important; }
             body { background-attachment: scroll; }
         }
     
@@ -694,6 +698,302 @@
             text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
         }
 
+
+        /* ========================================================= */
+        /* MODAL DE VISTA AMPLIADA VERTICAL (PRODUCTOS E INSUMOS) */
+        /* ========================================================= */
+        .modal-ampliado-dialog {
+            max-width: 500px;
+            width: 95vw;
+            margin: 15px auto;
+            height: 92vh;
+            height: 92dvh;
+            display: flex;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .modal-ampliado-dialog {
+                width: 96vw !important;
+                max-width: 96vw !important;
+                margin: 8px auto !important;
+                height: 94vh !important;
+                height: 94dvh !important;
+            }
+        }
+
+        .modal-ampliado-content {
+            background: linear-gradient(180deg, #180d05 0%, #08120e 100%) !important;
+            background-image: url('https://www.transparenttextures.com/patterns/wood-burn-pattern.png'), linear-gradient(180deg, rgba(24, 13, 5, 0.98) 0%, rgba(8, 18, 14, 0.98) 100%) !important;
+            border: 2px solid var(--bio-oro) !important;
+            border-radius: 20px !important;
+            color: white !important;
+            box-shadow: 0 0 35px rgba(0, 240, 255, 0.35), 0 25px 60px rgba(0, 0, 0, 0.95), inset 0 0 35px rgba(0, 0, 0, 0.9) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            height: 100% !important;
+            max-height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+            position: relative;
+        }
+
+        #contenido-detalle-ampliado {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-height: 100%;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .enredadera-ampliada {
+            position: absolute;
+            top: -6px; left: -6px; right: -6px; bottom: -6px;
+            background-image: url('lianas-limpias.png');
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            pointer-events: none;
+            z-index: 12;
+            opacity: 0.55;
+        }
+
+        .btn-cerrar-ampliado {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(10, 5, 2, 0.88);
+            border: 1px solid var(--bio-oro);
+            color: var(--bio-oro);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            cursor: pointer;
+            z-index: 40;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+            transition: all 0.2s ease;
+        }
+        .btn-cerrar-ampliado:hover, .btn-cerrar-ampliado:active {
+            background: var(--bio-oro);
+            color: #000;
+            transform: scale(1.08);
+        }
+
+        .img-zona-ampliada {
+            width: 100%;
+            height: 220px;
+            min-height: 190px;
+            max-height: 240px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 20;
+            background: radial-gradient(circle at center, rgba(0, 240, 255, 0.15) 0%, rgba(0, 0, 0, 0.4) 80%);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.25);
+            padding: 12px;
+            flex-shrink: 0;
+        }
+
+        .img-ampliada {
+            max-width: 90%;
+            max-height: 95%;
+            object-fit: contain;
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.95));
+            animation: flotar 4s infinite alternate ease-in-out;
+        }
+
+        .cuerpo-scroll-ampliado {
+            flex: 1 1 auto !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y !important;
+            overscroll-behavior: contain !important;
+            min-height: 0 !important;
+            padding: 16px 20px;
+            position: relative;
+            z-index: 25;
+        }
+
+        .cuerpo-scroll-ampliado::-webkit-scrollbar {
+            width: 6px;
+        }
+        .cuerpo-scroll-ampliado::-webkit-scrollbar-track {
+            background: rgba(10, 5, 2, 0.6);
+            border-radius: 4px;
+        }
+        .cuerpo-scroll-ampliado::-webkit-scrollbar-thumb {
+            background: var(--bio-oro);
+            border-radius: 4px;
+        }
+
+        .nombre-prod-ampliado {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+            line-height: 1.2;
+        }
+
+        .precio-ampliado-box {
+            display: flex;
+            align-items: center;
+        }
+
+        .card-bio-info {
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .texto-descripcion-ampliada {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.12rem;
+            line-height: 1.65;
+            color: rgba(255, 255, 255, 0.92);
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .footer-accion-ampliado {
+            padding: 14px 20px;
+            background: rgba(8, 4, 2, 0.96);
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            position: relative;
+            z-index: 30;
+            flex-shrink: 0;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .btn-extraer-ampliado {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.18) 0%, rgba(255, 215, 0, 0.38) 100%);
+            color: var(--bio-oro);
+            border: 1.5px solid var(--bio-oro);
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.25);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.25s ease;
+        }
+        .btn-extraer-ampliado:hover, .btn-extraer-ampliado:active {
+            background: var(--bio-oro);
+            color: #000;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+        }
+        .precio-btn-extraer {
+            font-size: 1.25rem;
+            font-weight: 900;
+        }
+
+        /* ========================================================= */
+        /* ESTILOS DE COMUNIDAD & BLOG INFORMATIVO */
+        /* ========================================================= */
+        .banner-comunidad-hero {
+            background: radial-gradient(circle at top, rgba(0, 240, 255, 0.16) 0%, rgba(5, 12, 10, 0.96) 100%);
+            border: 2px solid var(--bio-aqua);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(0, 240, 255, 0.25);
+        }
+
+        .card-blog-post {
+            background: linear-gradient(180deg, rgba(16, 22, 20, 0.95) 0%, rgba(8, 12, 10, 0.98) 100%);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .card-blog-post:hover {
+            transform: translateY(-5px);
+            border-color: var(--bio-oro);
+            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.2), 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .img-blog-header {
+            height: 180px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background: #020605;
+        }
+        .img-blog-header img, .img-blog-header video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .card-blog-post:hover .img-blog-header img {
+            transform: scale(1.05);
+        }
+
+        .card-comentario-item {
+            background: rgba(10, 15, 14, 0.94);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-left: 5px solid var(--bio-oro);
+            padding: 16px 20px;
+            margin-bottom: 14px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+            transition: all 0.2s ease;
+        }
+        .card-comentario-item.tipo-peticion {
+            border-left-color: var(--bio-aqua);
+        }
+        .card-comentario-item.tipo-sugerencia {
+            border-left-color: #ffc107;
+        }
+        .card-comentario-item.tipo-comentario {
+            border-left-color: #00ffaa;
+        }
+
+        .btn-like-pill {
+            background: rgba(255, 0, 85, 0.12);
+            border: 1px solid rgba(255, 0, 85, 0.4);
+            color: #ff4d6d;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.85rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-like-pill:hover, .btn-like-pill.active {
+            background: #ff0055;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+            transform: scale(1.05);
+        }
+
+        .pill-tipo-filtro {
+            cursor: pointer;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
     </style>
 </head>
 <body>
@@ -750,6 +1050,7 @@
     <button class="categoria-badge" onclick="filtrar('Packs', this)" data-cat="Packs"><span class="liston-categoria-neon" id="badge-cat-Packs" style="display:none;"></span>Pack de Pulpas</button>
     <button class="categoria-badge" onclick="filtrar('Arma tu Batido', this)" data-cat="Arma tu Batido"><span class="liston-categoria-neon" id="badge-cat-Arma-tu-Batido" style="display:none;"></span>Arma tu Batido</button>
     <button class="categoria-badge" onclick="filtrar('Shots', this)" data-cat="Shots"><span class="liston-categoria-neon liston-neon-magenta neon-magenta" id="badge-cat-Shots"><i class="bi bi-clock-history me-1"></i>PRÓXIMAMENTE</span>Shots</button>
+    <button class="categoria-badge" onclick="filtrar('Comunidad', this)" data-cat="Comunidad"><span class="liston-categoria-neon" id="badge-cat-Comunidad" style="display:none;"></span><i class="bi bi-chat-heart-fill me-1 text-info"></i>Comunidad & Blog</button>
 </div>
 
     <div class="container px-2">
@@ -822,6 +1123,15 @@
             <div class="modal-footer border-0 pt-0 pb-4 px-3">
                 <div id="contenedor-botones-pago" class="w-100"></div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE VISTA AMPLIADA VERTICAL (PRODUCTOS E INSUMOS) -->
+<div class="modal fade" id="modalDetalleAmpliado" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-ampliado-dialog">
+        <div class="modal-content modal-ampliado-content">
+            <div id="contenido-detalle-ampliado"></div>
         </div>
     </div>
 </div>
@@ -968,7 +1278,9 @@
     // ==========================================
     // MOTOR DE CARGA EXPRESS INSTANTÁNEA (SWR + PRE-WARM CACHE)
     // ==========================================
-    let productosRaw = []; let carrito = []; let filtroActual = '500 mls'; let simboloActual = '$'; let modalCarritoCliente;
+    let productosRaw = []; let carrito = []; let filtroActual = '500 mls'; let simboloActual = '$'; let modalCarritoCliente; let modalDetalleAmpliado; let globalInsumosArmado = [];
+    const FALLBACK_SMOOTHIE_IMG = 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80';
+    const LOCAL_FALLBACK_IMG = 'default-batido.png';
     let categoriaBadgesConfig = [];
 
     const CACHE_EXPRESS_PRODS = 'raices_express_prods_';
@@ -995,6 +1307,8 @@
 
     window.addEventListener('DOMContentLoaded', () => { 
         modalCarritoCliente = new bootstrap.Modal(document.getElementById('modalCarritoCliente'));
+        const modalAmpEl = document.getElementById('modalDetalleAmpliado');
+        if (modalAmpEl) modalDetalleAmpliado = new bootstrap.Modal(modalAmpEl);
         // Pre-carga inmediata en segundo plano: al abrir la web, calentar memoria antes de que toque la puerta
         const nodo = document.getElementById('sucursal-activa')?.value || 'Antofagasta';
         hidratarDesdeCacheInstantaneo(nodo);
@@ -1144,6 +1458,11 @@
             return;
         }
 
+        if (filtroActual === 'Comunidad' || filtroActual === 'Blog') {
+            renderizarBlogComunidad();
+            return;
+        }
+
         let lista = productosRaw.filter(p => {
             const cat = normalizarStr(p.categoria || '');
             const nom = normalizarStr(p.nombre || '');
@@ -1183,8 +1502,10 @@
             return;
         }
 
+        let htmlCards = '';
         lista.forEach(p => {
-            let desc = (p.descripcion || "").replace(/\n/g, '<br>'); let img = p.imagen || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+            let desc = (p.descripcion || "").replace(/\n/g, '<br>');
+            let img = (p.imagen && p.imagen.trim() !== '') ? p.imagen.trim() : FALLBACK_SMOOTHIE_IMG;
             const precioBase = Number(p.precio) || 0;
             const dto = (p.descuento && p.descuento > 0) ? Math.min(Math.round(p.descuento), 100) : 0;
             const tieneDto = dto > 0;
@@ -1204,31 +1525,32 @@
                    </div>`;
 
             const esVideo = img && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(img.trim());
-            const mediaTag = esVideo 
+            const mediaTag = esVideo
                 ? `<video src="${img}" class="img-batido" autoplay loop muted playsinline style="object-fit:cover;"></video>`
-                : `<img src="${img}" class="img-batido" loading="lazy" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">`;
+                : `<img src="${img}" class="img-batido" decoding="async" onerror="if(this.src!=='default-batido.png') this.src='default-batido.png';">`;
 
-            grid.innerHTML += `
+            htmlCards += `
                 <div class="col-12 col-md-6 col-lg-4 col-xl-3 item-tarjeta">
                     <div class="card-escena" id="card-${p.id}">
                         <div class="card-flipper">
-                            <div class="card-front">
+                            <div class="card-front" onclick="abrirDetalleProducto('${p.id}')" style="cursor: pointer;">
                                 <div class="enredadera-magica"></div>
                                 ${badgeDto}
-                                <button class="btn-info-flip" onclick="event.stopPropagation(); flip('${p.id}')">INFORMACIÓN <i class="bi bi-info-circle ms-2"></i></button>
+                                <button class="btn-info-flip" onclick="event.stopPropagation(); abrirDetalleProducto('${p.id}')">INFORMACIÓN <i class="bi bi-info-circle ms-2"></i></button>
                                 <div class="img-zona">${mediaTag}</div>
                                 <div class="info-prod-box"><div class="nombre-prod text-truncate">${p.nombre}</div>${precioHtml}</div>
-                                <button class="btn-extraer mt-3" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase})">EXTRAER</button>
+                                <button class="btn-extraer" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase})">EXTRAER</button>
                             </div>
-                            <div class="card-back">
-                                <button class="btn-cerrar-flip" onclick="flip('${p.id}')"><i class="bi bi-x-lg"></i></button>
+                            <div class="card-back" onclick="event.stopPropagation(); abrirDetalleProducto('${p.id}')" style="cursor: pointer;">
+                                <button class="btn-cerrar-flip" onclick="event.stopPropagation(); flip('${p.id}')"><i class="bi bi-x-lg"></i></button>
                                 <div class="back-titulo">BIO-ANÁLISIS</div><div class="back-desc">${desc}</div>
-                                <button class="btn-extraer mt-auto" style="background:var(--bio-oro); color:#000;" onclick="flip('${p.id}')">CERRAR</button>
+                                <button class="btn-extraer mt-auto" style="background:var(--bio-oro); color:#000;" onclick="event.stopPropagation(); abrirDetalleProducto('${p.id}')">AMPLIAR INFORMACIÓN</button>
                             </div>
                         </div>
                     </div>
                 </div>`;
         });
+        grid.innerHTML = htmlCards;
     }
 
     let subcategoriaFiltroActual = 'Todas';
@@ -1318,7 +1640,7 @@
         for (const [clave, url] of Object.entries(CATALOGO_IMAGENES_INGREDIENTES)) {
             if (nomLimpio.includes(clave)) return url;
         }
-        return 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+        return FALLBACK_SMOOTHIE_IMG;
     }
 
     async function renderizarArmaTuBatido(nodo) {
@@ -1374,6 +1696,7 @@
             }
         });
 
+        globalInsumosArmado = insumosArmado;
         if (insumosArmado.length === 0) {
             grid.innerHTML = `
                 <div class="col-12 text-center text-white-50 py-5 font-orbitron">
@@ -1492,17 +1815,17 @@
 
             const disMinus = cantPorc <= 0 ? 'disabled' : '';
             const classMinus = cantPorc > 0 ? 'btn-outline-warning text-warning' : 'btn-outline-secondary text-white-50';
-            let btnMinus = `<button id="btn-minus-${idInsClean}" class="btn ${classMinus} fw-bold px-3 py-1" style="border-radius: 8px;" ${disMinus} onclick="modificarPorcionInsumo('${idInsClean}', -1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">-</button>`;
+            let btnMinus = `<button id="btn-minus-${idInsClean}" class="btn ${classMinus} fw-bold px-2 py-1" style="border-radius: 8px; min-width: 36px; min-height: 36px;" ${disMinus} onclick="modificarPorcionInsumo('${idInsClean}', -1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">-</button>`;
 
             const disPlus = (esAgotado || cantPorc >= porcionesDisponibles) ? 'disabled' : '';
             const classPlus = (!esAgotado && cantPorc < porcionesDisponibles) ? 'btn-warning text-dark' : 'btn-secondary text-white-50';
             const titlePlus = esAgotado ? 'Agotado en Bodega' : (cantPorc >= porcionesDisponibles ? 'Máximo stock alcanzado' : 'Añadir porción');
-            let btnPlus = `<button id="btn-plus-${idInsClean}" class="btn ${classPlus} fw-bold px-3 py-1 shadow-sm" style="border-radius: 8px;" ${disPlus} onclick="modificarPorcionInsumo('${idInsClean}', 1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})" title="${titlePlus}">+</button>`;
+            let btnPlus = `<button id="btn-plus-${idInsClean}" class="btn ${classPlus} fw-bold px-2 py-1 shadow-sm" style="border-radius: 8px; min-width: 36px; min-height: 36px;" ${disPlus} onclick="modificarPorcionInsumo('${idInsClean}', 1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})" title="${titlePlus}">+</button>`;
 
             const esVideoIng = imgUrl && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(imgUrl.trim());
             const mediaIngTag = esVideoIng
                 ? `<video src="${imgUrl}" autoplay loop muted playsinline class="w-100 h-100" style="object-fit: cover; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}"></video>`
-                : `<img src="${imgUrl}" alt="${ins.nombre}" loading="lazy" class="w-100 h-100" style="object-fit: cover; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">`;
+                : `<img src="${imgUrl}" alt="${ins.nombre}" decoding="async" class="w-100 h-100" style="object-fit: cover; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}" onerror="if(this.src!=='default-batido.png') this.src='default-batido.png';">`;
 
             let precioHtml = (dtoPorc > 0)
                 ? `<div class="mb-2 font-orbitron">
@@ -1514,7 +1837,8 @@
             htmlBuilder += `
                 <div class="col-6 col-md-4 col-lg-3 mb-3">
                     <div class="card-ingrediente-batido p-3 rounded-3 text-center h-100 d-flex flex-column justify-content-between position-relative ${esAgotado ? 'ingrediente-agotado' : (esUltimas ? 'ingrediente-ultimas' : '')}" 
-                         style="background: rgba(10, 14, 18, 0.92); ${bordeCard}; box-shadow: 0 5px 15px rgba(0,0,0,0.8); backdrop-filter: blur(8px);">
+                         onclick="abrirDetalleInsumo('${idInsClean}')"
+                         style="cursor: pointer; background: rgba(10, 14, 18, 0.92); ${bordeCard}; box-shadow: 0 5px 15px rgba(0,0,0,0.8); backdrop-filter: blur(8px);">
                         <div>
                             <!-- IMAGEN/VIDEO DEL INGREDIENTE -->
                             <div class="position-relative mb-2 overflow-hidden rounded-3 border ${bordeImg}" style="background: rgba(0,0,0,0.6); height: 125px;">
@@ -1572,6 +1896,22 @@
         
         const spanCant = document.getElementById(`cant-porc-${idInsumo}`);
         if (spanCant) spanCant.innerText = porcionesArmado[idInsumo];
+        const spanCantModal = document.getElementById(`cant-porc-modal-${idInsumo}`);
+        if (spanCantModal) spanCantModal.innerText = porcionesArmado[idInsumo];
+        const btnMinusModal = document.getElementById(`btn-minus-modal-${idInsumo}`);
+        if (btnMinusModal) {
+            btnMinusModal.disabled = (porcionesArmado[idInsumo] <= 0);
+            btnMinusModal.className = (porcionesArmado[idInsumo] <= 0)
+                ? 'btn btn-outline-secondary text-white-50 fw-bold px-3 py-1'
+                : 'btn btn-outline-warning text-warning fw-bold px-3 py-1';
+        }
+        const btnPlusModal = document.getElementById(`btn-plus-modal-${idInsumo}`);
+        if (btnPlusModal) {
+            btnPlusModal.disabled = (porcionesArmado[idInsumo] >= maxPorciones);
+            btnPlusModal.className = (porcionesArmado[idInsumo] >= maxPorciones)
+                ? 'btn btn-secondary text-white-50 fw-bold px-3 py-1 shadow-sm'
+                : 'btn btn-warning text-dark fw-bold px-3 py-1 shadow-sm';
+        }
         
         const btnPlus = document.getElementById(`btn-plus-${idInsumo}`);
         if (btnPlus) {
@@ -1660,6 +2000,782 @@
         porcionesArmado = {};
         insumosInfoMap = {};
         renderizar();
+    }
+
+    
+    function cerrarModalAmpliado() {
+        if (modalDetalleAmpliado) {
+            modalDetalleAmpliado.hide();
+        }
+    }
+
+    function obtenerDescripcionInsumo(ins) {
+        if (ins.descripcion && ins.descripcion.trim() !== '') {
+            return ins.descripcion.replace(/\n/g, '<br>');
+        }
+        const nom = (ins.nombre || '').toLowerCase();
+        const sub = (ins.subcategoria || obtenerSubcategoriaInsumo(ins)).toLowerCase();
+        
+        if (sub.includes('fruta') || nom.includes('piña') || nom.includes('fresa') || nom.includes('frutilla') || nom.includes('arándano') || nom.includes('platano') || nom.includes('mango') || nom.includes('manzana')) {
+            return "Fruta seleccionada en su punto óptimo de maduración natural. Aporta azúcares bio-compatibles de absorción gradual, alta concentración de vitamina C, polifenoles antioxidantes y fibra soluble para equilibrar la microbiota y potenciar el sabor de tu elíxir.";
+        }
+        if (sub.includes('vegetal') || nom.includes('espinaca') || nom.includes('apio') || nom.includes('pepino') || nom.includes('zanahoria') || nom.includes('remolacha') || nom.includes('betarraga')) {
+            return "Vegetal fresco prensado en frío de cultivo libre de pesticidas. Rico en clorofila viva, nitratos vasodilatadores naturales, potasio y micronutrientes alcalinizantes que favorecen la oxigenación celular, la detoxificación hepática y la vitalidad.";
+        }
+        if (sub.includes('semilla') || nom.includes('chía') || nom.includes('chia') || nom.includes('linaza') || nom.includes('sésamo')) {
+            return "Semilla bio-activa rica en ácidos grasos esenciales Omega 3 (ALA), fibra soluble formadora de mucílago prebiótico y calcio de origen vegetal. Apoya el tránsito digestivo regular y la salud cardiovascular.";
+        }
+        if (sub.includes('suplemento') || nom.includes('espirulina') || nom.includes('maca') || nom.includes('colágeno')) {
+            return "Superalimento funcional de alta densidad nutricional y biodisponibilidad. Brinda soporte adaptógeno contra la fatiga mental y física, antioxidantes enzimáticos y aminoácidos esenciales para la vitalidad diaria.";
+        }
+        if (sub.includes('proteína') || nom.includes('whey') || nom.includes('proteina')) {
+            return "Aislado proteico de rápida asimilación con perfil completo de aminoácidos ramificados (BCAA). Ideal para la regeneración miofibrilar, saciedad prolongada y síntesis tisular post-esfuerzo.";
+        }
+        if (sub.includes('seco') || nom.includes('nuez') || nom.includes('almendra') || nom.includes('maní')) {
+            return "Fruto seco de primera selección tostado suavemente sin aditivos. Fuente insustituible de grasas monoinsaturadas cardiosaludables, vitamina E liposoluble, magnesio y energía limpia de larga duración.";
+        }
+        if (sub.includes('especia') || nom.includes('jengibre') || nom.includes('cúrcuma') || nom.includes('canela')) {
+            return "Especia medicinal de acción termogénica y antiinflamatoria sistémica. Contiene fitoquímicos bio-activos que estimulan el fuego digestivo, modulan la respuesta inmune y revitalizan el metabolismo basal.";
+        }
+        if (sub.includes('base') || nom.includes('leche') || nom.includes('agua') || nom.includes('aloe')) {
+            return "Base bio-líquida pura y equilibrada. Garantiza la textura suave, la emulsión perfecta de los ingredientes y una hidratación profunda a nivel celular con electrolitos naturales.";
+        }
+        return "Ingrediente 100% puro y bio-seleccionado para tu formulación personalizada. Aporta pureza, frescura y sinergia nutricional a tu batido en RAÍCES.";
+    }
+
+    function abrirDetalleProducto(id) {
+        const p = (productosRaw || []).find(prod => String(prod.id) === String(id));
+        if (!p) return;
+
+        let desc = (p.descripcion || "Bio-fórmula natural y energizante preparada al momento para potenciar tu vitalidad celular.").replace(/\n/g, '<br>');
+        let img = (p.imagen && p.imagen.trim() !== '') ? p.imagen.trim() : FALLBACK_SMOOTHIE_IMG;
+        const precioBase = Number(p.precio) || 0;
+        const dto = (p.descuento && p.descuento > 0) ? Math.min(Math.round(p.descuento), 100) : 0;
+        const tieneDto = dto > 0;
+        const precioFinal = tieneDto ? Math.round(precioBase * (1 - dto / 100)) : precioBase;
+
+        const badgeDto = tieneDto ? `<span class="badge bg-danger font-orbitron fw-bold" style="letter-spacing:1px; box-shadow:0 0 10px rgba(220,53,69,0.8);"><i class="bi bi-tag-fill me-1"></i>-${dto}% OFF</span>` : '';
+        const badgeStock = (p.stock !== undefined && p.stock !== null)
+            ? (p.stock <= 0 
+                ? `<span class="badge bg-danger bg-opacity-75 font-orbitron"><i class="bi bi-x-circle me-1"></i>AGOTADO</span>`
+                : (p.stock <= 5 
+                    ? `<span class="badge bg-warning text-dark font-orbitron fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>¡ÚLTIMAS ${p.stock} UNID!</span>` 
+                    : `<span class="badge bg-success bg-opacity-75 font-orbitron"><i class="bi bi-check-circle me-1"></i>EN STOCK</span>`))
+            : `<span class="badge bg-success bg-opacity-75 font-orbitron"><i class="bi bi-check-circle me-1"></i>DISPONIBLE</span>`;
+
+        const precioHtmlAmpliado = tieneDto
+            ? `<div class="d-flex align-items-baseline gap-2">
+                   <span class="text-white-50 text-decoration-line-through font-orbitron" style="font-size: 1.05rem; text-decoration-color:#ff3355;">${simboloActual}${precioBase.toLocaleString('es-CL')}</span>
+                   <span class="font-orbitron fw-bold fs-3 text-warning" style="text-shadow: 0 0 15px rgba(255,215,0,0.6);">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span>
+               </div>`
+            : `<div class="font-orbitron fw-bold fs-3 text-warning" style="text-shadow: 0 0 15px rgba(255,215,0,0.6);">${simboloActual}${precioBase.toLocaleString('es-CL')}</div>`;
+
+        const esVideo = img && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(img.trim());
+        const mediaTag = esVideo
+            ? `<video src="${img}" class="img-ampliada" autoplay loop muted playsinline></video>`
+            : `<img src="${img}" class="img-ampliada" decoding="async" onerror="if(this.src!=='default-batido.png') this.src='default-batido.png';">`;
+
+
+        const htmlContent = `
+            <div class="enredadera-ampliada"></div>
+            <button type="button" class="btn-cerrar-ampliado" onclick="cerrarModalAmpliado()" title="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="px-3 pt-3 pb-1 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
+                <span class="badge bg-dark border border-warning text-warning font-orbitron" style="font-size: 0.72rem; letter-spacing: 1px;">
+                    <i class="bi bi-tag-fill me-1"></i>${(p.categoria || 'ELÍXIR').toUpperCase()}
+                </span>
+                ${badgeDto}
+                ${badgeStock}
+            </div>
+
+            <div class="img-zona-ampliada">
+                ${mediaTag}
+            </div>
+
+            <div class="cuerpo-scroll-ampliado">
+                <h2 class="nombre-prod-ampliado mb-2">${p.nombre}</h2>
+                <div class="precio-ampliado-box mb-3">
+                    ${precioHtmlAmpliado}
+                </div>
+
+                <div class="card-bio-info p-3 rounded-3 mb-3">
+                    <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-warning border-opacity-25">
+                        <i class="bi bi-activity text-warning fs-5"></i>
+                        <span class="font-orbitron fw-bold text-warning" style="font-size: 0.9rem; letter-spacing: 1px;">BIO-ANÁLISIS & PROPIEDADES</span>
+                    </div>
+                    <div class="texto-descripcion-ampliada">
+                        ${desc}
+                    </div>
+                </div>
+
+
+                <div class="text-center text-white-50 small font-rajdhani mt-2 mb-1">
+                    <i class="bi bi-shield-check text-info me-1"></i> Formulación 100% viva, sin conservantes ni azúcares añadidos.
+                </div>
+            </div>
+
+            <div class="footer-accion-ampliado">
+                <button class="btn-extraer-ampliado w-100" onclick="agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase}); cerrarModalAmpliado();">
+                    <span class="d-flex align-items-center gap-2">
+                        <i class="bi bi-cart-plus-fill fs-5"></i>
+                        <span>EXTRAER AL PEDIDO</span>
+                    </span>
+                    <span class="precio-btn-extraer font-orbitron">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span>
+                </button>
+            </div>
+        `;
+
+        const contenedor = document.getElementById('contenido-detalle-ampliado');
+        if (contenedor) {
+            contenedor.innerHTML = htmlContent;
+            if (modalDetalleAmpliado) modalDetalleAmpliado.show();
+        }
+    }
+
+    function abrirDetalleInsumo(idInsumo) {
+        const ins = (globalInsumosArmado || []).find(i => String(i.idInsumo || i.id) === String(idInsumo));
+        if (!ins) return;
+
+        let idInsClean = String(ins.idInsumo || ins.id || 'ins').replace(/'/g, "\\'");
+        let cantPorc = porcionesArmado[idInsClean] || porcionesArmado[ins.idInsumo] || 0;
+        let precioBasePorc = ins.precio || 0;
+        let dtoPorc = (ins.descuento && ins.descuento > 0) ? Math.min(Math.round(ins.descuento), 100) : 0;
+        let precioFinalPorc = dtoPorc > 0 ? Math.round(precioBasePorc * (1 - dtoPorc / 100)) : precioBasePorc;
+        let sizePorcion = (ins.sizePorcion && Number(ins.sizePorcion) > 0) ? Number(ins.sizePorcion) : 1;
+        let stockRaw = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
+        let porcionesDisponibles = (sizePorcion > 1 && stockRaw >= sizePorcion && (ins.medida === 'gr' || ins.medida === 'mls'))
+            ? Math.floor(stockRaw / sizePorcion)
+            : Math.max(0, Math.floor(stockRaw));
+
+        const esAgotado = porcionesDisponibles <= 0;
+        const esUltimas = porcionesDisponibles > 0 && porcionesDisponibles <= 10;
+        let subcatLabel = (ins.subcategoria || obtenerSubcategoriaInsumo(ins)).toUpperCase();
+        let porcTexto = `${sizePorcion} ${ins.medida || 'gr'}`;
+        let nombreEscape = (ins.nombre || '').replace(/'/g, "\\'");
+        let imgUrl = obtenerImagenIngrediente(ins);
+
+        let ribbonDto = (dtoPorc > 0)
+            ? `<span class="badge bg-danger font-orbitron fw-bold" style="letter-spacing:1px; box-shadow:0 0 10px rgba(220,53,69,0.8);"><i class="bi bi-tag-fill me-1"></i>-${dtoPorc}% OFF</span>`
+            : '';
+
+        let badgeStock = '';
+        if (esAgotado) {
+            badgeStock = `<span class="badge bg-danger bg-opacity-75 font-orbitron"><i class="bi bi-x-circle me-1"></i>AGOTADO (0 DISP)</span>`;
+        } else if (esUltimas) {
+            badgeStock = `<span class="badge bg-warning text-dark font-orbitron fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>¡ÚLTIMAS ${porcionesDisponibles} PORCIONES!</span>`;
+        } else {
+            badgeStock = `<span class="badge bg-success bg-opacity-75 font-orbitron"><i class="bi bi-check-circle me-1"></i>EN STOCK (${porcionesDisponibles} DISP)</span>`;
+        }
+
+        const esVideoIng = imgUrl && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(imgUrl.trim());
+        const mediaIngTag = esVideoIng
+            ? `<video src="${imgUrl}" autoplay loop muted playsinline class="img-ampliada" style="object-fit: contain; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}"></video>`
+            : `<img src="${imgUrl}" alt="${ins.nombre}" decoding="async" class="img-ampliada" style="object-fit: contain; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}" onerror="if(this.src!=='default-batido.png') this.src='default-batido.png';">`;
+
+        let precioHtmlInsumo = (dtoPorc > 0)
+            ? `<div class="font-orbitron">
+                 <span class="text-white-50 text-decoration-line-through small me-1" style="font-size: 0.85rem; text-decoration-color:#ff3355;">${simboloActual}${precioBasePorc.toLocaleString('es-CL')}</span>
+                 <span class="text-warning fw-bold fs-4">${simboloActual}${precioFinalPorc.toLocaleString('es-CL')}</span>
+                 <span class="text-white-50 small d-block font-rajdhani">por porción</span>
+               </div>`
+            : `<div class="font-orbitron"><span class="text-warning fw-bold fs-4">${simboloActual}${precioBasePorc.toLocaleString('es-CL')}</span> <span class="text-white-50 small d-block font-rajdhani">por porción</span></div>`;
+
+        let descInsumo = obtenerDescripcionInsumo(ins);
+
+        const disMinus = cantPorc <= 0 ? 'disabled' : '';
+        const classMinus = cantPorc > 0 ? 'btn-outline-warning text-warning' : 'btn-outline-secondary text-white-50';
+        let btnMinusModal = `<button id="btn-minus-modal-${idInsClean}" class="btn ${classMinus} fw-bold px-3 py-1" style="border-radius: 8px; min-width: 42px; min-height: 40px; font-size: 1.2rem;" ${disMinus} onclick="modificarPorcionInsumo('${idInsClean}', -1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">-</button>`;
+
+        const disPlus = (esAgotado || cantPorc >= porcionesDisponibles) ? 'disabled' : '';
+        const classPlus = (!esAgotado && cantPorc < porcionesDisponibles) ? 'btn-warning text-dark' : 'btn-secondary text-white-50';
+        let btnPlusModal = `<button id="btn-plus-modal-${idInsClean}" class="btn ${classPlus} fw-bold px-3 py-1 shadow-sm" style="border-radius: 8px; min-width: 42px; min-height: 40px; font-size: 1.2rem;" ${disPlus} onclick="modificarPorcionInsumo('${idInsClean}', 1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">+</button>`;
+
+        const htmlContent = `
+            <div class="enredadera-ampliada"></div>
+            <button type="button" class="btn-cerrar-ampliado" onclick="cerrarModalAmpliado()" title="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="px-3 pt-3 pb-1 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
+                <span class="badge bg-dark border border-warning text-warning font-orbitron" style="font-size: 0.72rem; letter-spacing: 1px;">
+                    <i class="bi bi-cup-straw me-1"></i>ARMA TU BATIDO
+                </span>
+                <span class="badge bg-dark border border-info text-info font-orbitron" style="font-size: 0.72rem; letter-spacing: 1px;">
+                    ${subcatLabel}
+                </span>
+                ${ribbonDto}
+                ${badgeStock}
+            </div>
+
+            <div class="img-zona-ampliada">
+                ${mediaIngTag}
+            </div>
+
+            <div class="cuerpo-scroll-ampliado">
+                <h2 class="nombre-prod-ampliado mb-2">${ins.nombre}</h2>
+
+                <div class="d-flex align-items-center justify-content-between mb-3 p-3 rounded-3" style="background: rgba(0,0,0,0.55); border: 1px solid rgba(255,215,0,0.25);">
+                    <div>
+                        <span class="text-white-50 small d-block font-rajdhani fw-bold" style="letter-spacing:1px;">DOSIS / PORCIÓN:</span>
+                        <span class="text-info font-orbitron fw-bold" style="font-size: 1.05rem;">${porcTexto}</span>
+                    </div>
+                    <div class="text-end">
+                        ${precioHtmlInsumo}
+                    </div>
+                </div>
+
+                <div class="card-bio-info p-3 rounded-3 mb-3">
+                    <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-warning border-opacity-25">
+                        <i class="bi bi-flower1 text-warning fs-5"></i>
+                        <span class="font-orbitron fw-bold text-warning" style="font-size: 0.9rem; letter-spacing: 1px;">PROPIEDADES & APORTE VITAL</span>
+                    </div>
+                    <div class="texto-descripcion-ampliada">
+                        ${descInsumo}
+                    </div>
+                </div>
+
+                <div class="text-center text-white-50 small font-rajdhani mt-2 mb-1">
+                    <i class="bi bi-check2-circle text-warning me-1"></i> Selecciona la cantidad de porciones para tu fórmula personalizada.
+                </div>
+            </div>
+
+            <div class="footer-accion-ampliado">
+                <div class="d-flex align-items-center justify-content-between mb-2 px-1">
+                    <span class="font-orbitron text-white-50" style="font-size: 0.85rem; letter-spacing: 1px;">PORCIONES AÑADIDAS:</span>
+                    <div class="d-flex align-items-center gap-2">
+                        ${btnMinusModal}
+                        <span id="cant-porc-modal-${idInsClean}" class="fw-bold fs-3 text-white font-orbitron px-2">${cantPorc}</span>
+                        ${btnPlusModal}
+                    </div>
+                </div>
+                <button class="btn btn-warning w-100 py-2 fw-bold text-dark font-orbitron shadow-sm" onclick="cerrarModalAmpliado()" style="border-radius: 8px; letter-spacing: 1px;">
+                    <i class="bi bi-check-lg me-1"></i> ACEPTAR Y CONTINUAR
+                </button>
+            </div>
+        `;
+
+        const contenedor = document.getElementById('contenido-detalle-ampliado');
+        if (contenedor) {
+            contenedor.innerHTML = htmlContent;
+            if (modalDetalleAmpliado) modalDetalleAmpliado.show();
+        }
+    }
+
+    
+    // ==========================================
+    // SISTEMA DE COMUNIDAD BIO-ACTIVA & BLOG
+    // ==========================================
+    let pestanaComunidadActual = 'articulos';
+    let articulosBlogCache = [];
+    let comentariosComunidadCache = [];
+    let filtroTipoComentariosActual = 'TODOS';
+
+    async function renderizarBlogComunidad(pestana = 'articulos') {
+        pestanaComunidadActual = pestana;
+        const grid = document.getElementById('grid-menu');
+        if (!grid) return;
+
+        grid.innerHTML = `
+            <div class="col-12 mb-4">
+                <div class="banner-comunidad-hero p-4 rounded-4 text-center position-relative overflow-hidden">
+                    <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-2 font-orbitron" 
+                         style="background: rgba(0, 240, 255, 0.12); border: 1px solid var(--bio-aqua); color: var(--bio-aqua); font-size: 0.8rem; letter-spacing: 2px;">
+                        <i class="bi bi-broadcast"></i> COMUNIDAD BIO-ACTIVA & BLOG
+                    </div>
+                    <h2 class="font-rajdhani fw-bold text-white fs-2 text-uppercase mb-2" style="letter-spacing: 1px;">
+                        ESPACIO DE CONOCIMIENTO & CONEXIÓN VITAL
+                    </h2>
+                    <p class="font-rajdhani text-white-50 mx-auto mb-3" style="max-width: 650px; font-size: 1.05rem; line-height: 1.5;">
+                        Descubre los fundamentos de la nutrición celular viva, novedades del laboratorio RAÍCES y comparte tus sugerencias y peticiones de nuevos sabores para construir la comunidad.
+                    </p>
+
+                    <!-- NAVEGACIÓN INTERNA DE COMUNIDAD -->
+                    <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
+                        <button class="btn ${pestana === 'articulos' ? 'btn-info text-dark fw-bold' : 'btn-outline-info text-white'} font-orbitron px-3 py-2 shadow-sm" style="border-radius: 10px; font-size: 0.82rem;" onclick="renderizarBlogComunidad('articulos')">
+                            <i class="bi bi-newspaper me-1"></i> ARTÍCULOS & GUÍAS
+                        </button>
+                        <button class="btn ${pestana === 'buzon' ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-white'} font-orbitron px-3 py-2 shadow-sm" style="border-radius: 10px; font-size: 0.82rem;" onclick="renderizarBlogComunidad('buzon')">
+                            <i class="bi bi-lightbulb-fill me-1"></i> BUZÓN & PETICIONES
+                        </button>
+                        <button class="btn ${pestana === 'escribir' ? 'btn-success text-dark fw-bold' : 'btn-outline-success text-white'} font-orbitron px-3 py-2 shadow-sm" style="border-radius: 10px; font-size: 0.82rem;" onclick="renderizarBlogComunidad('escribir')">
+                            <i class="bi bi-pencil-square me-1"></i> DEJAR PROPUESTA / IDEA
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="contenedor-contenido-comunidad" class="row g-3 w-100 m-0">
+                <div class="col-12 text-center text-white py-4 font-orbitron">
+                    <span class="spinner-border text-info me-2"></span>Cargando contenidos de la comunidad...
+                </div>
+            </div>
+        `;
+
+        if (pestana === 'articulos') {
+            await cargarArticulosBlogVista();
+        } else if (pestana === 'buzon') {
+            await cargarBuzonComunidadVista();
+        } else if (pestana === 'escribir') {
+            cargarFormularioPropuestaVista();
+        }
+    }
+
+    async function cargarArticulosBlogVista() {
+        const cont = document.getElementById('contenedor-contenido-comunidad');
+        if (!cont) return;
+
+        try {
+            const res = await fetch('/api/blog/articulos?_t=' + Date.now());
+            if (res.ok) {
+                articulosBlogCache = await res.json();
+            }
+        } catch (e) {
+            console.warn("Error cargando artículos de blog:", e);
+        }
+
+        if (!articulosBlogCache || articulosBlogCache.length === 0) {
+            cont.innerHTML = `
+                <div class="col-12 text-center text-white-50 py-5 font-orbitron">
+                    <i class="bi bi-journal-x fs-1 text-info d-block mb-3"></i>
+                    Aún no hay artículos publicados en el blog. ¡Vuelve pronto para nuevas guías de salud!
+                </div>`;
+            return;
+        }
+
+        let html = '';
+        articulosBlogCache.forEach(art => {
+            const img = (art.imagen && art.imagen.trim() !== '') ? art.imagen.trim() : 'default-batido.png';
+            const cat = art.categoria || 'Nutrición';
+            const autor = art.autor || 'Equipo RAÍCES';
+            const likes = art.likes || 0;
+            const esVideo = /\.(mp4|webm|mov)/i.test(img);
+            const mediaTag = esVideo
+                ? `<video src="${img}" autoplay loop muted playsinline></video>`
+                : `<img src="${img}" alt="${art.titulo}" decoding="async" onerror="this.src='default-batido.png'">`;
+
+            html += `
+                <div class="col-12 col-md-6 col-lg-4 mb-3">
+                    <div class="card-blog-post" onclick="abrirArticuloBlog(${art.id})" style="cursor: pointer;">
+                        <div class="img-blog-header">
+                            ${mediaTag}
+                            <span class="badge bg-dark border border-info text-info font-orbitron position-absolute top-0 start-0 m-2" style="font-size: 0.7rem; letter-spacing: 0.8px;">
+                                <i class="bi bi-tag-fill me-1"></i>${cat.toUpperCase()}
+                            </span>
+                        </div>
+                        <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                            <div>
+                                <h4 class="font-rajdhani fw-bold text-white fs-5 text-uppercase mb-2" style="line-height: 1.3;">
+                                    ${art.titulo}
+                                </h4>
+                                <p class="text-white-50 font-rajdhani small mb-3" style="font-size: 0.95rem; line-height: 1.5;">
+                                    ${art.resumen || ''}
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between pt-2 border-top border-secondary border-opacity-25">
+                                <span class="text-info font-orbitron small" style="font-size: 0.72rem;">
+                                    <i class="bi bi-person-fill me-1"></i>${autor}
+                                </span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button class="btn-like-pill" onclick="event.stopPropagation(); darLikeArticulo(${art.id}, this)">
+                                        <i class="bi bi-heart-fill me-1"></i>${likes}
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold px-2 py-1" style="font-size: 0.75rem;">
+                                        LEER <i class="bi bi-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        cont.innerHTML = html;
+    }
+
+    async function abrirArticuloBlog(id) {
+        const art = (articulosBlogCache || []).find(a => Number(a.id) === Number(id));
+        if (!art) return;
+
+        const img = (art.imagen && art.imagen.trim() !== '') ? art.imagen.trim() : 'default-batido.png';
+        const esVideo = /\.(mp4|webm|mov)/i.test(img);
+        const mediaTag = esVideo
+            ? `<video src="${img}" class="img-ampliada" autoplay loop muted playsinline></video>`
+            : `<img src="${img}" class="img-ampliada" decoding="async" onerror="this.src='default-batido.png'">`;
+
+        const contenidoFormateado = (art.contenido || art.resumen || '').replace(/\n/g, '<br><br>');
+
+        const htmlModal = `
+            <div class="enredadera-ampliada"></div>
+            <button type="button" class="btn-cerrar-ampliado" onclick="cerrarModalAmpliado()" title="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="px-3 pt-3 pb-1 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
+                <span class="badge bg-dark border border-info text-info font-orbitron" style="font-size: 0.72rem; letter-spacing: 1px;">
+                    <i class="bi bi-journal-richtext me-1"></i>${(art.categoria || 'BLOG').toUpperCase()}
+                </span>
+                <span class="badge bg-dark border border-secondary text-white-50 font-orbitron" style="font-size: 0.7rem;">
+                    <i class="bi bi-person-fill me-1"></i>${art.autor || 'Equipo RAÍCES'}
+                </span>
+            </div>
+
+            <div class="img-zona-ampliada">
+                ${mediaTag}
+            </div>
+
+            <div class="cuerpo-scroll-ampliado">
+                <h2 class="nombre-prod-ampliado mb-2">${art.titulo}</h2>
+                
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-info border-opacity-25">
+                    <span class="text-white-50 font-rajdhani small">Publicación Oficial de RAÍCES</span>
+                    <button id="btn-like-modal-${art.id}" class="btn-like-pill" onclick="darLikeArticulo(${art.id}, this)">
+                        <i class="bi bi-heart-fill me-1"></i> ${art.likes || 0} APLAUSOS
+                    </button>
+                </div>
+
+                <div class="card-bio-info p-3 rounded-3 mb-4">
+                    <div class="texto-descripcion-ampliada font-rajdhani" style="font-size: 1.15rem; line-height: 1.7; color: #f0f0f0;">
+                        ${contenidoFormateado}
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DE COMENTARIOS PARA ESTE ARTÍCULO -->
+                <div class="border-top border-warning border-opacity-25 pt-3">
+                    <h5 class="font-orbitron fw-bold text-warning fs-6 mb-3">
+                        <i class="bi bi-chat-dots-fill me-1"></i> COMENTARIOS DE LECTORES
+                    </h5>
+                    <div class="d-flex gap-2 mb-3">
+                        <input type="text" id="comentario-input-art-${art.id}" class="form-control bg-dark border-secondary text-white font-rajdhani" placeholder="Escribe tu reflexión sobre este artículo..." style="font-size: 0.95rem;">
+                        <button class="btn btn-warning fw-bold font-orbitron px-3 text-nowrap" onclick="comentarEnArticulo(${art.id})">
+                            <i class="bi bi-send-fill"></i>
+                        </button>
+                    </div>
+                    <div id="lista-comentarios-art-${art.id}">
+                        <div class="text-white-50 small font-rajdhani">Cargando comentarios...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-accion-ampliado d-flex justify-content-between align-items-center">
+                <span class="text-white-50 font-rajdhani small">¿Te gustó el artículo? Comparte con tu comunidad</span>
+                <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold px-3 py-2" onclick="cerrarModalAmpliado()">
+                    VOLVER AL MENÚ
+                </button>
+            </div>
+        `;
+
+        const contenedor = document.getElementById('contenido-detalle-ampliado');
+        if (contenedor) {
+            contenedor.innerHTML = htmlModal;
+            if (modalDetalleAmpliado) modalDetalleAmpliado.show();
+            cargarComentariosArticuloModal(art.id);
+        }
+    }
+
+    async function darLikeArticulo(id, btn) {
+        try {
+            const res = await fetch(`/api/blog/articulos/${id}/like`, { method: 'POST' });
+            if (res.ok) {
+                const data = await res.json();
+                if (btn) {
+                    btn.innerHTML = `<i class="bi bi-heart-fill me-1"></i>${data.likes}`;
+                    btn.classList.add('active');
+                }
+                const btnModal = document.getElementById(`btn-like-modal-${id}`);
+                if (btnModal) {
+                    btnModal.innerHTML = `<i class="bi bi-heart-fill me-1"></i> ${data.likes} APLAUSOS`;
+                    btnModal.classList.add('active');
+                }
+                const art = (articulosBlogCache || []).find(a => Number(a.id) === Number(id));
+                if (art) art.likes = data.likes;
+            }
+        } catch(e) { console.warn("Error dar like:", e); }
+    }
+
+    async function cargarComentariosArticuloModal(articuloId) {
+        const cont = document.getElementById(`lista-comentarios-art-${articuloId}`);
+        if (!cont) return;
+        try {
+            const res = await fetch(`/api/blog/comentarios?articuloId=${articuloId}&_t=` + Date.now());
+            if (res.ok) {
+                const coms = await res.json();
+                if (coms.length === 0) {
+                    cont.innerHTML = '<div class="text-white-50 small font-rajdhani">Sé el primero en dejar un comentario o sugerencia.</div>';
+                    return;
+                }
+                let html = '';
+                coms.forEach(c => {
+                    html += `
+                        <div class="p-2 mb-2 rounded bg-black bg-opacity-50 border border-secondary border-opacity-25 font-rajdhani">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-info fw-bold small">${c.nombre || 'Explorador'}</span>
+                                <span class="text-white-50" style="font-size: 0.7rem;">${formatearFechaRelativa(c.fecha)}</span>
+                            </div>
+                            <div class="text-white small">${c.mensaje}</div>
+                        </div>
+                    `;
+                });
+                cont.innerHTML = html;
+            }
+        } catch (e) {
+            cont.innerHTML = '<div class="text-white-50 small">Comunidad activa.</div>';
+        }
+    }
+
+    async function comentarEnArticulo(articuloId) {
+        const input = document.getElementById(`comentario-input-art-${articuloId}`);
+        if (!input || !input.value.trim()) return;
+        const msg = input.value.trim();
+        const nombreGuardado = document.getElementById('nombreCliente')?.value || 'Explorador RAÍCES';
+
+        try {
+            const res = await fetch('/api/blog/comentarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    articuloId: articuloId,
+                    nombre: nombreGuardado,
+                    tipo: 'COMENTARIO',
+                    mensaje: msg
+                })
+            });
+            if (res.ok) {
+                input.value = '';
+                cargarComentariosArticuloModal(articuloId);
+            }
+        } catch(e) { alert("Error al publicar comentario."); }
+    }
+
+    async function cargarBuzonComunidadVista(filtroTipo = 'TODOS') {
+        filtroTipoComentariosActual = filtroTipo;
+        const cont = document.getElementById('contenedor-contenido-comunidad');
+        if (!cont) return;
+
+        try {
+            let url = '/api/blog/comentarios?_t=' + Date.now();
+            if (filtroTipo !== 'TODOS') url += '&tipo=' + encodeURIComponent(filtroTipo);
+            const res = await fetch(url);
+            if (res.ok) {
+                comentariosComunidadCache = await res.json();
+            }
+        } catch(e) { console.warn("Error cargando comentarios:", e); }
+
+        let html = `
+            <div class="col-12 mb-3">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 p-3 rounded-3" 
+                     style="background: rgba(0,0,0,0.6); border: 1px solid rgba(255,215,0,0.25);">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="text-white-50 font-orbitron small me-1">FILTRAR POR:</span>
+                        <span class="pill-tipo-filtro ${filtroTipo==='TODOS'?'bg-warning text-dark':'btn-outline-secondary text-white'}" onclick="cargarBuzonComunidadVista('TODOS')">
+                            TODOS (${comentariosComunidadCache.length})
+                        </span>
+                        <span class="pill-tipo-filtro ${filtroTipo==='SUGERENCIA'?'bg-warning text-dark':'btn-outline-warning text-warning'}" onclick="cargarBuzonComunidadVista('SUGERENCIA')">
+                            💡 SUGERENCIAS
+                        </span>
+                        <span class="pill-tipo-filtro ${filtroTipo==='PETICIÓN'?'bg-info text-dark':'btn-outline-info text-info'}" onclick="cargarBuzonComunidadVista('PETICIÓN')">
+                            📋 PETICIONES DE SABOR
+                        </span>
+                        <span class="pill-tipo-filtro ${filtroTipo==='COMENTARIO'?'bg-success text-dark':'btn-outline-success text-success'}" onclick="cargarBuzonComunidadVista('COMENTARIO')">
+                            💬 COMENTARIOS
+                        </span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold" onclick="renderizarBlogComunidad('escribir')">
+                        <i class="bi bi-plus-circle me-1"></i> NUEVA PROPUESTA
+                    </button>
+                </div>
+            </div>
+        `;
+
+        if (!comentariosComunidadCache || comentariosComunidadCache.length === 0) {
+            html += `
+                <div class="col-12 text-center text-white-50 py-5 font-orbitron">
+                    <i class="bi bi-chat-square-text fs-1 text-warning d-block mb-3"></i>
+                    Aún no hay propuestas en esta categoría. ¡Sé el primero en dejar una sugerencia o pedir tu ingrediente soñado!
+                    <div class="mt-3">
+                        <button class="btn btn-warning font-orbitron fw-bold text-dark px-4 py-2" onclick="renderizarBlogComunidad('escribir')">
+                            DEJAR MI IDEA AHORA
+                        </button>
+                    </div>
+                </div>`;
+            cont.innerHTML = html;
+            return;
+        }
+
+        comentariosComunidadCache.forEach(c => {
+            const tipo = (c.tipo || 'COMENTARIO').toUpperCase();
+            let claseTipo = 'tipo-comentario';
+            let badgeTipo = '<span class="badge bg-success bg-opacity-75 font-orbitron me-2"><i class="bi bi-chat-dots-fill me-1"></i>COMENTARIO</span>';
+            if (tipo === 'SUGERENCIA') {
+                claseTipo = 'tipo-sugerencia';
+                badgeTipo = '<span class="badge bg-warning text-dark font-orbitron me-2"><i class="bi bi-lightbulb-fill me-1"></i>SUGERENCIA</span>';
+            } else if (tipo === 'PETICIÓN' || tipo === 'PETICION') {
+                claseTipo = 'tipo-peticion';
+                badgeTipo = '<span class="badge bg-info text-dark font-orbitron me-2"><i class="bi bi-cup-straw me-1"></i>PETICIÓN DE INGREDIENTE</span>';
+            }
+
+            html += `
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="card-comentario-item ${claseTipo}">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center">
+                                ${badgeTipo}
+                                <span class="text-white fw-bold font-rajdhani fs-6">${c.nombre || 'Explorador'}</span>
+                            </div>
+                            <span class="text-white-50 font-rajdhani small" style="font-size: 0.75rem;">
+                                ${formatearFechaRelativa(c.fecha)}
+                            </span>
+                        </div>
+                        <p class="text-white font-rajdhani mb-3" style="font-size: 1.05rem; line-height: 1.5;">
+                            "${c.mensaje}"
+                        </p>
+                        <div class="d-flex justify-content-end align-items-center">
+                            <button class="btn-like-pill" onclick="darLikeComentario(${c.id}, this)">
+                                <i class="bi bi-heart-fill me-1"></i> APOYAR IDEA (${c.likes || 0})
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        cont.innerHTML = html;
+    }
+
+    async function darLikeComentario(id, btn) {
+        try {
+            const res = await fetch(`/api/blog/comentarios/${id}/like`, { method: 'POST' });
+            if (res.ok) {
+                const data = await res.json();
+                if (btn) {
+                    btn.innerHTML = `<i class="bi bi-heart-fill me-1"></i> APOYAR IDEA (${data.likes})`;
+                    btn.classList.add('active');
+                }
+            }
+        } catch(e) { console.warn("Error like comentario:", e); }
+    }
+
+    function cargarFormularioPropuestaVista() {
+        const cont = document.getElementById('contenedor-contenido-comunidad');
+        if (!cont) return;
+
+        const nombreClienteGuardado = document.getElementById('nombreCliente')?.value || '';
+
+        cont.innerHTML = `
+            <div class="col-12 col-md-8 mx-auto mb-4">
+                <div class="p-4 rounded-4" style="background: linear-gradient(180deg, rgba(16, 24, 20, 0.96) 0%, rgba(6, 12, 10, 0.98) 100%); border: 2px solid var(--bio-oro); box-shadow: 0 10px 35px rgba(0,0,0,0.9), 0 0 25px rgba(255,215,0,0.25);">
+                    <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-warning border-opacity-25">
+                        <i class="bi bi-chat-heart-fill text-warning fs-4"></i>
+                        <h4 class="font-orbitron fw-bold text-warning mb-0 fs-5">BUZÓN COMUNITARIO RAÍCES</h4>
+                    </div>
+                    <p class="text-white-50 font-rajdhani mb-4" style="font-size: 1.05rem;">
+                        Tu opinión da forma a nuestro menú. ¿Tienes una sugerencia de servicio, deseas un ingrediente o quieres compartir tu experiencia?
+                    </p>
+
+                    <form onsubmit="enviarPropuestaComunidad(event)">
+                        <div class="mb-3">
+                            <label class="form-label font-orbitron text-info small fw-bold">TU IDENTIFICACIÓN O NOMBRE</label>
+                            <input type="text" id="form-comunidad-nombre" class="form-control bg-dark text-white border-secondary font-rajdhani fs-6" placeholder="Ej. Camila Navarro" value="${nombreClienteGuardado}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label font-orbitron text-info small fw-bold">¿QUÉ DESEAS COMPARTIR?</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <label class="btn btn-outline-warning text-white font-orbitron small px-3 py-2 flex-fill" style="cursor: pointer;">
+                                    <input type="radio" name="tipoAporte" value="SUGERENCIA" class="me-1" checked> 💡 SUGERENCIA
+                                </label>
+                                <label class="btn btn-outline-info text-white font-orbitron small px-3 py-2 flex-fill" style="cursor: pointer;">
+                                    <input type="radio" name="tipoAporte" value="PETICIÓN" class="me-1"> 📋 PETICIÓN DE SABOR / INGREDIENTE
+                                </label>
+                                <label class="btn btn-outline-success text-white font-orbitron small px-3 py-2 flex-fill" style="cursor: pointer;">
+                                    <input type="radio" name="tipoAporte" value="COMENTARIO" class="me-1"> 💬 COMENTARIO VITAL
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label font-orbitron text-info small fw-bold">TU PROPUESTA O COMENTARIO</label>
+                            <textarea id="form-comunidad-mensaje" class="form-control bg-dark text-white border-secondary font-rajdhani fs-6" rows="4" placeholder="Escribe aquí tu propuesta en detalle... Ej: Me gustaría que incluyan Pitahaya y Guaraná en polvo en Arma tu Batido para más energía pre-entreno." required></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="button" class="btn btn-outline-secondary font-orbitron px-3" onclick="renderizarBlogComunidad('buzon')">
+                                CANCELAR
+                            </button>
+                            <button type="submit" id="btn-enviar-aporte" class="btn btn-warning font-orbitron fw-bold text-dark px-4 py-2 shadow-lg" style="letter-spacing: 1px;">
+                                <i class="bi bi-send-fill me-2"></i> PUBLICAR EN LA COMUNIDAD
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+    }
+
+    async function enviarPropuestaComunidad(event) {
+        event.preventDefault();
+        const nombreInput = document.getElementById('form-comunidad-nombre');
+        const mensajeInput = document.getElementById('form-comunidad-mensaje');
+        const tipoRadio = document.querySelector('input[name="tipoAporte"]:checked');
+        const btn = document.getElementById('btn-enviar-aporte');
+
+        const nombre = nombreInput ? nombreInput.value.trim() : 'Explorador RAÍCES';
+        const mensaje = mensajeInput ? mensajeInput.value.trim() : '';
+        const tipo = tipoRadio ? tipoRadio.value : 'SUGERENCIA';
+
+        if (!mensaje) {
+            alert("Por favor escribe tu propuesta o sugerencia.");
+            return;
+        }
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>PUBLICANDO...';
+        }
+
+        try {
+            const res = await fetch('/api/blog/comentarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: nombre,
+                    tipo: tipo,
+                    mensaje: mensaje
+                })
+            });
+
+            if (res.ok) {
+                alert("¡Gracias por construir RAÍCES! Tu propuesta ha sido publicada con éxito en el buzón comunitario.");
+                renderizarBlogComunidad('buzon');
+            } else {
+                alert("No se pudo publicar la propuesta. Intenta nuevamente.");
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-send-fill me-2"></i> PUBLICAR EN LA COMUNIDAD'; }
+            }
+        } catch(e) {
+            alert("Error de conexión al enviar propuesta.");
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-send-fill me-2"></i> PUBLICAR EN LA COMUNIDAD'; }
+        }
+    }
+
+    function formatearFechaRelativa(fechaIso) {
+        if (!fechaIso) return 'Reciente';
+        try {
+            const fecha = new Date(fechaIso);
+            const ahora = new Date();
+            const diffMs = ahora - fecha;
+            const diffMin = Math.floor(diffMs / 60000);
+            if (diffMin < 2) return 'Hace un momento';
+            if (diffMin < 60) return `Hace ${diffMin} min`;
+            const diffHoras = Math.floor(diffMin / 60);
+            if (diffHoras < 24) return `Hace ${diffHoras} h`;
+            const diffDias = Math.floor(diffHoras / 24);
+            if (diffDias < 30) return `Hace ${diffDias} d`;
+            return fecha.toLocaleDateString('es-CL', { day: 'numeric', month: 'short' });
+        } catch(e) {
+            return 'Reciente';
+        }
     }
 
     function flip(id) { document.getElementById(`card-${id}`).classList.toggle('flipped'); }

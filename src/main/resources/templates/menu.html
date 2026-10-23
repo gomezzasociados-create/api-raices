@@ -902,6 +902,98 @@
             font-size: 1.25rem;
             font-weight: 900;
         }
+
+        /* ========================================================= */
+        /* ESTILOS DE COMUNIDAD & BLOG INFORMATIVO */
+        /* ========================================================= */
+        .banner-comunidad-hero {
+            background: radial-gradient(circle at top, rgba(0, 240, 255, 0.16) 0%, rgba(5, 12, 10, 0.96) 100%);
+            border: 2px solid var(--bio-aqua);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(0, 240, 255, 0.25);
+        }
+
+        .card-blog-post {
+            background: linear-gradient(180deg, rgba(16, 22, 20, 0.95) 0%, rgba(8, 12, 10, 0.98) 100%);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .card-blog-post:hover {
+            transform: translateY(-5px);
+            border-color: var(--bio-oro);
+            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.2), 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .img-blog-header {
+            height: 180px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background: #020605;
+        }
+        .img-blog-header img, .img-blog-header video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .card-blog-post:hover .img-blog-header img {
+            transform: scale(1.05);
+        }
+
+        .card-comentario-item {
+            background: rgba(10, 15, 14, 0.94);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-left: 5px solid var(--bio-oro);
+            padding: 16px 20px;
+            margin-bottom: 14px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+            transition: all 0.2s ease;
+        }
+        .card-comentario-item.tipo-peticion {
+            border-left-color: var(--bio-aqua);
+        }
+        .card-comentario-item.tipo-sugerencia {
+            border-left-color: #ffc107;
+        }
+        .card-comentario-item.tipo-comentario {
+            border-left-color: #00ffaa;
+        }
+
+        .btn-like-pill {
+            background: rgba(255, 0, 85, 0.12);
+            border: 1px solid rgba(255, 0, 85, 0.4);
+            color: #ff4d6d;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.85rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-like-pill:hover, .btn-like-pill.active {
+            background: #ff0055;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+            transform: scale(1.05);
+        }
+
+        .pill-tipo-filtro {
+            cursor: pointer;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
     </style>
 </head>
 <body>
@@ -958,6 +1050,7 @@
     <button class="categoria-badge" onclick="filtrar('Packs', this)" data-cat="Packs"><span class="liston-categoria-neon" id="badge-cat-Packs" style="display:none;"></span>Pack de Pulpas</button>
     <button class="categoria-badge" onclick="filtrar('Arma tu Batido', this)" data-cat="Arma tu Batido"><span class="liston-categoria-neon" id="badge-cat-Arma-tu-Batido" style="display:none;"></span>Arma tu Batido</button>
     <button class="categoria-badge" onclick="filtrar('Shots', this)" data-cat="Shots"><span class="liston-categoria-neon liston-neon-magenta neon-magenta" id="badge-cat-Shots"><i class="bi bi-clock-history me-1"></i>PRÓXIMAMENTE</span>Shots</button>
+    <button class="categoria-badge" onclick="filtrar('Comunidad', this)" data-cat="Comunidad"><span class="liston-categoria-neon" id="badge-cat-Comunidad" style="display:none;"></span><i class="bi bi-chat-heart-fill me-1 text-info"></i>Comunidad & Blog</button>
 </div>
 
     <div class="container px-2">
@@ -1362,6 +1455,11 @@
 
         if (filtroActual === 'Arma tu Batido') {
             renderizarArmaTuBatido(nodo);
+            return;
+        }
+
+        if (filtroActual === 'Comunidad' || filtroActual === 'Blog') {
+            renderizarBlogComunidad();
             return;
         }
 
@@ -2162,6 +2260,521 @@
         if (contenedor) {
             contenedor.innerHTML = htmlContent;
             if (modalDetalleAmpliado) modalDetalleAmpliado.show();
+        }
+    }
+
+    
+    // ==========================================
+    // SISTEMA DE COMUNIDAD BIO-ACTIVA & BLOG
+    // ==========================================
+    let pestanaComunidadActual = 'articulos';
+    let articulosBlogCache = [];
+    let comentariosComunidadCache = [];
+    let filtroTipoComentariosActual = 'TODOS';
+
+    async function renderizarBlogComunidad(pestana = 'articulos') {
+        pestanaComunidadActual = pestana;
+        const grid = document.getElementById('grid-menu');
+        if (!grid) return;
+
+        grid.innerHTML = `
+            <div class="col-12 mb-4">
+                <div class="banner-comunidad-hero p-4 rounded-4 text-center position-relative overflow-hidden">
+                    <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-2 font-orbitron" 
+                         style="background: rgba(0, 240, 255, 0.12); border: 1px solid var(--bio-aqua); color: var(--bio-aqua); font-size: 0.8rem; letter-spacing: 2px;">
+                        <i class="bi bi-broadcast"></i> COMUNIDAD BIO-ACTIVA & BLOG
+                    </div>
+                    <h2 class="font-rajdhani fw-bold text-white fs-2 text-uppercase mb-2" style="letter-spacing: 1px;">
+                        ESPACIO DE CONOCIMIENTO & CONEXIÓN VITAL
+                    </h2>
+                    <p class="font-rajdhani text-white-50 mx-auto mb-3" style="max-width: 650px; font-size: 1.05rem; line-height: 1.5;">
+                        Descubre los fundamentos de la nutrición celular viva, novedades del laboratorio RAÍCES y comparte tus sugerencias y peticiones de nuevos sabores para construir la comunidad.
+                    </p>
+
+                    <!-- NAVEGACIÓN INTERNA DE COMUNIDAD -->
+                    <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
+                        <button class="btn ${pestana === 'articulos' ? 'btn-info text-dark fw-bold' : 'btn-outline-info text-white'} font-orbitron px-3 py-2 shadow-sm" style="border-radius: 10px; font-size: 0.82rem;" onclick="renderizarBlogComunidad('articulos')">
+                            <i class="bi bi-newspaper me-1"></i> ARTÍCULOS & GUÍAS
+                        </button>
+                        <button class="btn ${pestana === 'buzon' ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-white'} font-orbitron px-3 py-2 shadow-sm" style="border-radius: 10px; font-size: 0.82rem;" onclick="renderizarBlogComunidad('buzon')">
+                            <i class="bi bi-lightbulb-fill me-1"></i> BUZÓN & PETICIONES
+                        </button>
+                        <button class="btn ${pestana === 'escribir' ? 'btn-success text-dark fw-bold' : 'btn-outline-success text-white'} font-orbitron px-3 py-2 shadow-sm" style="border-radius: 10px; font-size: 0.82rem;" onclick="renderizarBlogComunidad('escribir')">
+                            <i class="bi bi-pencil-square me-1"></i> DEJAR PROPUESTA / IDEA
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="contenedor-contenido-comunidad" class="row g-3 w-100 m-0">
+                <div class="col-12 text-center text-white py-4 font-orbitron">
+                    <span class="spinner-border text-info me-2"></span>Cargando contenidos de la comunidad...
+                </div>
+            </div>
+        `;
+
+        if (pestana === 'articulos') {
+            await cargarArticulosBlogVista();
+        } else if (pestana === 'buzon') {
+            await cargarBuzonComunidadVista();
+        } else if (pestana === 'escribir') {
+            cargarFormularioPropuestaVista();
+        }
+    }
+
+    async function cargarArticulosBlogVista() {
+        const cont = document.getElementById('contenedor-contenido-comunidad');
+        if (!cont) return;
+
+        try {
+            const res = await fetch('/api/blog/articulos?_t=' + Date.now());
+            if (res.ok) {
+                articulosBlogCache = await res.json();
+            }
+        } catch (e) {
+            console.warn("Error cargando artículos de blog:", e);
+        }
+
+        if (!articulosBlogCache || articulosBlogCache.length === 0) {
+            cont.innerHTML = `
+                <div class="col-12 text-center text-white-50 py-5 font-orbitron">
+                    <i class="bi bi-journal-x fs-1 text-info d-block mb-3"></i>
+                    Aún no hay artículos publicados en el blog. ¡Vuelve pronto para nuevas guías de salud!
+                </div>`;
+            return;
+        }
+
+        let html = '';
+        articulosBlogCache.forEach(art => {
+            const img = (art.imagen && art.imagen.trim() !== '') ? art.imagen.trim() : 'default-batido.png';
+            const cat = art.categoria || 'Nutrición';
+            const autor = art.autor || 'Equipo RAÍCES';
+            const likes = art.likes || 0;
+            const esVideo = /\.(mp4|webm|mov)/i.test(img);
+            const mediaTag = esVideo
+                ? `<video src="${img}" autoplay loop muted playsinline></video>`
+                : `<img src="${img}" alt="${art.titulo}" decoding="async" onerror="this.src='default-batido.png'">`;
+
+            html += `
+                <div class="col-12 col-md-6 col-lg-4 mb-3">
+                    <div class="card-blog-post" onclick="abrirArticuloBlog(${art.id})" style="cursor: pointer;">
+                        <div class="img-blog-header">
+                            ${mediaTag}
+                            <span class="badge bg-dark border border-info text-info font-orbitron position-absolute top-0 start-0 m-2" style="font-size: 0.7rem; letter-spacing: 0.8px;">
+                                <i class="bi bi-tag-fill me-1"></i>${cat.toUpperCase()}
+                            </span>
+                        </div>
+                        <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                            <div>
+                                <h4 class="font-rajdhani fw-bold text-white fs-5 text-uppercase mb-2" style="line-height: 1.3;">
+                                    ${art.titulo}
+                                </h4>
+                                <p class="text-white-50 font-rajdhani small mb-3" style="font-size: 0.95rem; line-height: 1.5;">
+                                    ${art.resumen || ''}
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between pt-2 border-top border-secondary border-opacity-25">
+                                <span class="text-info font-orbitron small" style="font-size: 0.72rem;">
+                                    <i class="bi bi-person-fill me-1"></i>${autor}
+                                </span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button class="btn-like-pill" onclick="event.stopPropagation(); darLikeArticulo(${art.id}, this)">
+                                        <i class="bi bi-heart-fill me-1"></i>${likes}
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold px-2 py-1" style="font-size: 0.75rem;">
+                                        LEER <i class="bi bi-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        cont.innerHTML = html;
+    }
+
+    async function abrirArticuloBlog(id) {
+        const art = (articulosBlogCache || []).find(a => Number(a.id) === Number(id));
+        if (!art) return;
+
+        const img = (art.imagen && art.imagen.trim() !== '') ? art.imagen.trim() : 'default-batido.png';
+        const esVideo = /\.(mp4|webm|mov)/i.test(img);
+        const mediaTag = esVideo
+            ? `<video src="${img}" class="img-ampliada" autoplay loop muted playsinline></video>`
+            : `<img src="${img}" class="img-ampliada" decoding="async" onerror="this.src='default-batido.png'">`;
+
+        const contenidoFormateado = (art.contenido || art.resumen || '').replace(/\n/g, '<br><br>');
+
+        const htmlModal = `
+            <div class="enredadera-ampliada"></div>
+            <button type="button" class="btn-cerrar-ampliado" onclick="cerrarModalAmpliado()" title="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="px-3 pt-3 pb-1 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
+                <span class="badge bg-dark border border-info text-info font-orbitron" style="font-size: 0.72rem; letter-spacing: 1px;">
+                    <i class="bi bi-journal-richtext me-1"></i>${(art.categoria || 'BLOG').toUpperCase()}
+                </span>
+                <span class="badge bg-dark border border-secondary text-white-50 font-orbitron" style="font-size: 0.7rem;">
+                    <i class="bi bi-person-fill me-1"></i>${art.autor || 'Equipo RAÍCES'}
+                </span>
+            </div>
+
+            <div class="img-zona-ampliada">
+                ${mediaTag}
+            </div>
+
+            <div class="cuerpo-scroll-ampliado">
+                <h2 class="nombre-prod-ampliado mb-2">${art.titulo}</h2>
+                
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-info border-opacity-25">
+                    <span class="text-white-50 font-rajdhani small">Publicación Oficial de RAÍCES</span>
+                    <button id="btn-like-modal-${art.id}" class="btn-like-pill" onclick="darLikeArticulo(${art.id}, this)">
+                        <i class="bi bi-heart-fill me-1"></i> ${art.likes || 0} APLAUSOS
+                    </button>
+                </div>
+
+                <div class="card-bio-info p-3 rounded-3 mb-4">
+                    <div class="texto-descripcion-ampliada font-rajdhani" style="font-size: 1.15rem; line-height: 1.7; color: #f0f0f0;">
+                        ${contenidoFormateado}
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DE COMENTARIOS PARA ESTE ARTÍCULO -->
+                <div class="border-top border-warning border-opacity-25 pt-3">
+                    <h5 class="font-orbitron fw-bold text-warning fs-6 mb-3">
+                        <i class="bi bi-chat-dots-fill me-1"></i> COMENTARIOS DE LECTORES
+                    </h5>
+                    <div class="d-flex gap-2 mb-3">
+                        <input type="text" id="comentario-input-art-${art.id}" class="form-control bg-dark border-secondary text-white font-rajdhani" placeholder="Escribe tu reflexión sobre este artículo..." style="font-size: 0.95rem;">
+                        <button class="btn btn-warning fw-bold font-orbitron px-3 text-nowrap" onclick="comentarEnArticulo(${art.id})">
+                            <i class="bi bi-send-fill"></i>
+                        </button>
+                    </div>
+                    <div id="lista-comentarios-art-${art.id}">
+                        <div class="text-white-50 small font-rajdhani">Cargando comentarios...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-accion-ampliado d-flex justify-content-between align-items-center">
+                <span class="text-white-50 font-rajdhani small">¿Te gustó el artículo? Comparte con tu comunidad</span>
+                <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold px-3 py-2" onclick="cerrarModalAmpliado()">
+                    VOLVER AL MENÚ
+                </button>
+            </div>
+        `;
+
+        const contenedor = document.getElementById('contenido-detalle-ampliado');
+        if (contenedor) {
+            contenedor.innerHTML = htmlModal;
+            if (modalDetalleAmpliado) modalDetalleAmpliado.show();
+            cargarComentariosArticuloModal(art.id);
+        }
+    }
+
+    async function darLikeArticulo(id, btn) {
+        try {
+            const res = await fetch(`/api/blog/articulos/${id}/like`, { method: 'POST' });
+            if (res.ok) {
+                const data = await res.json();
+                if (btn) {
+                    btn.innerHTML = `<i class="bi bi-heart-fill me-1"></i>${data.likes}`;
+                    btn.classList.add('active');
+                }
+                const btnModal = document.getElementById(`btn-like-modal-${id}`);
+                if (btnModal) {
+                    btnModal.innerHTML = `<i class="bi bi-heart-fill me-1"></i> ${data.likes} APLAUSOS`;
+                    btnModal.classList.add('active');
+                }
+                const art = (articulosBlogCache || []).find(a => Number(a.id) === Number(id));
+                if (art) art.likes = data.likes;
+            }
+        } catch(e) { console.warn("Error dar like:", e); }
+    }
+
+    async function cargarComentariosArticuloModal(articuloId) {
+        const cont = document.getElementById(`lista-comentarios-art-${articuloId}`);
+        if (!cont) return;
+        try {
+            const res = await fetch(`/api/blog/comentarios?articuloId=${articuloId}&_t=` + Date.now());
+            if (res.ok) {
+                const coms = await res.json();
+                if (coms.length === 0) {
+                    cont.innerHTML = '<div class="text-white-50 small font-rajdhani">Sé el primero en dejar un comentario o sugerencia.</div>';
+                    return;
+                }
+                let html = '';
+                coms.forEach(c => {
+                    html += `
+                        <div class="p-2 mb-2 rounded bg-black bg-opacity-50 border border-secondary border-opacity-25 font-rajdhani">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-info fw-bold small">${c.nombre || 'Explorador'}</span>
+                                <span class="text-white-50" style="font-size: 0.7rem;">${formatearFechaRelativa(c.fecha)}</span>
+                            </div>
+                            <div class="text-white small">${c.mensaje}</div>
+                        </div>
+                    `;
+                });
+                cont.innerHTML = html;
+            }
+        } catch (e) {
+            cont.innerHTML = '<div class="text-white-50 small">Comunidad activa.</div>';
+        }
+    }
+
+    async function comentarEnArticulo(articuloId) {
+        const input = document.getElementById(`comentario-input-art-${articuloId}`);
+        if (!input || !input.value.trim()) return;
+        const msg = input.value.trim();
+        const nombreGuardado = document.getElementById('nombreCliente')?.value || 'Explorador RAÍCES';
+
+        try {
+            const res = await fetch('/api/blog/comentarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    articuloId: articuloId,
+                    nombre: nombreGuardado,
+                    tipo: 'COMENTARIO',
+                    mensaje: msg
+                })
+            });
+            if (res.ok) {
+                input.value = '';
+                cargarComentariosArticuloModal(articuloId);
+            }
+        } catch(e) { alert("Error al publicar comentario."); }
+    }
+
+    async function cargarBuzonComunidadVista(filtroTipo = 'TODOS') {
+        filtroTipoComentariosActual = filtroTipo;
+        const cont = document.getElementById('contenedor-contenido-comunidad');
+        if (!cont) return;
+
+        try {
+            let url = '/api/blog/comentarios?_t=' + Date.now();
+            if (filtroTipo !== 'TODOS') url += '&tipo=' + encodeURIComponent(filtroTipo);
+            const res = await fetch(url);
+            if (res.ok) {
+                comentariosComunidadCache = await res.json();
+            }
+        } catch(e) { console.warn("Error cargando comentarios:", e); }
+
+        let html = `
+            <div class="col-12 mb-3">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 p-3 rounded-3" 
+                     style="background: rgba(0,0,0,0.6); border: 1px solid rgba(255,215,0,0.25);">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="text-white-50 font-orbitron small me-1">FILTRAR POR:</span>
+                        <span class="pill-tipo-filtro ${filtroTipo==='TODOS'?'bg-warning text-dark':'btn-outline-secondary text-white'}" onclick="cargarBuzonComunidadVista('TODOS')">
+                            TODOS (${comentariosComunidadCache.length})
+                        </span>
+                        <span class="pill-tipo-filtro ${filtroTipo==='SUGERENCIA'?'bg-warning text-dark':'btn-outline-warning text-warning'}" onclick="cargarBuzonComunidadVista('SUGERENCIA')">
+                            💡 SUGERENCIAS
+                        </span>
+                        <span class="pill-tipo-filtro ${filtroTipo==='PETICIÓN'?'bg-info text-dark':'btn-outline-info text-info'}" onclick="cargarBuzonComunidadVista('PETICIÓN')">
+                            📋 PETICIONES DE SABOR
+                        </span>
+                        <span class="pill-tipo-filtro ${filtroTipo==='COMENTARIO'?'bg-success text-dark':'btn-outline-success text-success'}" onclick="cargarBuzonComunidadVista('COMENTARIO')">
+                            💬 COMENTARIOS
+                        </span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold" onclick="renderizarBlogComunidad('escribir')">
+                        <i class="bi bi-plus-circle me-1"></i> NUEVA PROPUESTA
+                    </button>
+                </div>
+            </div>
+        `;
+
+        if (!comentariosComunidadCache || comentariosComunidadCache.length === 0) {
+            html += `
+                <div class="col-12 text-center text-white-50 py-5 font-orbitron">
+                    <i class="bi bi-chat-square-text fs-1 text-warning d-block mb-3"></i>
+                    Aún no hay propuestas en esta categoría. ¡Sé el primero en dejar una sugerencia o pedir tu ingrediente soñado!
+                    <div class="mt-3">
+                        <button class="btn btn-warning font-orbitron fw-bold text-dark px-4 py-2" onclick="renderizarBlogComunidad('escribir')">
+                            DEJAR MI IDEA AHORA
+                        </button>
+                    </div>
+                </div>`;
+            cont.innerHTML = html;
+            return;
+        }
+
+        comentariosComunidadCache.forEach(c => {
+            const tipo = (c.tipo || 'COMENTARIO').toUpperCase();
+            let claseTipo = 'tipo-comentario';
+            let badgeTipo = '<span class="badge bg-success bg-opacity-75 font-orbitron me-2"><i class="bi bi-chat-dots-fill me-1"></i>COMENTARIO</span>';
+            if (tipo === 'SUGERENCIA') {
+                claseTipo = 'tipo-sugerencia';
+                badgeTipo = '<span class="badge bg-warning text-dark font-orbitron me-2"><i class="bi bi-lightbulb-fill me-1"></i>SUGERENCIA</span>';
+            } else if (tipo === 'PETICIÓN' || tipo === 'PETICION') {
+                claseTipo = 'tipo-peticion';
+                badgeTipo = '<span class="badge bg-info text-dark font-orbitron me-2"><i class="bi bi-cup-straw me-1"></i>PETICIÓN DE INGREDIENTE</span>';
+            }
+
+            html += `
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="card-comentario-item ${claseTipo}">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center">
+                                ${badgeTipo}
+                                <span class="text-white fw-bold font-rajdhani fs-6">${c.nombre || 'Explorador'}</span>
+                            </div>
+                            <span class="text-white-50 font-rajdhani small" style="font-size: 0.75rem;">
+                                ${formatearFechaRelativa(c.fecha)}
+                            </span>
+                        </div>
+                        <p class="text-white font-rajdhani mb-3" style="font-size: 1.05rem; line-height: 1.5;">
+                            "${c.mensaje}"
+                        </p>
+                        <div class="d-flex justify-content-end align-items-center">
+                            <button class="btn-like-pill" onclick="darLikeComentario(${c.id}, this)">
+                                <i class="bi bi-heart-fill me-1"></i> APOYAR IDEA (${c.likes || 0})
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        cont.innerHTML = html;
+    }
+
+    async function darLikeComentario(id, btn) {
+        try {
+            const res = await fetch(`/api/blog/comentarios/${id}/like`, { method: 'POST' });
+            if (res.ok) {
+                const data = await res.json();
+                if (btn) {
+                    btn.innerHTML = `<i class="bi bi-heart-fill me-1"></i> APOYAR IDEA (${data.likes})`;
+                    btn.classList.add('active');
+                }
+            }
+        } catch(e) { console.warn("Error like comentario:", e); }
+    }
+
+    function cargarFormularioPropuestaVista() {
+        const cont = document.getElementById('contenedor-contenido-comunidad');
+        if (!cont) return;
+
+        const nombreClienteGuardado = document.getElementById('nombreCliente')?.value || '';
+
+        cont.innerHTML = `
+            <div class="col-12 col-md-8 mx-auto mb-4">
+                <div class="p-4 rounded-4" style="background: linear-gradient(180deg, rgba(16, 24, 20, 0.96) 0%, rgba(6, 12, 10, 0.98) 100%); border: 2px solid var(--bio-oro); box-shadow: 0 10px 35px rgba(0,0,0,0.9), 0 0 25px rgba(255,215,0,0.25);">
+                    <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-warning border-opacity-25">
+                        <i class="bi bi-chat-heart-fill text-warning fs-4"></i>
+                        <h4 class="font-orbitron fw-bold text-warning mb-0 fs-5">BUZÓN COMUNITARIO RAÍCES</h4>
+                    </div>
+                    <p class="text-white-50 font-rajdhani mb-4" style="font-size: 1.05rem;">
+                        Tu opinión da forma a nuestro menú. ¿Tienes una sugerencia de servicio, deseas un ingrediente o quieres compartir tu experiencia?
+                    </p>
+
+                    <form onsubmit="enviarPropuestaComunidad(event)">
+                        <div class="mb-3">
+                            <label class="form-label font-orbitron text-info small fw-bold">TU IDENTIFICACIÓN O NOMBRE</label>
+                            <input type="text" id="form-comunidad-nombre" class="form-control bg-dark text-white border-secondary font-rajdhani fs-6" placeholder="Ej. Camila Navarro" value="${nombreClienteGuardado}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label font-orbitron text-info small fw-bold">¿QUÉ DESEAS COMPARTIR?</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <label class="btn btn-outline-warning text-white font-orbitron small px-3 py-2 flex-fill" style="cursor: pointer;">
+                                    <input type="radio" name="tipoAporte" value="SUGERENCIA" class="me-1" checked> 💡 SUGERENCIA
+                                </label>
+                                <label class="btn btn-outline-info text-white font-orbitron small px-3 py-2 flex-fill" style="cursor: pointer;">
+                                    <input type="radio" name="tipoAporte" value="PETICIÓN" class="me-1"> 📋 PETICIÓN DE SABOR / INGREDIENTE
+                                </label>
+                                <label class="btn btn-outline-success text-white font-orbitron small px-3 py-2 flex-fill" style="cursor: pointer;">
+                                    <input type="radio" name="tipoAporte" value="COMENTARIO" class="me-1"> 💬 COMENTARIO VITAL
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label font-orbitron text-info small fw-bold">TU PROPUESTA O COMENTARIO</label>
+                            <textarea id="form-comunidad-mensaje" class="form-control bg-dark text-white border-secondary font-rajdhani fs-6" rows="4" placeholder="Escribe aquí tu propuesta en detalle... Ej: Me gustaría que incluyan Pitahaya y Guaraná en polvo en Arma tu Batido para más energía pre-entreno." required></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="button" class="btn btn-outline-secondary font-orbitron px-3" onclick="renderizarBlogComunidad('buzon')">
+                                CANCELAR
+                            </button>
+                            <button type="submit" id="btn-enviar-aporte" class="btn btn-warning font-orbitron fw-bold text-dark px-4 py-2 shadow-lg" style="letter-spacing: 1px;">
+                                <i class="bi bi-send-fill me-2"></i> PUBLICAR EN LA COMUNIDAD
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+    }
+
+    async function enviarPropuestaComunidad(event) {
+        event.preventDefault();
+        const nombreInput = document.getElementById('form-comunidad-nombre');
+        const mensajeInput = document.getElementById('form-comunidad-mensaje');
+        const tipoRadio = document.querySelector('input[name="tipoAporte"]:checked');
+        const btn = document.getElementById('btn-enviar-aporte');
+
+        const nombre = nombreInput ? nombreInput.value.trim() : 'Explorador RAÍCES';
+        const mensaje = mensajeInput ? mensajeInput.value.trim() : '';
+        const tipo = tipoRadio ? tipoRadio.value : 'SUGERENCIA';
+
+        if (!mensaje) {
+            alert("Por favor escribe tu propuesta o sugerencia.");
+            return;
+        }
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>PUBLICANDO...';
+        }
+
+        try {
+            const res = await fetch('/api/blog/comentarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: nombre,
+                    tipo: tipo,
+                    mensaje: mensaje
+                })
+            });
+
+            if (res.ok) {
+                alert("¡Gracias por construir RAÍCES! Tu propuesta ha sido publicada con éxito en el buzón comunitario.");
+                renderizarBlogComunidad('buzon');
+            } else {
+                alert("No se pudo publicar la propuesta. Intenta nuevamente.");
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-send-fill me-2"></i> PUBLICAR EN LA COMUNIDAD'; }
+            }
+        } catch(e) {
+            alert("Error de conexión al enviar propuesta.");
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-send-fill me-2"></i> PUBLICAR EN LA COMUNIDAD'; }
+        }
+    }
+
+    function formatearFechaRelativa(fechaIso) {
+        if (!fechaIso) return 'Reciente';
+        try {
+            const fecha = new Date(fechaIso);
+            const ahora = new Date();
+            const diffMs = ahora - fecha;
+            const diffMin = Math.floor(diffMs / 60000);
+            if (diffMin < 2) return 'Hace un momento';
+            if (diffMin < 60) return `Hace ${diffMin} min`;
+            const diffHoras = Math.floor(diffMin / 60);
+            if (diffHoras < 24) return `Hace ${diffHoras} h`;
+            const diffDias = Math.floor(diffHoras / 24);
+            if (diffDias < 30) return `Hace ${diffDias} d`;
+            return fecha.toLocaleDateString('es-CL', { day: 'numeric', month: 'short' });
+        } catch(e) {
+            return 'Reciente';
         }
     }
 
