@@ -1,0 +1,14 @@
+# Configuración de compilación para Easypanel / Nixpacks
+[variables]
+NIXPACKS_JDK_VERSION = "17"
+
+[phases.build]
+cmds = [
+    "rm -rf /app/.m2/repository/org/codehaus/plexus ~/.m2/repository/org/codehaus/plexus /root/.m2/repository/org/codehaus/plexus || true",
+    "find /app/.m2/repository ~/.m2/repository -name '*.lastUpdated' -delete 2>/dev/null || true",
+    "chmod +x ./mvnw",
+    "./mvnw -U -B -DskipTests clean package"
+]
+
+[start]
+cmd = "java -Dserver.port=$PORT $JAVA_OPTS -jar target/minierp-0.0.1-SNAPSHOT.jar"
