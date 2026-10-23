@@ -3146,7 +3146,7 @@
                 else if (isVaso) colorBadge = 'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan);';
                 else if (isShot) colorBadge = 'color:var(--p-magenta); border-color:var(--p-magenta); box-shadow:0 0 10px var(--p-magenta);';
 
-                let defaultFallback = 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+                let defaultFallback = 'default-batido.png';
                 if (isVaso) defaultFallback = 'https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?auto=format&fit=crop&w=350&q=80';
                 else if (isShot) defaultFallback = 'https://images.unsplash.com/photo-1514733670139-4d87a1941d55?auto=format&fit=crop&w=350&q=80';
                 else if (!isArmaTuBatido) defaultFallback = 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80';
@@ -3910,7 +3910,7 @@
                 const precioNorm = normalizarPrecioCLP(p.precio || 0);
                 const dtoVal = (p.descuento && p.descuento > 0) ? Math.min(Math.round(p.descuento), 100) : 0;
                 const precioFinal = dtoVal > 0 ? Math.round(precioNorm * (1 - dtoVal / 100)) : precioNorm;
-                const imgUrl = p.imagen && p.imagen.trim() !== '' ? p.imagen : 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+                const imgUrl = p.imagen && p.imagen.trim() !== '' ? p.imagen : 'default-batido.png';
 
                 const attrReadonly = esSupremo ? '' : 'readonly';
                 const classInput = esSupremo ? 'input-matriz' : 'input-matriz border-0 text-white-50 pointer-events-none';
@@ -4132,19 +4132,19 @@
     }
 
     function renderMediaThumbnail(url, id, sizeStyle = "width: 52px; height: 52px; object-fit: cover;") {
-        const safeUrl = (url && url.trim() !== '') ? url.trim() : 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+        const safeUrl = (url && url.trim() !== '') ? url.trim() : 'default-batido.png';
         if (esVideoUrl(safeUrl)) {
             return `<video src="${safeUrl}" autoplay loop muted playsinline class="rounded-3 border border-info flex-shrink-0" id="${id}" style="${sizeStyle}"></video>`;
         }
-        return `<img src="${safeUrl}" class="rounded-3 border border-info flex-shrink-0" id="${id}" style="${sizeStyle}" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">`;
+        return `<img src="${safeUrl}" class="rounded-3 border border-info flex-shrink-0" id="${id}" style="${sizeStyle}" onerror="this.src='default-batido.png'">`;
     }
 
     function renderMediaPreviewBox(url, id, maxHeight = "170px") {
-        const safeUrl = (url && url.trim() !== '') ? url.trim() : 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+        const safeUrl = (url && url.trim() !== '') ? url.trim() : 'default-batido.png';
         if (esVideoUrl(safeUrl)) {
             return `<video src="${safeUrl}" id="${id}" controls autoplay loop muted playsinline class="img-fluid rounded" style="max-height: ${maxHeight}; object-fit: contain; width: 100%;"></video>`;
         }
-        return `<img src="${safeUrl}" id="${id}" class="img-fluid rounded" style="max-height: ${maxHeight}; object-fit: contain;" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">`;
+        return `<img src="${safeUrl}" id="${id}" class="img-fluid rounded" style="max-height: ${maxHeight}; object-fit: contain;" onerror="this.src='default-batido.png'">`;
     }
 
     function actualizarPreviewImg(id) {
@@ -4153,7 +4153,7 @@
         const thumbHeaderBox = document.getElementById(`thumb-header-container-${id}`);
         const imgTable = document.getElementById(`img-display-${id}`);
         if (input) {
-            const url = input.value.trim() || 'https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png';
+            const url = input.value.trim() || 'default-batido.png';
             if (previewBox) {
                 previewBox.innerHTML = renderMediaPreviewBox(url, `preview-img-${id}`, "170px");
             }
@@ -4166,7 +4166,7 @@
                 } else if (imgTable.tagName === 'IMG') {
                     imgTable.src = url;
                 } else {
-                    imgTable.outerHTML = `<img src="${url}" class="img-preview" id="img-display-${id}" style="width:50px; height:50px; object-fit:cover;" onerror="this.src='https://www.pngmart.com/files/10/Smoothie-PNG-Photos.png'">`;
+                    imgTable.outerHTML = `<img src="${url}" class="img-preview" id="img-display-${id}" style="width:50px; height:50px; object-fit:cover;" onerror="this.src='default-batido.png'">`;
                 }
             }
         }
