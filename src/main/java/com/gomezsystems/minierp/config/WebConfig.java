@@ -35,16 +35,22 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/uploads/media/**")
                 .addResourceLocations(location)
                 .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS).cachePublic().immutable());
+
+        // Mapeo de recursos estáticos del sistema (imágenes, CSS, JS, audio, video) con caché de 30 días
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/")
+                .setCacheControl(CacheControl.maxAge(30, TimeUnit.DAYS).cachePublic());
     }
 
     @Override
     public void addInterceptors(org.springframework.web.servlet.config.annotation.InterceptorRegistry registry) {
-        // Desactivar caché HTTP para TODOS los endpoints de la API (/api/**)
+        // Desactivar caché HTTP para TODOS los endpoints de la API (/api/**) y el Service Worker (/sw.js)
         // Garantiza que cualquier cambio realizado desde el ordenador o móvil se refleje inmediatamente en todos los dispositivos
         registry.addInterceptor(new org.springframework.web.servlet.HandlerInterceptor() {
             @Override
             public boolean preHandle(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, Object handler) {
-                if (request.getRequestURI().startsWith("/api/")) {
+                String uri = request.getRequestURI();
+                if (uri.startsWith("/api/") || uri.endsWith("/sw.js")) {
                     response.setHeader("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate");
                     response.setHeader("Pragma", "no-cache");
                     response.setHeader("Expires", "0");
