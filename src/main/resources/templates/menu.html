@@ -1977,19 +1977,6 @@
             ? `<video src="${img}" class="img-ampliada" autoplay loop muted playsinline></video>`
             : `<img src="${img}" class="img-ampliada" decoding="async" onerror="if(this.src!=='default-batido.png') this.src='default-batido.png';">`;
 
-        let formulaHtml = '';
-        if (p.recetaDetalle && p.recetaDetalle.trim() !== '') {
-            formulaHtml = `
-                <div class="card-bio-info p-3 rounded-3 mb-3" style="background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.25);">
-                    <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-info border-opacity-25">
-                        <i class="bi bi-flask text-info fs-5"></i>
-                        <span class="font-orbitron fw-bold text-info" style="font-size: 0.88rem; letter-spacing: 1px;">FÓRMULA & ALQUIMIA BIO-ACTIVA</span>
-                    </div>
-                    <div class="small text-white-50 font-rajdhani" style="font-size: 1.02rem; line-height: 1.5;">
-                        ${p.recetaDetalle.replace(/\n/g, '<br>')}
-                    </div>
-                </div>`;
-        }
 
         const htmlContent = `
             <div class="enredadera-ampliada"></div>
@@ -2025,7 +2012,6 @@
                     </div>
                 </div>
 
-                ${formulaHtml}
 
                 <div class="text-center text-white-50 small font-rajdhani mt-2 mb-1">
                     <i class="bi bi-shield-check text-info me-1"></i> Formulación 100% viva, sin conservantes ni azúcares añadidos.
