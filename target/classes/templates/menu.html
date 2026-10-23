@@ -785,11 +785,11 @@
     }
 
     function iniciarExperiencia(paisSeleccionado = 'Antofagasta') {
-        // Guardar selección
-        document.getElementById('sucursal-activa').value = 'Antofagasta';
-        document.getElementById('display-nodo-actual').innerText = '🇨🇱 NODO ANTOFAGASTA';
+        const nodoInput = document.getElementById('sucursal-activa');
+        if (nodoInput) nodoInput.value = 'Antofagasta';
+        const displayNodo = document.getElementById('display-nodo-actual');
+        if (displayNodo) displayNodo.innerText = '🇨🇱 NODO ANTOFAGASTA';
 
-        // Efectos visuales
         const puerta = document.getElementById('fondo-puerta');
         const pantallaInicio = document.getElementById('pantalla-inicio');
         const textosInicio = document.getElementById('contenido-textos-inicio');
@@ -797,35 +797,47 @@
         const btnMic = document.getElementById('btn-mic-cliente');
         const btnAudio = document.getElementById('btn-audio-toggle');
 
-        textosInicio.style.transform = 'scale(0.8)';
-        textosInicio.style.opacity = '0';
-
-        puerta.classList.add('efecto-wow-puerta');
-
-        const vidFondo = document.getElementById('video-fondo-catalogo');
-        if (vidFondo && vidFondo.paused) {
-            vidFondo.play().catch(e => console.warn("Video background play:", e));
+        if (textosInicio) {
+            textosInicio.style.transform = 'scale(0.8)';
+            textosInicio.style.opacity = '0';
         }
 
-        mainAudio.play().catch(e => {
-            console.error("Música bloquedada", e);
-            document.getElementById('icono-audio').className = 'bi bi-volume-mute-fill';
-        });
+        if (puerta) puerta.classList.add('efecto-wow-puerta');
 
-        setTimeout(() => { destello.style.opacity = '1'; }, 600);
+        try {
+            const vidFondo = document.getElementById('video-fondo-catalogo');
+            if (vidFondo && vidFondo.paused) {
+                vidFondo.play().catch(e => console.warn('Video background play:', e));
+            }
+        } catch(e) {}
+
+        try {
+            if (mainAudio) {
+                mainAudio.play().catch(e => {
+                    console.error('Música bloquedada', e);
+                    const icono = document.getElementById('icono-audio');
+                    if (icono) icono.className = 'bi bi-volume-mute-fill';
+                });
+            }
+        } catch(e) {}
+
+        if (destello) setTimeout(() => { destello.style.opacity = '1'; }, 600);
 
         setTimeout(() => {
-            pantallaInicio.style.display = 'none';
-            document.getElementById('main-content').style.display = 'block';
-            btnAudio.style.display = 'flex';
-            if('webkitSpeechRecognition' in window) { btnMic.style.display = 'flex'; }
+            if (pantallaInicio) pantallaInicio.style.display = 'none';
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) mainContent.style.display = 'block';
+            if (btnAudio) btnAudio.style.display = 'flex';
+            if (btnMic && 'webkitSpeechRecognition' in window) { btnMic.style.display = 'flex'; }
             cargarMenu();
         }, 1200);
 
-        setTimeout(() => {
-            destello.style.transition = 'opacity 1.5s ease-out';
-            destello.style.opacity = '0';
-        }, 1500);
+        if (destello) {
+            setTimeout(() => {
+                destello.style.transition = 'opacity 1.5s ease-out';
+                destello.style.opacity = '0';
+            }, 1500);
+        }
     }
 
     function playCashSound() { cashSound.currentTime = 0; cashSound.play().catch(e => console.error(e)); }
@@ -941,8 +953,6 @@
             aplicarBadgesCategorias();
         }
     }
-
-    let categoriaBadgesConfig = [];
 
     async function cargarBadgesCategorias() {
         try {
