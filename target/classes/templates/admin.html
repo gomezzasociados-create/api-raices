@@ -1521,8 +1521,27 @@
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label-neon">URL Imagen / Portada (o archivo /img/)</label>
-                                    <input type="text" id="blog-input-imagen" class="form-control" placeholder="Ej: https://images.unsplash.com/... o /img/blog1.jpg">
+                                    <label class="form-label-neon">Imagen / Video de Portada (Subir Archivo o pegar URL)</label>
+                                    <div class="input-group">
+                                        <input type="text" id="blog-input-imagen" class="form-control" placeholder="Ej: https://images.unsplash.com/... o sube tu archivo ->" oninput="actualizarPreviewBlogAdmin(this.value)">
+                                        <button class="btn btn-outline-info font-orbitron fw-bold px-3" type="button" id="btn-upload-blog-media" onclick="document.getElementById('upload-blog-media').click()" title="Subir imagen o video desde tu dispositivo">
+                                            <i class="bi bi-cloud-arrow-up-fill me-1"></i> SUBIR ARCHIVO
+                                        </button>
+                                    </div>
+                                    <input type="file" id="upload-blog-media" class="d-none" accept="image/*,video/*" onchange="subirMultimediaBlogAdmin(this)">
+                                    <div id="blog-media-preview-box" class="mt-2 d-none p-2 rounded d-flex align-items-center justify-content-between" style="background: rgba(0, 229, 255, 0.06); border: 1px dashed rgba(0, 229, 255, 0.35);">
+                                        <div class="d-flex align-items-center gap-2 overflow-hidden">
+                                            <img id="blog-media-preview-img" src="" alt="Preview" style="width: 56px; height: 56px; object-fit: cover; border-radius: 6px; border: 1px solid var(--p-cyan);" class="d-none">
+                                            <video id="blog-media-preview-video" src="" autoplay loop muted playsinline style="width: 56px; height: 56px; object-fit: cover; border-radius: 6px; border: 1px solid var(--p-cyan);" class="d-none"></video>
+                                            <div class="text-truncate">
+                                                <div class="text-info font-orbitron small fw-bold" style="font-size: 0.72rem;">PORTADA LISTA</div>
+                                                <small id="blog-media-preview-text" class="text-white-50 font-rajdhani d-block text-truncate" style="max-width: 260px;"></small>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" onclick="limpiarMediaBlogAdmin()" title="Quitar archivo">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label-neon">Resumen Corto (se ve en la tarjeta)</label>
@@ -5348,6 +5367,105 @@
         cont.innerHTML = html;
     }
 
+    function actualizarPreviewBlogAdmin(url) {
+        const box = document.getElementById('blog-media-preview-box');
+        const img = document.getElementById('blog-media-preview-img');
+        const vid = document.getElementById('blog-media-preview-video');
+        const txt = document.getElementById('blog-media-preview-text');
+        if (!box || !img || !vid) return;
+
+        const clean = (url || '').trim();
+        if (!clean) {
+            box.classList.add('d-none');
+            img.classList.add('d-none');
+            vid.classList.add('d-none');
+            img.src = '';
+            vid.src = '';
+            return;
+        }
+
+        box.classList.remove('d-none');
+        const esVideo = /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(clean) || clean.startsWith('data:video/');
+        if (esVideo) {
+            img.classList.add('d-none');
+            vid.classList.remove('d-none');
+            vid.src = clean;
+        } else {
+            vid.classList.add('d-none');
+            img.classList.remove('d-none');
+            img.src = clean;
+        }
+        if (txt) {
+            txt.innerText = clean.startsWith('data:') ? 'Imagen optimizada en base de datos' : clean;
+        }
+    }
+
+    function limpiarMediaBlogAdmin() {
+        const input = document.getElementById('blog-input-imagen');
+        if (input) input.value = '';
+        actualizarPreviewBlogAdmin('');
+    }
+
+    async function subirMultimediaBlogAdmin(inputElement) {
+        const file = inputElement.files?.[0];
+        if (!file) return;
+
+        const btn = document.getElementById('btn-upload-blog-media');
+        const originalText = btn ? btn.innerHTML : '';
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> SUBIENDO...';
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await fetch('/api/media/subir', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                const input = document.getElementById('blog-input-imagen');
+                if (input) input.value = data.url;
+                actualizarPreviewBlogAdmin(data.url);
+                playSound('success');
+            } else if (file.type && file.type.startsWith('image/')) {
+                const dataUrl = await optimizarImagenADataURL(file, 1000, 0.85);
+                const input = document.getElementById('blog-input-imagen');
+                if (input) input.value = dataUrl;
+                actualizarPreviewBlogAdmin(dataUrl);
+                playSound('success');
+            } else {
+                const err = await res.json().catch(() => ({}));
+                playSound('error');
+                alert(`⚠️ Error al subir archivo: ${err.error || res.statusText}`);
+            }
+        } catch (e) {
+            if (file.type && file.type.startsWith('image/')) {
+                try {
+                    const dataUrl = await optimizarImagenADataURL(file, 1000, 0.85);
+                    const input = document.getElementById('blog-input-imagen');
+                    if (input) input.value = dataUrl;
+                    actualizarPreviewBlogAdmin(dataUrl);
+                    playSound('success');
+                } catch (errImg) {
+                    alert('Error al subir archivo: ' + e.message);
+                }
+            } else {
+                alert('Error al subir archivo: ' + e.message);
+            }
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+            inputElement.value = '';
+        }
+    }
+
     async function guardarArticuloBlogAdmin(e) {
         e.preventDefault();
         const titulo = document.getElementById('blog-input-titulo').value.trim();
@@ -5392,6 +5510,7 @@
                 alert('✅ ¡Artículo publicado exitosamente en el catálogo!');
                 document.getElementById('form-nuevo-articulo-blog').reset();
                 document.getElementById('blog-input-autor').value = 'Equipo Científico RAÍCES';
+                limpiarMediaBlogAdmin();
                 cargarBlogAdmin();
             } else {
                 playSound('error');
