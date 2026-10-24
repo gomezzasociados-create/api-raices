@@ -2278,7 +2278,13 @@
         if (!grid) return;
 
         grid.innerHTML = `
-            <div class="col-12 mb-4">
+            <div id="contenedor-contenido-comunidad" class="row g-3 w-100 m-0 mb-3">
+                <div class="col-12 text-center text-white py-4 font-orbitron">
+                    <span class="spinner-border text-info me-2"></span>Cargando contenidos de la comunidad...
+                </div>
+            </div>
+
+            <div class="col-12 mt-2 mb-4">
                 <div class="banner-comunidad-hero p-4 rounded-4 text-center position-relative overflow-hidden">
                     <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-2 font-orbitron" 
                          style="background: rgba(0, 240, 255, 0.12); border: 1px solid var(--bio-aqua); color: var(--bio-aqua); font-size: 0.8rem; letter-spacing: 2px;">
@@ -2303,12 +2309,6 @@
                             <i class="bi bi-pencil-square me-1"></i> DEJAR PROPUESTA / IDEA
                         </button>
                     </div>
-                </div>
-            </div>
-
-            <div id="contenedor-contenido-comunidad" class="row g-3 w-100 m-0">
-                <div class="col-12 text-center text-white py-4 font-orbitron">
-                    <span class="spinner-border text-info me-2"></span>Cargando contenidos de la comunidad...
                 </div>
             </div>
         `;
