@@ -1475,7 +1475,19 @@
 
     let porcionesArmado = {};
     let insumosInfoMap = {};
-    const normalizarStr = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : '';
+    const normalizarStr = (str) => {
+        if (!str) return '';
+        let s = String(str)
+            .replace(/Ã‘|Ã±/g, 'n')
+            .replace(/Ã¡|Ã /g, 'a')
+            .replace(/Ã©|Ã¨/g, 'e')
+            .replace(/Ã­|Ã¬/g, 'i')
+            .replace(/Ã³/Ã²/g, 'o')
+            .replace(/Ãº|Ã¹/g, 'u')
+            .replace(/ñ/g, 'n')
+            .replace(/Ñ/g, 'n');
+        return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "").trim();
+    };
 
     function renderizar() {
         const grid = document.getElementById('grid-menu'); grid.innerHTML = '';
@@ -1705,21 +1717,50 @@
         (insumosBase || []).forEach(ins => {
             if (!ins || !ins.nombre) return;
             const cat = normalizarStr(ins.categoria || '');
-            if (cat.includes('arma tu batido') || cat.includes('porciones')) {
+            if (cat.includes('arma') || cat.includes('porcion')) {
                 const porcionDosis = (ins.cantidadPorcion && ins.cantidadPorcion > 0) ? ins.cantidadPorcion : 1;
                 let precioPorc = Number(ins.precio) || 0;
                 if (precioPorc > 0 && precioPorc <= 100) precioPorc = precioPorc * 1000;
+
+                // Reconciliar en tiempo real con productosRaw (Catálogo Virtual de Administrador)
+                const nomLimpio = normalizarStr(ins.nombre);
+                const prodMatch = (productosRaw || []).find(p => normalizarStr(p.nombre) === nomLimpio);
+                let stockVal = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
+                let dtoVal = Number(ins.descuento) || 0;
+                let precioVal = Math.round(precioPorc);
+                let imgVal = ins.imagen || '';
+
+                if (prodMatch) {
+                    if (prodMatch.stock !== undefined && prodMatch.stock !== null) {
+                        const stockProd = Number(prodMatch.stock);
+                        // Si el catálogo tiene stock configurado (ej: 6) y el insumo estaba en 0 o negativo, o el catálogo es mayor
+                        if (stockVal <= 0 || stockProd > stockVal) {
+                            stockVal = stockProd;
+                        }
+                    }
+                    if (prodMatch.descuento !== undefined && prodMatch.descuento !== null && prodMatch.descuento > 0) {
+                        dtoVal = Number(prodMatch.descuento);
+                    }
+                    if (prodMatch.precio !== undefined && prodMatch.precio !== null && Number(prodMatch.precio) > 0) {
+                        precioVal = Math.round(Number(prodMatch.precio));
+                    }
+                    if (prodMatch.imagen && prodMatch.imagen.trim() !== '') {
+                        imgVal = prodMatch.imagen.trim();
+                    }
+                }
+                if (stockVal < 0) stockVal = 0;
+
                 insumosArmado.push({
                     idInsumo: ins.idInsumo || ins.id,
                     nombre: ins.nombre,
                     subcategoria: ins.subcategoria || obtenerSubcategoriaInsumo(ins),
                     categoria: ins.categoria,
-                    precio: Math.round(precioPorc),
-                    descuento: Number(ins.descuento) || 0,
-                    unidadActual: (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0,
+                    precio: precioVal,
+                    descuento: dtoVal,
+                    unidadActual: stockVal,
                     sizePorcion: porcionDosis,
                     medida: ins.medida || 'gr',
-                    imagen: ins.imagen || ''
+                    imagen: imgVal
                 });
             }
         });
@@ -1789,7 +1830,7 @@
             let precioFinalPorc = dtoPorc > 0 ? Math.round(precioBasePorc * (1 - dtoPorc / 100)) : precioBasePorc;
             let sizePorcion = (ins.sizePorcion && Number(ins.sizePorcion) > 0) ? Number(ins.sizePorcion) : 1;
             let stockRaw = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
-            let porcionesDisponibles = (sizePorcion > 1 && stockRaw >= sizePorcion && (ins.medida === 'gr' || ins.medida === 'mls'))
+            let porcionesDisponibles = (sizePorcion > 5 && stockRaw >= sizePorcion)
                 ? Math.floor(stockRaw / sizePorcion)
                 : Math.max(0, Math.floor(stockRaw));
 
@@ -1998,10 +2039,8 @@
             let cant = porcionesArmado[id];
             if (cant > 0 && insumosInfoMap[id]) {
                 let info = insumosInfoMap[id];
-                const porcionDosis = (info.sizePorcion && Number(info.sizePorcion) > 0) ? Number(info.sizePorcion) : 1;
-                const gastoReal = cant * porcionDosis; // Descuento de bodega según la cantidad de porción (gr/mls)
                 lista.push(`${cant}x ${info.nombre}`);
-                lineasReceta.push(`${info.nombre}:${gastoReal}`);
+                lineasReceta.push(`${info.nombre}:${cant}`);
                 total += (cant * info.precio);
             }
         }
@@ -2173,7 +2212,7 @@
         let precioFinalPorc = dtoPorc > 0 ? Math.round(precioBasePorc * (1 - dtoPorc / 100)) : precioBasePorc;
         let sizePorcion = (ins.sizePorcion && Number(ins.sizePorcion) > 0) ? Number(ins.sizePorcion) : 1;
         let stockRaw = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
-        let porcionesDisponibles = (sizePorcion > 1 && stockRaw >= sizePorcion && (ins.medida === 'gr' || ins.medida === 'mls'))
+        let porcionesDisponibles = (sizePorcion > 5 && stockRaw >= sizePorcion)
             ? Math.floor(stockRaw / sizePorcion)
             : Math.max(0, Math.floor(stockRaw));
 

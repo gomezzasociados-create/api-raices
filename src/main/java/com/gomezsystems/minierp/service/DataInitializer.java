@@ -32,6 +32,17 @@ public class DataInitializer implements CommandLineRunner {
         this.insumoRepository = insumoRepository;
     }
 
+    private String normalizar(String str) {
+        if (str == null) return "";
+        String s = str.replace("Ã‘", "n").replace("Ã±", "n")
+                      .replace("Ã¡", "a").replace("Ã©", "e").replace("Ã­", "i").replace("Ã³", "o").replace("Ãº", "u")
+                      .replace("ñ", "n").replace("Ñ", "n");
+        return java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                .replaceAll("[^a-zA-Z0-9]", "")
+                .toLowerCase().trim();
+    }
+
     @Override
     public void run(String... args) {
         try {
@@ -100,16 +111,16 @@ public class DataInitializer implements CommandLineRunner {
                         String nombre = ins.getNombre() != null ? ins.getNombre().trim() : "";
                         if (nombre.isEmpty()) continue;
                         String sucursal = ins.getSucursal() != null ? ins.getSucursal().trim() : "Antofagasta";
+                        String nomInsNorm = normalizar(nombre);
                         Producto prodExistente = repository.findAll().stream().filter(p -> 
-                            p.getNombre() != null && p.getNombre().trim().equalsIgnoreCase(nombre) &&
-                            p.getSucursal() != null && p.getSucursal().trim().equalsIgnoreCase(sucursal)
+                            normalizar(p.getNombre()).equals(nomInsNorm)
                         ).findFirst().orElse(null);
                         if (prodExistente == null) {
                             Producto p = new Producto();
                             p.setNombre(nombre);
                             p.setCategoria("Arma tu Batido");
                             p.setPrecio(ins.getPrecio() != null ? ins.getPrecio() : 1000.0);
-                            p.setStock(ins.getUnidadActual() != null ? (int) Math.round(ins.getUnidadActual()) : 0);
+                            p.setStock(ins.getUnidadActual() != null ? (int) Math.max(0, Math.round(ins.getUnidadActual())) : 0);
                             p.setSucursal(sucursal);
                             p.setImagen(ins.getImagen());
                             p.setDescripcion("🌿 Ingrediente / Porción para Arma tu Batido (" + (ins.getSubcategoria() != null ? ins.getSubcategoria() : "General") + "). Conectado a Bodega.");
@@ -118,8 +129,15 @@ public class DataInitializer implements CommandLineRunner {
                         } else {
                             if (prodExistente.getCategoria() == null || !prodExistente.getCategoria().equalsIgnoreCase("Arma tu Batido")) {
                                 prodExistente.setCategoria("Arma tu Batido");
-                                repository.save(prodExistente);
                             }
+                            // Si el insumo está en negativo o desfasado y el producto tiene stock válido, corregir insumo
+                            if (prodExistente.getStock() != null && prodExistente.getStock() > 0 && (ins.getUnidadActual() == null || ins.getUnidadActual() <= 0)) {
+                                ins.setUnidadActual(prodExistente.getStock().doubleValue());
+                                insumoRepository.save(ins);
+                            } else if (ins.getUnidadActual() != null && ins.getUnidadActual() > 0 && (prodExistente.getStock() == null || prodExistente.getStock() <= 0)) {
+                                prodExistente.setStock((int) Math.round(ins.getUnidadActual()));
+                            }
+                            repository.save(prodExistente);
                         }
                     }
                 }

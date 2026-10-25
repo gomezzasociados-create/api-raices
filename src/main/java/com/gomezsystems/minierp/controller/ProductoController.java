@@ -61,6 +61,17 @@ public class ProductoController {
         return true;
     }
 
+    private String normalizar(String str) {
+        if (str == null) return "";
+        String s = str.replace("Ã‘", "n").replace("Ã±", "n")
+                      .replace("Ã¡", "a").replace("Ã©", "e").replace("Ã­", "i").replace("Ã³", "o").replace("Ãº", "u")
+                      .replace("ñ", "n").replace("Ñ", "n");
+        return java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                .replaceAll("[^a-zA-Z0-9]", "")
+                .toLowerCase().trim();
+    }
+
     @PostMapping
     public Producto guardar(@RequestBody Producto producto) {
         if (producto.getPrecio() != null && producto.getPrecio() > 0 && producto.getPrecio() <= 100.0) {
@@ -99,9 +110,10 @@ public class ProductoController {
             String catProd = prod.getCategoria() != null ? prod.getCategoria().toLowerCase() : "";
             if (catProd.contains("arma") || catProd.contains("batido")) {
                 try {
-                    String nomProd = prod.getNombre() != null ? prod.getNombre().trim() : "";
+                    String nomProdNorm = normalizar(prod.getNombre());
                     for (com.gomezsystems.minierp.model.Insumo ins : insumoRepository.findAll()) {
-                        if (ins.getNombre() != null && ins.getNombre().trim().equalsIgnoreCase(nomProd)) {
+                        String nomInsNorm = normalizar(ins.getNombre());
+                        if (nomInsNorm.equals(nomProdNorm) || nomInsNorm.contains(nomProdNorm) || nomProdNorm.contains(nomInsNorm)) {
                             if (nuevoProducto.getPrecio() != null) ins.setPrecio(nuevoProducto.getPrecio());
                             if (nuevoProducto.getDescuento() != null) ins.setDescuento(nuevoProducto.getDescuento());
                             if (nuevoProducto.getImagen() != null && !nuevoProducto.getImagen().isBlank()) ins.setImagen(nuevoProducto.getImagen().trim());
