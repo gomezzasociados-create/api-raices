@@ -703,22 +703,22 @@
         /* MODAL DE VISTA AMPLIADA VERTICAL (PRODUCTOS E INSUMOS) */
         /* ========================================================= */
         .modal-ampliado-dialog {
-            max-width: 500px;
-            width: 95vw;
-            margin: 15px auto;
-            height: 92vh;
-            height: 92dvh;
+            max-width: 680px;
+            width: 96vw;
+            margin: 12px auto;
+            height: 94vh;
+            height: 94dvh;
             display: flex;
             align-items: center;
         }
 
         @media (max-width: 768px) {
             .modal-ampliado-dialog {
-                width: 96vw !important;
-                max-width: 96vw !important;
-                margin: 8px auto !important;
-                height: 94vh !important;
-                height: 94dvh !important;
+                width: 97vw !important;
+                max-width: 97vw !important;
+                margin: 6px auto !important;
+                height: 95vh !important;
+                height: 95dvh !important;
             }
         }
 
@@ -788,9 +788,9 @@
 
         .img-zona-ampliada {
             width: 100%;
-            height: 220px;
-            min-height: 190px;
-            max-height: 240px;
+            height: 310px;
+            min-height: 260px;
+            max-height: 350px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -803,11 +803,39 @@
         }
 
         .img-ampliada {
-            max-width: 90%;
-            max-height: 95%;
+            width: 100%;
+            height: 100%;
+            max-width: 96%;
+            max-height: 96%;
             object-fit: contain;
+            border-radius: 12px;
             filter: drop-shadow(0 15px 30px rgba(0,0,0,0.95));
             animation: flotar 4s infinite alternate ease-in-out;
+        }
+
+        .img-zona-blog-ampliada {
+            width: 100%;
+            min-height: 300px;
+            max-height: 430px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 20;
+            background: radial-gradient(circle at center, rgba(0, 240, 255, 0.18) 0%, rgba(0, 0, 0, 0.55) 85%);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            border-radius: 16px;
+            padding: 10px;
+            margin-bottom: 18px;
+            overflow: hidden;
+        }
+
+        .img-blog-ampliada {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 12px;
+            filter: drop-shadow(0 12px 28px rgba(0,0,0,0.95));
         }
 
         .cuerpo-scroll-ampliado {
@@ -817,7 +845,7 @@
             touch-action: pan-y !important;
             overscroll-behavior: contain !important;
             min-height: 0 !important;
-            padding: 16px 20px;
+            padding: 18px 22px;
             position: relative;
             z-index: 25;
         }
@@ -836,13 +864,13 @@
 
         .nombre-prod-ampliado {
             font-family: 'Rajdhani', sans-serif;
-            font-size: 1.65rem;
+            font-size: 2rem;
             font-weight: 800;
             color: #ffffff;
             text-transform: uppercase;
             letter-spacing: 1px;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
-            line-height: 1.2;
+            line-height: 1.25;
         }
 
         .precio-ampliado-box {
@@ -851,17 +879,17 @@
         }
 
         .card-bio-info {
-            background: rgba(0, 0, 0, 0.55);
-            border: 1px solid rgba(255, 215, 0, 0.25);
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid rgba(255, 215, 0, 0.3);
             box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.8);
         }
 
         .texto-descripcion-ampliada {
             font-family: 'Rajdhani', sans-serif;
-            font-size: 1.12rem;
-            line-height: 1.65;
-            color: rgba(255, 255, 255, 0.92);
-            font-weight: 500;
+            font-size: 1.38rem;
+            line-height: 1.75;
+            color: #ffffff;
+            font-weight: 600;
             text-align: left;
         }
 
@@ -930,7 +958,7 @@
         }
 
         .img-blog-header {
-            height: 180px;
+            height: 240px;
             width: 100%;
             position: relative;
             overflow: hidden;
@@ -2082,28 +2110,28 @@
                 <i class="bi bi-x-lg"></i>
             </button>
 
-            <div class="px-3 pt-3 pb-1 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
-                <span class="badge bg-dark border border-warning text-warning font-orbitron" style="font-size: 0.72rem; letter-spacing: 1px;">
+            <div class="px-4 pt-3 pb-2 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
+                <span class="badge bg-dark border border-warning text-warning font-orbitron px-3 py-2" style="font-size: 0.85rem; letter-spacing: 1px;">
                     <i class="bi bi-tag-fill me-1"></i>${(p.categoria || 'ELÍXIR').toUpperCase()}
                 </span>
                 ${badgeDto}
                 ${badgeStock}
             </div>
 
-            <div class="img-zona-ampliada">
-                ${mediaTag}
-            </div>
-
             <div class="cuerpo-scroll-ampliado">
+                <div class="img-zona-ampliada rounded-4 mb-3" style="border: 1px solid rgba(255, 215, 0, 0.3);">
+                    ${mediaTag}
+                </div>
+
                 <h2 class="nombre-prod-ampliado mb-2">${p.nombre}</h2>
                 <div class="precio-ampliado-box mb-3">
                     ${precioHtmlAmpliado}
                 </div>
 
-                <div class="card-bio-info p-3 rounded-3 mb-3">
+                <div class="card-bio-info p-4 rounded-3 mb-3">
                     <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-warning border-opacity-25">
-                        <i class="bi bi-activity text-warning fs-5"></i>
-                        <span class="font-orbitron fw-bold text-warning" style="font-size: 0.9rem; letter-spacing: 1px;">BIO-ANÁLISIS & PROPIEDADES</span>
+                        <i class="bi bi-activity text-warning fs-4"></i>
+                        <span class="font-orbitron fw-bold text-warning" style="font-size: 1.02rem; letter-spacing: 1px;">BIO-ANÁLISIS & PROPIEDADES</span>
                     </div>
                     <div class="texto-descripcion-ampliada">
                         ${desc}
@@ -2111,7 +2139,7 @@
                 </div>
 
 
-                <div class="text-center text-white-50 small font-rajdhani mt-2 mb-1">
+                <div class="text-center text-white font-rajdhani mt-2 mb-1" style="font-size: 1.05rem; opacity: 0.85;">
                     <i class="bi bi-shield-check text-info me-1"></i> Formulación 100% viva, sin conservantes ni azúcares añadidos.
                 </div>
             </div>
@@ -2198,45 +2226,45 @@
                 <i class="bi bi-x-lg"></i>
             </button>
 
-            <div class="px-3 pt-3 pb-1 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
-                <span class="badge bg-dark border border-warning text-warning font-orbitron" style="font-size: 0.72rem; letter-spacing: 1px;">
+            <div class="px-4 pt-3 pb-2 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
+                <span class="badge bg-dark border border-warning text-warning font-orbitron px-3 py-2" style="font-size: 0.85rem; letter-spacing: 1px;">
                     <i class="bi bi-cup-straw me-1"></i>ARMA TU BATIDO
                 </span>
-                <span class="badge bg-dark border border-info text-info font-orbitron" style="font-size: 0.72rem; letter-spacing: 1px;">
+                <span class="badge bg-dark border border-info text-info font-orbitron px-3 py-2" style="font-size: 0.85rem; letter-spacing: 1px;">
                     ${subcatLabel}
                 </span>
                 ${ribbonDto}
                 ${badgeStock}
             </div>
 
-            <div class="img-zona-ampliada">
-                ${mediaIngTag}
-            </div>
-
             <div class="cuerpo-scroll-ampliado">
+                <div class="img-zona-ampliada rounded-4 mb-3" style="border: 1px solid rgba(255, 215, 0, 0.3);">
+                    ${mediaIngTag}
+                </div>
+
                 <h2 class="nombre-prod-ampliado mb-2">${ins.nombre}</h2>
 
                 <div class="d-flex align-items-center justify-content-between mb-3 p-3 rounded-3" style="background: rgba(0,0,0,0.55); border: 1px solid rgba(255,215,0,0.25);">
                     <div>
-                        <span class="text-white-50 small d-block font-rajdhani fw-bold" style="letter-spacing:1px;">DOSIS / PORCIÓN:</span>
-                        <span class="text-info font-orbitron fw-bold" style="font-size: 1.05rem;">${porcTexto}</span>
+                        <span class="text-white-50 d-block font-rajdhani fw-bold" style="font-size: 0.98rem; letter-spacing:1px;">DOSIS / PORCIÓN:</span>
+                        <span class="text-info font-orbitron fw-bold" style="font-size: 1.2rem;">${porcTexto}</span>
                     </div>
                     <div class="text-end">
                         ${precioHtmlInsumo}
                     </div>
                 </div>
 
-                <div class="card-bio-info p-3 rounded-3 mb-3">
+                <div class="card-bio-info p-4 rounded-3 mb-3">
                     <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-warning border-opacity-25">
-                        <i class="bi bi-flower1 text-warning fs-5"></i>
-                        <span class="font-orbitron fw-bold text-warning" style="font-size: 0.9rem; letter-spacing: 1px;">PROPIEDADES & APORTE VITAL</span>
+                        <i class="bi bi-flower1 text-warning fs-4"></i>
+                        <span class="font-orbitron fw-bold text-warning" style="font-size: 1.02rem; letter-spacing: 1px;">PROPIEDADES & APORTE VITAL</span>
                     </div>
                     <div class="texto-descripcion-ampliada">
                         ${descInsumo}
                     </div>
                 </div>
 
-                <div class="text-center text-white-50 small font-rajdhani mt-2 mb-1">
+                <div class="text-center text-white font-rajdhani mt-2 mb-1" style="font-size: 1.05rem; opacity: 0.85;">
                     <i class="bi bi-check2-circle text-warning me-1"></i> Selecciona la cantidad de porciones para tu fórmula personalizada.
                 </div>
             </div>
@@ -2360,28 +2388,28 @@
                     <div class="card-blog-post" onclick="abrirArticuloBlog(${art.id})" style="cursor: pointer;">
                         <div class="img-blog-header">
                             ${mediaTag}
-                            <span class="badge bg-dark border border-info text-info font-orbitron position-absolute top-0 start-0 m-2" style="font-size: 0.7rem; letter-spacing: 0.8px;">
+                            <span class="badge bg-dark border border-info text-info font-orbitron position-absolute top-0 start-0 m-2 px-2 py-1" style="font-size: 0.8rem; letter-spacing: 0.8px;">
                                 <i class="bi bi-tag-fill me-1"></i>${cat.toUpperCase()}
                             </span>
                         </div>
                         <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
                             <div>
-                                <h4 class="font-rajdhani fw-bold text-white fs-5 text-uppercase mb-2" style="line-height: 1.3;">
+                                <h4 class="font-rajdhani fw-bold text-white text-uppercase mb-2" style="font-size: 1.45rem; line-height: 1.3;">
                                     ${art.titulo}
                                 </h4>
-                                <p class="text-white-50 font-rajdhani small mb-3" style="font-size: 0.95rem; line-height: 1.5;">
+                                <p class="text-white font-rajdhani mb-3" style="font-size: 1.15rem; line-height: 1.6; opacity: 0.9;">
                                     ${art.resumen || ''}
                                 </p>
                             </div>
                             <div class="d-flex align-items-center justify-content-between pt-2 border-top border-secondary border-opacity-25">
-                                <span class="text-info font-orbitron small" style="font-size: 0.72rem;">
+                                <span class="text-info font-orbitron small" style="font-size: 0.8rem;">
                                     <i class="bi bi-person-fill me-1"></i>${autor}
                                 </span>
                                 <div class="d-flex align-items-center gap-2">
                                     <button class="btn-like-pill" onclick="event.stopPropagation(); darLikeArticulo(${art.id}, this)">
                                         <i class="bi bi-heart-fill me-1"></i>${likes}
                                     </button>
-                                    <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold px-2 py-1" style="font-size: 0.75rem;">
+                                    <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold px-3 py-1" style="font-size: 0.82rem;">
                                         LEER <i class="bi bi-arrow-right"></i>
                                     </button>
                                 </div>
@@ -2402,8 +2430,8 @@
         const img = (art.imagen && art.imagen.trim() !== '') ? art.imagen.trim() : 'default-batido.png';
         const esVideo = /\.(mp4|webm|mov)/i.test(img);
         const mediaTag = esVideo
-            ? `<video src="${img}" class="img-ampliada" autoplay loop muted playsinline></video>`
-            : `<img src="${img}" class="img-ampliada" decoding="async" onerror="this.src='default-batido.png'">`;
+            ? `<video src="${img}" class="img-blog-ampliada" autoplay loop muted playsinline></video>`
+            : `<img src="${img}" class="img-blog-ampliada" decoding="async" onerror="this.src='default-batido.png'">`;
 
         const contenidoFormateado = (art.contenido || art.resumen || '').replace(/\n/g, '<br><br>');
 
@@ -2413,55 +2441,55 @@
                 <i class="bi bi-x-lg"></i>
             </button>
 
-            <div class="px-3 pt-3 pb-1 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
-                <span class="badge bg-dark border border-info text-info font-orbitron" style="font-size: 0.72rem; letter-spacing: 1px;">
+            <div class="px-4 pt-3 pb-2 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
+                <span class="badge bg-dark border border-info text-info font-orbitron px-3 py-2" style="font-size: 0.88rem; letter-spacing: 1px;">
                     <i class="bi bi-journal-richtext me-1"></i>${(art.categoria || 'BLOG').toUpperCase()}
                 </span>
-                <span class="badge bg-dark border border-secondary text-white-50 font-orbitron" style="font-size: 0.7rem;">
+                <span class="badge bg-dark border border-secondary text-white font-orbitron px-3 py-2" style="font-size: 0.85rem;">
                     <i class="bi bi-person-fill me-1"></i>${art.autor || 'Equipo RAÍCES'}
                 </span>
             </div>
 
-            <div class="img-zona-ampliada">
-                ${mediaTag}
-            </div>
-
             <div class="cuerpo-scroll-ampliado">
-                <h2 class="nombre-prod-ampliado mb-2">${art.titulo}</h2>
+                <div class="img-zona-blog-ampliada">
+                    ${mediaTag}
+                </div>
+
+                <h2 class="nombre-prod-ampliado mb-2" style="font-size: 2.05rem;">${art.titulo}</h2>
                 
                 <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-info border-opacity-25">
-                    <span class="text-white-50 font-rajdhani small">Publicación Oficial de RAÍCES</span>
-                    <button id="btn-like-modal-${art.id}" class="btn-like-pill" onclick="darLikeArticulo(${art.id}, this)">
+                    <span class="text-white-50 font-rajdhani" style="font-size: 1.05rem;">Publicación Oficial de RAÍCES</span>
+                    <button id="btn-like-modal-${art.id}" class="btn-like-pill" style="font-size: 0.95rem; padding: 6px 14px;" onclick="darLikeArticulo(${art.id}, this)">
                         <i class="bi bi-heart-fill me-1"></i> ${art.likes || 0} APLAUSOS
                     </button>
                 </div>
 
-                <div class="card-bio-info p-3 rounded-3 mb-4">
-                    <div class="texto-descripcion-ampliada font-rajdhani" style="font-size: 1.15rem; line-height: 1.7; color: #f0f0f0;">
+                <div class="card-bio-info p-4 rounded-3 mb-4">
+                    <div class="texto-descripcion-ampliada font-rajdhani" style="font-size: 1.42rem; line-height: 1.8; color: #ffffff; font-weight: 600;">
                         ${contenidoFormateado}
                     </div>
                 </div>
 
                 <!-- SECCIÓN DE COMENTARIOS PARA ESTE ARTÍCULO -->
                 <div class="border-top border-warning border-opacity-25 pt-3">
-                    <h5 class="font-orbitron fw-bold text-warning fs-6 mb-3">
+                    <h5 class="font-orbitron fw-bold text-warning fs-5 mb-3">
                         <i class="bi bi-chat-dots-fill me-1"></i> COMENTARIOS DE LECTORES
                     </h5>
                     <div class="d-flex gap-2 mb-3">
-                        <input type="text" id="comentario-input-art-${art.id}" class="form-control bg-dark border-secondary text-white font-rajdhani" placeholder="Escribe tu reflexión sobre este artículo..." style="font-size: 0.95rem;">
+                        <input type="text" id="comentario-input-art-${art.id}" class="form-control bg-dark border-secondary text-white font-rajdhani" placeholder="Escribe tu reflexión sobre este artículo..." style="font-size: 1.1rem; padding: 10px 14px;">
                         <button class="btn btn-warning fw-bold font-orbitron px-3 text-nowrap" onclick="comentarEnArticulo(${art.id})">
                             <i class="bi bi-send-fill"></i>
                         </button>
                     </div>
                     <div id="lista-comentarios-art-${art.id}">
-                        <div class="text-white-50 small font-rajdhani">Cargando comentarios...</div>
+                        <div class="text-white-50 font-rajdhani" style="font-size: 1.05rem;">Cargando comentarios...</div>
                     </div>
                 </div>
             </div>
 
-            <div class="footer-accion-ampliado d-flex justify-content-between align-items-center">
-                <span class="text-white-50 font-rajdhani small">¿Te gustó el artículo? Comparte con tu comunidad</span>
-                <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold px-3 py-2" onclick="cerrarModalAmpliado()">
+            <div class="footer-accion-ampliado d-flex justify-content-between align-items-center gap-2">
+                <span class="text-white font-rajdhani" style="font-size: 1.08rem; opacity: 0.85;">¿Te gustó el artículo? Comparte con tu comunidad</span>
+                <button class="btn btn-outline-warning font-orbitron fw-bold px-4 py-2" style="font-size: 0.95rem;" onclick="cerrarModalAmpliado()">
                     VOLVER AL MENÚ
                 </button>
             </div>
