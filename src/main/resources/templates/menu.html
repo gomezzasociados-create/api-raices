@@ -1569,6 +1569,19 @@
                 ? `<video src="${img}" class="img-batido" autoplay loop muted playsinline style="object-fit:cover;"></video>`
                 : `<img src="${img}" class="img-batido" decoding="async" onerror="if(this.src!=='default-batido.png') this.src='default-batido.png';">`;
 
+            const esAgotado = (p.stock !== undefined && p.stock !== null && Number(p.stock) <= 0);
+            const esUltimas = (p.stock !== undefined && p.stock !== null && Number(p.stock) > 0 && Number(p.stock) <= 5);
+            let badgeStockCard = '';
+            if (esAgotado) {
+                badgeStockCard = `<div class="badge-stock-card badge-agotado" style="position:absolute; top:12px; left:12px; background:rgba(220,53,69,0.9); color:#fff; font-family:'Orbitron'; font-size:0.75rem; padding:4px 8px; border-radius:4px; font-weight:bold; z-index:20; box-shadow:0 0 10px rgba(220,53,69,0.5);"><i class="bi bi-x-circle-fill me-1"></i>AGOTADO</div>`;
+            } else if (esUltimas) {
+                badgeStockCard = `<div class="badge-stock-card badge-ultimas" style="position:absolute; top:12px; left:12px; background:rgba(255,193,7,0.95); color:#000; font-family:'Orbitron'; font-size:0.75rem; padding:4px 8px; border-radius:4px; font-weight:bold; z-index:20; box-shadow:0 0 10px rgba(255,193,7,0.5);"><i class="bi bi-exclamation-triangle-fill me-1"></i>¡ÚLTIMAS ${p.stock}!</div>`;
+            }
+
+            const btnExtraerHtml = esAgotado
+                ? `<button class="btn-extraer" style="background: rgba(220,53,69,0.15); border-color: rgba(220,53,69,0.5); color: #ff6b6b; cursor: not-allowed;" disabled><i class="bi bi-slash-circle me-1"></i>AGOTADO</button>`
+                : `<button class="btn-extraer" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase})">EXTRAER</button>`;
+
             htmlCards += `
                 <div class="col-12 col-md-6 col-lg-4 col-xl-3 item-tarjeta">
                     <div class="card-escena" id="card-${p.id}">
@@ -1576,10 +1589,11 @@
                             <div class="card-front" onclick="abrirDetalleProducto('${p.id}')" style="cursor: pointer;">
                                 <div class="enredadera-magica"></div>
                                 ${badgeDto}
+                                ${badgeStockCard}
                                 <button class="btn-info-flip" onclick="event.stopPropagation(); abrirDetalleProducto('${p.id}')">INFORMACIÓN <i class="bi bi-info-circle ms-2"></i></button>
                                 <div class="img-zona">${mediaTag}</div>
                                 <div class="info-prod-box"><div class="nombre-prod text-truncate">${p.nombre}</div>${precioHtml}</div>
-                                <button class="btn-extraer" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase})">EXTRAER</button>
+                                ${btnExtraerHtml}
                             </div>
                             <div class="card-back" onclick="event.stopPropagation(); abrirDetalleProducto('${p.id}')" style="cursor: pointer;">
                                 <button class="btn-cerrar-flip" onclick="event.stopPropagation(); flip('${p.id}')"><i class="bi bi-x-lg"></i></button>
@@ -2184,13 +2198,23 @@
             </div>
 
             <div class="footer-accion-ampliado">
-                <button class="btn-extraer-ampliado w-100" onclick="agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase}); cerrarModalAmpliado();">
-                    <span class="d-flex align-items-center gap-2">
-                        <i class="bi bi-cart-plus-fill fs-5"></i>
-                        <span>EXTRAER AL PEDIDO</span>
-                    </span>
-                    <span class="precio-btn-extraer font-orbitron">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span>
-                </button>
+                ${(p.stock !== undefined && p.stock !== null && Number(p.stock) <= 0) ? `
+                    <button class="btn-extraer-ampliado w-100" style="background: rgba(220,53,69,0.25); border-color: #dc3545; color: #ff6b6b; cursor: not-allowed;" disabled>
+                        <span class="d-flex align-items-center gap-2">
+                            <i class="bi bi-slash-circle fs-5"></i>
+                            <span>AGOTADO EN BODEGA</span>
+                        </span>
+                        <span class="precio-btn-extraer font-orbitron">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span>
+                    </button>
+                ` : `
+                    <button class="btn-extraer-ampliado w-100" onclick="agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase}); cerrarModalAmpliado();">
+                        <span class="d-flex align-items-center gap-2">
+                            <i class="bi bi-cart-plus-fill fs-5"></i>
+                            <span>EXTRAER AL PEDIDO</span>
+                        </span>
+                        <span class="precio-btn-extraer font-orbitron">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span>
+                    </button>
+                `}
             </div>
         `;
 

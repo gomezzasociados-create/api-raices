@@ -440,6 +440,85 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println(">> GÓMEZ SYSTEMS: Insumos de Bodega inicializados con subcategorías correctamente para Antofagasta.");
         }
 
+        // =========================================================================
+        // 4. ASEGURAR SUMINISTROS FÍSICOS DE PACKAGING (VASOS Y TAPAS 500 MLS)
+        // Y SINCRONIZAR DIRECTAMENTE CON EL STOCK DE ELÍXIRES (500 MLS)
+        // =========================================================================
+        try {
+            // Reclasificar insumos de comida erróneamente puestos en "Insumos Vaso"
+            List<Insumo> todosIns = insumoRepository.findAll();
+            for (Insumo ins : todosIns) {
+                String c = ins.getCategoria() != null ? ins.getCategoria().toLowerCase() : "";
+                String n = ins.getNombre() != null ? ins.getNombre().toLowerCase() : "";
+                if (c.contains("vaso") && !n.contains("vaso") && !n.contains("tapa") && !n.contains("packaging") && !n.contains("envase") && !n.contains("bombilla")) {
+                    ins.setCategoria("Pulpas");
+                    insumoRepository.save(ins);
+                }
+            }
+
+            String[] sedes = {"Antofagasta"};
+            for (String sede : sedes) {
+                List<Insumo> insumosSede = insumoRepository.findBySucursal(sede);
+                boolean tieneVaso = insumosSede.stream().anyMatch(i -> {
+                    String n = i.getNombre() != null ? i.getNombre().toLowerCase() : "";
+                    String c = i.getCategoria() != null ? i.getCategoria().toLowerCase() : "";
+                    return (c.contains("vaso") || c.contains("packaging")) && n.contains("vaso");
+                });
+                if (!tieneVaso) {
+                    Insumo vaso = new Insumo();
+                    vaso.setNombre("Vaso Biodegradable 500cc");
+                    vaso.setUnidadActual(50.0);
+                    vaso.setCantidadPorcion(1.0);
+                    vaso.setMedida("und");
+                    vaso.setSucursal(sede);
+                    vaso.setCategoria("Insumos Vaso");
+                    vaso.setSubcategoria("Packaging");
+                    vaso.setPrecio(250.0);
+                    vaso.setDescuento(0.0);
+                    insumoRepository.save(vaso);
+                }
+
+                boolean tieneTapa = insumosSede.stream().anyMatch(i -> {
+                    String n = i.getNombre() != null ? i.getNombre().toLowerCase() : "";
+                    String c = i.getCategoria() != null ? i.getCategoria().toLowerCase() : "";
+                    return (c.contains("vaso") || c.contains("packaging")) && n.contains("tapa");
+                });
+                if (!tieneTapa) {
+                    Insumo tapa = new Insumo();
+                    tapa.setNombre("Tapa Domo 500cc");
+                    tapa.setUnidadActual(50.0);
+                    tapa.setCantidadPorcion(1.0);
+                    tapa.setMedida("und");
+                    tapa.setSucursal(sede);
+                    tapa.setCategoria("Insumos Vaso");
+                    tapa.setSubcategoria("Packaging");
+                    tapa.setPrecio(100.0);
+                    tapa.setDescuento(0.0);
+                    insumoRepository.save(tapa);
+                }
+
+                // Sincronizar el stock en todos los productos de 500 mls
+                List<Insumo> vasosActuales = insumoRepository.findBySucursal(sede).stream().filter(i -> {
+                    String n = i.getNombre() != null ? i.getNombre().toLowerCase() : "";
+                    String c = i.getCategoria() != null ? i.getCategoria().toLowerCase() : "";
+                    return (c.contains("vaso") || c.contains("packaging")) && (n.contains("vaso") || n.contains("tapa"));
+                }).toList();
+
+                int stockPackaging = vasosActuales.stream()
+                        .mapToInt(i -> i.getUnidadActual() != null ? (int) Math.floor(i.getUnidadActual()) : 0)
+                        .min().orElse(50);
+
+                for (Producto p : repository.findBySucursal(sede)) {
+                    if (com.gomezsystems.minierp.controller.ProductoController.esProducto500(p)) {
+                        p.setStock(stockPackaging);
+                        repository.save(p);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Aviso al asegurar Suministros Físicos de Vasos 500 mls: " + e.getMessage());
+        }
+
         // 3. INICIALIZAR BLOG Y COMUNIDAD INTERACTIVA
         try {
             if (articuloBlogRepository != null && articuloBlogRepository.count() == 0) {

@@ -166,6 +166,7 @@ public class InventarioService {
                     }
                 }
             }
+            sincronizarStockBatidos500(producto.getSucursal());
         }
     }
 
@@ -225,5 +226,38 @@ public class InventarioService {
     @Transactional
     public void procesarVenta(Long idProductoVendido, int cantidadVendida) {
         procesarVenta(idProductoVendido, cantidadVendida, "Ajuste Directo REST");
+    }
+
+    private void sincronizarStockBatidos500(String sucursal) {
+        try {
+            List<Insumo> insumos = (sucursal != null && !sucursal.trim().isEmpty())
+                    ? insumoRepository.findBySucursal(sucursal)
+                    : insumoRepository.findAll();
+            Double minStock = null;
+            for (Insumo item : insumos) {
+                String ic = item.getCategoria() != null ? item.getCategoria().toLowerCase() : "";
+                String is = item.getSubcategoria() != null ? item.getSubcategoria().toLowerCase() : "";
+                String in = item.getNombre() != null ? item.getNombre().toLowerCase() : "";
+                if ((ic.contains("vaso") || ic.contains("packaging") || is.contains("packaging")) &&
+                    (in.contains("vaso") || in.contains("tapa") || in.contains("500") || in.contains("packaging"))) {
+                    double st = item.getUnidadActual() != null ? Math.max(0.0, item.getUnidadActual()) : 0.0;
+                    if (minStock == null || st < minStock) {
+                        minStock = st;
+                    }
+                }
+            }
+            if (minStock != null) {
+                int stockFinal = (int) Math.floor(minStock);
+                List<Producto> prods = (sucursal != null && !sucursal.trim().isEmpty())
+                        ? productoRepository.findBySucursal(sucursal)
+                        : productoRepository.findAll();
+                for (Producto p : prods) {
+                    if (com.gomezsystems.minierp.controller.ProductoController.esProducto500(p)) {
+                        p.setStock(stockFinal);
+                        productoRepository.save(p);
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
     }
 }

@@ -1439,7 +1439,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>
 
             <!-- ========================================== -->
             <!-- PESTAÑA: COMUNIDAD Y BLOG (ADMINISTRACIÓN) -->
@@ -4088,7 +4088,11 @@
                 const esPack = catNorm.includes('pack') || catNorm.includes('pulpa') || nomNorm.includes('pulpa');
                 const esArma = catNorm.includes('arma') || catNorm.includes('batido');
                 const esShot = catNorm.includes('shot');
+                const es500 = (!esPack && !esShot && !esArma) || catNorm.includes('500') || catNorm.includes('elixir');
                 const catMostrar = esPack ? 'Pack de Pulpas' : (esArma ? 'Arma tu Batido' : (esShot ? 'Shots' : 'Elíxires (500 mls)'));
+                const badgeStockHeader = es500
+                    ? `<span class="badge bg-dark border border-cyan text-info" style="font-size:0.75rem;" id="header-stock-${p.id}" title="Stock físico sincronizado con Bodega: Vasos y Packaging (500 mls)"><i class="bi bi-cup-straw me-1"></i>Stock Vasos: ${p.stock || 0}</span>`
+                    : `<span class="badge bg-dark border border-success text-success" style="font-size:0.75rem;" id="header-stock-${p.id}"><i class="bi bi-box-seam me-1"></i>Stock: ${p.stock || 0}</span>`;
 
                 let optionsCat = `
                     <option value="500 mls" ${catActual==='500 mls' || (!esPack && !esShot && !esArma) ? 'selected' : ''}>Elíxires (500 mls)</option>
@@ -4134,7 +4138,7 @@
                                             <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
                                                 <span class="badge badge-categoria" id="header-cat-${p.id}">${catMostrar}</span>
                                                 <span class="badge bg-dark border border-cyan text-info" style="font-size:0.75rem;"><i class="bi bi-geo-alt me-1"></i>${p.sucursal || 'Antofagasta'}</span>
-                                                <span class="badge bg-dark border border-success text-success" style="font-size:0.75rem;" id="header-stock-${p.id}"><i class="bi bi-box-seam me-1"></i>Stock: ${p.stock || 0}</span>
+                                                ${badgeStockHeader}
                                             </div>
                                         </div>
                                     </div>
@@ -4202,8 +4206,9 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <label class="form-label-neon text-success">Stock en Bodega</label>
+                                                    <label class="form-label-neon text-success">${es500 ? 'Stock Físico (Vasos 500cc)' : 'Stock en Bodega'}</label>
                                                     <input type="number" id="stock-prod-${p.id}" value="${p.stock || 0}" class="form-control text-success fw-bold fs-5 bg-dark" onchange="actualizarProducto(${p.id})" ${attrReadonly}>
+                                                    ${es500 ? '<small class="text-cyan d-block mt-1 font-rajdhani" style="font-size:0.75rem;"><i class="bi bi-link-45deg"></i> Suministros Físicos: Vasos y Packaging</small>' : ''}
                                                 </div>
                                                 <div class="col-12 mt-2">
                                                     <div class="p-3 rounded border border-warning-subtle" style="background: rgba(255, 215, 0, 0.04);">

@@ -85,6 +85,7 @@ public class GestorPorciones {
                     if (insumo.getImagen() != null && !insumo.getImagen().isBlank()) existente.setImagen(insumo.getImagen().trim());
                     insumoRepository.save(existente);
                     sincronizarProductoArmaTuBatido(existente);
+                    sincronizarStockVasosConProductos(existente);
                     return ResponseEntity.ok("Insumo actualizado");
                 }
             }
@@ -101,6 +102,7 @@ public class GestorPorciones {
                 kardexRepository.save(mk);
             }
             sincronizarProductoArmaTuBatido(insumo);
+            sincronizarStockVasosConProductos(insumo);
             return ResponseEntity.ok("Insumo creado");
         } catch (Exception e) {
             System.err.println("GÓMEZ SYSTEMS - ERROR GRAVE BODEGA: " + e.getMessage());
@@ -124,7 +126,9 @@ public class GestorPorciones {
 
     @DeleteMapping("/{id}")
     public void eliminarInsumo(@PathVariable Long id) {
+        Optional<Insumo> opt = insumoRepository.findById(id);
         insumoRepository.deleteById(id);
+        opt.ifPresent(this::sincronizarStockVasosConProductos);
     }
 
     // --- CARGA MASIVA DE BODEGA ---
@@ -270,6 +274,40 @@ public class GestorPorciones {
                     p.setImagen(insumo.getImagen());
                     p.setDescripcion("🌿 Ingrediente / Porción para Arma tu Batido (" + (insumo.getSubcategoria() != null ? insumo.getSubcategoria() : "General") + "). Conectado a Bodega.");
                     productoRepository.save(p);
+                }
+            } catch (Exception ignored) {}
+        }
+    }
+
+    private void sincronizarStockVasosConProductos(Insumo insumo) {
+        if (insumo == null) return;
+        String c = insumo.getCategoria() != null ? insumo.getCategoria().toLowerCase() : "";
+        String s = insumo.getSubcategoria() != null ? insumo.getSubcategoria().toLowerCase() : "";
+        String n = insumo.getNombre() != null ? insumo.getNombre().toLowerCase() : "";
+        if (c.contains("vaso") || c.contains("packaging") || s.contains("packaging") || n.contains("vaso") || n.contains("tapa")) {
+            try {
+                String sucursal = insumo.getSucursal() != null ? insumo.getSucursal() : "Antofagasta";
+                List<Insumo> insumosSucursal = insumoRepository.findBySucursal(sucursal);
+                Double minStock = null;
+                for (Insumo item : insumosSucursal) {
+                    String ic = item.getCategoria() != null ? item.getCategoria().toLowerCase() : "";
+                    String is = item.getSubcategoria() != null ? item.getSubcategoria().toLowerCase() : "";
+                    String in = item.getNombre() != null ? item.getNombre().toLowerCase() : "";
+                    if ((ic.contains("vaso") || ic.contains("packaging") || is.contains("packaging")) &&
+                        (in.contains("vaso") || in.contains("tapa") || in.contains("packaging") || in.contains("500") || in.contains("envase"))) {
+                        double st = item.getUnidadActual() != null ? Math.max(0.0, item.getUnidadActual()) : 0.0;
+                        if (minStock == null || st < minStock) {
+                            minStock = st;
+                        }
+                    }
+                }
+                int stockFinal = (minStock != null) ? (int) Math.floor(minStock) : 0;
+                List<Producto> prods = productoRepository.findBySucursal(sucursal);
+                for (Producto p : prods) {
+                    if (ProductoController.esProducto500(p)) {
+                        p.setStock(stockFinal);
+                        productoRepository.save(p);
+                    }
                 }
             } catch (Exception ignored) {}
         }

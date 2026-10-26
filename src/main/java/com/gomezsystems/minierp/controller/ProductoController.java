@@ -29,6 +29,7 @@ public class ProductoController {
     public List<Producto> listarTodos() {
         return productoRepository.findAll().stream()
                 .filter(this::esProductoCatalogoValido)
+                .map(this::aplicarStockPackaging)
                 .toList();
     }
 
@@ -40,7 +41,91 @@ public class ProductoController {
         }
         return lista.stream()
                 .filter(this::esProductoCatalogoValido)
+                .map(this::aplicarStockPackaging)
                 .toList();
+    }
+
+    /**
+     * Identifica si un producto pertenece a la línea de Elíxires / Batidos de 500 mls
+     * cuyo stock físico está estrictamente determinado por los vasos y packaging disponibles.
+     */
+    public static boolean esProducto500(Producto p) {
+        if (p == null) return false;
+        String cat = p.getCategoria() != null ? p.getCategoria().trim().toLowerCase() : "";
+        String nom = p.getNombre() != null ? p.getNombre().trim().toLowerCase() : "";
+
+        // Si es Pack, Pulpa, Shot o Arma tu Batido, NO es batido 500
+        if (cat.contains("pack") || cat.contains("pulpa") || nom.contains("pulpa")) return false;
+        if (cat.contains("shot") || nom.contains("shot") || nom.contains("caldo")) return false;
+        if (cat.contains("arma") || cat.contains("personalizado") || cat.contains("porcion") || nom.contains("batido armado") || nom.contains("batido personalizado")) return false;
+
+        // Categoría 500 mls o Elíxires
+        return cat.contains("500") || cat.contains("elixir") || cat.contains("elíxir") || cat.contains("batido") || cat.isEmpty();
+    }
+
+    /**
+     * Calcula en tiempo real el stock físico disponible para batidos de 500 mls,
+     * basado en los vasos y packaging en bodega ("SUMINISTROS FÍSICOS: VASOS Y PACKAGING (500 MLS)").
+     */
+    public int calcularStockPackaging500(String sucursal) {
+        try {
+            List<com.gomezsystems.minierp.model.Insumo> insumos = (sucursal != null && !sucursal.trim().isEmpty())
+                    ? insumoRepository.findBySucursal(sucursal)
+                    : insumoRepository.findAll();
+            if (insumos == null || insumos.isEmpty()) {
+                insumos = insumoRepository.findAll();
+            }
+
+            List<com.gomezsystems.minierp.model.Insumo> packaging = insumos.stream().filter(i -> {
+                String c = i.getCategoria() != null ? i.getCategoria().toLowerCase() : "";
+                String s = i.getSubcategoria() != null ? i.getSubcategoria().toLowerCase() : "";
+                String n = i.getNombre() != null ? i.getNombre().toLowerCase() : "";
+
+                boolean esPackagingCat = c.contains("vaso") || c.contains("packaging") || s.contains("packaging");
+                boolean esFisico = n.contains("vaso") || n.contains("packaging") || n.contains("500")
+                        || n.contains("envase") || n.contains("tapa") || n.contains("bombilla")
+                        || "und".equalsIgnoreCase(i.getMedida());
+                return esPackagingCat && esFisico;
+            }).toList();
+
+            if (packaging.isEmpty()) {
+                return 0;
+            }
+
+            Double minStock = null;
+            // Primero buscar items clave: vaso y tapa de 500cc
+            for (com.gomezsystems.minierp.model.Insumo item : packaging) {
+                String n = item.getNombre() != null ? item.getNombre().toLowerCase() : "";
+                if (n.contains("vaso") || n.contains("tapa") || n.contains("packaging") || n.contains("500") || n.contains("envase")) {
+                    double stock = item.getUnidadActual() != null ? Math.max(0.0, item.getUnidadActual()) : 0.0;
+                    if (minStock == null || stock < minStock) {
+                        minStock = stock;
+                    }
+                }
+            }
+
+            if (minStock == null) {
+                for (com.gomezsystems.minierp.model.Insumo item : packaging) {
+                    double stock = item.getUnidadActual() != null ? Math.max(0.0, item.getUnidadActual()) : 0.0;
+                    if (minStock == null || stock < minStock) {
+                        minStock = stock;
+                    }
+                }
+            }
+
+            return (minStock != null) ? (int) Math.floor(minStock) : 0;
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    private Producto aplicarStockPackaging(Producto p) {
+        if (p == null) return null;
+        if (esProducto500(p)) {
+            int stockPkg = calcularStockPackaging500(p.getSucursal());
+            p.setStock(stockPkg);
+        }
+        return p;
     }
 
     /**
@@ -106,6 +191,13 @@ public class ProductoController {
             if (nuevoProducto.getStock() != null) prod.setStock(nuevoProducto.getStock());
             Producto guardado = productoRepository.save(prod);
 
+            // Sincronizar automáticamente con Suministros Físicos: Vasos y Packaging si es batido 500 mls
+            if (esProducto500(prod) && nuevoProducto.getStock() != null) {
+                try {
+                    sincronizarStockVasosBodega(prod.getSucursal(), nuevoProducto.getStock());
+                } catch (Exception ignored) {}
+            }
+
             // Sincronizar automáticamente con la Bodega de Insumos si es de Arma tu Batido
             String catProd = prod.getCategoria() != null ? prod.getCategoria().toLowerCase() : "";
             if (catProd.contains("arma") || catProd.contains("batido")) {
@@ -138,6 +230,32 @@ public class ProductoController {
             }
             return ResponseEntity.ok(guardado);
         }).orElse(ResponseEntity.notFound().build());
+    }
+
+    private void sincronizarStockVasosBodega(String sucursal, Integer nuevoStock) {
+        if (nuevoStock == null) return;
+        List<com.gomezsystems.minierp.model.Insumo> insumos = (sucursal != null && !sucursal.trim().isEmpty())
+                ? insumoRepository.findBySucursal(sucursal)
+                : insumoRepository.findAll();
+        for (com.gomezsystems.minierp.model.Insumo ins : insumos) {
+            String c = ins.getCategoria() != null ? ins.getCategoria().toLowerCase() : "";
+            String s = ins.getSubcategoria() != null ? ins.getSubcategoria().toLowerCase() : "";
+            String n = ins.getNombre() != null ? ins.getNombre().toLowerCase() : "";
+            if ((c.contains("vaso") || c.contains("packaging") || s.contains("packaging")) && n.contains("vaso")) {
+                ins.setUnidadActual(nuevoStock.doubleValue());
+                insumoRepository.save(ins);
+            }
+        }
+        // Sincronizar los demás productos de 500 mls en esa sucursal
+        List<Producto> productosSucursal = (sucursal != null && !sucursal.trim().isEmpty())
+                ? productoRepository.findBySucursal(sucursal)
+                : productoRepository.findAll();
+        for (Producto p : productosSucursal) {
+            if (esProducto500(p)) {
+                p.setStock(nuevoStock);
+                productoRepository.save(p);
+            }
+        }
     }
 
     @PutMapping("/{id}/precio")
@@ -189,6 +307,9 @@ public class ProductoController {
         return productoRepository.findById(id).map(prod -> {
             prod.setStock(cantidad);
             productoRepository.save(prod);
+            if (esProducto500(prod)) {
+                sincronizarStockVasosBodega(prod.getSucursal(), cantidad);
+            }
             return ResponseEntity.ok("Stock ajustado sin requerir descuento molecular");
         }).orElse(ResponseEntity.badRequest().body("Producto no encontrado"));
     }
