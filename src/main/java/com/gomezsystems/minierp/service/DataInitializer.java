@@ -445,17 +445,6 @@ public class DataInitializer implements CommandLineRunner {
         // Y SINCRONIZAR DIRECTAMENTE CON EL STOCK DE ELÍXIRES (500 MLS)
         // =========================================================================
         try {
-            // Reclasificar insumos de comida erróneamente puestos en "Insumos Vaso"
-            List<Insumo> todosIns = insumoRepository.findAll();
-            for (Insumo ins : todosIns) {
-                String c = ins.getCategoria() != null ? ins.getCategoria().toLowerCase() : "";
-                String n = ins.getNombre() != null ? ins.getNombre().toLowerCase() : "";
-                if (c.contains("vaso") && !n.contains("vaso") && !n.contains("tapa") && !n.contains("packaging") && !n.contains("envase") && !n.contains("bombilla")) {
-                    ins.setCategoria("Pulpas");
-                    insumoRepository.save(ins);
-                }
-            }
-
             String[] sedes = {"Antofagasta"};
             for (String sede : sedes) {
                 List<Insumo> insumosSede = insumoRepository.findBySucursal(sede);
