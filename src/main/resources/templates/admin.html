@@ -5210,14 +5210,15 @@
                 const esPack = catNorm.includes('pack') || catNorm.includes('pulpa') || nomNorm.includes('pulpa');
                 const esArma = catNorm.includes('arma') || catNorm.includes('batido');
                 const esShot = catNorm.includes('shot');
-                const es500 = (!esPack && !esShot && !esArma) || catNorm.includes('500') || catNorm.includes('elixir');
-                const catMostrar = esPack ? 'Pack de Pulpas' : (esArma ? 'Arma tu Batido' : (esShot ? 'Shots' : 'Elíxires (500 mls)'));
+                const esExotico = catNorm.includes('exot') || nomNorm.includes('exot');
+                const es500 = (!esPack && !esShot && !esArma && !esExotico) || catNorm.includes('500') || catNorm.includes('elixir');
+                const catMostrar = esExotico ? 'Exóticos' : (esPack ? 'Pack de Pulpas' : (esArma ? 'Arma tu Batido' : (esShot ? 'Shots' : 'Elíxires (500 mls)')));
                 const badgeStockHeader = es500
                     ? `<span class="badge bg-dark border border-cyan text-info" style="font-size:0.75rem;" id="header-stock-${p.id}" title="Stock físico sincronizado con Bodega: Vasos y Packaging (500 mls)"><i class="bi bi-cup-straw me-1"></i>Stock Vasos: ${p.stock || 0}</span>`
                     : `<span class="badge bg-dark border border-success text-success" style="font-size:0.75rem;" id="header-stock-${p.id}"><i class="bi bi-box-seam me-1"></i>Stock: ${p.stock || 0}</span>`;
 
                 let optionsCat = `
-                    <option value="500 mls" ${catActual==='500 mls' || (!esPack && !esShot && !esArma) ? 'selected' : ''}>Elíxires (500 mls)</option>
+                    <option value="500 mls" ${catActual==='500 mls' || (!esPack && !esShot && !esArma && !esExotico) ? 'selected' : ''}>Elíxires (500 mls)</option>
                     <option value="Packs" ${esPack ? 'selected' : ''}>Pack de Pulpas</option>
                     <option value="Shots" ${esShot ? 'selected' : ''}>Shots</option>
                     <option value="Arma tu Batido" ${esArma ? 'selected' : ''}>Arma tu Batido</option>
@@ -5743,11 +5744,14 @@
                 } else if (f === '500 mls') {
                     const esPackOPulpa = cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa');
                     const esArma = cat.includes('arma') || cat.includes('batido');
-                    coincideCat = !esPackOPulpa && !esArma && (cat.includes('500') || !cat);
+                    const esExot = cat.includes('exot') || nom.includes('exot');
+                    coincideCat = !esPackOPulpa && !esArma && !esExot && (cat.includes('500') || !cat);
                 } else if (f.includes('arma') || f.includes('batido')) {
                     coincideCat = cat.includes('arma') || cat.includes('batido');
                 } else if (f.includes('shot')) {
                     coincideCat = cat.includes('shot');
+                } else if (f.includes('exot')) {
+                    coincideCat = cat.includes('exot') || nom.includes('exot');
                 } else {
                     coincideCat = cat.includes(f);
                 }
