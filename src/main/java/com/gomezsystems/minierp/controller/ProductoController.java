@@ -173,8 +173,12 @@ public class ProductoController {
         if (p == null) return false;
         String cat = p.getCategoria() != null ? p.getCategoria().trim().toLowerCase() : "";
         String nom = p.getNombre() != null ? p.getNombre().trim().toLowerCase() : "";
+        String desc = p.getDescripcion() != null ? p.getDescripcion().toLowerCase() : "";
 
         if (cat.contains("personalizado") || cat.contains("custom") || cat.contains("tesoreria")) {
+            return false;
+        }
+        if (cat.contains("arma") || cat.contains("porcion") || nom.contains("porción") || nom.contains("porcion") || desc.contains("conectado a bodega")) {
             return false;
         }
         if (nom.startsWith("batido armado") || nom.startsWith("batido personalizado")) {

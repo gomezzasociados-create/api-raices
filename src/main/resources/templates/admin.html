@@ -1892,7 +1892,6 @@
                             <button type="button" class="categoria-filtro-btn" data-cat="500 mls" onclick="filtrarCategoriaAcordeon('500 mls', this)">ELÍXIRES</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Packs" onclick="filtrarCategoriaAcordeon('Packs', this)">PACK DE PULPAS</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Shots" onclick="filtrarCategoriaAcordeon('Shots', this)">SHOTS</button>
-                            <button type="button" class="categoria-filtro-btn" data-cat="Arma tu Batido" onclick="filtrarCategoriaAcordeon('Arma tu Batido', this)">ARMA TU BATIDO</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Exóticos" onclick="filtrarCategoriaAcordeon('Exóticos', this)">EXÓTICOS</button>
                             
                             <div class="btn-group ms-1">
@@ -2364,18 +2363,19 @@
     // =======================================================
     // SINTETIZADOR GENÉTICO (PRODUCCIÓN CON FECHAS)
     // =======================================================
-    function esProductoProduccion(p) {
+    function esPulpaOPack(p) {
         if (!p) return false;
         const n = normalizarStr(p.nombre || '');
         const c = normalizarStr(p.categoria || '');
-        // Excluir materias primas e insumos que no son productos terminados
+        // Excluir materias primas e insumos de bodega
         if (c.includes('arma') || c.includes('batido') || n.includes('arma') || n.includes('porci') || c.includes('vaso') || c.includes('packaging')) return false;
-        // Permitir Elíxires (500 mls), Packs de Pulpas, Shots, Exóticos y productos creados
-        return true;
+        if (c.includes('shot') || c.includes('caldo') || c.includes('500') || c.includes('elixir') || n.includes('shot') || c.includes('exot') || n.includes('exot')) return false;
+        // Génesis de Producción contiene estrictamente la línea de Pulpas y Packs de Pulpas
+        return c.includes('pack') || c.includes('pulpa') || n.includes('pulpa') || n.includes('pack');
     }
 
-    function esPulpaOPack(p) {
-        return esProductoProduccion(p);
+    function esProductoProduccion(p) {
+        return esPulpaOPack(p);
     }
 
     async function cargarProductosSelect() {
@@ -5056,8 +5056,7 @@
             adminBadgesCategorias = [
                 { categoriaKey: '500 mls', categoriaNombre: 'Elíxires', texto: '', color: 'neon-oro', activo: true, autoOferta: true },
                 { categoriaKey: 'Packs', categoriaNombre: 'Pack de Pulpas', texto: '', color: 'neon-oro', activo: true, autoOferta: true },
-                { categoriaKey: 'Arma tu Batido', categoriaNombre: 'Arma tu Batido', texto: '', color: 'neon-cyan', activo: true, autoOferta: true },
-                { categoriaKey: 'Shots', categoriaNombre: 'Shots', texto: 'PRÓXIMAMENTE', color: 'neon-magenta', activo: true, autoOferta: false },
+                                { categoriaKey: 'Shots', categoriaNombre: 'Shots', texto: 'PRÓXIMAMENTE', color: 'neon-magenta', activo: true, autoOferta: false },
                 { categoriaKey: 'Exóticos', categoriaNombre: 'Exóticos', texto: 'NUEVO', color: 'neon-magenta', activo: true, autoOferta: true }
             ];
         }
@@ -5208,7 +5207,12 @@
             data = deduplicarProductos(data || []).filter(p => {
                 const cat = (p.categoria || '').toLowerCase();
                 const nom = (p.nombre || '').toLowerCase();
-                return !cat.includes('personalizado') && !cat.includes('custom') && !nom.startsWith('batido armado') && !nom.startsWith('batido personalizado');
+                const desc = (p.descripcion || '').toLowerCase();
+                // Purgar insumos de bodega, materias primas y personalizados
+                if (cat.includes('personalizado') || cat.includes('custom') || cat.includes('tesoreria')) return false;
+                if (cat.includes('arma') || cat.includes('porcion') || nom.includes('porcion') || nom.includes('porción') || desc.includes('conectado a bodega')) return false;
+                if (nom.startsWith('batido armado') || nom.startsWith('batido personalizado')) return false;
+                return true;
             });
 
             const acordeonCont = document.getElementById('contenedor-catalogo-acordeon');
@@ -5257,10 +5261,9 @@
                     <option value="500 mls" ${catActual==='500 mls' || (!esPack && !esShot && !esArma && !esExotico) ? 'selected' : ''}>Elíxires (500 mls)</option>
                     <option value="Packs" ${esPack ? 'selected' : ''}>Pack de Pulpas</option>
                     <option value="Shots" ${esShot ? 'selected' : ''}>Shots</option>
-                    <option value="Arma tu Batido" ${esArma ? 'selected' : ''}>Arma tu Batido</option>
                     <option value="Exóticos" ${esExotico ? 'selected' : ''}>Exóticos</option>
                 `;
-                if (catActual && !['500 mls', 'Packs', 'Shots', 'Arma tu Batido', 'Exóticos'].includes(catActual) && !esPack && !esArma && !esShot && !esExotico) {
+                if (catActual && !['500 mls', 'Packs', 'Shots', 'Exóticos'].includes(catActual) && !esPack && !esArma && !esShot && !esExotico) {
                     optionsCat += `<option value="${catActual}" selected>${catActual}</option>`;
                 }
 

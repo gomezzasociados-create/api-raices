@@ -107,7 +107,8 @@ public class DataInitializer implements CommandLineRunner {
                 for (Producto p : repository.findAll()) {
                     String cat = p.getCategoria() != null ? p.getCategoria().toLowerCase() : "";
                     String nom = p.getNombre() != null ? p.getNombre().toLowerCase() : "";
-                    if (cat.contains("arma tu batido") || cat.contains("porciones") || cat.contains("arma") || nom.contains("porción") || nom.contains("porcion")) {
+                    String desc = p.getDescripcion() != null ? p.getDescripcion().toLowerCase() : "";
+                    if (cat.contains("arma") || cat.contains("porcion") || nom.contains("porción") || nom.contains("porcion") || desc.contains("conectado a bodega")) {
                         repository.delete(p);
                     }
                 }

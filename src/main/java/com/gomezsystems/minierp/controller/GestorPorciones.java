@@ -246,37 +246,7 @@ public class GestorPorciones {
         return ResponseEntity.badRequest().body("Error al eliminar");
     }
     private void sincronizarProductoArmaTuBatido(Insumo insumo) {
-        if (insumo == null) return;
-        String catIns = insumo.getCategoria() != null ? insumo.getCategoria().toLowerCase() : "";
-        if (catIns.contains("arma") || catIns.contains("porciones")) {
-            try {
-                String nomIns = insumo.getNombre() != null ? insumo.getNombre().trim() : "";
-                if (nomIns.isEmpty()) return;
-                List<Producto> matchProds = productoRepository.findAll().stream()
-                    .filter(p -> p.getNombre() != null && p.getNombre().trim().equalsIgnoreCase(nomIns))
-                    .toList();
-                if (!matchProds.isEmpty()) {
-                    for (Producto p : matchProds) {
-                        if (insumo.getPrecio() != null) p.setPrecio(insumo.getPrecio());
-                        if (insumo.getDescuento() != null) p.setDescuento(insumo.getDescuento());
-                        if (insumo.getImagen() != null && !insumo.getImagen().isBlank()) p.setImagen(insumo.getImagen().trim());
-                        if (insumo.getUnidadActual() != null) p.setStock((int) Math.round(insumo.getUnidadActual()));
-                        productoRepository.save(p);
-                    }
-                } else {
-                    Producto p = new Producto();
-                    p.setNombre(nomIns);
-                    p.setCategoria("Arma tu Batido");
-                    p.setPrecio(insumo.getPrecio() != null ? insumo.getPrecio() : 1000.0);
-                    p.setDescuento(insumo.getDescuento() != null ? insumo.getDescuento() : 0.0);
-                    p.setStock(insumo.getUnidadActual() != null ? (int) Math.round(insumo.getUnidadActual()) : 0);
-                    p.setSucursal(insumo.getSucursal() != null ? insumo.getSucursal() : "Antofagasta");
-                    p.setImagen(insumo.getImagen());
-                    p.setDescripcion("🌿 Ingrediente / Porción para Arma tu Batido (" + (insumo.getSubcategoria() != null ? insumo.getSubcategoria() : "General") + "). Conectado a Bodega.");
-                    productoRepository.save(p);
-                }
-            } catch (Exception ignored) {}
-        }
+        // Los insumos pertenecen exclusivamente a Bodega y no deben crearse como productos comerciales
     }
 
     private void sincronizarStockVasosConProductos(Insumo insumo) {
