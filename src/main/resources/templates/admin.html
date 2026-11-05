@@ -252,34 +252,269 @@
             transition: transform 0.3s ease;
         }
         
-        /* --- TARJETAS PLEGABLES DE BODEGAS --- */
-        .insumo-tarjeta-item {
-            border-radius: 12px !important;
+        /* =========================================================================
+           TERMINAL DE BODEGAS: TARJETAS HOLOGRÁFICAS Y FUTURISTAS (CYBER-HUD)
+           ========================================================================= */
+        .insumo-tarjeta-cyber {
+            background: linear-gradient(135deg, rgba(6, 18, 35, 0.9) 0%, rgba(2, 7, 18, 0.97) 100%) !important;
+            border-radius: 14px !important;
+            border: 1px solid rgba(0, 229, 255, 0.22);
+            position: relative;
             overflow: hidden;
-            margin-bottom: 10px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            margin-bottom: 12px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        .insumo-tarjeta-item:hover {
-            transform: translateY(-2px);
+        .insumo-tarjeta-cyber::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            pointer-events: none;
         }
-        .insumo-tarjeta-item .accordion-button {
-            background: linear-gradient(90deg, rgba(2, 12, 24, 0.95), rgba(0, 5, 12, 0.95)) !important;
-            color: #fff !important;
-            padding: 12px 16px;
-            box-shadow: none !important;
+        .insumo-tarjeta-cyber:hover {
+            transform: translateY(-3px);
+            border-color: rgba(0, 229, 255, 0.55) !important;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 229, 255, 0.25) !important;
+        }
+
+        /* Cabecera Interactiva */
+        .insumo-tarjeta-cyber .accordion-button {
+            background: transparent !important;
+            color: #ffffff !important;
+            padding: 14px 20px;
             border: none !important;
+            box-shadow: none !important;
         }
-        .insumo-tarjeta-item .accordion-button:not(.collapsed) {
-            background: linear-gradient(90deg, rgba(0, 229, 255, 0.12), rgba(0, 255, 166, 0.08)) !important;
-            border-bottom: 1px solid rgba(0, 229, 255, 0.3) !important;
+        .insumo-tarjeta-cyber .accordion-button:not(.collapsed) {
+            background: linear-gradient(90deg, rgba(0, 229, 255, 0.1), rgba(255, 0, 234, 0.05)) !important;
+            border-bottom: 1px dashed rgba(0, 229, 255, 0.35) !important;
         }
-        .insumo-tarjeta-item .accordion-button::after {
-            filter: invert(1) drop-shadow(0 0 4px var(--p-cyan));
+        .insumo-tarjeta-cyber .accordion-button::after {
+            display: none !important;
+        }
+
+        /* Avatar del Insumo */
+        .cyber-avatar-frame {
+            position: relative;
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(0,0,0,0.8));
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
+            flex-shrink: 0;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .cyber-avatar-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
             transition: transform 0.3s ease;
         }
-        .insumo-tarjeta-item .accordion-body {
-            background: rgba(0, 3, 10, 0.96) !important;
-            padding: 18px;
+        .cyber-avatar-frame:hover img {
+            transform: scale(1.14);
+        }
+        .cyber-avatar-btn-cam {
+            position: absolute;
+            bottom: 2px; right: 2px;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid var(--p-warning);
+            color: var(--p-warning);
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .cyber-avatar-btn-cam:hover {
+            transform: scale(1.2);
+            background: var(--p-warning);
+            color: #000;
+        }
+
+        /* Chips de Telemetría HUD */
+        .cyber-hud-chip {
+            background: rgba(4, 12, 26, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            padding: 6px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 105px;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+        .cyber-hud-chip:hover {
+            border-color: rgba(0, 229, 255, 0.45);
+            background: rgba(6, 18, 38, 0.95);
+        }
+        .cyber-hud-chip-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.55);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .cyber-hud-chip-value {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.15rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        /* Botones de Acción Rápida Dock */
+        .cyber-action-dock {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cyber-action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: rgba(6, 18, 35, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .cyber-action-btn:hover {
+            transform: translateY(-2px) scale(1.06);
+        }
+        .cyber-action-btn.btn-calc:hover {
+            background: rgba(255, 221, 0, 0.18);
+            border-color: var(--p-warning);
+            color: var(--p-warning);
+            box-shadow: 0 0 12px rgba(255, 221, 0, 0.5);
+        }
+        .cyber-action-btn.btn-edit:hover {
+            background: rgba(0, 229, 255, 0.18);
+            border-color: var(--p-cyan);
+            color: var(--p-cyan);
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+        }
+        .cyber-action-btn.btn-purge:hover {
+            background: rgba(255, 0, 85, 0.18);
+            border-color: var(--p-danger);
+            color: var(--p-danger);
+            box-shadow: 0 0 12px rgba(255, 0, 85, 0.5);
+        }
+
+        /* Pill Expansor HUD */
+        .cyber-expand-trigger {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: rgba(0, 229, 255, 0.08);
+            border: 1px solid rgba(0, 229, 255, 0.35);
+            color: var(--p-cyan);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 1px;
+            font-weight: 700;
+            transition: all 0.25s ease;
+        }
+        .insumo-tarjeta-cyber:hover .cyber-expand-trigger {
+            background: rgba(0, 229, 255, 0.2);
+            border-color: var(--p-cyan);
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+            color: #ffffff;
+        }
+        .cyber-expand-trigger i {
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .accordion-button:not(.collapsed) .cyber-expand-trigger i {
+            transform: rotate(180deg);
+        }
+
+        /* Panel Desplegado Bio-Console */
+        .cyber-body-console {
+            background: radial-gradient(circle at top, rgba(10, 26, 48, 0.5) 0%, rgba(2, 6, 14, 0.97) 100%) !important;
+            border-top: 1px dashed rgba(0, 229, 255, 0.3);
+            padding: 22px 24px;
+        }
+        .cyber-specimen-viewport {
+            position: relative;
+            width: 125px;
+            height: 125px;
+            border-radius: 14px;
+            padding: 3px;
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.5), rgba(255, 0, 234, 0.3));
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+            margin: 0 auto;
+        }
+        .cyber-specimen-viewport img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 11px;
+        }
+        .cyber-specimen-crosshair {
+            position: absolute;
+            inset: 0;
+            border: 1px dashed rgba(0, 229, 255, 0.4);
+            border-radius: 14px;
+            pointer-events: none;
+        }
+        .cyber-stat-card {
+            background: rgba(4, 15, 30, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 12px 14px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: border-color 0.2s ease;
+        }
+        .cyber-stat-card:hover {
+            border-color: rgba(0, 229, 255, 0.35);
+        }
+        .cyber-stat-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .cyber-stat-number {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        .cyber-cmd-btn {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+        .cyber-cmd-btn:hover {
+            transform: translateX(4px);
         }
 
         .catalogo-acordeon-item .accordion-body {
@@ -3673,128 +3908,159 @@
         const id = i.idInsumo;
         const nombre = i.nombre || 'Insumo sin nombre';
         const subcat = (i.subcategoria || i.categoria || cfg.labelCat).toUpperCase();
-        const nodo = i.sucursal || 'Antofagasta';
+        const nodo = (i.sucursal || 'Antofagasta').toUpperCase();
         const img = cfg.urlInsumoImg;
         const color = cfg.colorTheme;
-        const glow = cfg.glowBox;
-        const badgeBorder = cfg.borderImg;
+        const rgb = cfg.rgbTheme || '0, 229, 255';
         const fallback = cfg.defaultFallback;
         const dosisTxt = `${cfg.dosis} ${i.medida || 'gr'}`;
-        const costoPorcTxt = formatMoney(cfg.costoPorcion, nodo);
-        const precioBaseTxt = formatMoney(i.precio || 0, nodo);
-        const valorTotalTxt = formatMoney(cfg.valorInsumo, nodo);
+        const costoPorcTxt = formatMoney(cfg.costoPorcion, i.sucursal);
+        const precioBaseTxt = formatMoney(i.precio || 0, i.sucursal);
+        const valorTotalTxt = formatMoney(cfg.valorInsumo, i.sucursal);
         const stockHtml = cfg.stockHTML;
         const stockCant = (Number(i.unidadActual) || 0).toFixed(0);
 
         return `
-        <div class="accordion-item insumo-tarjeta-item mb-2" id="card-insumo-${id}" style="background: rgba(4, 15, 30, 0.88); border: 1px solid ${color}; border-radius: 12px; overflow: hidden; box-shadow: ${glow};">
+        <div class="accordion-item insumo-tarjeta-cyber" id="card-insumo-${id}" style="border-left: 5px solid ${color} !important; box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 0 15px rgba(${rgb}, 0.06);">
             <div class="accordion-header" id="heading-ins-${id}">
-                <div class="accordion-button collapsed d-flex justify-content-between align-items-center py-2 px-3"
+                <div class="accordion-button collapsed d-flex justify-content-between align-items-center flex-wrap gap-2"
                      data-bs-toggle="collapse"
                      data-bs-target="#collapse-ins-${id}"
                      aria-expanded="false"
                      aria-controls="collapse-ins-${id}"
-                     style="cursor: pointer; background: transparent;">
+                     style="cursor: pointer;">
                      
-                     <!-- IZQUIERDA: MINIATURA + NOMBRE + BADGES -->
-                     <div class="d-flex align-items-center gap-3 flex-grow-1 overflow-hidden me-2">
-                         <div class="position-relative flex-shrink-0">
-                             <img src="${img}" id="img-insumo-${id}" class="rounded-3 border ${badgeBorder}" style="width: 48px; height: 48px; object-fit: cover; cursor: pointer;" title="Cambiar foto de este insumo" onclick="event.stopPropagation(); iniciarSubidaFotoInsumo(${id})" onerror="this.src='${fallback}'">
-                             <button type="button" class="btn btn-sm btn-dark position-absolute bottom-0 end-0 p-0 rounded-circle text-warning border border-warning" style="width: 18px; height: 18px; line-height: 16px; font-size: 10px;" onclick="event.stopPropagation(); iniciarSubidaFotoInsumo(${id})" title="Subir / Tomar foto"><i class="bi bi-camera-fill"></i></button>
+                     <!-- ZONA 1: ESPECIMEN / NOMBRE / STATUS HUD -->
+                     <div class="d-flex align-items-center gap-3 overflow-hidden" style="min-width: 250px; max-width: 350px;">
+                         <div class="cyber-avatar-frame" onclick="event.stopPropagation(); iniciarSubidaFotoInsumo(${id})" title="Actualizar foto del insumo" style="border-color: ${color}; box-shadow: 0 0 10px rgba(${rgb}, 0.4);">
+                             <img src="${img}" id="img-insumo-${id}" onerror="this.src='${fallback}'">
+                             <div class="cyber-avatar-btn-cam" title="Cambiar foto"><i class="bi bi-camera-fill"></i></div>
                          </div>
                          <div class="overflow-hidden">
-                             <div class="fw-bold font-orbitron fs-5 text-white text-truncate">${nombre}</div>
-                             <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
+                             <div class="fw-bold font-orbitron fs-5 text-white text-truncate" style="letter-spacing: 0.5px; text-shadow: 0 0 8px rgba(${rgb}, 0.4);">${nombre}</div>
+                             <div class="d-flex align-items-center gap-1 mt-1 flex-wrap">
                                  <span class="badge-categoria" style="${cfg.colorBadge}">${subcat}</span>
-                                 <span class="badge bg-dark border border-cyan text-info" style="font-size:0.75rem;"><i class="bi bi-geo-alt me-1"></i>${nodo}</span>
+                                 <span class="badge bg-dark border border-cyan text-info" style="font-size:0.7rem;"><i class="bi bi-geo-alt me-1"></i>${nodo}</span>
                                  ${stockHtml}
                              </div>
                          </div>
                      </div>
 
-                     <!-- CENTRO: VALORES ECONÓMICOS -->
-                     <div class="d-flex align-items-center gap-3 me-3 flex-shrink-0 flex-wrap">
-                         <div class="text-end d-none d-md-block">
-                             <small class="text-white-50 d-block font-rajdhani" style="font-size:0.78rem;">PRECIO BASE</small>
-                             <span class="text-warning fw-bold fs-5 font-orbitron">${precioBaseTxt}</span>
+                     <!-- ZONA 2: TELEMETRÍA FINANCIERA Y BIOMÉTRICA (HUD CHIPS) -->
+                     <div class="d-flex align-items-center gap-2 flex-wrap">
+                         <div class="cyber-hud-chip" style="border-left: 2px solid var(--p-cyan);">
+                             <span class="cyber-hud-chip-label"><i class="bi bi-sliders text-info"></i> DOSIS</span>
+                             <span class="cyber-hud-chip-value text-info">${dosisTxt}</span>
                          </div>
-                         <div class="text-end">
-                             <small class="text-white-50 d-block font-rajdhani" style="font-size:0.78rem;">COSTO PORCIÓN</small>
-                             <span class="text-info fw-bold fs-5 font-orbitron">${costoPorcTxt}</span>
+                         <div class="cyber-hud-chip" style="border-left: 2px solid var(--p-warning);">
+                             <span class="cyber-hud-chip-label"><i class="bi bi-cash-stack text-warning"></i> VALOR/BASE</span>
+                             <span class="cyber-hud-chip-value text-warning">${precioBaseTxt}</span>
                          </div>
-                         <div class="text-end d-none d-sm-block">
-                             <small class="text-white-50 d-block font-rajdhani" style="font-size:0.78rem;">VALOR TOTAL</small>
-                             <span class="text-success fw-bold fs-5 font-orbitron" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${valorTotalTxt}</span>
+                         <div class="cyber-hud-chip" style="border-left: 2px solid ${color};">
+                             <span class="cyber-hud-chip-label" style="color:${color}"><i class="bi bi-pie-chart-fill"></i> COSTO/PORC</span>
+                             <span class="cyber-hud-chip-value" style="color:${color}; text-shadow: 0 0 8px rgba(${rgb}, 0.5);">${costoPorcTxt}</span>
+                         </div>
+                         <div class="cyber-hud-chip d-none d-lg-flex" style="border-left: 2px solid var(--p-bio-green);">
+                             <span class="cyber-hud-chip-label text-success"><i class="bi bi-shield-check"></i> TOTAL NODO</span>
+                             <span class="cyber-hud-chip-value text-success" style="text-shadow: 0 0 8px rgba(0,255,166,0.4);">${valorTotalTxt}</span>
                          </div>
                      </div>
 
-                     <!-- DERECHA: BOTONES DE ACCIÓN RÁPIDA Y CHEVRON -->
-                     <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                         <button class="btn btn-sm btn-outline-warning border-0 p-1" type="button" onclick="event.stopPropagation(); abrirCalculadoraConInsumo('${tipo}', ${id})" title="Calculadora de Porción y Margen Real 1-%"><i class="bi bi-calculator fs-4"></i></button>
-                         <button class="btn btn-sm btn-outline-info border-0 p-1" type="button" onclick="event.stopPropagation(); editarInsumo(${id})" title="Editar Insumo"><i class="bi bi-pencil-square fs-4"></i></button>
-                         <button class="btn btn-sm btn-outline-danger border-0 p-1" type="button" onclick="event.stopPropagation(); eliminarInsumo(${id})" title="Eliminar"><i class="bi bi-trash3-fill fs-4"></i></button>
-                         <span class="badge bg-dark border border-secondary text-info px-2 py-1 ms-1 font-orbitron d-none d-lg-inline" style="font-size:0.75rem;"><i class="bi bi-sliders me-1"></i> DETALLE</span>
+                     <!-- ZONA 3: DOCK DE ACCIONES Y EXPANSOR HUD -->
+                     <div class="cyber-action-dock ms-auto">
+                         <button class="cyber-action-btn btn-calc" type="button" onclick="event.stopPropagation(); abrirCalculadoraConInsumo('${tipo}', ${id})" title="Calculadora 1-% Margen Real">
+                             <i class="bi bi-calculator-fill"></i>
+                         </button>
+                         <button class="cyber-action-btn btn-edit" type="button" onclick="event.stopPropagation(); editarInsumo(${id})" title="Cargar a Formulario de Edición">
+                             <i class="bi bi-pencil-square"></i>
+                         </button>
+                         <button class="cyber-action-btn btn-purge" type="button" onclick="event.stopPropagation(); eliminarInsumo(${id})" title="Purgar de Inventario">
+                             <i class="bi bi-trash3-fill"></i>
+                         </button>
+                         <div class="cyber-expand-trigger">
+                             <span>TELEMETRÍA</span>
+                             <i class="bi bi-chevron-down"></i>
+                         </div>
                      </div>
                 </div>
             </div>
 
-            <!-- CUERPO DESPLEGABLE -->
+            <!-- CONSOLA EXPANDIDA / TERMINAL DE OPERACIONES -->
             <div id="collapse-ins-${id}" class="accordion-collapse collapse" aria-labelledby="heading-ins-${id}">
-                <div class="accordion-body p-3" style="background: rgba(0, 3, 10, 0.95); border-top: 1px dashed rgba(255,255,255,0.15);">
-                    <div class="row g-3 align-items-center">
-                        <!-- FOTO / MULTIMEDIA -->
-                        <div class="col-md-3 text-center">
-                            <div class="position-relative d-inline-block">
-                                <img src="${img}" class="rounded-3 border ${badgeBorder}" style="width: 110px; height: 110px; object-fit: cover;" onerror="this.src='${fallback}'">
-                                <button type="button" class="btn btn-sm btn-dark position-absolute bottom-0 end-0 p-1 rounded-circle text-warning border border-warning" onclick="iniciarSubidaFotoInsumo(${id})" title="Subir / Tomar foto"><i class="bi bi-camera-fill fs-6"></i></button>
+                <div class="cyber-body-console">
+                    <div class="row g-4 align-items-center">
+                        <!-- BIO-SCANNER ESPECIMEN -->
+                        <div class="col-lg-3 col-md-4 text-center">
+                            <div class="cyber-specimen-viewport mb-2" style="border: 1px solid ${color}; box-shadow: 0 0 15px rgba(${rgb}, 0.35);">
+                                <img src="${img}" onerror="this.src='${fallback}'">
+                                <div class="cyber-specimen-crosshair"></div>
                             </div>
-                            <div class="mt-2">
-                                <button type="button" class="btn btn-xs btn-outline-info font-orbitron w-100 py-1" onclick="iniciarSubidaFotoInsumo(${id})">
-                                    <i class="bi bi-cloud-arrow-up-fill me-1"></i> CAMBIAR FOTO
-                                </button>
-                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-info font-orbitron w-100 py-2" onclick="iniciarSubidaFotoInsumo(${id})" style="font-size:0.75rem; letter-spacing:1px;">
+                                <i class="bi bi-camera-fill me-1"></i> ACTUALIZAR MUESTRA
+                            </button>
                         </div>
 
-                        <!-- MÉTRICAS & FICHA TÉCNICA -->
-                        <div class="col-md-6">
+                        <!-- MATRIZ DE TELEMETRÍA (4 GAUGE TILES) -->
+                        <div class="col-lg-5 col-md-8">
                             <div class="row g-2">
-                                <div class="col-6 col-sm-3 p-2 border rounded bg-dark" style="border-color: rgba(255,255,255,0.1) !important;">
-                                    <small class="text-white-50 d-block font-rajdhani" style="font-size:0.75rem;">RESERVA STOCK</small>
-                                    <span class="fw-bold text-white fs-5 font-orbitron">${stockCant} <small class="text-white-50 fs-6">${i.medida || 'gr'}</small></span>
+                                <div class="col-6">
+                                    <div class="cyber-stat-card" style="border-left: 3px solid var(--p-cyan);">
+                                        <span class="cyber-stat-title"><i class="bi bi-box-seam me-1 text-info"></i> RESERVA FÍSICA</span>
+                                        <div class="d-flex justify-content-between align-items-baseline mt-2">
+                                            <span class="cyber-stat-number text-white">${stockCant}</span>
+                                            <small class="text-white-50 font-orbitron">${i.medida || 'gr'}</small>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-6 col-sm-3 p-2 border rounded bg-dark" style="border-color: rgba(255,255,255,0.1) !important;">
-                                    <small class="text-white-50 d-block font-rajdhani" style="font-size:0.75rem;">DOSIS PORCIÓN</small>
-                                    <span class="fw-bold text-info fs-5 font-orbitron">${dosisTxt}</span>
+                                <div class="col-6">
+                                    <div class="cyber-stat-card" style="border-left: 3px solid ${color};">
+                                        <span class="cyber-stat-title" style="color:${color}"><i class="bi bi-pie-chart me-1"></i> DOSIS / PORCIÓN</span>
+                                        <div class="d-flex justify-content-between align-items-baseline mt-2">
+                                            <span class="cyber-stat-number" style="color:${color}">${dosisTxt}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-6 col-sm-3 p-2 border rounded bg-dark" style="border-color: rgba(255,255,255,0.1) !important;">
-                                    <small class="text-white-50 d-block font-rajdhani" style="font-size:0.75rem;">PRECIO / COMPRA</small>
-                                    <span class="fw-bold text-warning fs-5 font-orbitron">${precioBaseTxt}</span>
+                                <div class="col-6">
+                                    <div class="cyber-stat-card" style="border-left: 3px solid var(--p-warning);">
+                                        <span class="cyber-stat-title"><i class="bi bi-tag me-1 text-warning"></i> PRECIO ADQUISICIÓN</span>
+                                        <div class="d-flex justify-content-between align-items-baseline mt-2">
+                                            <span class="cyber-stat-number text-warning">${precioBaseTxt}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-6 col-sm-3 p-2 border rounded bg-dark" style="border-color: rgba(255,255,255,0.1) !important;">
-                                    <small class="text-white-50 d-block font-rajdhani" style="font-size:0.75rem;">VALOR TOTAL BODEGA</small>
-                                    <span class="fw-bold text-success fs-5 font-orbitron">${valorTotalTxt}</span>
+                                <div class="col-6">
+                                    <div class="cyber-stat-card" style="border-left: 3px solid var(--p-bio-green);">
+                                        <span class="cyber-stat-title text-success"><i class="bi bi-safe me-1"></i> VALOR TOTAL EN BODEGA</span>
+                                        <div class="d-flex justify-content-between align-items-baseline mt-2">
+                                            <span class="cyber-stat-number text-success" style="text-shadow: 0 0 10px rgba(0,255,166,0.5);">${valorTotalTxt}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="mt-2 text-white-50 small font-rajdhani">
-                                <span>Línea: <b class="text-white">${i.categoria || cfg.labelCat}</b></span> • 
-                                <span>Subcategoría: <b class="text-white">${i.subcategoria || 'General'}</b></span> • 
-                                <span>Nodo Destino: <b class="text-info">${nodo}</b></span>
+                            <div class="mt-3 p-2 rounded d-flex align-items-center justify-content-between flex-wrap gap-2" style="background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); font-family: 'Share Tech Mono', monospace; font-size: 0.8rem;">
+                                <span class="text-white-50">ID_REF: <b class="text-info">#INS-${id}</b></span>
+                                <span class="text-white-50">BODEGA: <b class="text-white">${subcat}</b></span>
+                                <span class="text-white-50">NODO: <b class="text-warning">${nodo}</b></span>
                             </div>
                         </div>
 
-                        <!-- ACCIONES OPERATIVAS -->
-                        <div class="col-md-3 d-flex flex-column gap-2">
-                            <button class="btn btn-sm btn-outline-warning w-100 font-orbitron text-start py-2" onclick="abrirCalculadoraConInsumo('${tipo}', ${id})">
-                                <i class="bi bi-calculator-fill me-1"></i> CALCULADORA 1-%
+                        <!-- TERMINAL DE COMANDOS OPERATIVOS -->
+                        <div class="col-lg-4 col-md-12 d-flex flex-column gap-2">
+                            <button class="cyber-cmd-btn btn btn-sm btn-outline-warning text-warning" onclick="abrirCalculadoraConInsumo('${tipo}', ${id})">
+                                <span><i class="bi bi-calculator-fill me-2 fs-6"></i> EJECUTAR CALCULADORA 1-%</span>
+                                <i class="bi bi-chevron-right small"></i>
                             </button>
-                            <button class="btn btn-sm btn-outline-info w-100 font-orbitron text-start py-2" onclick="editarInsumo(${id})">
-                                <i class="bi bi-pencil-square me-1"></i> EDITAR FORMULARIO
+                            <button class="cyber-cmd-btn btn btn-sm btn-outline-info text-info" onclick="editarInsumo(${id})">
+                                <span><i class="bi bi-pencil-square me-2 fs-6"></i> CARGAR EN FORMULARIO</span>
+                                <i class="bi bi-chevron-right small"></i>
                             </button>
-                            <button class="btn btn-sm btn-outline-light w-100 font-orbitron text-start py-2 text-white-50" onclick="verInsumoEnFormulas('${tipo}')">
-                                <i class="bi bi-flask me-1"></i> VER EN FÓRMULAS
+                            <button class="cyber-cmd-btn btn btn-sm btn-outline-light text-white" onclick="verInsumoEnFormulas('${tipo}')">
+                                <span><i class="bi bi-flask me-2 fs-6" style="color:var(--p-magenta)"></i> ANALIZAR EN FÓRMULAS</span>
+                                <i class="bi bi-chevron-right small"></i>
                             </button>
-                            <button class="btn btn-sm btn-outline-danger w-100 font-orbitron text-start py-2" onclick="eliminarInsumo(${id})">
-                                <i class="bi bi-trash3-fill me-1"></i> ELIMINAR INSUMO
+                            <button class="cyber-cmd-btn btn btn-sm btn-outline-danger text-danger" onclick="eliminarInsumo(${id})">
+                                <span><i class="bi bi-trash3-fill me-2 fs-6"></i> PURGAR DE INVENTARIO</span>
+                                <i class="bi bi-exclamation-triangle small"></i>
                             </button>
                         </div>
                     </div>
