@@ -440,6 +440,34 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println(">> GÓMEZ SYSTEMS: Insumos de Bodega inicializados con subcategorías correctamente para Antofagasta.");
         }
 
+        // Asegurar que existan insumos y producto de muestra para la nueva categoría "Exóticos"
+        try {
+            boolean hasExoticosInsumos = insumoRepository.findAll().stream().anyMatch(i -> "Exóticos".equalsIgnoreCase(i.getCategoria()) || (i.getCategoria() != null && i.getCategoria().toLowerCase().contains("exot")));
+            if (!hasExoticosInsumos) {
+                crearInsumoSiNoExiste("Pulpa de Pitahaya Dragón", 5000.0, 50, "gr", "Antofagasta", "Exóticos", "Frutas Exóticas", 1200.0);
+                crearInsumoSiNoExiste("Açai Puro del Amazonas", 4000.0, 50, "gr", "Antofagasta", "Exóticos", "Superfoods", 1500.0);
+                crearInsumoSiNoExiste("Extracto de Camu Camu Bio", 2000.0, 15, "gr", "Antofagasta", "Exóticos", "Extractos Puros", 1800.0);
+                System.out.println(">> GÓMEZ SYSTEMS: Insumos de la nueva Bodega Exóticos inicializados.");
+            }
+
+            boolean hasExoticosProd = repository.findAll().stream().anyMatch(p -> "Exóticos".equalsIgnoreCase(p.getCategoria()) || (p.getCategoria() != null && p.getCategoria().toLowerCase().contains("exot")));
+            if (!hasExoticosProd) {
+                Producto prodExotico = new Producto();
+                prodExotico.setNombre("Pitahaya Dragón Imperial");
+                prodExotico.setPrecio(5990.0);
+                prodExotico.setCategoria("Exóticos");
+                prodExotico.setSucursal("Antofagasta");
+                prodExotico.setStock(30);
+                prodExotico.setImagen("https://images.unsplash.com/photo-1527325678964-54921661f888?auto=format&fit=crop&w=600&q=80");
+                prodExotico.setDescripcion("🌺 Brebaje Exótico Pitahaya Dragón Imperial 🐉✨\nFusión biodisponible de Pitahaya Roja silvestre, toque de Açai del Amazonas y camu camu puro. Alto poder antioxidante celular y energía vital limpia.");
+                prodExotico.setRecetaDetalle("Pulpa de Pitahaya Dragón:50 gr\nAçai Puro del Amazonas:30 gr");
+                repository.save(prodExotico);
+                System.out.println(">> GÓMEZ SYSTEMS: Producto de muestra Exóticos 'Pitahaya Dragón Imperial' inicializado.");
+            }
+        } catch (Exception e) {
+            System.err.println("Aviso al inicializar categoría Exóticos: " + e.getMessage());
+        }
+
         // 3. INICIALIZAR BLOG Y COMUNIDAD INTERACTIVA
         try {
             if (articuloBlogRepository != null && articuloBlogRepository.count() == 0) {

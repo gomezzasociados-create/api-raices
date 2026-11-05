@@ -20,13 +20,19 @@ public class CategoriaBadgeController {
     @GetMapping
     public List<CategoriaBadge> listar() {
         List<CategoriaBadge> lista = repository.findAll();
+        boolean hasExoticos = lista.stream().anyMatch(b -> "Exóticos".equalsIgnoreCase(b.getCategoriaKey()) || "Exoticos".equalsIgnoreCase(b.getCategoriaKey()));
         if (lista.isEmpty()) {
             lista = new ArrayList<>();
             lista.add(new CategoriaBadge("500 mls", "Elíxires", "", "neon-oro", true, true));
             lista.add(new CategoriaBadge("Packs", "Pack de Pulpas", "", "neon-oro", true, true));
             lista.add(new CategoriaBadge("Arma tu Batido", "Arma tu Batido", "", "neon-cyan", true, true));
             lista.add(new CategoriaBadge("Shots", "Shots", "PRÓXIMAMENTE", "neon-magenta", true, false));
+            lista.add(new CategoriaBadge("Exóticos", "Exóticos", "NUEVO", "neon-magenta", true, true));
             repository.saveAll(lista);
+        } else if (!hasExoticos) {
+            CategoriaBadge nuevo = new CategoriaBadge("Exóticos", "Exóticos", "NUEVO", "neon-magenta", true, true);
+            repository.save(nuevo);
+            lista.add(nuevo);
         }
         return lista;
     }

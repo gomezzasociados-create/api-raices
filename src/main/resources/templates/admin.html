@@ -32,6 +32,8 @@
             --p-bio-green: #00ffa6;
             --p-warning: #ffdd00;
             --p-danger: #ff0055;
+            --p-purple: #bd00ff;
+            --purple-glow: 0 0 20px rgba(189, 0, 255, 0.5);
             --text-blanco: #ffffff;
 
             --border-glow: 0 0 15px rgba(0, 229, 255, 0.4);
@@ -1435,6 +1437,215 @@
                         </div>
                     </div>
 
+                    <!-- 5. SUMINISTROS Y MATERIA PRIMA: LÍNEA EXÓTICOS -->
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingExoticos">
+                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExoticos" aria-expanded="false" aria-controls="collapseExoticos" style="background: rgba(189,0,255,0.05); border: 1px solid #bd00ff; color: #bd00ff; box-shadow: 0 0 10px rgba(189,0,255,0.2);">
+                                <i class="bi bi-stars me-2"></i> 5. SUMINISTROS Y MATERIA PRIMA: LÍNEA EXÓTICOS
+                            </button>
+                        </h2>
+                        <div id="collapseExoticos" class="accordion-collapse collapse" aria-labelledby="headingExoticos" data-bs-parent="#accordionInventario">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid #bd00ff;">
+                                    <div class="d-flex justify-content-between align-items-center mb-3 mt-2 flex-wrap gap-2">
+                                        <button type="button" class="btn btn-sm btn-outline-light font-orbitron fw-bold px-3 py-2" onclick="toggleCalculadoraBodega('exoticos')" style="color: #bd00ff; border-color: #bd00ff; box-shadow: 0 0 10px rgba(189,0,255,0.25);">
+                                            <i class="bi bi-calculator-fill me-2 fs-5"></i> CALCULADORA DE PORCIÓN & MARGEN REAL (1 - %)
+                                        </button>
+                                        <div class="p-2 border rounded" style="border-color: #bd00ff !important; background: rgba(189,0,255,0.1); box-shadow: 0 0 10px rgba(189,0,255,0.2);">
+                                            <span style="color:#bd00ff; font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
+                                            <span class="fw-bold text-white fs-4" id="total-valor-exoticos" style="text-shadow: 0 0 10px rgba(189,0,255,0.5);">$0</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- CALCULADORA DE PORCIÓN & MARGEN REAL 1-% (EXÓTICOS) -->
+                                    <div id="calc-container-exoticos" class="p-3 mb-4 rounded-3" style="display: none; background: rgba(22, 5, 30, 0.95); border: 2px solid #bd00ff; box-shadow: 0 0 20px rgba(189,0,255,0.25);">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary">
+                                            <h6 class="font-orbitron fw-bold m-0" style="color: #bd00ff;">
+                                                <i class="bi bi-calculator-fill me-2"></i> CALCULADORA DE COSTO POR PORCIÓN & MARGEN REAL (1 - %) • LÍNEA EXÓTICOS
+                                            </h6>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-sm btn-outline-info font-rajdhani" onclick="sincronizarConFormulario('exoticos')">
+                                                    <i class="bi bi-arrow-repeat me-1"></i> Cargar del Formulario
+                                                </button>
+                                                <button type="button" class="btn-close btn-close-white" onclick="toggleCalculadoraBodega('exoticos')"></button>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3">
+                                            <div class="col-lg-7">
+                                                <div class="row g-2">
+                                                    <div class="col-md-5">
+                                                        <label class="form-label-neon small" style="color: #bd00ff;">Modo de Compra Insumo</label>
+                                                        <select id="calc-exoticos-modo" class="form-select form-select-sm auth-select" onchange="actualizarCalculadora('exoticos')">
+                                                            <option value="kilo">⚖️ Por Kilo (1.000 gr)</option>
+                                                            <option value="litro">💧 Por Litro (1.000 ml)</option>
+                                                            <option value="pack">📦 Por Pack / Bolsa</option>
+                                                            <option value="unidad">🍏 Por Unidad</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-warning">Precio Compra Insumo ($)</label>
+                                                        <input type="number" id="calc-exoticos-costo-base" class="form-control form-control-sm text-warning fw-bold" placeholder="Ej: 15000" oninput="actualizarCalculadora('exoticos')">
+                                                    </div>
+                                                    <div class="col-md-3" id="calc-exoticos-pack-cant-col" style="display:none;">
+                                                        <label class="form-label-neon small text-info">Cant. Pack</label>
+                                                        <input type="number" id="calc-exoticos-pack-cant" class="form-control form-control-sm text-info fw-bold" value="10" oninput="actualizarCalculadora('exoticos')">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small" style="color: #bd00ff;">Dosis en Producto (gr/mls)</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-exoticos-dosis" class="form-control text-white fw-bold" step="0.1" placeholder="Ej: 50" oninput="actualizarCalculadora('exoticos')">
+                                                            <span class="input-group-text bg-dark text-white-50 border-secondary" id="calc-exoticos-dosis-unidad">gr</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-info">% Margen Real (1 - %)</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-exoticos-margen" class="form-control text-info fw-bold" value="65" min="1" max="99" oninput="actualizarCalculadora('exoticos')">
+                                                            <span class="input-group-text bg-dark text-info border-secondary">%</span>
+                                                        </div>
+                                                        <div class="d-flex gap-1 mt-1">
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('exoticos', 50)">50%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('exoticos', 60)">60%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('exoticos', 65)">65%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('exoticos', 70)">70%</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-white-50">% Merma / Desecho</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-exoticos-merma" class="form-control text-white-50" value="0" min="0" max="90" oninput="actualizarCalculadora('exoticos')">
+                                                            <span class="input-group-text bg-dark text-white-50 border-secondary">%</span>
+                                                        </div>
+                                                        <div class="d-flex gap-1 mt-1">
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('exoticos', 0)">0%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('exoticos', 5)">5%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('exoticos', 10)">10%</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-between" style="background: rgba(0,0,0,0.7); border: 1px dashed #bd00ff;">
+                                                    <div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <span class="text-white-50 small font-rajdhani">COSTO PURO PORCIÓN:</span>
+                                                            <span class="fw-bold text-white fs-6" id="calc-exoticos-res-costo-puro">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <span class="text-white-50 small font-rajdhani">COSTO CON MERMA:</span>
+                                                            <span class="fw-bold fs-6" style="color: #bd00ff;" id="calc-exoticos-res-costo-merma">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom border-secondary">
+                                                            <span class="small font-rajdhani text-info">FÓRMULA MARGEN REAL:</span>
+                                                            <span class="font-monospace text-info small" id="calc-exoticos-res-formula">Costo / (1 - 0.65)</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-baseline mb-1">
+                                                            <span class="font-orbitron small text-white">PRECIO VENTA PORCIÓN:</span>
+                                                            <span class="font-orbitron fw-bold fs-4" style="color: #bd00ff; text-shadow: 0 0 10px #bd00ff;" id="calc-exoticos-res-precio-sugerido">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center small text-white-50 font-rajdhani">
+                                                            <span>Ganancia neta: <b class="text-success" id="calc-exoticos-res-ganancia">$0</b></span>
+                                                            <span>Margen Real: <b class="text-info" id="calc-exoticos-res-margen-real">0%</b></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-3 d-flex gap-2">
+                                                        <button type="button" class="btn btn-sm w-100 fw-bold font-orbitron text-white" style="background: #bd00ff;" onclick="aplicarCalculadoraABodega('exoticos')">
+                                                            <i class="bi bi-check-circle-fill me-1"></i> APLICAR A FORMULARIO
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-outline-info font-rajdhani" onclick="verInsumoEnFormulas('exoticos')" title="Ver en Fórmulas">
+                                                            <i class="bi bi-flask"></i> Fórmulas
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 mb-4 mt-1 align-items-end">
+                                        <input type="hidden" id="exoticos-id">
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon" style="color: #bd00ff;">Insumo / Fruta Exótica</label>
+                                            <input type="text" id="exoticos-nombre" class="form-control" placeholder="Ej: Pitahaya Roja, Açai Silvestre, Camu Camu">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label-neon" style="color: #bd00ff;">Subcategoría</label>
+                                            <select id="exoticos-subcategoria" class="form-select">
+                                                <option value="Frutas Exóticas">Frutas Exóticas</option>
+                                                <option value="Superfoods">Superfoods</option>
+                                                <option value="Bases Exóticas">Bases Exóticas</option>
+                                                <option value="Semillas / Toppings">Semillas / Toppings</option>
+                                                <option value="Especias Exóticas">Especias Exóticas</option>
+                                                <option value="Extractos Puros">Extractos Puros</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label class="form-label-neon" style="color: #bd00ff;">Métrica</label>
+                                            <select id="exoticos-unidad" class="form-select" onchange="actualizarBadgeCostoEnVivo('exoticos')">
+                                                <option value="gr">Gramos (gr)</option>
+                                                <option value="mls">Mililitros (mls)</option>
+                                                <option value="und">Unidades (und)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label-neon" style="color: #bd00ff;">Dosis Porción</label>
+                                            <input type="number" id="exoticos-dosis" class="form-control fw-bold" style="color: #bd00ff;" step="0.1" placeholder="Ej: 50" oninput="actualizarBadgeCostoEnVivo('exoticos')">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label-neon" style="color: #bd00ff;">Reserva Stock</label>
+                                            <input type="number" id="exoticos-stock" class="form-control" placeholder="Cant. stock">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label-neon text-warning">Precio Compra ($)</label>
+                                            <input type="number" id="exoticos-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 18000" oninput="actualizarBadgeCostoEnVivo('exoticos')">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon text-info">Análisis Porción</label>
+                                            <div id="badge-costo-porcion-exoticos" class="form-control bg-dark text-info fw-bold text-center border-secondary fs-6 py-2">$0 / porc</div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label-neon" style="color: #bd00ff;">Foto / Video (URL o Subida)</label>
+                                            <div class="input-group">
+                                                <input type="text" id="exoticos-imagen" class="form-control" placeholder="/uploads/media/... o https://...">
+                                                <button class="btn btn-outline-light" type="button" id="btn-upload-exoticos" onclick="document.getElementById('upload-exoticos-file').click()" title="Subir desde dispositivo" style="color: #bd00ff; border-color: #bd00ff;">
+                                                    <i class="bi bi-cloud-arrow-up-fill"></i>
+                                                </button>
+                                            </div>
+                                            <input type="file" id="upload-exoticos-file" class="d-none" accept="image/*,video/*" onchange="subirMultimediaExoticos(this)">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label-neon" style="color: #bd00ff;">Nodo Destino</label>
+                                            <select id="exoticos-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')">
+                                                <option value="Antofagasta">Antofagasta</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button class="btn btn-bio w-100 py-2 fs-5 font-orbitron text-white" style="background: #bd00ff;" onclick="guardarInsumo('exoticos')">
+                                                <i class="bi bi-plus-circle-fill me-2"></i> GUARDAR / ACTUALIZAR
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table text-center align-middle m-0">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th style="width: 60px;">IMG</th>
+                                                    <th>INSUMO EXÓTICO</th>
+                                                    <th>SUBCATEGORÍA</th>
+                                                    <th>NODO_BASE</th>
+                                                    <th>RESERVA_STOCK</th>
+                                                    <th>PRECIO_BASE</th>
+                                                    <th>COSTO/PORCIÓN</th>
+                                                    <th>VALOR_TOTAL</th>
+                                                    <th>ACCIONES</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tabla-exoticos"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1635,6 +1846,65 @@
                         </div>
                     </div>
 
+                    <!-- 4. ESTRUCTURADOR DE FÓRMULAS DE EXÓTICOS -->
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingRecetasExoticos">
+                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasExoticos" aria-expanded="false" aria-controls="collapseRecetasExoticos" style="background: rgba(189,0,255,0.05); border: 1px solid #bd00ff; color: #bd00ff; box-shadow: 0 0 10px rgba(189,0,255,0.2);">
+                                <i class="bi bi-stars me-2"></i> 4. ESTRUCTURADOR DE FÓRMULAS DE EXÓTICOS
+                            </button>
+                        </h2>
+                        <div id="collapseRecetasExoticos" class="accordion-collapse collapse" aria-labelledby="headingRecetasExoticos" data-bs-parent="#accordionRecetas">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid #bd00ff;">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon" style="color: #bd00ff;">PRODUCTO EXÓTICO (OUTPUT)</label>
+                                            <select id="rec-producto-exoticos" class="form-select text-white" style="border-color: #bd00ff;" onchange="cargarTablaReceta('exoticos')"></select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label-neon" style="color: #bd00ff;">INSUMO / BASE EXÓTICA (INPUT)</label>
+                                            <select id="rec-insumo-exoticos" class="form-select text-white" style="border-color: #bd00ff;" onchange="actualizarUnidadDefaultInsumo('exoticos')"></select>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mt-2 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="form-label-neon" style="color: #bd00ff;">DOSIS REQUERIDA POR PRODUCTO EXÓTICO</label>
+                                            <input type="number" id="rec-cantidad-exoticos" class="form-control text-white fs-4" style="border-color: #bd00ff;" placeholder="0.00" step="0.01">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
+                                            <select id="rec-unidad-exoticos" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;">
+                                                <option value="gr">🌾 Gramos (gr)</option>
+                                                <option value="mls">💧 Mililitros (mls)</option>
+                                                <option value="und">🍏 Unidades (und)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button class="btn btn-bio w-100 py-3 fw-bold text-white" style="background: #bd00ff;" onclick="guardarReceta('exoticos')">
+                                                <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR A FÓRMULA DE EXÓTICO
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 p-3 rounded-3" style="background: rgba(0,0,0,0.6); border: 1px dashed #bd00ff;">
+                                        <h6 class="form-label-neon mb-3 fs-6 text-center" style="color: #bd00ff;">BIOLOGÍA DE LA FÓRMULA ACTIVA (PRODUCTO EXÓTICO)</h6>
+                                        <div class="table-responsive">
+                                            <table class="table text-center align-middle m-0">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>EXTRACTO / MATERIAL / BASE</th>
+                                                        <th>DOSIS_REQUERIDA</th>
+                                                        <th>COSTO PROYECTADO</th>
+                                                        <th>SEPARAR</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tabla-vista-formula-exoticos"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1696,6 +1966,7 @@
                                 <option value="Packs">Pack de Pulpas</option>
                                 <option value="Shots">Shots</option>
                                 <option value="Arma tu Batido">Arma tu Batido</option>
+                                <option value="Exóticos">Exóticos</option>
                             </select>
                         </div>
                         <div class="col-md-2">
@@ -1745,6 +2016,7 @@
                             <button type="button" class="categoria-filtro-btn" data-cat="Packs" onclick="filtrarCategoriaAcordeon('Packs', this)">PACK DE PULPAS</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Shots" onclick="filtrarCategoriaAcordeon('Shots', this)">SHOTS</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Arma tu Batido" onclick="filtrarCategoriaAcordeon('Arma tu Batido', this)">ARMA TU BATIDO</button>
+                            <button type="button" class="categoria-filtro-btn" data-cat="Exóticos" onclick="filtrarCategoriaAcordeon('Exóticos', this)">EXÓTICOS</button>
                             
                             <div class="btn-group ms-1">
                                 <button type="button" class="btn btn-sm btn-outline-info" onclick="expandirTodosAcordeon()" title="Expandir Todos"><i class="bi bi-arrows-expand"></i></button>
@@ -3658,11 +3930,13 @@
             const tbVasos = document.getElementById('tabla-vasos'); if(tbVasos) tbVasos.innerHTML='';
             const tbShots = document.getElementById('tabla-shots'); if(tbShots) tbShots.innerHTML='';
             const tbArmaTuBatido = document.getElementById('tabla-armatubatido'); if(tbArmaTuBatido) tbArmaTuBatido.innerHTML='';
+            const tbExoticos = document.getElementById('tabla-exoticos'); if(tbExoticos) tbExoticos.innerHTML='';
 
             let totalPulpas = 0;
             let totalVasos = 0;
             let totalShots = 0;
             let totalArmaTuBatido = 0;
+            let totalExoticos = 0;
             let alertasVasos500 = [];
 
             data.sort((a,b)=>(a.sucursal||'').localeCompare(b.sucursal||'')).forEach(i => {
@@ -3672,8 +3946,9 @@
 
                 const cat = (i.categoria || '').toLowerCase();
                 const isArmaTuBatido = cat.includes('arma tu batido') || cat.includes('porciones');
-                const isVaso = !isArmaTuBatido && (cat.includes('vaso') || cat.includes('packaging'));
-                const isShot = !isArmaTuBatido && (cat.includes('shot') || cat.includes('caldo'));
+                const isExotico = !isArmaTuBatido && (cat.includes('exot') || cat.includes('exótico') || (i.subcategoria || '').toLowerCase().includes('exot') || (i.nombre || '').toLowerCase().includes('exot'));
+                const isVaso = !isArmaTuBatido && !isExotico && (cat.includes('vaso') || cat.includes('packaging'));
+                const isShot = !isArmaTuBatido && !isExotico && (cat.includes('shot') || cat.includes('caldo'));
 
                 let selectFiltroId = 'ins-sucursal';
                 if (isArmaTuBatido) selectFiltroId = 'armatubatido-sucursal';
@@ -3759,7 +4034,7 @@
                 else if (!isArmaTuBatido) defaultFallback = 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80';
 
                 const urlInsumoImg = (i.imagen && i.imagen.trim() !== '') ? i.imagen.trim() : defaultFallback;
-                let borderImg = isArmaTuBatido ? 'border-warning' : (isVaso ? 'border-info' : (isShot ? 'border-danger' : 'border-success'));
+                let borderImg = isArmaTuBatido ? 'border-warning' : (isExotico ? 'border-light' : (isVaso ? 'border-info' : (isShot ? 'border-danger' : 'border-success')));
                 let imgTdHtml = `<td>
                     <div class="position-relative d-inline-block">
                         <img src="${urlInsumoImg}" id="img-insumo-${i.idInsumo}" class="rounded border ${borderImg}" style="width: 44px; height: 44px; object-fit: cover; cursor: pointer;" title="Cambiar foto de este insumo" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" onerror="this.src='${defaultFallback}'">
@@ -3821,6 +4096,27 @@
                     <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
                     <td>
                         <button class="btn btn-sm text-warning border-0 me-1" onclick="abrirCalculadoraConInsumo('shots', ${i.idInsumo})" title="Calculadora 1-% Margen Real"><i class="bi bi-calculator fs-4"></i></button>
+                        <button class="btn btn-sm text-warning border-0 me-1" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Cambiar foto de este insumo"><i class="bi bi-camera-fill fs-4"></i></button>
+                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})" title="Editar"><i class="bi bi-pencil-square fs-3"></i></button>
+                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})" title="Eliminar"><i class="bi bi-trash3-fill fs-3"></i></button>
+                    </td>
+                </tr>`;
+
+                
+                let dosisExotico = i.cantidadPorcion || (i.medida === 'und' ? 1 : 50);
+                let costoPorcExotico = (i.medida === 'gr' || i.medida === 'mls') ? (precioUnitario / 1000) * dosisExotico : precioUnitario * dosisExotico;
+
+                const rowExoticos = `<tr>
+                    ${imgTdHtml}
+                    <td class="fw-bold text-white fs-5">${i.nombre}</td>
+                    <td><span class="badge-categoria" style="${colorBadge}">${(i.subcategoria || i.categoria || 'Exóticos').toUpperCase()}</span></td>
+                    <td class="text-white">${i.sucursal}</td>
+                    <td>${stockHTML}</td>
+                    <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
+                    <td class="fs-5 text-info fw-bold">${formatMoney(costoPorcExotico, i.sucursal)} <small class="text-white-50 fs-6">(${dosisExotico} ${i.medida || 'gr'})</small></td>
+                    <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
+                    <td>
+                        <button class="btn btn-sm text-warning border-0 me-1" onclick="abrirCalculadoraConInsumo('exoticos', ${i.idInsumo})" title="Calculadora 1-% Margen Real"><i class="bi bi-calculator fs-4"></i></button>
                         <button class="btn btn-sm text-warning border-0 me-1" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Cambiar foto de este insumo"><i class="bi bi-camera-fill fs-4"></i></button>
                         <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})" title="Editar"><i class="bi bi-pencil-square fs-3"></i></button>
                         <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})" title="Eliminar"><i class="bi bi-trash3-fill fs-3"></i></button>
@@ -4725,7 +5021,8 @@
                 { categoriaKey: '500 mls', categoriaNombre: 'Elíxires', texto: '', color: 'neon-oro', activo: true, autoOferta: true },
                 { categoriaKey: 'Packs', categoriaNombre: 'Pack de Pulpas', texto: '', color: 'neon-oro', activo: true, autoOferta: true },
                 { categoriaKey: 'Arma tu Batido', categoriaNombre: 'Arma tu Batido', texto: '', color: 'neon-cyan', activo: true, autoOferta: true },
-                { categoriaKey: 'Shots', categoriaNombre: 'Shots', texto: 'PRÓXIMAMENTE', color: 'neon-magenta', activo: true, autoOferta: false }
+                { categoriaKey: 'Shots', categoriaNombre: 'Shots', texto: 'PRÓXIMAMENTE', color: 'neon-magenta', activo: true, autoOferta: false },
+                { categoriaKey: 'Exóticos', categoriaNombre: 'Exóticos', texto: 'NUEVO', color: 'neon-magenta', activo: true, autoOferta: true }
             ];
         }
 
@@ -4924,8 +5221,9 @@
                     <option value="Packs" ${esPack ? 'selected' : ''}>Pack de Pulpas</option>
                     <option value="Shots" ${esShot ? 'selected' : ''}>Shots</option>
                     <option value="Arma tu Batido" ${esArma ? 'selected' : ''}>Arma tu Batido</option>
+                    <option value="Exóticos" ${esExotico ? 'selected' : ''}>Exóticos</option>
                 `;
-                if (catActual && !['500 mls', 'Packs', 'Shots', 'Arma tu Batido'].includes(catActual) && !esPack && !esArma && !esShot) {
+                if (catActual && !['500 mls', 'Packs', 'Shots', 'Arma tu Batido', 'Exóticos'].includes(catActual) && !esPack && !esArma && !esShot && !esExotico) {
                     optionsCat += `<option value="${catActual}" selected>${catActual}</option>`;
                 }
 
@@ -5318,6 +5616,36 @@
         } catch (err) {
             console.error('Error procesando foto rápida:', err);
             alert('❌ Error al procesar imagen: ' + err.message);
+        }
+    }
+
+    
+    async function subirMultimediaExoticos(inputElement) {
+        const file = inputElement.files?.[0];
+        if (!file) return;
+
+        const btn = document.getElementById('btn-upload-exoticos');
+        const originalText = btn ? btn.innerHTML : '';
+        if (btn) btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+        try {
+            const dataUrl = await optimizarImagenADataURL(file, 800, 0.85);
+            const input = document.getElementById('exoticos-imagen');
+            if (input) input.value = dataUrl;
+
+            const idInsumo = document.getElementById('exoticos-id')?.value;
+            if (idInsumo) {
+                await fetch('/api/insumos/' + idInsumo + '/foto', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ foto: dataUrl })
+                });
+                cargarInsumos();
+            }
+        } catch (e) {
+            console.error('Error subiendo imagen exoticos:', e);
+        } finally {
+            if (btn) btn.innerHTML = originalText;
         }
     }
 

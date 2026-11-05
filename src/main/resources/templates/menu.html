@@ -1197,6 +1197,7 @@
     <button class="categoria-badge" onclick="filtrar('Packs', this)" data-cat="Packs"><span class="liston-categoria-neon" id="badge-cat-Packs" style="display:none;"></span><i class="bi bi-box-seam-fill text-success me-2"></i>Pack de Pulpas</button>
     <button class="categoria-badge" onclick="filtrar('Arma tu Batido', this)" data-cat="Arma tu Batido"><span class="liston-categoria-neon" id="badge-cat-Arma-tu-Batido" style="display:none;"></span><i class="bi bi-magic text-info me-2"></i>Arma tu Batido</button>
     <button class="categoria-badge" onclick="filtrar('Shots', this)" data-cat="Shots"><span class="liston-categoria-neon liston-neon-magenta neon-magenta" id="badge-cat-Shots"><i class="bi bi-clock-history me-1"></i>PRÓXIMAMENTE</span><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Shots</button>
+    <button class="categoria-badge" onclick="filtrar('Exóticos', this)" data-cat="Exóticos"><span class="liston-categoria-neon" id="badge-cat-Exoticos" style="display:none;"></span><i class="bi bi-stars text-warning me-2"></i>Exóticos</button>
     <button class="categoria-badge" onclick="filtrar('Comunidad', this)" data-cat="Comunidad"><span class="liston-categoria-neon" id="badge-cat-Comunidad" style="display:none;"></span><i class="bi bi-chat-heart-fill me-2 text-info"></i>Comunidad & Blog</button>
 </div>
 
@@ -1527,7 +1528,8 @@
             '500 mls': document.getElementById('badge-cat-500-mls'),
             'Packs': document.getElementById('badge-cat-Packs'),
             'Arma tu Batido': document.getElementById('badge-cat-Arma-tu-Batido'),
-            'Shots': document.getElementById('badge-cat-Shots')
+            'Shots': document.getElementById('badge-cat-Shots'),
+            'Exóticos': document.getElementById('badge-cat-Exoticos')
         };
 
         const configMap = {};
@@ -1632,18 +1634,22 @@
                 return false;
             }
 
+            const esExotico = cat.includes('exot') || nom.includes('exot');
             const esPulpa = cat.includes('pulpa') || nom.includes('pulpa');
             const esPack = cat.includes('pack') || cat.includes('16') || esPulpa;
             const esShot = cat.includes('shot') || nom.includes('shot');
 
+            if (f.includes('exot')) {
+                return esExotico;
+            }
             if (f.includes('pack') || f.includes('pulpa')) {
-                return esPack;
+                return esPack && !esExotico;
             }
             if (f.includes('shot')) {
-                return esShot && !esPack;
+                return esShot && !esPack && !esExotico;
             }
-            // Categoría Elíxires (500 mls): no debe incluir ni packs, ni pulpas, ni shots
-            return !esPack && !esShot;
+            // Categoría Elíxires (500 mls): no debe incluir ni packs, ni pulpas, ni shots, ni exóticos
+            return !esPack && !esShot && !esExotico;
         });
 
         // Deduplicar por nombre normalizado en Frontend
