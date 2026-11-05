@@ -251,6 +251,37 @@
             filter: invert(1) drop-shadow(0 0 5px var(--p-cyan));
             transition: transform 0.3s ease;
         }
+        
+        /* --- TARJETAS PLEGABLES DE BODEGAS --- */
+        .insumo-tarjeta-item {
+            border-radius: 12px !important;
+            overflow: hidden;
+            margin-bottom: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .insumo-tarjeta-item:hover {
+            transform: translateY(-2px);
+        }
+        .insumo-tarjeta-item .accordion-button {
+            background: linear-gradient(90deg, rgba(2, 12, 24, 0.95), rgba(0, 5, 12, 0.95)) !important;
+            color: #fff !important;
+            padding: 12px 16px;
+            box-shadow: none !important;
+            border: none !important;
+        }
+        .insumo-tarjeta-item .accordion-button:not(.collapsed) {
+            background: linear-gradient(90deg, rgba(0, 229, 255, 0.12), rgba(0, 255, 166, 0.08)) !important;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.3) !important;
+        }
+        .insumo-tarjeta-item .accordion-button::after {
+            filter: invert(1) drop-shadow(0 0 4px var(--p-cyan));
+            transition: transform 0.3s ease;
+        }
+        .insumo-tarjeta-item .accordion-body {
+            background: rgba(0, 3, 10, 0.96) !important;
+            padding: 18px;
+        }
+
         .catalogo-acordeon-item .accordion-body {
             background: rgba(0, 3, 8, 0.98) !important;
             border-top: 1px solid rgba(0, 229, 255, 0.2);
@@ -650,276 +681,12 @@
 
                 <div class="table-container p-4">
                     <h5 class="text-money-green mb-4 fw-bold font-orbitron fs-4"><i class="bi bi-activity"></i> RESERVA VITAL Y ESTABILIDAD ORGÁNICA</h5>
-                    <div class="table-responsive">
-                        <table class="table text-center align-middle" style="min-width: 900px;">
-                            <thead class="table-dark">
-                            <tr>
-                                <th style="width: 20%;">ELIXIR NATURAL</th>
-                                <th style="width: 10%;">STOCK</th>
-                                <th style="width: 10%;">VALOR</th>
-                                <th style="width: 10%;">GÉNESIS</th>
-                                <th style="width: 10%;">COLAPSO</th>
-                                <th style="width: 25%;">BIOMARCADOR</th>
-                                <th style="width: 15%;">ACCIONES</th>
-                            </tr>
-                            </thead>
-                            <tbody id="tabla-produccion"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tab-pane fade" id="tab-ventas" role="tabpanel">
-                <div class="table-container p-4 mb-4" style="border-top: 3px solid var(--p-warning);">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h5 class="fw-bold font-orbitron" style="color: var(--p-warning);"><i class="bi bi-cash-stack"></i> MOTOR CONTABLE Y FLUJO DE CAPITAL</h5>
-                        <select id="tesoreria-sucursal" class="form-select auth-select w-auto" onchange="cargarTesoreria(); playSound('click')">
-                            <option value="Antofagasta">Nodo Antofagasta</option>
-                        </select>
-                    </div>
-
-                    <div class="row g-4 text-center mb-4">
-                        <div class="col-md-3">
-                            <div class="p-3 border rounded-3" style="border-color: var(--p-eco-green) !important; background: rgba(0,255,166,0.1);">
-                                <h6 style="color:var(--p-eco-green); font-family:'Orbitron'; font-size:0.8rem;">CAJA EFECTIVO (TURNO)</h6>
-                                <h3 class="fw-bold text-white mb-0" id="tesoreria-efectivo">$0</h3>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="p-3 border rounded-3" style="border-color: var(--p-cyan) !important; background: rgba(0,229,255,0.1);">
-                                <h6 style="color:var(--p-cyan); font-family:'Orbitron'; font-size:0.8rem;">BANCOS Y TRANSF. (TURNO)</h6>
-                                <h3 class="fw-bold text-white mb-0" id="tesoreria-bancos">$0</h3>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="p-3 border rounded-3" style="border-color: #ff0055 !important; background: rgba(255,0,85,0.1);">
-                                <h6 style="color:#ff0055; font-family:'Orbitron'; font-size:0.8rem;">GASTOS DIARIOS (DEBE)</h6>
-                                <h3 class="fw-bold text-white mb-0" id="tesoreria-gastos">$0</h3>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="p-3 border rounded-3" style="border-color: var(--p-warning) !important; background: rgba(255,221,0,0.1); box-shadow: 0 0 15px rgba(255,221,0,0.3);">
-                                <h6 style="color:var(--p-warning); font-family:'Orbitron'; font-size:0.9rem;">UTILIDAD BRUTA (HABER)</h6>
-                                <h3 class="fw-bold text-white mb-0" id="tesoreria-utilidad">$0</h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="text-end mb-4 d-flex justify-content-end gap-2 flex-wrap">
-                        <button class="btn btn-outline-info font-orbitron fw-bold" onclick="abrirLibroContable()"><i class="bi bi-journal-text me-2"></i> LIBRO CONTABLE</button>
-                        <button class="btn btn-outline-primary font-orbitron fw-bold" onclick="descargarLibroContable()" title="Descargar Libro Mayor en PDF"><i class="bi bi-file-earmark-pdf me-2"></i> DESCARGAR LIBRO</button>
-                        <button class="btn btn-outline-light font-orbitron fw-bold" onclick="imprimirCierreCaja()"><i class="bi bi-printer me-2"></i> IMPRIMIR BALANCE</button>
-                        <button class="btn btn-outline-success font-orbitron fw-bold" onclick="descargarCierreCaja()" title="Descargar Balance de Turno en PDF"><i class="bi bi-download me-2"></i> DESCARGAR BALANCE</button>
-                        <button class="btn" style="background:var(--p-warning); color:#000; font-family:'Orbitron'; font-weight:bold;" onclick="ejecutarCierreAdmin()"><i class="bi bi-safe me-2"></i> EJECUTAR CIERRE ADMIN (RESET)</button>
-                    </div>
-                </div>
-
-                <div class="row g-4">
-                    <div class="col-lg-6">
-                        <div class="table-container">
-                            <h5 class="mb-4 fw-bold font-orbitron" style="color: var(--p-cyan);"><i class="bi bi-receipt"></i> LIBRO MAYOR: VENTAS (PENDIENTES)</h5>
-                            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-                                <table class="table text-center align-middle">
-                                    <thead class="table-dark"><tr><th>#TICKET</th><th>CANAL</th><th>MEDIO PAGO</th><th>INGRESO</th><th>STATUS</th></tr></thead>
-                                    <tbody id="tabla-historico-ventas"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="table-container">
-                            <h5 class="mb-4 fw-bold font-orbitron" style="color: #ff0055;"><i class="bi bi-graph-down"></i> REGISTRO DE GASTOS / PAGOS</h5>
-                            <div class="row g-2 mb-4">
-                                <div class="col-md-6"><input type="text" id="gasto-concepto" class="form-control bg-dark border-secondary text-white" placeholder="Ej: Pago de Luz"></div>
-                                <div class="col-md-4"><input type="number" id="gasto-monto" class="form-control bg-dark border-secondary text-white" placeholder="Monto"></div>
-                                <div class="col-md-2"><button class="btn btn-danger w-100" onclick="guardarGasto()"><i class="bi bi-plus-lg"></i></button></div>
-                            </div>
-                            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                                <table class="table text-center align-middle">
-                                    <thead class="table-dark"><tr><th>CONCEPTO</th><th>EGRESO</th><th>ACCIÓN</th></tr></thead>
-                                    <tbody id="tabla-historico-gastos"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tab-pane fade" id="tab-crm" role="tabpanel">
-                <div class="table-container mb-4" style="border-top: 3px solid var(--p-magenta);">
-                    <h5 class="mb-4 fw-bold font-orbitron" style="color: var(--p-magenta); text-shadow: var(--magenta-glow);"><i class="bi bi-person-plus"></i> REGISTRO DE NUEVO CLIENTE VIP</h5>
-                    <div class="row g-2">
-                        <input type="hidden" id="crm-id">
-                        <div class="col-md-2"><label class="form-label-neon">Identificación</label><input type="text" id="crm-nombre" class="form-control" placeholder="Nombre completo"></div>
-                        <div class="col-md-2"><label class="form-label-neon">Teléfono</label><input type="text" id="crm-tel" class="form-control" placeholder="WhatsApp"></div>
-                        <div class="col-md-2"><label class="form-label-neon">Dirección</label><input type="text" id="crm-dir" class="form-control" placeholder="Envío"></div>
-                        <div class="col-md-2"><label class="form-label-neon">Correo (Opc)</label><input type="email" id="crm-correo" class="form-control" placeholder="@"></div>
-                        <div class="col-md-2"><label class="form-label-neon">F Nacimiento</label><input type="date" id="crm-cumple" class="form-control"></div>
-                        <div class="col-md-1"><label class="form-label-neon text-warning">Pts</label><input type="number" id="crm-puntos" class="form-control border-warning bg-dark fw-bold text-warning text-center" placeholder="0"></div>
-                        <div class="col-md-1">
-                            <label class="form-label-neon">Nodo</label><select id="crm-nodo" class="form-select auth-select"><option value="Antofagasta">Antofagasta</option></select>
-                        </div>
-                        <div class="col-md-12 mt-2"><button class="btn btn-bio w-100 py-2 fs-5" onclick="guardarCliente()"><i class="bi bi-person-fill-up me-2"></i> REGISTRAR O ACTUALIZAR CLIENTE (BD)</button></div>
-                    </div>
-                </div>
-                <div class="table-container p-0 border-0 bg-transparent box-shadow-none">
-                    <div class="table-responsive">
-                        <table class="table text-center align-middle m-0 text-nowrap">
-                            <thead class="table-dark"><tr><th>CLIENTE</th><th>CONTACTO</th><th>CORREO / UBICACIÓN</th><th>MARKETING</th><th>NODO_BASE</th><th>ADMIN</th></tr></thead>
-                            <tbody id="tabla-crm"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="tab-pane fade" id="tab-inventario" role="tabpanel">
-                <div class="d-flex justify-content-end mb-3">
-                    <button class="btn btn-outline-warning font-orbitron fw-bold px-4" onclick="abrirModalKardex()"><i class="bi bi-clock-history me-2"></i> VER KARDEX / AUDITORÍA</button>
-                </div>
-
-                <div class="accordion" id="accordionInventario">
-
-                    <div class="accordion-item bg-transparent border-0 mb-4">
-                        <h2 class="accordion-header" id="headingPulpas">
-                            <button class="accordion-button font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePulpas" aria-expanded="true" aria-controls="collapsePulpas" style="background: rgba(0,255,0,0.05); border: 1px solid var(--p-bio-green); color: var(--p-bio-green); box-shadow: 0 0 10px rgba(0,255,0,0.2);">
-                                <i class="bi bi-tree me-2"></i> REGISTRO BOTÁNICO: MATERIA PRIMA (PULPAS)
-                            </button>
-                        </h2>
-                        <div id="collapsePulpas" class="accordion-collapse collapse show" aria-labelledby="headingPulpas" data-bs-parent="#accordionInventario">
-                            <div class="accordion-body p-0 pt-3">
-                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-bio-green);">
-                                    <div class="d-flex justify-content-between align-items-center mb-3 mt-2 flex-wrap gap-2">
-                                        <button type="button" class="btn btn-sm btn-outline-warning font-orbitron fw-bold px-3 py-2" onclick="toggleCalculadoraBodega('pulpas')" style="box-shadow: 0 0 10px rgba(255,215,0,0.25);">
-                                            <i class="bi bi-calculator-fill me-2 text-warning fs-5"></i> CALCULADORA DE PORCIÓN & MARGEN REAL (1 - %)
-                                        </button>
-                                        <div class="p-2 border rounded" style="border-color: var(--p-bio-green) !important; background: rgba(0,255,0,0.1); box-shadow: 0 0 10px rgba(0,255,0,0.2);">
-                                            <span style="color:var(--p-bio-green); font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
-                                            <span class="fw-bold text-white fs-4" id="total-valor-pulpas" style="text-shadow: 0 0 10px rgba(0,255,0,0.5);">$0</span>
+                    <div class="mt-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                                            <span class="text-white-50 font-orbitron small" style="color:var(--p-bio-green) !important;"><i class="bi bi-boxes me-1"></i> INSUMOS EN BODEGA (TARJETAS PLEGABLES)</span>
+                                            <small class="text-info font-orbitron"><i class="bi bi-info-circle me-1"></i> Haz clic en cualquier tarjeta para desplegar el detalle u operar</small>
                                         </div>
-                                    </div>
-
-                                    <!-- CALCULADORA DE PORCIÓN & MARGEN REAL 1-% (PULPAS) -->
-                                    <div id="calc-container-pulpas" class="p-3 mb-4 rounded-3" style="display: none; background: rgba(5, 12, 10, 0.95); border: 2px solid var(--p-bio-green); box-shadow: 0 0 20px rgba(0,255,100,0.25);">
-                                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary">
-                                            <h6 class="font-orbitron fw-bold m-0" style="color: var(--p-bio-green);">
-                                                <i class="bi bi-calculator-fill me-2"></i> CALCULADORA DE COSTO POR PORCIÓN & MARGEN REAL (1 - %) • PULPAS Y MATERIA PRIMA
-                                            </h6>
-                                            <div class="d-flex gap-2">
-                                                <button type="button" class="btn btn-sm btn-outline-info font-rajdhani" onclick="sincronizarConFormulario('pulpas')">
-                                                    <i class="bi bi-arrow-repeat me-1"></i> Cargar del Formulario
-                                                </button>
-                                                <button type="button" class="btn-close btn-close-white" onclick="toggleCalculadoraBodega('pulpas')"></button>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3">
-                                            <div class="col-lg-7">
-                                                <div class="row g-2">
-                                                    <div class="col-md-5">
-                                                        <label class="form-label-neon small" style="color:var(--p-bio-green)">Modo de Compra</label>
-                                                        <select id="calc-pulpas-modo" class="form-select form-select-sm auth-select" onchange="actualizarCalculadora('pulpas')">
-                                                            <option value="kilo">⚖️ Por Kilo (1.000 gr)</option>
-                                                            <option value="litro">💧 Por Litro (1.000 ml)</option>
-                                                            <option value="pack">📦 Por Pack / Lote</option>
-                                                            <option value="unidad">🍏 Por Unidad</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <label class="form-label-neon small text-warning">Precio Compra / Base ($)</label>
-                                                        <input type="number" id="calc-pulpas-costo-base" class="form-control form-control-sm text-warning fw-bold" placeholder="Ej: 3500" oninput="actualizarCalculadora('pulpas')">
-                                                    </div>
-                                                    <div class="col-md-3" id="calc-pulpas-pack-cant-col" style="display:none;">
-                                                        <label class="form-label-neon small text-info">Cant. en Pack</label>
-                                                        <input type="number" id="calc-pulpas-pack-cant" class="form-control form-control-sm text-info fw-bold" value="10" oninput="actualizarCalculadora('pulpas')">
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <label class="form-label-neon small" style="color:var(--p-bio-green)">Dosis por Porción</label>
-                                                        <div class="input-group input-group-sm">
-                                                            <input type="number" id="calc-pulpas-dosis" class="form-control text-white fw-bold" step="0.1" placeholder="Ej: 50" oninput="actualizarCalculadora('pulpas')">
-                                                            <span class="input-group-text bg-dark text-white-50 border-secondary" id="calc-pulpas-dosis-unidad">gr</span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <label class="form-label-neon small text-info">% Margen Real (1 - %)</label>
-                                                        <div class="input-group input-group-sm">
-                                                            <input type="number" id="calc-pulpas-margen" class="form-control text-info fw-bold" value="60" min="1" max="99" oninput="actualizarCalculadora('pulpas')">
-                                                            <span class="input-group-text bg-dark text-info border-secondary">%</span>
-                                                        </div>
-                                                        <div class="d-flex gap-1 mt-1">
-                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('pulpas', 40)">40%</button>
-                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('pulpas', 50)">50%</button>
-                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('pulpas', 60)">60%</button>
-                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('pulpas', 70)">70%</button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                        <label class="form-label-neon small text-white-50">% Merma / Desecho</label>
-                                                        <div class="input-group input-group-sm">
-                                                            <input type="number" id="calc-pulpas-merma" class="form-control text-white-50" value="0" min="0" max="90" oninput="actualizarCalculadora('pulpas')">
-                                                            <span class="input-group-text bg-dark text-white-50 border-secondary">%</span>
-                                                        </div>
-                                                        <div class="d-flex gap-1 mt-1">
-                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('pulpas', 0)">0%</button>
-                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('pulpas', 5)">5%</button>
-                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('pulpas', 10)">10%</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-5">
-                                                <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-between" style="background: rgba(0,0,0,0.7); border: 1px dashed var(--p-bio-green);">
-                                                    <div>
-                                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                                            <span class="text-white-50 small font-rajdhani">COSTO PURO PORCIÓN:</span>
-                                                            <span class="fw-bold text-white fs-6" id="calc-pulpas-res-costo-puro">$0</span>
-                                                        </div>
-                                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                                            <span class="text-white-50 small font-rajdhani">COSTO REAL CON MERMA:</span>
-                                                            <span class="fw-bold text-warning fs-6" id="calc-pulpas-res-costo-merma">$0</span>
-                                                        </div>
-                                                        <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom border-secondary">
-                                                            <span class="small font-rajdhani text-info">FÓRMULA MARGEN REAL:</span>
-                                                            <span class="font-monospace text-info small" id="calc-pulpas-res-formula">Costo / (1 - 0.60)</span>
-                                                        </div>
-                                                        <div class="d-flex justify-content-between align-items-baseline mb-1">
-                                                            <span class="font-orbitron small text-white">PRECIO SUGERIDO:</span>
-                                                            <span class="font-orbitron fw-bold fs-4" style="color: var(--p-bio-green); text-shadow: 0 0 10px var(--p-bio-green);" id="calc-pulpas-res-precio-sugerido">$0</span>
-                                                        </div>
-                                                        <div class="d-flex justify-content-between align-items-center small text-white-50 font-rajdhani">
-                                                            <span>Ganancia neta: <b class="text-success" id="calc-pulpas-res-ganancia">$0</b></span>
-                                                            <span>Margen Real: <b class="text-info" id="calc-pulpas-res-margen-real">0%</b></span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="mt-3 d-flex gap-2">
-                                                        <button type="button" class="btn btn-sm w-100 fw-bold font-orbitron text-dark" style="background: var(--p-bio-green);" onclick="aplicarCalculadoraABodega('pulpas')">
-                                                            <i class="bi bi-check-circle-fill me-1"></i> APLICAR AL FORMULARIO
-                                                        </button>
-                                                        <button type="button" class="btn btn-sm btn-outline-info font-rajdhani" onclick="verInsumoEnFormulas('pulpas')" title="Ver en Fórmulas">
-                                                            <i class="bi bi-flask"></i> Fórmulas
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row g-3 mb-4 mt-1 align-items-end">
-                                        <input type="hidden" id="ins-id">
-                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Cód. Botánico</label><input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Pulpa de Mango"></div>
-                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Subcategoría</label><select id="ins-subcategoria" class="form-select"><option value="Base">Base</option><option value="Semillas">Semillas</option><option value="Frutas">Frutas</option><option value="Vegetales">Vegetales</option><option value="Suplementos">Suplementos</option><option value="Frutos Secos">Frutos Secos</option><option value="Especias">Especias</option><option value="Endulzantes">Endulzantes</option><option value="Estabilizantes">Estabilizantes</option><option value="Grasas">Grasas</option><option value="Proteínas">Proteínas</option><option value="Cereales">Cereales</option></select></div>
-                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-bio-green)">Métrica</label><select id="ins-unidad" class="form-select" onchange="actualizarBadgeCostoEnVivo('pulpas')"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
-                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control" placeholder="Stock"></div>
-                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/KG ($)</label><input type="number" id="ins-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 3200" oninput="actualizarBadgeCostoEnVivo('pulpas')"></div>
-                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-bio-green)">Dosis Porc.</label><input type="number" id="ins-dosis" class="form-control text-white fw-bold" step="0.1" placeholder="50" oninput="actualizarBadgeCostoEnVivo('pulpas')"></div>
-                                        <div class="col-md-2"><label class="form-label-neon text-info">Costo Porción</label><div id="badge-costo-porcion-pulpas" class="form-control bg-dark text-info fw-bold text-center border-secondary fs-6 py-2">$0 / porc</div></div>
-                                        <div class="col-md-4"><label class="form-label-neon" style="color:var(--p-bio-green)">URL Imagen</label><input type="text" id="ins-imagen" class="form-control" placeholder="https://..."></div>
-                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
-                                        <div class="col-md-2"><button class="btn btn-bio w-100 py-2 fs-5 font-orbitron" style="background:var(--p-bio-green); color:#000;" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg me-1"></i> GUARDAR</button></div>
-                                    </div>
-                                    <div class="table-responsive">
-                                        <table class="table text-center align-middle m-0">
-                                            <thead class="table-dark"><tr><th style="width: 50px;">IMG</th><th>BIOLOGÍA_PULPA</th><th>ETIQUETA</th><th>NODO_BASE</th><th>VOLUMEN_ACTUAL</th><th>VALOR/KG</th><th>DOSIS & COSTO/PORCIÓN</th><th>VALOR_TOTAL</th><th>ACCIONES</th></tr></thead>
-                                            <tbody id="tabla-pulpas"></tbody>
-                                        </table>
+                                        <div id="tabla-pulpas" class="accordion d-flex flex-column gap-2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1062,11 +829,12 @@
                                         <div class="col-md-2"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
                                         <div class="col-md-2"><button class="btn btn-bio w-100 py-2 fs-5 font-orbitron" style="background: var(--p-cyan); color: #000;" onclick="guardarInsumo('vasos')"><i class="bi bi-plus-lg me-1"></i> GUARDAR</button></div>
                                     </div>
-                                    <div class="table-responsive">
-                                        <table class="table text-center align-middle m-0">
-                                            <thead class="table-dark"><tr><th style="width: 50px;">IMG</th><th>ELEMENTO_FÍSICO</th><th>FAMILIA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>VALOR/UND</th><th>DOSIS & COSTO/PORCIÓN</th><th>VALOR_TOTAL</th><th>RECICLAR</th></tr></thead>
-                                            <tbody id="tabla-vasos"></tbody>
-                                        </table>
+                                    <div class="mt-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                                            <span class="text-white-50 font-orbitron small" style="color:var(--p-cyan) !important;"><i class="bi bi-boxes me-1"></i> SUMINISTROS EN BODEGA (TARJETAS PLEGABLES)</span>
+                                            <small class="text-info font-orbitron"><i class="bi bi-info-circle me-1"></i> Haz clic en cualquier tarjeta para desplegar el detalle u operar</small>
+                                        </div>
+                                        <div id="tabla-vasos" class="accordion d-flex flex-column gap-2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1210,11 +978,12 @@
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Nodo Destino</label><select id="shot-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
                                         <div class="col-md-2"><button class="btn btn-bio w-100 py-2 fs-5 font-orbitron" style="background: var(--p-magenta); color: #fff;" onclick="guardarInsumo('shots')"><i class="bi bi-plus-lg me-1"></i> GUARDAR</button></div>
                                     </div>
-                                    <div class="table-responsive">
-                                        <table class="table text-center align-middle m-0">
-                                            <thead class="table-dark"><tr><th style="width: 50px;">IMG</th><th>ELEMENTO_SHOT_CALDO</th><th>ETIQUETA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>VALOR/UNIT</th><th>DOSIS & COSTO/PORCIÓN</th><th>VALOR_TOTAL</th><th>ACCIONES</th></tr></thead>
-                                            <tbody id="tabla-shots"></tbody>
-                                        </table>
+                                    <div class="mt-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                                            <span class="text-white-50 font-orbitron small" style="color:var(--p-magenta) !important;"><i class="bi bi-boxes me-1"></i> EXTRACTOS EN BODEGA (TARJETAS PLEGABLES)</span>
+                                            <small class="text-info font-orbitron"><i class="bi bi-info-circle me-1"></i> Haz clic en cualquier tarjeta para desplegar el detalle u operar</small>
+                                        </div>
+                                        <div id="tabla-shots" class="accordion d-flex flex-column gap-2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1414,23 +1183,12 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="table-responsive">
-                                        <table class="table text-center align-middle m-0">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th style="width: 60px;">IMG</th>
-                                                    <th>INGREDIENTE</th>
-                                                    <th>SUBCATEGORÍA</th>
-                                                    <th>NODO_BASE</th>
-                                                    <th>TAMAÑO_PORCIÓN</th>
-                                                    <th>RESERVA_PORCIONES</th>
-                                                    <th>PRECIO/PORCIÓN</th>
-                                                    <th>VALOR_TOTAL</th>
-                                                    <th>ACCIONES</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tabla-armatubatido"></tbody>
-                                        </table>
+                                    <div class="mt-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                                            <span class="text-white-50 font-orbitron small" style="color:var(--p-warning) !important;"><i class="bi bi-boxes me-1"></i> PORCIONES EN BODEGA (TARJETAS PLEGABLES)</span>
+                                            <small class="text-info font-orbitron"><i class="bi bi-info-circle me-1"></i> Haz clic en cualquier tarjeta para desplegar el detalle u operar</small>
+                                        </div>
+                                        <div id="tabla-armatubatido" class="accordion d-flex flex-column gap-2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1624,23 +1382,12 @@
                                             </button>
                                         </div>
                                     </div>
-                                    <div class="table-responsive">
-                                        <table class="table text-center align-middle m-0">
-                                            <thead class="table-dark">
-                                                <tr>
-                                                    <th style="width: 60px;">IMG</th>
-                                                    <th>INSUMO EXÓTICO</th>
-                                                    <th>SUBCATEGORÍA</th>
-                                                    <th>NODO_BASE</th>
-                                                    <th>RESERVA_STOCK</th>
-                                                    <th>PRECIO_BASE</th>
-                                                    <th>COSTO/PORCIÓN</th>
-                                                    <th>VALOR_TOTAL</th>
-                                                    <th>ACCIONES</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="tabla-exoticos"></tbody>
-                                        </table>
+                                    <div class="mt-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                                            <span class="text-white-50 font-orbitron small" style="color:#bd00ff !important;"><i class="bi bi-boxes me-1"></i> LÍNEA EXÓTICOS (TARJETAS PLEGABLES)</span>
+                                            <small class="text-info font-orbitron"><i class="bi bi-info-circle me-1"></i> Haz clic en cualquier tarjeta para desplegar el detalle u operar</small>
+                                        </div>
+                                        <div id="tabla-exoticos" class="accordion d-flex flex-column gap-2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -3921,6 +3668,141 @@
     }
 
     // --- INSUMOS (BODEGAS: PULPAS, VASOS, SHOTS/CALDOS, ARMA TU BATIDO) ---
+    
+    function renderizarTarjetaInsumo(i, tipo, cfg) {
+        const id = i.idInsumo;
+        const nombre = i.nombre || 'Insumo sin nombre';
+        const subcat = (i.subcategoria || i.categoria || cfg.labelCat).toUpperCase();
+        const nodo = i.sucursal || 'Antofagasta';
+        const img = cfg.urlInsumoImg;
+        const color = cfg.colorTheme;
+        const glow = cfg.glowBox;
+        const badgeBorder = cfg.borderImg;
+        const fallback = cfg.defaultFallback;
+        const dosisTxt = `${cfg.dosis} ${i.medida || 'gr'}`;
+        const costoPorcTxt = formatMoney(cfg.costoPorcion, nodo);
+        const precioBaseTxt = formatMoney(i.precio || 0, nodo);
+        const valorTotalTxt = formatMoney(cfg.valorInsumo, nodo);
+        const stockHtml = cfg.stockHTML;
+        const stockCant = (Number(i.unidadActual) || 0).toFixed(0);
+
+        return `
+        <div class="accordion-item insumo-tarjeta-item mb-2" id="card-insumo-${id}" style="background: rgba(4, 15, 30, 0.88); border: 1px solid ${color}; border-radius: 12px; overflow: hidden; box-shadow: ${glow};">
+            <div class="accordion-header" id="heading-ins-${id}">
+                <div class="accordion-button collapsed d-flex justify-content-between align-items-center py-2 px-3"
+                     data-bs-toggle="collapse"
+                     data-bs-target="#collapse-ins-${id}"
+                     aria-expanded="false"
+                     aria-controls="collapse-ins-${id}"
+                     style="cursor: pointer; background: transparent;">
+                     
+                     <!-- IZQUIERDA: MINIATURA + NOMBRE + BADGES -->
+                     <div class="d-flex align-items-center gap-3 flex-grow-1 overflow-hidden me-2">
+                         <div class="position-relative flex-shrink-0">
+                             <img src="${img}" id="img-insumo-${id}" class="rounded-3 border ${badgeBorder}" style="width: 48px; height: 48px; object-fit: cover; cursor: pointer;" title="Cambiar foto de este insumo" onclick="event.stopPropagation(); iniciarSubidaFotoInsumo(${id})" onerror="this.src='${fallback}'">
+                             <button type="button" class="btn btn-sm btn-dark position-absolute bottom-0 end-0 p-0 rounded-circle text-warning border border-warning" style="width: 18px; height: 18px; line-height: 16px; font-size: 10px;" onclick="event.stopPropagation(); iniciarSubidaFotoInsumo(${id})" title="Subir / Tomar foto"><i class="bi bi-camera-fill"></i></button>
+                         </div>
+                         <div class="overflow-hidden">
+                             <div class="fw-bold font-orbitron fs-5 text-white text-truncate">${nombre}</div>
+                             <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
+                                 <span class="badge-categoria" style="${cfg.colorBadge}">${subcat}</span>
+                                 <span class="badge bg-dark border border-cyan text-info" style="font-size:0.75rem;"><i class="bi bi-geo-alt me-1"></i>${nodo}</span>
+                                 ${stockHtml}
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- CENTRO: VALORES ECONÓMICOS -->
+                     <div class="d-flex align-items-center gap-3 me-3 flex-shrink-0 flex-wrap">
+                         <div class="text-end d-none d-md-block">
+                             <small class="text-white-50 d-block font-rajdhani" style="font-size:0.78rem;">PRECIO BASE</small>
+                             <span class="text-warning fw-bold fs-5 font-orbitron">${precioBaseTxt}</span>
+                         </div>
+                         <div class="text-end">
+                             <small class="text-white-50 d-block font-rajdhani" style="font-size:0.78rem;">COSTO PORCIÓN</small>
+                             <span class="text-info fw-bold fs-5 font-orbitron">${costoPorcTxt}</span>
+                         </div>
+                         <div class="text-end d-none d-sm-block">
+                             <small class="text-white-50 d-block font-rajdhani" style="font-size:0.78rem;">VALOR TOTAL</small>
+                             <span class="text-success fw-bold fs-5 font-orbitron" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${valorTotalTxt}</span>
+                         </div>
+                     </div>
+
+                     <!-- DERECHA: BOTONES DE ACCIÓN RÁPIDA Y CHEVRON -->
+                     <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                         <button class="btn btn-sm btn-outline-warning border-0 p-1" type="button" onclick="event.stopPropagation(); abrirCalculadoraConInsumo('${tipo}', ${id})" title="Calculadora de Porción y Margen Real 1-%"><i class="bi bi-calculator fs-4"></i></button>
+                         <button class="btn btn-sm btn-outline-info border-0 p-1" type="button" onclick="event.stopPropagation(); editarInsumo(${id})" title="Editar Insumo"><i class="bi bi-pencil-square fs-4"></i></button>
+                         <button class="btn btn-sm btn-outline-danger border-0 p-1" type="button" onclick="event.stopPropagation(); eliminarInsumo(${id})" title="Eliminar"><i class="bi bi-trash3-fill fs-4"></i></button>
+                         <span class="badge bg-dark border border-secondary text-info px-2 py-1 ms-1 font-orbitron d-none d-lg-inline" style="font-size:0.75rem;"><i class="bi bi-sliders me-1"></i> DETALLE</span>
+                     </div>
+                </div>
+            </div>
+
+            <!-- CUERPO DESPLEGABLE -->
+            <div id="collapse-ins-${id}" class="accordion-collapse collapse" aria-labelledby="heading-ins-${id}">
+                <div class="accordion-body p-3" style="background: rgba(0, 3, 10, 0.95); border-top: 1px dashed rgba(255,255,255,0.15);">
+                    <div class="row g-3 align-items-center">
+                        <!-- FOTO / MULTIMEDIA -->
+                        <div class="col-md-3 text-center">
+                            <div class="position-relative d-inline-block">
+                                <img src="${img}" class="rounded-3 border ${badgeBorder}" style="width: 110px; height: 110px; object-fit: cover;" onerror="this.src='${fallback}'">
+                                <button type="button" class="btn btn-sm btn-dark position-absolute bottom-0 end-0 p-1 rounded-circle text-warning border border-warning" onclick="iniciarSubidaFotoInsumo(${id})" title="Subir / Tomar foto"><i class="bi bi-camera-fill fs-6"></i></button>
+                            </div>
+                            <div class="mt-2">
+                                <button type="button" class="btn btn-xs btn-outline-info font-orbitron w-100 py-1" onclick="iniciarSubidaFotoInsumo(${id})">
+                                    <i class="bi bi-cloud-arrow-up-fill me-1"></i> CAMBIAR FOTO
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- MÉTRICAS & FICHA TÉCNICA -->
+                        <div class="col-md-6">
+                            <div class="row g-2">
+                                <div class="col-6 col-sm-3 p-2 border rounded bg-dark" style="border-color: rgba(255,255,255,0.1) !important;">
+                                    <small class="text-white-50 d-block font-rajdhani" style="font-size:0.75rem;">RESERVA STOCK</small>
+                                    <span class="fw-bold text-white fs-5 font-orbitron">${stockCant} <small class="text-white-50 fs-6">${i.medida || 'gr'}</small></span>
+                                </div>
+                                <div class="col-6 col-sm-3 p-2 border rounded bg-dark" style="border-color: rgba(255,255,255,0.1) !important;">
+                                    <small class="text-white-50 d-block font-rajdhani" style="font-size:0.75rem;">DOSIS PORCIÓN</small>
+                                    <span class="fw-bold text-info fs-5 font-orbitron">${dosisTxt}</span>
+                                </div>
+                                <div class="col-6 col-sm-3 p-2 border rounded bg-dark" style="border-color: rgba(255,255,255,0.1) !important;">
+                                    <small class="text-white-50 d-block font-rajdhani" style="font-size:0.75rem;">PRECIO / COMPRA</small>
+                                    <span class="fw-bold text-warning fs-5 font-orbitron">${precioBaseTxt}</span>
+                                </div>
+                                <div class="col-6 col-sm-3 p-2 border rounded bg-dark" style="border-color: rgba(255,255,255,0.1) !important;">
+                                    <small class="text-white-50 d-block font-rajdhani" style="font-size:0.75rem;">VALOR TOTAL BODEGA</small>
+                                    <span class="fw-bold text-success fs-5 font-orbitron">${valorTotalTxt}</span>
+                                </div>
+                            </div>
+                            <div class="mt-2 text-white-50 small font-rajdhani">
+                                <span>Línea: <b class="text-white">${i.categoria || cfg.labelCat}</b></span> • 
+                                <span>Subcategoría: <b class="text-white">${i.subcategoria || 'General'}</b></span> • 
+                                <span>Nodo Destino: <b class="text-info">${nodo}</b></span>
+                            </div>
+                        </div>
+
+                        <!-- ACCIONES OPERATIVAS -->
+                        <div class="col-md-3 d-flex flex-column gap-2">
+                            <button class="btn btn-sm btn-outline-warning w-100 font-orbitron text-start py-2" onclick="abrirCalculadoraConInsumo('${tipo}', ${id})">
+                                <i class="bi bi-calculator-fill me-1"></i> CALCULADORA 1-%
+                            </button>
+                            <button class="btn btn-sm btn-outline-info w-100 font-orbitron text-start py-2" onclick="editarInsumo(${id})">
+                                <i class="bi bi-pencil-square me-1"></i> EDITAR FORMULARIO
+                            </button>
+                            <button class="btn btn-sm btn-outline-light w-100 font-orbitron text-start py-2 text-white-50" onclick="verInsumoEnFormulas('${tipo}')">
+                                <i class="bi bi-flask me-1"></i> VER EN FÓRMULAS
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger w-100 font-orbitron text-start py-2" onclick="eliminarInsumo(${id})">
+                                <i class="bi bi-trash3-fill me-1"></i> ELIMINAR INSUMO
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+    }
+
     async function cargarInsumos() {
         try {
             const res = await fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' });
@@ -4146,6 +4028,24 @@
                 else if (tbPulpas) tbPulpas.innerHTML += rowPulpas;
             });
             
+
+            // Mensajes cuando una bodega no tiene insumos registrados
+            if (tbPulpas && tbPulpas.innerHTML === '') {
+                tbPulpas.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border border-success rounded" style="background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2 text-success"></i>NO HAY INSUMOS EN LA BODEGA DE PULPAS.</div>`;
+            }
+            if (tbVasos && tbVasos.innerHTML === '') {
+                tbVasos.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border border-info rounded" style="background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2 text-info"></i>NO HAY SUMINISTROS EN LA BODEGA DE VASOS Y PACKAGING.</div>`;
+            }
+            if (tbShots && tbShots.innerHTML === '') {
+                tbShots.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border border-danger rounded" style="background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2 text-danger"></i>NO HAY EXTRACTOS EN LA BODEGA DE SHOTS Y CALDOS.</div>`;
+            }
+            if (tbArmaTuBatido && tbArmaTuBatido.innerHTML === '') {
+                tbArmaTuBatido.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border border-warning rounded" style="background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2 text-warning"></i>NO HAY PORCIONES EN LA BODEGA DE ARMA TU BATIDO.</div>`;
+            }
+            if (tbExoticos && tbExoticos.innerHTML === '') {
+                tbExoticos.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border rounded" style="border-color: #bd00ff; background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2" style="color: #bd00ff;"></i>NO HAY INSUMOS EN LA BODEGA DE EXÓTICOS.</div>`;
+            }
+
             const sucMuestraPulpas = document.getElementById('ins-sucursal') ? document.getElementById('ins-sucursal').value : 'Antofagasta';
             const tbVPulpas = document.getElementById('total-valor-pulpas');
             if (tbVPulpas) tbVPulpas.innerText = formatMoney(totalPulpas, sucMuestraPulpas);
