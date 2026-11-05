@@ -811,7 +811,234 @@
 
                 <div class="table-container p-4">
                     <h5 class="text-money-green mb-4 fw-bold font-orbitron fs-4"><i class="bi bi-activity"></i> RESERVA VITAL Y ESTABILIDAD ORGÁNICA</h5>
-                    <div class="mt-3">
+                    <div class="table-responsive">
+                        <table class="table text-center align-middle" style="min-width: 900px;">
+                            <thead class="table-dark">
+                            <tr>
+                                <th style="width: 25%;">ELIXIR NATURAL</th>
+                                <th style="width: 10%;">STOCK</th>
+                                <th style="width: 15%;">GÉNESIS (ELAB)</th>
+                                <th style="width: 15%;">COLAPSO (VENC)</th>
+                                <th style="width: 35%;">BIOMARCADOR (ESTADO)</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tabla-produccion"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: TESORERÍA -->
+            <div class="tab-pane fade" id="tab-ventas" role="tabpanel">
+                <div class="table-container p-4 mb-4" style="border-top: 3px solid var(--p-warning);">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold font-orbitron" style="color: var(--p-warning);"><i class="bi bi-cash-stack"></i> MOTOR CONTABLE Y FLUJO DE CAPITAL</h5>
+                        <select id="tesoreria-sucursal" class="form-select auth-select w-auto" onchange="cargarTesoreria(); playSound('click')">
+                            <option value="Antofagasta">Nodo Antofagasta</option>
+                        </select>
+                    </div>
+
+                    <div class="row g-4 text-center mb-4">
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded-3" style="border-color: var(--p-eco-green) !important; background: rgba(0,255,166,0.1);">
+                                <h6 style="color:var(--p-eco-green); font-family:'Orbitron'; font-size:0.8rem;">CAJA EFECTIVO (TURNO)</h6>
+                                <h3 class="fw-bold text-white mb-0" id="tesoreria-efectivo">$0</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded-3" style="border-color: var(--p-cyan) !important; background: rgba(0,229,255,0.1);">
+                                <h6 style="color:var(--p-cyan); font-family:'Orbitron'; font-size:0.8rem;">BANCOS Y TRANSF. (TURNO)</h6>
+                                <h3 class="fw-bold text-white mb-0" id="tesoreria-bancos">$0</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded-3" style="border-color: #ff0055 !important; background: rgba(255,0,85,0.1);">
+                                <h6 style="color:#ff0055; font-family:'Orbitron'; font-size:0.8rem;">GASTOS DIARIOS (DEBE)</h6>
+                                <h3 class="fw-bold text-white mb-0" id="tesoreria-gastos">$0</h3>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded-3" style="border-color: var(--p-warning) !important; background: rgba(255,221,0,0.1); box-shadow: 0 0 15px rgba(255,221,0,0.3);">
+                                <h6 style="color:var(--p-warning); font-family:'Orbitron'; font-size:0.9rem;">UTILIDAD BRUTA (HABER)</h6>
+                                <h3 class="fw-bold text-white mb-0" id="tesoreria-utilidad">$0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end mb-4 d-flex justify-content-end gap-2 flex-wrap">
+                        <button class="btn btn-outline-info font-orbitron fw-bold" onclick="abrirLibroContable()"><i class="bi bi-journal-text me-2"></i> LIBRO CONTABLE Y MAYOR</button>
+                        <button class="btn btn-outline-light font-orbitron fw-bold" onclick="imprimirCierreCaja()"><i class="bi bi-printer me-2"></i> IMPRIMIR BALANCE ACTUAL</button>
+                        <button class="btn" style="background:var(--p-warning); color:#000; font-family:'Orbitron'; font-weight:bold;" onclick="ejecutarCierreAdmin()"><i class="bi bi-safe me-2"></i> EJECUTAR CIERRE ADMIN (RESET)</button>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="table-container">
+                            <h5 class="mb-4 fw-bold font-orbitron" style="color: var(--p-cyan);"><i class="bi bi-receipt"></i> LIBRO MAYOR: VENTAS (PENDIENTES)</h5>
+                            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                <table class="table text-center align-middle">
+                                    <thead class="table-dark"><tr><th>#TICKET</th><th>CANAL</th><th>MEDIO PAGO</th><th>INGRESO</th><th>STATUS</th></tr></thead>
+                                    <tbody id="tabla-historico-ventas"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="table-container">
+                            <h5 class="mb-4 fw-bold font-orbitron" style="color: #ff0055;"><i class="bi bi-graph-down"></i> REGISTRO DE GASTOS / PAGOS</h5>
+                            <div class="row g-2 mb-4">
+                                <div class="col-md-6"><input type="text" id="gasto-concepto" class="form-control bg-dark border-secondary text-white" placeholder="Ej: Pago de Luz"></div>
+                                <div class="col-md-4"><input type="number" id="gasto-monto" class="form-control bg-dark border-secondary text-white" placeholder="Monto"></div>
+                                <div class="col-md-2"><button class="btn btn-danger w-100" onclick="guardarGasto()"><i class="bi bi-plus-lg"></i></button></div>
+                            </div>
+                            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                <table class="table text-center align-middle">
+                                    <thead class="table-dark"><tr><th>CONCEPTO</th><th>EGRESO</th><th>ACCIÓN</th></tr></thead>
+                                    <tbody id="tabla-historico-gastos"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: RED CLIENTES (CRM) -->
+            <div class="tab-pane fade" id="tab-crm" role="tabpanel">
+                <div class="table-container mb-4" style="border-top: 3px solid var(--p-magenta);">
+                    <h5 class="mb-4 fw-bold font-orbitron" style="color: var(--p-magenta); text-shadow: var(--magenta-glow);"><i class="bi bi-person-plus"></i> REGISTRO DE NUEVO CLIENTE VIP</h5>
+                    <div class="row g-2">
+                        <input type="hidden" id="crm-id">
+                        <div class="col-md-2"><label class="form-label-neon">Identificación</label><input type="text" id="crm-nombre" class="form-control" placeholder="Nombre completo"></div>
+                        <div class="col-md-2"><label class="form-label-neon">Teléfono</label><input type="text" id="crm-tel" class="form-control" placeholder="WhatsApp"></div>
+                        <div class="col-md-2"><label class="form-label-neon">Dirección</label><input type="text" id="crm-dir" class="form-control" placeholder="Envío"></div>
+                        <div class="col-md-2"><label class="form-label-neon">Correo (Opc)</label><input type="email" id="crm-correo" class="form-control" placeholder="@"></div>
+                        <div class="col-md-2"><label class="form-label-neon">F Nacimiento</label><input type="date" id="crm-cumple" class="form-control"></div>
+                        <div class="col-md-1"><label class="form-label-neon text-warning">Pts</label><input type="number" id="crm-puntos" class="form-control border-warning bg-dark fw-bold text-warning text-center" placeholder="0"></div>
+                        <div class="col-md-1">
+                            <label class="form-label-neon">Nodo</label><select id="crm-nodo" class="form-select auth-select"><option value="Antofagasta">Antofagasta</option></select>
+                        </div>
+                        <div class="col-md-12 mt-2"><button class="btn btn-bio w-100 py-2 fs-5" onclick="guardarCliente()"><i class="bi bi-person-fill-up me-2"></i> REGISTRAR O ACTUALIZAR CLIENTE (BD)</button></div>
+                    </div>
+                </div>
+                <div class="table-container p-0 border-0 bg-transparent box-shadow-none">
+                    <div class="table-responsive">
+                        <table class="table text-center align-middle m-0 text-nowrap">
+                            <thead class="table-dark"><tr><th>CLIENTE</th><th>CONTACTO</th><th>CORREO / UBICACIÓN</th><th>MARKETING</th><th>NODO_BASE</th><th>ADMIN</th></tr></thead>
+                            <tbody id="tabla-crm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: BODEGA BOTÁNICA (INVENTARIO DE INSUMOS) -->
+            <div class="tab-pane fade" id="tab-inventario" role="tabpanel">
+                <div class="d-flex justify-content-end mb-3">
+                    <button class="btn btn-outline-warning font-orbitron fw-bold px-4" onclick="abrirModalKardex()"><i class="bi bi-clock-history me-2"></i> VER KARDEX / AUDITORÍA</button>
+                </div>
+
+                <div class="accordion" id="accordionInventario">
+
+                    <!-- 1. BODEGA: PULPAS -->
+                    <div class="accordion-item bg-transparent border-0 mb-4">
+                        <h2 class="accordion-header" id="headingPulpas">
+                            <button class="accordion-button font-orbitron fw-bold d-flex justify-content-between align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePulpas" aria-expanded="true" aria-controls="collapsePulpas" style="background: rgba(0,255,0,0.05); border: 1px solid var(--p-bio-green); color: var(--p-bio-green); box-shadow: 0 0 10px rgba(0,255,0,0.2);">
+                                <span><i class="bi bi-tree me-2"></i> REGISTRO BOTÁNICO: MATERIA PRIMA (PULPAS)</span>
+                                <span id="badge-alerta-pulpas" class="ms-2"></span>
+                            </button>
+                        </h2>
+                        <div id="collapsePulpas" class="accordion-collapse collapse show" aria-labelledby="headingPulpas" data-bs-parent="#accordionInventario">
+                            <div class="accordion-body p-0 pt-3">
+                                <div class="table-container mb-0" style="border-top: 3px solid var(--p-bio-green);">
+                                    <div class="d-flex justify-content-between align-items-center mb-3 mt-2 flex-wrap gap-2">
+                                        <button type="button" class="btn btn-sm btn-outline-success font-orbitron fw-bold px-3 py-2" onclick="toggleCalculadoraBodega('pulpas')" style="box-shadow: 0 0 10px rgba(0,255,166,0.25);">
+                                            <i class="bi bi-calculator-fill me-2 text-success fs-5"></i> CALCULADORA DE PORCIÓN & MARGEN REAL (1 - %)
+                                        </button>
+                                        <div class="p-2 border rounded" style="border-color: var(--p-bio-green) !important; background: rgba(0,255,166,0.1); box-shadow: 0 0 10px rgba(0,255,166,0.2);">
+                                            <span style="color:var(--p-bio-green); font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
+                                            <span class="fw-bold text-white fs-4" id="total-valor-pulpas" style="text-shadow: 0 0 10px rgba(0,255,166,0.5);">$0</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- CALCULADORA DE PORCIÓN & MARGEN REAL 1-% (PULPAS) -->
+                                    <div id="calc-container-pulpas" class="p-3 mb-4 rounded-3" style="display: none; background: rgba(5, 18, 10, 0.95); border: 2px solid var(--p-bio-green); box-shadow: 0 0 20px rgba(0,255,166,0.25);">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary">
+                                            <h6 class="font-orbitron fw-bold m-0" style="color: var(--p-bio-green);">
+                                                <i class="bi bi-calculator-fill me-2"></i> CALCULADORA DE COSTO POR PORCIÓN & MARGEN REAL (1 - %) • PULPAS
+                                            </h6>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-sm btn-outline-success font-rajdhani" onclick="sincronizarConFormulario('pulpas')">
+                                                    <i class="bi bi-arrow-repeat me-1"></i> Cargar del Formulario
+                                                </button>
+                                                <button type="button" class="btn-close btn-close-white" onclick="toggleCalculadoraBodega('pulpas')"></button>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3">
+                                            <div class="col-md-3">
+                                                <label class="form-label-neon small">Modo de Insumo</label>
+                                                <select id="calc-pulpas-modo" class="form-select form-select-sm" onchange="calcularPorcionMargenBodega('pulpas')">
+                                                    <option value="kilo">Kilo (1000 gr) -> Dosis en gr</option>
+                                                    <option value="litro">Litro (1000 ml) -> Dosis en ml</option>
+                                                    <option value="unidad">Unidad (und) -> Dosis en und</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label-neon small" id="calc-pulpas-label-precio">Precio por Kilo ($ CLP)</label>
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-text bg-dark text-success border-success">$</span>
+                                                    <input type="number" id="calc-pulpas-precio-total" class="form-control text-success fw-bold" placeholder="Ej: 5000" oninput="calcularPorcionMargenBodega('pulpas')">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label-neon small" id="calc-pulpas-label-dosis">Porción / Dosis usada (gr)</label>
+                                                <input type="number" id="calc-pulpas-cantidad-porcion" class="form-control form-control-sm text-white fw-bold" placeholder="Ej: 50" oninput="calcularPorcionMargenBodega('pulpas')">
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label-neon small" style="color:var(--p-magenta);">% Margen Real Deseado</label>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="number" id="calc-pulpas-pct-margen" class="form-control text-magenta fw-bold" placeholder="Ej: 40" value="40" min="1" max="99" oninput="calcularPorcionMargenBodega('pulpas')">
+                                                    <span class="input-group-text bg-dark text-magenta border-secondary">%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 mt-2 pt-2 border-top border-secondary">
+                                            <div class="col-md-4">
+                                                <div class="p-2 rounded bg-black border border-secondary text-center">
+                                                    <small class="text-white-50 d-block font-orbitron" style="font-size:0.75rem;">COSTO POR PORCIÓN</small>
+                                                    <span class="fs-4 fw-bold font-orbitron text-success" id="calc-pulpas-res-costo">$0</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="p-2 rounded bg-black border border-secondary text-center">
+                                                    <small class="text-white-50 d-block font-orbitron" style="font-size:0.75rem;">PRECIO VENTA RECOMENDADO (1 - %)</small>
+                                                    <span class="fs-4 fw-bold font-orbitron text-warning" id="calc-pulpas-res-pvp">$0</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="p-2 rounded bg-black border border-secondary text-center">
+                                                    <small class="text-white-50 d-block font-orbitron" style="font-size:0.75rem;">MARGEN BRUTO REAL EN PESOS</small>
+                                                    <span class="fs-4 fw-bold font-orbitron text-info" id="calc-pulpas-res-ganancia">$0</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- FORMULARIO DE ALTA DE INSUMO PULPAS -->
+                                    <div class="row g-3 mb-4 mt-1">
+                                        <input type="hidden" id="ins-id">
+                                        <div class="col-md-2"><label class="form-label-neon">Biología / Pulpa</label><input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Espinaca, Apio"></div>
+                                        <div class="col-md-2"><label class="form-label-neon">Familia / Subcategoría</label><input type="text" id="ins-subcategoria" class="form-control" placeholder="Ej: Hojas Verdes"></div>
+                                        <div class="col-md-1"><label class="form-label-neon">Métrica</label><select id="ins-unidad" class="form-select"><option value="gr">Gramos</option><option value="mls">Mililitros</option><option value="und">Unidades</option></select></div>
+                                        <div class="col-md-1"><label class="form-label-neon">Dosis (Porc)</label><input type="number" id="ins-dosis" class="form-control text-center" placeholder="50"></div>
+                                        <div class="col-md-1"><label class="form-label-neon">Stock Real</label><input type="number" id="ins-stock" class="form-control text-center" placeholder="1000"></div>
+                                        <div class="col-md-2"><label class="form-label-neon">Precio Kilo/Litro</label><input type="number" id="ins-precio" class="form-control text-center" placeholder="5000"></div>
+                                        <div class="col-md-2"><label class="form-label-neon">Nodo Base</label><select id="ins-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
+                                        <div class="col-md-2 d-none"><input type="text" id="ins-imagen" class="form-control"></div>
+                                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background:var(--p-bio-green); color:#000;" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg fs-4"></i></button></div>
+                                    </div>
+
+                                    <div class="mt-3">
                                         <div class="d-flex justify-content-between align-items-center mb-2 px-1">
                                             <span class="text-white-50 font-orbitron small" style="color:var(--p-bio-green) !important;"><i class="bi bi-boxes me-1"></i> INSUMOS EN BODEGA (TARJETAS PLEGABLES)</span>
                                             <small class="text-info font-orbitron"><i class="bi bi-info-circle me-1"></i> Haz clic en cualquier tarjeta para desplegar el detalle u operar</small>
@@ -2260,14 +2487,33 @@
         const zonaImp = document.getElementById('impresion-zona');
         if(zonaImp) zonaImp.innerHTML = '';
         document.querySelectorAll('#pdf-render-sandbox').forEach(el => el.remove());
+
+        // Auto-reconexión de sesión para que el operador no sufra pantallas oscuras tras refrescar
+        try {
+            const rawAuth = localStorage.getItem('raices_admin_auth');
+            if (rawAuth) {
+                const parsed = JSON.parse(rawAuth);
+                if (parsed && parsed.user && parsed.pass) {
+                    const uInp = document.getElementById('input-usuario');
+                    const pInp = document.getElementById('input-clave');
+                    if (uInp && pInp) {
+                        uInp.value = parsed.user;
+                        pInp.value = parsed.pass;
+                        validarAcceso(true);
+                    }
+                }
+            }
+        } catch(e) {
+            console.warn('Auto-login error:', e);
+        }
     });
 
     const normalizarStr = (str) => str ? str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : '';
 
-    function validarAcceso() {
-        playSound('magic');
-        const userRaw = document.getElementById('input-usuario').value.trim();
-        const pass = document.getElementById('input-clave').value.trim();
+    function validarAcceso(silent = false) {
+        if (!silent) playSound('magic');
+        const userRaw = (document.getElementById('input-usuario')?.value || '').trim();
+        const pass = (document.getElementById('input-clave')?.value || '').trim();
         const userNorm = normalizarStr(userRaw);
 
         let rol = null, etiqueta = null, sucursalBase = null, msgVoz = "";
@@ -2292,35 +2538,71 @@
             rol = 'ADMIN'; etiqueta = 'ADMIN ANTOFAGASTA'; sucursalBase = 'Antofagasta';
             msgVoz = "Hola Hermana, lista para iniciar la operación con la mejor energía.";
         }
-        else { playSound('error'); document.getElementById('error-login').style.display='block'; return; }
+        else {
+            if (!silent) {
+                playSound('error');
+                const err = document.getElementById('error-login');
+                if (err) err.style.display = 'block';
+            }
+            try { localStorage.removeItem('raices_admin_auth'); } catch(e) {}
+            return;
+        }
 
-        playSound('success'); rolUsuario = rol; sucursalAdmin = sucursalBase;
+        try {
+            localStorage.setItem('raices_admin_auth', JSON.stringify({ user: userRaw, pass: pass, time: Date.now() }));
+        } catch(e) {}
 
-        if ('speechSynthesis' in window && msgVoz !== "") {
+        if (!silent) playSound('success');
+        rolUsuario = rol;
+        sucursalAdmin = sucursalBase;
+
+        if (!silent && 'speechSynthesis' in window && msgVoz !== "") {
             const voz = new SpeechSynthesisUtterance(msgVoz);
             voz.lang = 'es-ES';
             voz.rate = 1.0;
             window.speechSynthesis.speak(voz);
         }
 
-        document.getElementById('login-screen').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app-dashboard').style.display = 'block';
-            setTimeout(() => { document.getElementById('app-dashboard').style.opacity = '1'; }, 50);
-            document.getElementById('label-rol').innerText = etiqueta;
+        const loginScreen = document.getElementById('login-screen');
+        const appDashboard = document.getElementById('app-dashboard');
 
-            // MOSTRAR MICRÓFONO AL ENTRAR
+        if (silent) {
+            if (loginScreen) { loginScreen.style.opacity = '0'; loginScreen.style.display = 'none'; }
+            if (appDashboard) { appDashboard.style.display = 'block'; appDashboard.style.opacity = '1'; }
+            const lbl = document.getElementById('label-rol');
+            if (lbl) lbl.innerText = etiqueta;
             if('webkitSpeechRecognition' in window) {
-                document.getElementById('btn-mic-admin').style.display = 'flex';
+                const btnM = document.getElementById('btn-mic-admin');
+                if (btnM) btnM.style.display = 'flex';
             }
+            try { aplicarSeguridad(); } catch(e) { console.error('Seguridad error:', e); }
+            try { cargarProduccion(); } catch(e) { console.error('Produccion error:', e); }
+            try { cargarTesoreria(); } catch(e) { console.error('Tesoreria error:', e); }
+            try { cargarInsumos(); } catch(e) { console.error('Insumos error:', e); }
+            try { verificarMigracionNecesaria(); } catch(e) { console.error('Migracion error:', e); }
+        } else {
+            if (loginScreen) loginScreen.style.opacity = '0';
+            setTimeout(() => {
+                if (loginScreen) loginScreen.style.display = 'none';
+                if (appDashboard) {
+                    appDashboard.style.display = 'block';
+                    setTimeout(() => { appDashboard.style.opacity = '1'; }, 50);
+                }
+                const lbl = document.getElementById('label-rol');
+                if (lbl) lbl.innerText = etiqueta;
 
-            aplicarSeguridad();
-            cargarProduccion();
-            cargarTesoreria(); // Para tener data lista para el asistente
-            cargarInsumos(); // Para tener data lista para el asistente
-            verificarMigracionNecesaria();
-        }, 800);
+                if('webkitSpeechRecognition' in window) {
+                    const btnM = document.getElementById('btn-mic-admin');
+                    if (btnM) btnM.style.display = 'flex';
+                }
+
+                try { aplicarSeguridad(); } catch(e) { console.error('Seguridad error:', e); }
+                try { cargarProduccion(); } catch(e) { console.error('Produccion error:', e); }
+                try { cargarTesoreria(); } catch(e) { console.error('Tesoreria error:', e); }
+                try { cargarInsumos(); } catch(e) { console.error('Insumos error:', e); }
+                try { verificarMigracionNecesaria(); } catch(e) { console.error('Migracion error:', e); }
+            }, 500);
+        }
     }
 
     // =======================================================
@@ -2501,7 +2783,7 @@
             data = deduplicarProductos(data.filter(p => esPulpaOPack(p)));
 
             produccionGlobal = data; // Guardamos para el asistente
-            const tb = document.getElementById('tabla-produccion'); tb.innerHTML='';
+            const tb = document.getElementById('tabla-produccion'); if (!tb) return; tb.innerHTML='';
 
             data.forEach(p => {
                 const sucProd = normalizarStr(p.sucursal);
@@ -3764,7 +4046,7 @@
     let baseCRM = [];
 
     async function cargarCRM() {
-        const tb = document.getElementById('tabla-crm'); tb.innerHTML='';
+        const tb = document.getElementById('tabla-crm'); if (!tb) return; tb.innerHTML='';
         try {
             const res = await fetch('/api/clientes');
             if (res.ok) {
