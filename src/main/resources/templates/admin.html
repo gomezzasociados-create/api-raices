@@ -2363,15 +2363,60 @@
     // =======================================================
     // SINTETIZADOR GENÉTICO (PRODUCCIÓN CON FECHAS)
     // =======================================================
+    const NOMBRES_INSUMOS_CRUDOS_SET = new Set([
+        'agua de coco', 'espinaca', 'apio', 'pepino', 'manzana verde', 'limon', 'limón', 'jengibre', 'menta', 'piña',
+        'semillas de calabaza', 'papaya', 'ajo', 'betarraga', 'zanahoria', 'naranja', 'platano', 'plátano', 'avena',
+        'mantequilla de mani', 'mantequilla de maní', 'cilantro', 'perejil', 'espirulina', 'chlorella',
+        'vaso biodegradable 500ml', 'tapa domo compostable', 'bombilla de bambu / polipapel', 'bombilla de bambú / polipapel', 'bolsa kraft ecologica', 'bolsa kraft ecológica',
+        'caldo de huesos', 'jengibre concentrado', 'curcuma concentrada', 'cúrcuma concentrada', 'pimienta negra', 'limon concentrado', 'limón concentrado', 'berries prensados', 'botellita shot 60ml', 'tapa botellita 60ml',
+        'pulpa de pitahaya dragon', 'pulpa de pitahaya dragón', 'acai puro del amazonas', 'açai puro del amazonas', 'camu camu silvestre', 'guarana en polvo', 'guaraná en polvo', 'leche de coco cremosa', 'botella cristal exoticos 350ml', 'botella cristal exóticos 350ml', 'tapa dorada hermetica', 'tapa dorada hermética',
+        'porcion proteina vegana', 'porción proteína vegana', 'porcion creatina creapure', 'porción creatina creapure', 'porcion semillas de chia', 'porción semillas de chía', 'porcion colageno hidrolizado', 'porción colágeno hidrolizado', 'porcion frutos rojos silvestres', 'porción frutos rojos silvestres', 'porcion cacao organico', 'porción cacao orgánico'
+    ]);
+
+    function esInsumoCrudo(nombre) {
+        if (!nombre) return false;
+        const norm = normalizarStr(nombre);
+        if (norm.startsWith('porcion') || norm.includes('insumo') || norm.includes('packaging') || norm.includes('vaso') || norm.includes('tapa ') || norm.includes('botellita') || norm.includes('bombilla') || norm.includes('bolsa ')) return true;
+        for (const ins of NOMBRES_INSUMOS_CRUDOS_SET) {
+            const insNorm = normalizarStr(ins);
+            if (norm === insNorm || (norm.startsWith(insNorm) && !norm.includes('pulpas') && !norm.includes('pack') && !norm.includes('imperial'))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function clasificarProductoMatriz(p) {
+        const catNorm = normalizarStr(p.categoria || '');
+        const nomNorm = normalizarStr(p.nombre || '');
+
+        if (catNorm.includes('exot') || nomNorm.includes('exot') || nomNorm.includes('pitahaya') || nomNorm.includes('dragon')) {
+            return { key: 'Exóticos', nombre: 'Exóticos', esExotico: true };
+        }
+        if (catNorm.includes('shot') || nomNorm.includes('shot')) {
+            return { key: 'Shots', nombre: 'Shots', esShot: true };
+        }
+        if (catNorm.includes('pack') || nomNorm.includes('pack') || nomNorm.startsWith('pulpas ') || nomNorm.includes('pulpa')) {
+            return { key: 'Packs', nombre: 'Pack de Pulpas', esPack: true };
+        }
+        return { key: '500 mls', nombre: 'Elíxires (500 mls)', es500: true };
+    }
+
     function esPulpaOPack(p) {
         if (!p) return false;
         const n = normalizarStr(p.nombre || '');
         const c = normalizarStr(p.categoria || '');
-        // Excluir materias primas e insumos de bodega
+
+        // 1. Excluir materias primas e insumos de bodega
+        if (esInsumoCrudo(n)) return false;
         if (c.includes('arma') || c.includes('batido') || n.includes('arma') || n.includes('porci') || c.includes('vaso') || c.includes('packaging')) return false;
-        if (c.includes('shot') || c.includes('caldo') || c.includes('500') || c.includes('elixir') || n.includes('shot') || c.includes('exot') || n.includes('exot')) return false;
-        // Génesis de Producción contiene estrictamente la línea de Pulpas y Packs de Pulpas
-        return c.includes('pack') || c.includes('pulpa') || n.includes('pulpa') || n.includes('pack');
+        if (c.includes('shot') || c.includes('caldo') || c.includes('500') || c.includes('elixir') || n.includes('shot') || c.includes('exot') || n.includes('exot') || n.includes('pitahaya') || n.includes('dragon')) return false;
+
+        // 2. Génesis de Producción contiene estrictamente la línea de Pulpas y Packs de Pulpas terminados
+        const pulpasValidas = ['pulpas detox', 'pulpas desparasitantes', 'pulpas cardio', 'pulpas gainer', 'pulpas quelantes', 'pack 10 pulpas', 'pack 20 pulpas', 'pack 30 pulpas', 'pack 10', 'pack 20', 'pack 30'];
+        if (pulpasValidas.some(pv => n.includes(pv))) return true;
+
+        return (n.startsWith('pulpas ') || n.includes('pack')) && !n.includes('vaso') && !n.includes('botell');
     }
 
     function esProductoProduccion(p) {
@@ -5209,6 +5254,7 @@
                 const nom = (p.nombre || '').toLowerCase();
                 const desc = (p.descripcion || '').toLowerCase();
                 // Purgar insumos de bodega, materias primas y personalizados
+                if (esInsumoCrudo(nom)) return false;
                 if (cat.includes('personalizado') || cat.includes('custom') || cat.includes('tesoreria')) return false;
                 if (cat.includes('arma') || cat.includes('porcion') || nom.includes('porcion') || nom.includes('porción') || desc.includes('conectado a bodega')) return false;
                 if (nom.startsWith('batido armado') || nom.startsWith('batido personalizado')) return false;
@@ -5244,28 +5290,23 @@
                 const classInput = esSupremo ? 'input-matriz' : 'input-matriz border-0 text-white-50 pointer-events-none';
                 const classPrecio = esSupremo ? 'input-matriz text-money-green' : 'input-matriz border-0 text-money-green pointer-events-none';
 
-                const catActual = p.categoria || '500 mls';
-                const catNorm = (catActual || '').toLowerCase();
-                const nomNorm = (p.nombre || '').toLowerCase();
-                const esPack = catNorm.includes('pack') || catNorm.includes('pulpa') || nomNorm.includes('pulpa');
-                const esArma = catNorm.includes('arma') || catNorm.includes('batido');
-                const esShot = catNorm.includes('shot');
-                const esExotico = catNorm.includes('exot') || nomNorm.includes('exot');
-                const es500 = (!esPack && !esShot && !esArma && !esExotico) || catNorm.includes('500') || catNorm.includes('elixir');
-                const catMostrar = esExotico ? 'Exóticos' : (esPack ? 'Pack de Pulpas' : (esArma ? 'Arma tu Batido' : (esShot ? 'Shots' : 'Elíxires (500 mls)')));
+                const clasif = clasificarProductoMatriz(p);
+                const catActual = clasif.key;
+                const catMostrar = clasif.nombre;
+                const es500 = clasif.es500;
+                const esPack = clasif.esPack;
+                const esShot = clasif.esShot;
+                const esExotico = clasif.esExotico;
                 const badgeStockHeader = es500
                     ? `<span class="badge bg-dark border border-cyan text-info" style="font-size:0.75rem;" id="header-stock-${p.id}" title="Stock físico sincronizado con Bodega: Vasos y Packaging (500 mls)"><i class="bi bi-cup-straw me-1"></i>Stock Vasos: ${p.stock || 0}</span>`
                     : `<span class="badge bg-dark border border-success text-success" style="font-size:0.75rem;" id="header-stock-${p.id}"><i class="bi bi-box-seam me-1"></i>Stock: ${p.stock || 0}</span>`;
 
                 let optionsCat = `
-                    <option value="500 mls" ${catActual==='500 mls' || (!esPack && !esShot && !esArma && !esExotico) ? 'selected' : ''}>Elíxires (500 mls)</option>
-                    <option value="Packs" ${esPack ? 'selected' : ''}>Pack de Pulpas</option>
-                    <option value="Shots" ${esShot ? 'selected' : ''}>Shots</option>
-                    <option value="Exóticos" ${esExotico ? 'selected' : ''}>Exóticos</option>
+                    <option value="500 mls" ${catActual === '500 mls' ? 'selected' : ''}>Elíxires (500 mls)</option>
+                    <option value="Packs" ${catActual === 'Packs' ? 'selected' : ''}>Pack de Pulpas</option>
+                    <option value="Shots" ${catActual === 'Shots' ? 'selected' : ''}>Shots</option>
+                    <option value="Exóticos" ${catActual === 'Exóticos' ? 'selected' : ''}>Exóticos</option>
                 `;
-                if (catActual && !['500 mls', 'Packs', 'Shots', 'Exóticos'].includes(catActual) && !esPack && !esArma && !esShot && !esExotico) {
-                    optionsCat += `<option value="${catActual}" selected>${catActual}</option>`;
-                }
 
                 // 1. RENDERIZAR EN TARJETA ACORDEÓN (VISTA PRINCIPAL DETALLADA)
                 if (acordeonCont) {
@@ -5280,7 +5321,7 @@
                     `;
 
                     acordeonCont.innerHTML += `
-                        <div class="accordion-item catalogo-acordeon-item" id="item-prod-${p.id}" data-id="${p.id}" data-categoria="${catActual}" data-nombre="${(p.nombre || '').toLowerCase()}">
+                        <div class="accordion-item catalogo-acordeon-item" id="item-prod-${p.id}" data-id="${p.id}" data-categoria="${clasif.key}" data-nombre="${(p.nombre || '').toLowerCase()}">
                             <div class="accordion-header" id="heading-${p.id}">
                                 <div class="accordion-button collapsed d-flex justify-content-between align-items-center py-2 px-3"
                                      data-bs-toggle="collapse"
@@ -5779,20 +5820,15 @@
             if (categoriaFiltroMatriz !== 'TODAS') {
                 const f = categoriaFiltroMatriz.toLowerCase();
                 if (f === 'packs') {
-                    coincideCat = cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa');
+                    coincideCat = (cat === 'packs');
                 } else if (f === '500 mls') {
-                    const esPackOPulpa = cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa');
-                    const esArma = cat.includes('arma') || cat.includes('batido');
-                    const esExot = cat.includes('exot') || nom.includes('exot');
-                    coincideCat = !esPackOPulpa && !esArma && !esExot && (cat.includes('500') || !cat);
-                } else if (f.includes('arma') || f.includes('batido')) {
-                    coincideCat = cat.includes('arma') || cat.includes('batido');
-                } else if (f.includes('shot')) {
-                    coincideCat = cat.includes('shot');
+                    coincideCat = (cat === '500 mls');
+                } else if (f === 'shots') {
+                    coincideCat = (cat === 'shots');
                 } else if (f.includes('exot')) {
-                    coincideCat = cat.includes('exot') || nom.includes('exot');
+                    coincideCat = cat.includes('exot');
                 } else {
-                    coincideCat = cat.includes(f);
+                    coincideCat = (cat === f);
                 }
             }
 
@@ -5806,7 +5842,12 @@
 
         const contador = document.getElementById('contador-catalogo-matriz');
         if (contador) {
-            contador.innerText = `MOSTRANDO ${visibles} DE ${items.length} ELÍXIRES EN MATRIZ`;
+            let label = 'PRODUCTOS';
+            if (categoriaFiltroMatriz === '500 mls') label = 'ELÍXIRES';
+            else if (categoriaFiltroMatriz === 'Packs') label = 'PACKS DE PULPAS';
+            else if (categoriaFiltroMatriz === 'Shots') label = 'SHOTS';
+            else if (categoriaFiltroMatriz.toLowerCase().includes('exot')) label = 'EXÓTICOS';
+            contador.innerText = `MOSTRANDO ${visibles} DE ${items.length} ${label} EN MATRIZ`;
         }
     }
 

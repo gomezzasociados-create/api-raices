@@ -1624,26 +1624,50 @@
             return;
         }
 
+        const NOMBRES_INSUMOS_CRUDOS_SET = new Set([
+            'agua de coco', 'espinaca', 'apio', 'pepino', 'manzana verde', 'limon', 'limón', 'jengibre', 'menta', 'piña',
+            'semillas de calabaza', 'papaya', 'ajo', 'betarraga', 'zanahoria', 'naranja', 'platano', 'plátano', 'avena',
+            'mantequilla de mani', 'mantequilla de maní', 'cilantro', 'perejil', 'espirulina', 'chlorella',
+            'vaso biodegradable 500ml', 'tapa domo compostable', 'bombilla de bambu / polipapel', 'bombilla de bambú / polipapel', 'bolsa kraft ecologica', 'bolsa kraft ecológica',
+            'caldo de huesos', 'jengibre concentrado', 'curcuma concentrada', 'cúrcuma concentrada', 'pimienta negra', 'limon concentrado', 'limón concentrado', 'berries prensados', 'botellita shot 60ml', 'tapa botellita 60ml',
+            'pulpa de pitahaya dragon', 'pulpa de pitahaya dragón', 'acai puro del amazonas', 'açai puro del amazonas', 'camu camu silvestre', 'guarana en polvo', 'guaraná en polvo', 'leche de coco cremosa', 'botella cristal exoticos 350ml', 'botella cristal exóticos 350ml', 'tapa dorada hermetica', 'tapa dorada hermética',
+            'porcion proteina vegana', 'porción proteína vegana', 'porcion creatina creapure', 'porción creatina creapure', 'porcion semillas de chia', 'porción semillas de chía', 'porcion colageno hidrolizado', 'porción colágeno hidrolizado', 'porcion frutos rojos silvestres', 'porción frutos rojos silvestres', 'porcion cacao organico', 'porción cacao orgánico'
+        ]);
+
+        function esInsumoCrudo(nombre) {
+            if (!nombre) return false;
+            const norm = normalizarStr(nombre);
+            if (norm.startsWith('porcion') || norm.includes('insumo') || norm.includes('packaging') || norm.includes('vaso') || norm.includes('tapa ') || norm.includes('botellita') || norm.includes('bombilla') || norm.includes('bolsa ')) return true;
+            for (const ins of NOMBRES_INSUMOS_CRUDOS_SET) {
+                const insNorm = normalizarStr(ins);
+                if (norm === insNorm || (norm.startsWith(insNorm) && !norm.includes('pulpas') && !norm.includes('pack') && !norm.includes('imperial'))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         let lista = productosRaw.filter(p => {
             const cat = normalizarStr(p.categoria || '');
             const nom = normalizarStr(p.nombre || '');
             const f = normalizarStr(filtroActual);
             
-            // Los ingredientes de "Arma tu Batido" pertenecen exclusivamente a la sección interactiva Arma tu Batido
+            // Los insumos crudos y de "Arma tu Batido" pertenecen exclusivamente a sus bodegas
+            if (esInsumoCrudo(nom)) return false;
             if (cat.includes('arma') || cat.includes('batido') || cat.includes('porcion') || nom.includes('porcion') || nom.includes('porción')) {
                 return false;
             }
 
-            const esExotico = cat.includes('exot') || nom.includes('exot');
-            const esPulpa = cat.includes('pulpa') || nom.includes('pulpa');
-            const esPack = cat.includes('pack') || cat.includes('16') || esPulpa;
+            const esExotico = cat.includes('exot') || nom.includes('exot') || nom.includes('pitahaya') || nom.includes('dragon');
+            const esPulpa = nom.startsWith('pulpas ') || nom.includes('pack') || nom.includes('pulpas');
+            const esPack = cat.includes('pack') || esPulpa;
             const esShot = cat.includes('shot') || nom.includes('shot');
 
             if (f.includes('exot')) {
                 return esExotico;
             }
             if (f.includes('pack') || f.includes('pulpa')) {
-                return esPack && !esExotico;
+                return esPack && !esExotico && !esShot;
             }
             if (f.includes('shot')) {
                 return esShot && !esPack && !esExotico;

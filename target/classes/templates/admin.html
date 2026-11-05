@@ -220,72 +220,202 @@
             100% { transform: scale(1); }
         }
 
-        /* ESTILOS CATÁLOGO EN TARJETAS ACORDEÓN */
+        /* =========================================================================
+           TARJETAS DE MATRIZ TOTAL & BODEGAS (DISEÑO BIEN DIMENSIONADO & ESTÉTICO)
+           ========================================================================= */
+
+        /* --- 1. MATRIZ TOTAL: TARJETAS ACORDEÓN --- */
         .catalogo-acordeon-item {
-            background: rgba(0, 7, 16, 0.92) !important;
+            background: linear-gradient(135deg, rgba(6, 18, 36, 0.95) 0%, rgba(2, 8, 20, 0.98) 100%) !important;
             border: 1px solid rgba(0, 229, 255, 0.25) !important;
             border-radius: 12px !important;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         .catalogo-acordeon-item:hover {
-            border-color: var(--p-cyan) !important;
-            box-shadow: 0 8px 30px rgba(0, 229, 255, 0.2);
+            border-color: rgba(0, 229, 255, 0.6) !important;
+            box-shadow: 0 6px 22px rgba(0, 229, 255, 0.2) !important;
             transform: translateY(-2px);
         }
         .catalogo-acordeon-item .accordion-button {
-            background: linear-gradient(90deg, rgba(1, 16, 32, 0.95), rgba(0, 6, 14, 0.95)) !important;
-            color: #fff !important;
-            padding: 14px 18px;
-            box-shadow: none !important;
+            background: transparent !important;
+            color: #ffffff !important;
+            padding: 10px 18px !important;
             border: none !important;
+            box-shadow: none !important;
         }
         .catalogo-acordeon-item .accordion-button:not(.collapsed) {
-            background: linear-gradient(90deg, rgba(255, 0, 234, 0.12), rgba(0, 229, 255, 0.08)) !important;
-            border-bottom: 1px solid rgba(255, 0, 234, 0.4) !important;
-            color: #fff !important;
+            background: linear-gradient(90deg, rgba(0, 229, 255, 0.08), rgba(255, 0, 234, 0.05)) !important;
+            border-bottom: 1px dashed rgba(0, 229, 255, 0.3) !important;
         }
         .catalogo-acordeon-item .accordion-button::after {
             filter: invert(1) drop-shadow(0 0 5px var(--p-cyan));
             transition: transform 0.3s ease;
+            margin-left: 12px;
         }
-        
-        /* --- TARJETAS PLEGABLES DE BODEGAS --- */
-        .insumo-tarjeta-item {
-            border-radius: 12px !important;
-            overflow: hidden;
-            margin-bottom: 10px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .insumo-tarjeta-item:hover {
-            transform: translateY(-2px);
-        }
-        .insumo-tarjeta-item .accordion-button {
-            background: linear-gradient(90deg, rgba(2, 12, 24, 0.95), rgba(0, 5, 12, 0.95)) !important;
-            color: #fff !important;
-            padding: 12px 16px;
-            box-shadow: none !important;
-            border: none !important;
-        }
-        .insumo-tarjeta-item .accordion-button:not(.collapsed) {
-            background: linear-gradient(90deg, rgba(0, 229, 255, 0.12), rgba(0, 255, 166, 0.08)) !important;
-            border-bottom: 1px solid rgba(0, 229, 255, 0.3) !important;
-        }
-        .insumo-tarjeta-item .accordion-button::after {
-            filter: invert(1) drop-shadow(0 0 4px var(--p-cyan));
-            transition: transform 0.3s ease;
-        }
-        .insumo-tarjeta-item .accordion-body {
-            background: rgba(0, 3, 10, 0.96) !important;
-            padding: 18px;
+        .catalogo-acordeon-item .accordion-body {
+            background: rgba(2, 6, 16, 0.98) !important;
+            padding: 18px 22px !important;
         }
 
-        .catalogo-acordeon-item .accordion-body {
-            background: rgba(0, 3, 8, 0.98) !important;
-            border-top: 1px solid rgba(0, 229, 255, 0.2);
-            padding: 24px;
+        /* --- 2. BODEGAS: TARJETAS PLEGABLES DE INSUMOS --- */
+        .insumo-tarjeta-cyber {
+            background: linear-gradient(135deg, rgba(6, 18, 36, 0.92) 0%, rgba(2, 7, 18, 0.97) 100%) !important;
+            border-radius: 12px !important;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            margin-bottom: 8px;
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .insumo-tarjeta-cyber:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 15px rgba(var(--card-rgb, 0, 229, 255), 0.25) !important;
+            border-color: rgba(var(--card-rgb, 0, 229, 255), 0.5) !important;
+        }
+        .insumo-tarjeta-cyber .accordion-button {
+            background: transparent !important;
+            color: #ffffff !important;
+            padding: 10px 16px !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .insumo-tarjeta-cyber .accordion-button:not(.collapsed) {
+            background: linear-gradient(90deg, rgba(var(--card-rgb, 0, 229, 255), 0.1), transparent) !important;
+            border-bottom: 1px dashed rgba(var(--card-rgb, 0, 229, 255), 0.3) !important;
+        }
+        .insumo-tarjeta-cyber .accordion-button::after {
+            display: none !important;
+        }
+
+        /* Avatar del Insumo / Producto */
+        .card-avatar-box {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            padding: 2px;
+            border: 1.5px solid var(--p-cyan);
+            background: #020712;
+            flex-shrink: 0;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+        }
+        .card-avatar-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .card-avatar-box .cam-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            color: #00e5ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .card-avatar-box:hover .cam-overlay {
+            opacity: 1;
+        }
+
+        /* Chips métricos horizontales en cabecera */
+        .hud-metric-pill {
+            background: rgba(4, 12, 26, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 7px;
+            padding: 4px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 90px;
+        }
+        .hud-metric-pill-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 1px;
+        }
+        .hud-metric-pill-val {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        /* Botones de comando rápidos */
+        .hud-btn-action {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.8);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .hud-btn-action:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.18);
+        }
+        .hud-btn-action.purge:hover {
+            background: rgba(255, 0, 85, 0.25);
+            border-color: #ff0055;
+            color: #ff0055;
+        }
+        .hud-btn-calc {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 7px;
+            background: rgba(var(--card-rgb, 0, 229, 255), 0.15);
+            border: 1px solid rgba(var(--card-rgb, 0, 229, 255), 0.45);
+            color: var(--card-accent, #00e5ff);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+        .hud-btn-calc:hover {
+            background: rgba(var(--card-rgb, 0, 229, 255), 0.3);
+            box-shadow: 0 0 10px rgba(var(--card-rgb, 0, 229, 255), 0.4);
+            color: #fff;
+        }
+        .hud-expand-trigger {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.55);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 6px;
+        }
+
+        /* Consola expandida de Insumo */
+        .insumo-console-body {
+            background: rgba(2, 6, 16, 0.98);
+            border-top: 1px dashed rgba(var(--card-rgb, 0, 229, 255), 0.3);
+            padding: 14px 18px;
         }
         .badge-dto-pill {
             background: linear-gradient(135deg, #ff0055, #ff5500);
@@ -1762,7 +1892,6 @@
                             <button type="button" class="categoria-filtro-btn" data-cat="500 mls" onclick="filtrarCategoriaAcordeon('500 mls', this)">ELÍXIRES</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Packs" onclick="filtrarCategoriaAcordeon('Packs', this)">PACK DE PULPAS</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Shots" onclick="filtrarCategoriaAcordeon('Shots', this)">SHOTS</button>
-                            <button type="button" class="categoria-filtro-btn" data-cat="Arma tu Batido" onclick="filtrarCategoriaAcordeon('Arma tu Batido', this)">ARMA TU BATIDO</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Exóticos" onclick="filtrarCategoriaAcordeon('Exóticos', this)">EXÓTICOS</button>
                             
                             <div class="btn-group ms-1">
@@ -2234,13 +2363,64 @@
     // =======================================================
     // SINTETIZADOR GENÉTICO (PRODUCCIÓN CON FECHAS)
     // =======================================================
+    const NOMBRES_INSUMOS_CRUDOS_SET = new Set([
+        'agua de coco', 'espinaca', 'apio', 'pepino', 'manzana verde', 'limon', 'limón', 'jengibre', 'menta', 'piña',
+        'semillas de calabaza', 'papaya', 'ajo', 'betarraga', 'zanahoria', 'naranja', 'platano', 'plátano', 'avena',
+        'mantequilla de mani', 'mantequilla de maní', 'cilantro', 'perejil', 'espirulina', 'chlorella',
+        'vaso biodegradable 500ml', 'tapa domo compostable', 'bombilla de bambu / polipapel', 'bombilla de bambú / polipapel', 'bolsa kraft ecologica', 'bolsa kraft ecológica',
+        'caldo de huesos', 'jengibre concentrado', 'curcuma concentrada', 'cúrcuma concentrada', 'pimienta negra', 'limon concentrado', 'limón concentrado', 'berries prensados', 'botellita shot 60ml', 'tapa botellita 60ml',
+        'pulpa de pitahaya dragon', 'pulpa de pitahaya dragón', 'acai puro del amazonas', 'açai puro del amazonas', 'camu camu silvestre', 'guarana en polvo', 'guaraná en polvo', 'leche de coco cremosa', 'botella cristal exoticos 350ml', 'botella cristal exóticos 350ml', 'tapa dorada hermetica', 'tapa dorada hermética',
+        'porcion proteina vegana', 'porción proteína vegana', 'porcion creatina creapure', 'porción creatina creapure', 'porcion semillas de chia', 'porción semillas de chía', 'porcion colageno hidrolizado', 'porción colágeno hidrolizado', 'porcion frutos rojos silvestres', 'porción frutos rojos silvestres', 'porcion cacao organico', 'porción cacao orgánico'
+    ]);
+
+    function esInsumoCrudo(nombre) {
+        if (!nombre) return false;
+        const norm = normalizarStr(nombre);
+        if (norm.startsWith('porcion') || norm.includes('insumo') || norm.includes('packaging') || norm.includes('vaso') || norm.includes('tapa ') || norm.includes('botellita') || norm.includes('bombilla') || norm.includes('bolsa ')) return true;
+        for (const ins of NOMBRES_INSUMOS_CRUDOS_SET) {
+            const insNorm = normalizarStr(ins);
+            if (norm === insNorm || (norm.startsWith(insNorm) && !norm.includes('pulpas') && !norm.includes('pack') && !norm.includes('imperial'))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function clasificarProductoMatriz(p) {
+        const catNorm = normalizarStr(p.categoria || '');
+        const nomNorm = normalizarStr(p.nombre || '');
+
+        if (catNorm.includes('exot') || nomNorm.includes('exot') || nomNorm.includes('pitahaya') || nomNorm.includes('dragon')) {
+            return { key: 'Exóticos', nombre: 'Exóticos', esExotico: true };
+        }
+        if (catNorm.includes('shot') || nomNorm.includes('shot')) {
+            return { key: 'Shots', nombre: 'Shots', esShot: true };
+        }
+        if (catNorm.includes('pack') || nomNorm.includes('pack') || nomNorm.startsWith('pulpas ') || nomNorm.includes('pulpa')) {
+            return { key: 'Packs', nombre: 'Pack de Pulpas', esPack: true };
+        }
+        return { key: '500 mls', nombre: 'Elíxires (500 mls)', es500: true };
+    }
+
     function esPulpaOPack(p) {
         if (!p) return false;
         const n = normalizarStr(p.nombre || '');
         const c = normalizarStr(p.categoria || '');
-        if (c.includes('arma') || c.includes('batido') || n.includes('arma') || n.includes('porci')) return false;
-        if (c.includes('shot') || c.includes('caldo') || c.includes('500') || c.includes('elixir') || n.includes('shot')) return false;
-        return c.includes('pack') || c.includes('pulpa') || n.includes('pulpa') || n.includes('pack');
+
+        // 1. Excluir materias primas e insumos de bodega
+        if (esInsumoCrudo(n)) return false;
+        if (c.includes('arma') || c.includes('batido') || n.includes('arma') || n.includes('porci') || c.includes('vaso') || c.includes('packaging')) return false;
+        if (c.includes('shot') || c.includes('caldo') || c.includes('500') || c.includes('elixir') || n.includes('shot') || c.includes('exot') || n.includes('exot') || n.includes('pitahaya') || n.includes('dragon')) return false;
+
+        // 2. Génesis de Producción contiene estrictamente la línea de Pulpas y Packs de Pulpas terminados
+        const pulpasValidas = ['pulpas detox', 'pulpas desparasitantes', 'pulpas cardio', 'pulpas gainer', 'pulpas quelantes', 'pack 10 pulpas', 'pack 20 pulpas', 'pack 30 pulpas', 'pack 10', 'pack 20', 'pack 30'];
+        if (pulpasValidas.some(pv => n.includes(pv))) return true;
+
+        return (n.startsWith('pulpas ') || n.includes('pack')) && !n.includes('vaso') && !n.includes('botell');
+    }
+
+    function esProductoProduccion(p) {
+        return esPulpaOPack(p);
     }
 
     async function cargarProductosSelect() {
@@ -3669,138 +3849,139 @@
 
     // --- INSUMOS (BODEGAS: PULPAS, VASOS, SHOTS/CALDOS, ARMA TU BATIDO) ---
     
+    
+    function toggleDetallesInsumo(id) {
+        const drawer = document.getElementById(`drawer-insumo-${id}`);
+        const icon = document.getElementById(`icon-detalles-${id}`);
+        if (!drawer) return;
+        const isShown = drawer.classList.contains('show');
+        if (isShown) {
+            drawer.classList.remove('show');
+            if (icon) {
+                icon.classList.remove('bi-chevron-up');
+                icon.classList.add('bi-chevron-down');
+            }
+        } else {
+            drawer.classList.add('show');
+            if (icon) {
+                icon.classList.remove('bi-chevron-down');
+                icon.classList.add('bi-chevron-up');
+            }
+        }
+    }
+
     function renderizarTarjetaInsumo(i, tipo, cfg) {
         const id = i.idInsumo;
         const nombre = i.nombre || 'Insumo sin nombre';
         const subcat = (i.subcategoria || i.categoria || cfg.labelCat).toUpperCase();
-        const nodo = i.sucursal || 'Antofagasta';
+        const nodo = (i.sucursal || 'Antofagasta').toUpperCase();
         const img = cfg.urlInsumoImg;
         const color = cfg.colorTheme;
-        const glow = cfg.glowBox;
-        const badgeBorder = cfg.borderImg;
+        const rgb = cfg.rgbTheme || '0, 229, 255';
         const fallback = cfg.defaultFallback;
         const dosisTxt = `${cfg.dosis} ${i.medida || 'gr'}`;
-        const costoPorcTxt = formatMoney(cfg.costoPorcion, nodo);
-        const precioBaseTxt = formatMoney(i.precio || 0, nodo);
-        const valorTotalTxt = formatMoney(cfg.valorInsumo, nodo);
+        const costoPorcTxt = formatMoney(cfg.costoPorcion, i.sucursal);
+        const precioBaseTxt = formatMoney(i.precio || 0, i.sucursal);
+        const valorTotalTxt = formatMoney(cfg.valorInsumo, i.sucursal);
         const stockHtml = cfg.stockHTML;
         const stockCant = (Number(i.unidadActual) || 0).toFixed(0);
 
         return `
-        <div class="accordion-item insumo-tarjeta-item mb-2" id="card-insumo-${id}" style="background: rgba(4, 15, 30, 0.88); border: 1px solid ${color}; border-radius: 12px; overflow: hidden; box-shadow: ${glow};">
+        <div class="accordion-item insumo-tarjeta-cyber" id="card-insumo-${id}" style="border-left: 4px solid ${color} !important; --card-accent: ${color}; --card-rgb: ${rgb};">
             <div class="accordion-header" id="heading-ins-${id}">
-                <div class="accordion-button collapsed d-flex justify-content-between align-items-center py-2 px-3"
+                <div class="accordion-button collapsed d-flex justify-content-between align-items-center flex-wrap gap-2"
                      data-bs-toggle="collapse"
                      data-bs-target="#collapse-ins-${id}"
                      aria-expanded="false"
                      aria-controls="collapse-ins-${id}"
-                     style="cursor: pointer; background: transparent;">
+                     style="cursor: pointer;">
                      
-                     <!-- IZQUIERDA: MINIATURA + NOMBRE + BADGES -->
-                     <div class="d-flex align-items-center gap-3 flex-grow-1 overflow-hidden me-2">
-                         <div class="position-relative flex-shrink-0">
-                             <img src="${img}" id="img-insumo-${id}" class="rounded-3 border ${badgeBorder}" style="width: 48px; height: 48px; object-fit: cover; cursor: pointer;" title="Cambiar foto de este insumo" onclick="event.stopPropagation(); iniciarSubidaFotoInsumo(${id})" onerror="this.src='${fallback}'">
-                             <button type="button" class="btn btn-sm btn-dark position-absolute bottom-0 end-0 p-0 rounded-circle text-warning border border-warning" style="width: 18px; height: 18px; line-height: 16px; font-size: 10px;" onclick="event.stopPropagation(); iniciarSubidaFotoInsumo(${id})" title="Subir / Tomar foto"><i class="bi bi-camera-fill"></i></button>
+                     <!-- ZONA 1: ESPECIMEN / IDENTIDAD -->
+                     <div class="d-flex align-items-center gap-3" style="min-width: 240px; max-width: 340px;">
+                         <div class="card-avatar-box" onclick="event.stopPropagation(); iniciarSubidaFotoInsumo(${id})" title="Actualizar foto" style="border-color: ${color}; box-shadow: 0 0 8px rgba(${rgb}, 0.35);">
+                             <img src="${img}" id="img-insumo-${id}" onerror="this.src='${fallback}'">
+                             <div class="cam-overlay"><i class="bi bi-camera-fill"></i></div>
                          </div>
                          <div class="overflow-hidden">
-                             <div class="fw-bold font-orbitron fs-5 text-white text-truncate">${nombre}</div>
-                             <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
-                                 <span class="badge-categoria" style="${cfg.colorBadge}">${subcat}</span>
-                                 <span class="badge bg-dark border border-cyan text-info" style="font-size:0.75rem;"><i class="bi bi-geo-alt me-1"></i>${nodo}</span>
+                             <div class="fw-bold font-orbitron fs-6 text-white text-truncate" style="letter-spacing: 0.5px;">${nombre}</div>
+                             <div class="d-flex align-items-center gap-1 mt-1 flex-wrap">
+                                 <span class="badge" style="${cfg.colorBadge}; font-size:0.65rem;">${subcat}</span>
+                                 <span class="badge bg-dark border border-cyan text-info" style="font-size:0.65rem;">${nodo}</span>
                                  ${stockHtml}
                              </div>
                          </div>
                      </div>
 
-                     <!-- CENTRO: VALORES ECONÓMICOS -->
-                     <div class="d-flex align-items-center gap-3 me-3 flex-shrink-0 flex-wrap">
-                         <div class="text-end d-none d-md-block">
-                             <small class="text-white-50 d-block font-rajdhani" style="font-size:0.78rem;">PRECIO BASE</small>
-                             <span class="text-warning fw-bold fs-5 font-orbitron">${precioBaseTxt}</span>
+                     <!-- ZONA 2: TELEMETRÍA FINANCIERA HORIZONTAL -->
+                     <div class="d-flex align-items-center gap-2 flex-wrap">
+                         <div class="hud-metric-pill" style="border-left: 2px solid var(--p-cyan);">
+                             <span class="hud-metric-pill-label"><i class="bi bi-sliders text-info"></i> DOSIS</span>
+                             <span class="hud-metric-pill-val text-info">${dosisTxt}</span>
                          </div>
-                         <div class="text-end">
-                             <small class="text-white-50 d-block font-rajdhani" style="font-size:0.78rem;">COSTO PORCIÓN</small>
-                             <span class="text-info fw-bold fs-5 font-orbitron">${costoPorcTxt}</span>
+                         <div class="hud-metric-pill" style="border-left: 2px solid var(--p-warning);">
+                             <span class="hud-metric-pill-label"><i class="bi bi-cash-stack text-warning"></i> VALOR/BASE</span>
+                             <span class="hud-metric-pill-val text-warning">${precioBaseTxt}</span>
                          </div>
-                         <div class="text-end d-none d-sm-block">
-                             <small class="text-white-50 d-block font-rajdhani" style="font-size:0.78rem;">VALOR TOTAL</small>
-                             <span class="text-success fw-bold fs-5 font-orbitron" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${valorTotalTxt}</span>
+                         <div class="hud-metric-pill" style="border-left: 2px solid ${color}; background: rgba(${rgb}, 0.08);">
+                             <span class="hud-metric-pill-label" style="color:${color};"><i class="bi bi-pie-chart-fill"></i> COSTO/PORC</span>
+                             <span class="hud-metric-pill-val" style="color:${color}; text-shadow: 0 0 8px rgba(${rgb}, 0.5);">${costoPorcTxt}</span>
+                         </div>
+                         <div class="hud-metric-pill d-none d-lg-flex" style="border-left: 2px solid var(--p-bio-green);">
+                             <span class="hud-metric-pill-label text-success"><i class="bi bi-shield-check"></i> TOTAL NODO</span>
+                             <span class="hud-metric-pill-val text-success">${valorTotalTxt}</span>
                          </div>
                      </div>
 
-                     <!-- DERECHA: BOTONES DE ACCIÓN RÁPIDA Y CHEVRON -->
-                     <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                         <button class="btn btn-sm btn-outline-warning border-0 p-1" type="button" onclick="event.stopPropagation(); abrirCalculadoraConInsumo('${tipo}', ${id})" title="Calculadora de Porción y Margen Real 1-%"><i class="bi bi-calculator fs-4"></i></button>
-                         <button class="btn btn-sm btn-outline-info border-0 p-1" type="button" onclick="event.stopPropagation(); editarInsumo(${id})" title="Editar Insumo"><i class="bi bi-pencil-square fs-4"></i></button>
-                         <button class="btn btn-sm btn-outline-danger border-0 p-1" type="button" onclick="event.stopPropagation(); eliminarInsumo(${id})" title="Eliminar"><i class="bi bi-trash3-fill fs-4"></i></button>
-                         <span class="badge bg-dark border border-secondary text-info px-2 py-1 ms-1 font-orbitron d-none d-lg-inline" style="font-size:0.75rem;"><i class="bi bi-sliders me-1"></i> DETALLE</span>
+                     <!-- ZONA 3: ACCIONES & EXPANSOR -->
+                     <div class="d-flex align-items-center gap-2 ms-auto">
+                         <button class="hud-btn-calc" type="button" onclick="event.stopPropagation(); abrirCalculadoraConInsumo('${tipo}', ${id})" title="Calculadora 1-% Margen Real">
+                             <i class="bi bi-calculator-fill"></i> <span>1-% MARGEN</span>
+                         </button>
+                         <button class="hud-btn-action" type="button" onclick="event.stopPropagation(); editarInsumo(${id})" title="Editar Insumo">
+                             <i class="bi bi-pencil-square"></i>
+                         </button>
+                         <button class="hud-btn-action purge" type="button" onclick="event.stopPropagation(); eliminarInsumo(${id})" title="Eliminar de Bodega">
+                             <i class="bi bi-trash3-fill"></i>
+                         </button>
+                         <div class="hud-expand-trigger">
+                             <i class="bi bi-chevron-down"></i>
+                         </div>
                      </div>
                 </div>
             </div>
 
-            <!-- CUERPO DESPLEGABLE -->
+            <!-- CUERPO EXPANDIDO / CONSOLA DE DETALLES -->
             <div id="collapse-ins-${id}" class="accordion-collapse collapse" aria-labelledby="heading-ins-${id}">
-                <div class="accordion-body p-3" style="background: rgba(0, 3, 10, 0.95); border-top: 1px dashed rgba(255,255,255,0.15);">
-                    <div class="row g-3 align-items-center">
-                        <!-- FOTO / MULTIMEDIA -->
-                        <div class="col-md-3 text-center">
-                            <div class="position-relative d-inline-block">
-                                <img src="${img}" class="rounded-3 border ${badgeBorder}" style="width: 110px; height: 110px; object-fit: cover;" onerror="this.src='${fallback}'">
-                                <button type="button" class="btn btn-sm btn-dark position-absolute bottom-0 end-0 p-1 rounded-circle text-warning border border-warning" onclick="iniciarSubidaFotoInsumo(${id})" title="Subir / Tomar foto"><i class="bi bi-camera-fill fs-6"></i></button>
-                            </div>
-                            <div class="mt-2">
-                                <button type="button" class="btn btn-xs btn-outline-info font-orbitron w-100 py-1" onclick="iniciarSubidaFotoInsumo(${id})">
-                                    <i class="bi bi-cloud-arrow-up-fill me-1"></i> CAMBIAR FOTO
-                                </button>
+                <div class="insumo-console-body">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-md-3">
+                            <div class="p-2 border rounded text-center" style="border-color: rgba(${rgb}, 0.3); background: rgba(0,0,0,0.5);">
+                                <span class="d-block font-orbitron small text-white-50">CÓDIGO NODO</span>
+                                <span class="fw-bold text-info font-monospace">#MP-${id}</span>
                             </div>
                         </div>
-
-                        <!-- MÉTRICAS & FICHA TÉCNICA -->
-                        <div class="col-md-6">
-                            <div class="row g-2">
-                                <div class="col-6 col-sm-3 p-2 border rounded bg-dark" style="border-color: rgba(255,255,255,0.1) !important;">
-                                    <small class="text-white-50 d-block font-rajdhani" style="font-size:0.75rem;">RESERVA STOCK</small>
-                                    <span class="fw-bold text-white fs-5 font-orbitron">${stockCant} <small class="text-white-50 fs-6">${i.medida || 'gr'}</small></span>
-                                </div>
-                                <div class="col-6 col-sm-3 p-2 border rounded bg-dark" style="border-color: rgba(255,255,255,0.1) !important;">
-                                    <small class="text-white-50 d-block font-rajdhani" style="font-size:0.75rem;">DOSIS PORCIÓN</small>
-                                    <span class="fw-bold text-info fs-5 font-orbitron">${dosisTxt}</span>
-                                </div>
-                                <div class="col-6 col-sm-3 p-2 border rounded bg-dark" style="border-color: rgba(255,255,255,0.1) !important;">
-                                    <small class="text-white-50 d-block font-rajdhani" style="font-size:0.75rem;">PRECIO / COMPRA</small>
-                                    <span class="fw-bold text-warning fs-5 font-orbitron">${precioBaseTxt}</span>
-                                </div>
-                                <div class="col-6 col-sm-3 p-2 border rounded bg-dark" style="border-color: rgba(255,255,255,0.1) !important;">
-                                    <small class="text-white-50 d-block font-rajdhani" style="font-size:0.75rem;">VALOR TOTAL BODEGA</small>
-                                    <span class="fw-bold text-success fs-5 font-orbitron">${valorTotalTxt}</span>
-                                </div>
-                            </div>
-                            <div class="mt-2 text-white-50 small font-rajdhani">
-                                <span>Línea: <b class="text-white">${i.categoria || cfg.labelCat}</b></span> • 
-                                <span>Subcategoría: <b class="text-white">${i.subcategoria || 'General'}</b></span> • 
-                                <span>Nodo Destino: <b class="text-info">${nodo}</b></span>
+                        <div class="col-md-3">
+                            <div class="p-2 border rounded text-center" style="border-color: rgba(${rgb}, 0.3); background: rgba(0,0,0,0.5);">
+                                <span class="d-block font-orbitron small text-white-50">STOCK FÍSICO</span>
+                                <span class="fw-bold text-white font-monospace">${stockCant} ${i.medida || 'ud'}</span>
                             </div>
                         </div>
-
-                        <!-- ACCIONES OPERATIVAS -->
-                        <div class="col-md-3 d-flex flex-column gap-2">
-                            <button class="btn btn-sm btn-outline-warning w-100 font-orbitron text-start py-2" onclick="abrirCalculadoraConInsumo('${tipo}', ${id})">
-                                <i class="bi bi-calculator-fill me-1"></i> CALCULADORA 1-%
-                            </button>
-                            <button class="btn btn-sm btn-outline-info w-100 font-orbitron text-start py-2" onclick="editarInsumo(${id})">
-                                <i class="bi bi-pencil-square me-1"></i> EDITAR FORMULARIO
-                            </button>
-                            <button class="btn btn-sm btn-outline-light w-100 font-orbitron text-start py-2 text-white-50" onclick="verInsumoEnFormulas('${tipo}')">
-                                <i class="bi bi-flask me-1"></i> VER EN FÓRMULAS
-                            </button>
-                            <button class="btn btn-sm btn-outline-danger w-100 font-orbitron text-start py-2" onclick="eliminarInsumo(${id})">
-                                <i class="bi bi-trash3-fill me-1"></i> ELIMINAR INSUMO
+                        <div class="col-md-3">
+                            <div class="p-2 border rounded text-center" style="border-color: rgba(${rgb}, 0.3); background: rgba(0,0,0,0.5);">
+                                <span class="d-block font-orbitron small text-white-50">SUCURSAL</span>
+                                <span class="fw-bold text-warning font-orbitron">${nodo}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-sm btn-outline-info font-orbitron w-100 py-2" type="button" onclick="iniciarSubidaFotoInsumo(${id})">
+                                <i class="bi bi-camera me-1"></i> CAMBIAR FOTO
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>`;
+        </div>
+        `;
     }
 
     async function cargarInsumos() {
@@ -4031,19 +4212,19 @@
 
             // Mensajes cuando una bodega no tiene insumos registrados
             if (tbPulpas && tbPulpas.innerHTML === '') {
-                tbPulpas.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border border-success rounded" style="background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2 text-success"></i>NO HAY INSUMOS EN LA BODEGA DE PULPAS.</div>`;
+                tbPulpas.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border border-success rounded empty-bodega-msg" style="background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2 text-success"></i>NO HAY INSUMOS EN LA BODEGA DE PULPAS.</div>`;
             }
             if (tbVasos && tbVasos.innerHTML === '') {
-                tbVasos.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border border-info rounded" style="background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2 text-info"></i>NO HAY SUMINISTROS EN LA BODEGA DE VASOS Y PACKAGING.</div>`;
+                tbVasos.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border border-info rounded empty-bodega-msg" style="background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2 text-info"></i>NO HAY SUMINISTROS EN LA BODEGA DE VASOS Y PACKAGING.</div>`;
             }
             if (tbShots && tbShots.innerHTML === '') {
-                tbShots.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border border-danger rounded" style="background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2 text-danger"></i>NO HAY EXTRACTOS EN LA BODEGA DE SHOTS Y CALDOS.</div>`;
+                tbShots.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border border-danger rounded empty-bodega-msg" style="background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2 text-danger"></i>NO HAY EXTRACTOS EN LA BODEGA DE SHOTS Y CALDOS.</div>`;
             }
             if (tbArmaTuBatido && tbArmaTuBatido.innerHTML === '') {
-                tbArmaTuBatido.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border border-warning rounded" style="background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2 text-warning"></i>NO HAY PORCIONES EN LA BODEGA DE ARMA TU BATIDO.</div>`;
+                tbArmaTuBatido.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border border-warning rounded empty-bodega-msg" style="background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2 text-warning"></i>NO HAY PORCIONES EN LA BODEGA DE ARMA TU BATIDO.</div>`;
             }
             if (tbExoticos && tbExoticos.innerHTML === '') {
-                tbExoticos.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border rounded" style="border-color: #bd00ff; background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2" style="color: #bd00ff;"></i>NO HAY INSUMOS EN LA BODEGA DE EXÓTICOS.</div>`;
+                tbExoticos.innerHTML = `<div class="p-4 text-center text-white-50 font-orbitron border rounded empty-bodega-msg" style="border-color: #bd00ff; background: rgba(0,0,0,0.4);"><i class="bi bi-inbox fs-2 d-block mb-2" style="color: #bd00ff;"></i>NO HAY INSUMOS EN LA BODEGA DE EXÓTICOS.</div>`;
             }
 
             const sucMuestraPulpas = document.getElementById('ins-sucursal') ? document.getElementById('ins-sucursal').value : 'Antofagasta';
@@ -4920,8 +5101,7 @@
             adminBadgesCategorias = [
                 { categoriaKey: '500 mls', categoriaNombre: 'Elíxires', texto: '', color: 'neon-oro', activo: true, autoOferta: true },
                 { categoriaKey: 'Packs', categoriaNombre: 'Pack de Pulpas', texto: '', color: 'neon-oro', activo: true, autoOferta: true },
-                { categoriaKey: 'Arma tu Batido', categoriaNombre: 'Arma tu Batido', texto: '', color: 'neon-cyan', activo: true, autoOferta: true },
-                { categoriaKey: 'Shots', categoriaNombre: 'Shots', texto: 'PRÓXIMAMENTE', color: 'neon-magenta', activo: true, autoOferta: false },
+                                { categoriaKey: 'Shots', categoriaNombre: 'Shots', texto: 'PRÓXIMAMENTE', color: 'neon-magenta', activo: true, autoOferta: false },
                 { categoriaKey: 'Exóticos', categoriaNombre: 'Exóticos', texto: 'NUEVO', color: 'neon-magenta', activo: true, autoOferta: true }
             ];
         }
@@ -5072,7 +5252,13 @@
             data = deduplicarProductos(data || []).filter(p => {
                 const cat = (p.categoria || '').toLowerCase();
                 const nom = (p.nombre || '').toLowerCase();
-                return !cat.includes('personalizado') && !cat.includes('custom') && !nom.startsWith('batido armado') && !nom.startsWith('batido personalizado');
+                const desc = (p.descripcion || '').toLowerCase();
+                // Purgar insumos de bodega, materias primas y personalizados
+                if (esInsumoCrudo(nom)) return false;
+                if (cat.includes('personalizado') || cat.includes('custom') || cat.includes('tesoreria')) return false;
+                if (cat.includes('arma') || cat.includes('porcion') || nom.includes('porcion') || nom.includes('porción') || desc.includes('conectado a bodega')) return false;
+                if (nom.startsWith('batido armado') || nom.startsWith('batido personalizado')) return false;
+                return true;
             });
 
             const acordeonCont = document.getElementById('contenedor-catalogo-acordeon');
@@ -5104,29 +5290,23 @@
                 const classInput = esSupremo ? 'input-matriz' : 'input-matriz border-0 text-white-50 pointer-events-none';
                 const classPrecio = esSupremo ? 'input-matriz text-money-green' : 'input-matriz border-0 text-money-green pointer-events-none';
 
-                const catActual = p.categoria || '500 mls';
-                const catNorm = (catActual || '').toLowerCase();
-                const nomNorm = (p.nombre || '').toLowerCase();
-                const esPack = catNorm.includes('pack') || catNorm.includes('pulpa') || nomNorm.includes('pulpa');
-                const esArma = catNorm.includes('arma') || catNorm.includes('batido');
-                const esShot = catNorm.includes('shot');
-                const esExotico = catNorm.includes('exot') || nomNorm.includes('exot');
-                const es500 = (!esPack && !esShot && !esArma && !esExotico) || catNorm.includes('500') || catNorm.includes('elixir');
-                const catMostrar = esExotico ? 'Exóticos' : (esPack ? 'Pack de Pulpas' : (esArma ? 'Arma tu Batido' : (esShot ? 'Shots' : 'Elíxires (500 mls)')));
+                const clasif = clasificarProductoMatriz(p);
+                const catActual = clasif.key;
+                const catMostrar = clasif.nombre;
+                const es500 = clasif.es500;
+                const esPack = clasif.esPack;
+                const esShot = clasif.esShot;
+                const esExotico = clasif.esExotico;
                 const badgeStockHeader = es500
                     ? `<span class="badge bg-dark border border-cyan text-info" style="font-size:0.75rem;" id="header-stock-${p.id}" title="Stock físico sincronizado con Bodega: Vasos y Packaging (500 mls)"><i class="bi bi-cup-straw me-1"></i>Stock Vasos: ${p.stock || 0}</span>`
                     : `<span class="badge bg-dark border border-success text-success" style="font-size:0.75rem;" id="header-stock-${p.id}"><i class="bi bi-box-seam me-1"></i>Stock: ${p.stock || 0}</span>`;
 
                 let optionsCat = `
-                    <option value="500 mls" ${catActual==='500 mls' || (!esPack && !esShot && !esArma && !esExotico) ? 'selected' : ''}>Elíxires (500 mls)</option>
-                    <option value="Packs" ${esPack ? 'selected' : ''}>Pack de Pulpas</option>
-                    <option value="Shots" ${esShot ? 'selected' : ''}>Shots</option>
-                    <option value="Arma tu Batido" ${esArma ? 'selected' : ''}>Arma tu Batido</option>
-                    <option value="Exóticos" ${esExotico ? 'selected' : ''}>Exóticos</option>
+                    <option value="500 mls" ${catActual === '500 mls' ? 'selected' : ''}>Elíxires (500 mls)</option>
+                    <option value="Packs" ${catActual === 'Packs' ? 'selected' : ''}>Pack de Pulpas</option>
+                    <option value="Shots" ${catActual === 'Shots' ? 'selected' : ''}>Shots</option>
+                    <option value="Exóticos" ${catActual === 'Exóticos' ? 'selected' : ''}>Exóticos</option>
                 `;
-                if (catActual && !['500 mls', 'Packs', 'Shots', 'Arma tu Batido', 'Exóticos'].includes(catActual) && !esPack && !esArma && !esShot && !esExotico) {
-                    optionsCat += `<option value="${catActual}" selected>${catActual}</option>`;
-                }
 
                 // 1. RENDERIZAR EN TARJETA ACORDEÓN (VISTA PRINCIPAL DETALLADA)
                 if (acordeonCont) {
@@ -5141,7 +5321,7 @@
                     `;
 
                     acordeonCont.innerHTML += `
-                        <div class="accordion-item catalogo-acordeon-item" id="item-prod-${p.id}" data-id="${p.id}" data-categoria="${catActual}" data-nombre="${(p.nombre || '').toLowerCase()}">
+                        <div class="accordion-item catalogo-acordeon-item" id="item-prod-${p.id}" data-id="${p.id}" data-categoria="${clasif.key}" data-nombre="${(p.nombre || '').toLowerCase()}">
                             <div class="accordion-header" id="heading-${p.id}">
                                 <div class="accordion-button collapsed d-flex justify-content-between align-items-center py-2 px-3"
                                      data-bs-toggle="collapse"
@@ -5640,20 +5820,15 @@
             if (categoriaFiltroMatriz !== 'TODAS') {
                 const f = categoriaFiltroMatriz.toLowerCase();
                 if (f === 'packs') {
-                    coincideCat = cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa');
+                    coincideCat = (cat === 'packs');
                 } else if (f === '500 mls') {
-                    const esPackOPulpa = cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa');
-                    const esArma = cat.includes('arma') || cat.includes('batido');
-                    const esExot = cat.includes('exot') || nom.includes('exot');
-                    coincideCat = !esPackOPulpa && !esArma && !esExot && (cat.includes('500') || !cat);
-                } else if (f.includes('arma') || f.includes('batido')) {
-                    coincideCat = cat.includes('arma') || cat.includes('batido');
-                } else if (f.includes('shot')) {
-                    coincideCat = cat.includes('shot');
+                    coincideCat = (cat === '500 mls');
+                } else if (f === 'shots') {
+                    coincideCat = (cat === 'shots');
                 } else if (f.includes('exot')) {
-                    coincideCat = cat.includes('exot') || nom.includes('exot');
+                    coincideCat = cat.includes('exot');
                 } else {
-                    coincideCat = cat.includes(f);
+                    coincideCat = (cat === f);
                 }
             }
 
@@ -5667,7 +5842,12 @@
 
         const contador = document.getElementById('contador-catalogo-matriz');
         if (contador) {
-            contador.innerText = `MOSTRANDO ${visibles} DE ${items.length} ELÍXIRES EN MATRIZ`;
+            let label = 'PRODUCTOS';
+            if (categoriaFiltroMatriz === '500 mls') label = 'ELÍXIRES';
+            else if (categoriaFiltroMatriz === 'Packs') label = 'PACKS DE PULPAS';
+            else if (categoriaFiltroMatriz === 'Shots') label = 'SHOTS';
+            else if (categoriaFiltroMatriz.toLowerCase().includes('exot')) label = 'EXÓTICOS';
+            contador.innerText = `MOSTRANDO ${visibles} DE ${items.length} ${label} EN MATRIZ`;
         }
     }
 

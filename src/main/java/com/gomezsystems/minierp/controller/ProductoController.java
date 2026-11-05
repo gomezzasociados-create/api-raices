@@ -169,6 +169,16 @@ public class ProductoController {
      * Regla: Los batidos que los usuarios arman pertenecen exclusivamente a Tesorería
      * (órdenes y tickets de venta) y NUNCA deben mostrarse en el catálogo de productos.
      */
+    private static final java.util.Set<String> NOMBRES_INSUMOS_CRUDOS = new java.util.HashSet<>(java.util.Arrays.asList(
+            "agua de coco", "espinaca", "apio", "pepino", "manzana verde", "limon", "limón", "jengibre", "menta", "piña",
+            "semillas de calabaza", "papaya", "ajo", "betarraga", "zanahoria", "naranja", "platano", "plátano", "avena",
+            "mantequilla de mani", "mantequilla de maní", "cilantro", "perejil", "espirulina", "chlorella",
+            "vaso biodegradable 500ml", "tapa domo compostable", "bombilla de bambu / polipapel", "bombilla de bambú / polipapel", "bolsa kraft ecologica", "bolsa kraft ecológica",
+            "caldo de huesos", "jengibre concentrado", "curcuma concentrada", "cúrcuma concentrada", "pimienta negra", "limon concentrado", "limón concentrado", "berries prensados", "botellita shot 60ml", "tapa botellita 60ml",
+            "pulpa de pitahaya dragon", "pulpa de pitahaya dragón", "acai puro del amazonas", "açai puro del amazonas", "camu camu silvestre", "guarana en polvo", "guaraná en polvo", "leche de coco cremosa", "botella cristal exoticos 350ml", "botella cristal exóticos 350ml", "tapa dorada hermetica", "tapa dorada hermética",
+            "porcion proteina vegana", "porción proteína vegana", "porcion creatina creapure", "porción creatina creapure", "porcion semillas de chia", "porción semillas de chía", "porcion colageno hidrolizado", "porción colágeno hidrolizado", "porcion frutos rojos silvestres", "porción frutos rojos silvestres", "porcion cacao organico", "porción cacao orgánico"
+    ));
+
     private boolean esProductoCatalogoValido(Producto p) {
         if (p == null) return false;
         String cat = p.getCategoria() != null ? p.getCategoria().trim().toLowerCase() : "";
@@ -183,6 +193,35 @@ public class ProductoController {
         }
         if (nom.startsWith("batido armado") || nom.startsWith("batido personalizado")) {
             return false;
+        }
+        if (cat.contains("packaging") || cat.contains("vaso") || cat.contains("insumo") ||
+            nom.contains("vaso") || nom.contains("tapa ") || nom.contains("botellita") || nom.contains("bombilla") || nom.contains("bolsa ")) {
+            return false;
+        }
+        String nomNorm = normalizar(nom);
+        // Proteger explícitamente productos reales
+        if (nomNorm.contains("pulpasdetox") || nomNorm.contains("pulpasdesparasitantes") ||
+            nomNorm.contains("pulpascardio") || nomNorm.contains("pulpasgainer") ||
+            nomNorm.contains("pulpasquelantes") || nomNorm.contains("pack") || nomNorm.contains("dragonimperial")) {
+            return true;
+        }
+        for (String ins : NOMBRES_INSUMOS_CRUDOS) {
+            String insNorm = normalizar(ins);
+            if (nomNorm.equals(insNorm) || (nomNorm.startsWith(insNorm) && !nomNorm.contains("dragonimperial"))) {
+                return false;
+            }
+        }
+        if (insumoRepository != null) {
+            try {
+                for (com.gomezsystems.minierp.model.Insumo i : insumoRepository.findAll()) {
+                    if (i.getNombre() != null) {
+                        String iNorm = normalizar(i.getNombre());
+                        if (!iNorm.isEmpty() && nomNorm.equals(iNorm)) {
+                            return false;
+                        }
+                    }
+                }
+            } catch (Exception ignored) {}
         }
         return true;
     }

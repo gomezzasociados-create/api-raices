@@ -102,14 +102,71 @@ public class DataInitializer implements CommandLineRunner {
                 }
             }
         
-            // 3. PURGAR INSUMOS DE BODEGA DEL CATÁLOGO DE PRODUCTOS (SE GESTIONAN EXCLUSIVAMENTE EN BODEGAS)
+            // 3. PURGAR TOTALMENTE INSUMOS Y MATERIAS PRIMAS DEL CATÁLOGO DE PRODUCTOS
             try {
+                java.util.Set<String> nombresInsumos = new java.util.HashSet<>();
+                if (insumoRepository != null) {
+                    for (Insumo ins : insumoRepository.findAll()) {
+                        if (ins.getNombre() != null) {
+                            nombresInsumos.add(normalizar(ins.getNombre()));
+                        }
+                    }
+                }
+                String[] insumosConocidos = {
+                    "agua de coco", "espinaca", "apio", "pepino", "manzana verde", "limon", "limón", "jengibre", "menta", "piña",
+                    "semillas de calabaza", "papaya", "ajo", "betarraga", "zanahoria", "naranja", "platano", "plátano", "avena",
+                    "mantequilla de mani", "mantequilla de maní", "cilantro", "perejil", "espirulina", "chlorella",
+                    "vaso biodegradable 500ml", "tapa domo compostable", "bombilla de bambu / polipapel", "bombilla de bambú / polipapel", "bolsa kraft ecologica", "bolsa kraft ecológica",
+                    "caldo de huesos", "jengibre concentrado", "curcuma concentrada", "cúrcuma concentrada", "pimienta negra", "limon concentrado", "limón concentrado", "berries prensados", "botellita shot 60ml", "tapa botellita 60ml",
+                    "pulpa de pitahaya dragon", "pulpa de pitahaya dragón", "acai puro del amazonas", "açai puro del amazonas", "camu camu silvestre", "guarana en polvo", "guaraná en polvo", "leche de coco cremosa", "botella cristal exoticos 350ml", "botella cristal exóticos 350ml", "tapa dorada hermetica", "tapa dorada hermética",
+                    "porcion proteina vegana", "porción proteína vegana", "porcion creatina creapure", "porción creatina creapure", "porcion semillas de chia", "porción semillas de chía", "porcion colageno hidrolizado", "porción colágeno hidrolizado", "porcion frutos rojos silvestres", "porción frutos rojos silvestres", "porcion cacao organico", "porción cacao orgánico"
+                };
+                for (String s : insumosConocidos) {
+                    nombresInsumos.add(normalizar(s));
+                }
+
                 for (Producto p : repository.findAll()) {
                     String cat = p.getCategoria() != null ? p.getCategoria().toLowerCase() : "";
-                    String nom = p.getNombre() != null ? p.getNombre().toLowerCase() : "";
+                    String nom = p.getNombre() != null ? p.getNombre().trim() : "";
+                    String nomNorm = normalizar(nom);
                     String desc = p.getDescripcion() != null ? p.getDescripcion().toLowerCase() : "";
-                    if (cat.contains("arma") || cat.contains("porcion") || nom.contains("porción") || nom.contains("porcion") || desc.contains("conectado a bodega")) {
-                        repository.delete(p);
+
+                    boolean esInsumo = nombresInsumos.contains(nomNorm) ||
+                            nomNorm.startsWith("porcion") ||
+                            cat.contains("arma") || cat.contains("porcion") || nomNorm.contains("porcion") ||
+                            desc.contains("conectado a bodega") || desc.contains("bodega de insumo") ||
+                            cat.contains("packaging") || cat.contains("vaso") || cat.contains("insumo") ||
+                            nomNorm.contains("vaso") || nomNorm.contains("tapa") || nomNorm.contains("botellita") || nomNorm.contains("bombilla") || nomNorm.contains("bolsa");
+
+                    // Proteger explícitamente productos comerciales de pulpas y exóticos
+                    if (nomNorm.contains("pulpasdetox") || nomNorm.contains("pulpasdesparasitantes") ||
+                        nomNorm.contains("pulpascardio") || nomNorm.contains("pulpasgainer") ||
+                        nomNorm.contains("pulpasquelantes") || nomNorm.contains("pack") || nomNorm.contains("dragonimperial")) {
+                        esInsumo = false;
+                    }
+
+                    if (esInsumo) {
+                        try {
+                            repository.delete(p);
+                            System.out.println(">> GÓMEZ SYSTEMS: Insumo eliminado de tabla productos: " + nom);
+                        } catch (Exception ex) {
+                            System.err.println("No se pudo borrar producto insumo: " + ex.getMessage());
+                        }
+                    } else {
+                        // Normalizar categorías limpias en BD para productos comerciales reales
+                        boolean modCat = false;
+                        if (nomNorm.contains("dragonimperial") || nomNorm.contains("pitahaya") || cat.contains("exot")) {
+                            if (!"Exóticos".equals(p.getCategoria())) { p.setCategoria("Exóticos"); modCat = true; }
+                        } else if (nomNorm.contains("shot") || cat.contains("shot")) {
+                            if (!"Shots".equals(p.getCategoria())) { p.setCategoria("Shots"); modCat = true; }
+                        } else if (nomNorm.contains("pulpas") || nomNorm.contains("pack") || cat.contains("pack")) {
+                            if (!"Packs".equals(p.getCategoria())) { p.setCategoria("Packs"); modCat = true; }
+                        } else {
+                            if (!"500 mls".equals(p.getCategoria())) { p.setCategoria("500 mls"); modCat = true; }
+                        }
+                        if (modCat) {
+                            repository.save(p);
+                        }
                     }
                 }
             } catch (Throwable t) {
