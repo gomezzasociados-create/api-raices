@@ -786,26 +786,136 @@
                         <div id="collapsePulpas" class="accordion-collapse collapse show" aria-labelledby="headingPulpas" data-bs-parent="#accordionInventario">
                             <div class="accordion-body p-0 pt-3">
                                 <div class="table-container mb-0" style="border-top: 3px solid var(--p-bio-green);">
-                                    <div class="d-flex justify-content-end mb-1 mt-2">
+                                    <div class="d-flex justify-content-between align-items-center mb-3 mt-2 flex-wrap gap-2">
+                                        <button type="button" class="btn btn-sm btn-outline-warning font-orbitron fw-bold px-3 py-2" onclick="toggleCalculadoraBodega('pulpas')" style="box-shadow: 0 0 10px rgba(255,215,0,0.25);">
+                                            <i class="bi bi-calculator-fill me-2 text-warning fs-5"></i> CALCULADORA DE PORCIÓN & MARGEN REAL (1 - %)
+                                        </button>
                                         <div class="p-2 border rounded" style="border-color: var(--p-bio-green) !important; background: rgba(0,255,0,0.1); box-shadow: 0 0 10px rgba(0,255,0,0.2);">
                                             <span style="color:var(--p-bio-green); font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
                                             <span class="fw-bold text-white fs-4" id="total-valor-pulpas" style="text-shadow: 0 0 10px rgba(0,255,0,0.5);">$0</span>
                                         </div>
                                     </div>
-                                    <div class="row g-3 mb-4 mt-1">
+
+                                    <!-- CALCULADORA DE PORCIÓN & MARGEN REAL 1-% (PULPAS) -->
+                                    <div id="calc-container-pulpas" class="p-3 mb-4 rounded-3" style="display: none; background: rgba(5, 12, 10, 0.95); border: 2px solid var(--p-bio-green); box-shadow: 0 0 20px rgba(0,255,100,0.25);">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary">
+                                            <h6 class="font-orbitron fw-bold m-0" style="color: var(--p-bio-green);">
+                                                <i class="bi bi-calculator-fill me-2"></i> CALCULADORA DE COSTO POR PORCIÓN & MARGEN REAL (1 - %) • PULPAS Y MATERIA PRIMA
+                                            </h6>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-sm btn-outline-info font-rajdhani" onclick="sincronizarConFormulario('pulpas')">
+                                                    <i class="bi bi-arrow-repeat me-1"></i> Cargar del Formulario
+                                                </button>
+                                                <button type="button" class="btn-close btn-close-white" onclick="toggleCalculadoraBodega('pulpas')"></button>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3">
+                                            <div class="col-lg-7">
+                                                <div class="row g-2">
+                                                    <div class="col-md-5">
+                                                        <label class="form-label-neon small" style="color:var(--p-bio-green)">Modo de Compra</label>
+                                                        <select id="calc-pulpas-modo" class="form-select form-select-sm auth-select" onchange="actualizarCalculadora('pulpas')">
+                                                            <option value="kilo">⚖️ Por Kilo (1.000 gr)</option>
+                                                            <option value="litro">💧 Por Litro (1.000 ml)</option>
+                                                            <option value="pack">📦 Por Pack / Lote</option>
+                                                            <option value="unidad">🍏 Por Unidad</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-warning">Precio Compra / Base ($)</label>
+                                                        <input type="number" id="calc-pulpas-costo-base" class="form-control form-control-sm text-warning fw-bold" placeholder="Ej: 3500" oninput="actualizarCalculadora('pulpas')">
+                                                    </div>
+                                                    <div class="col-md-3" id="calc-pulpas-pack-cant-col" style="display:none;">
+                                                        <label class="form-label-neon small text-info">Cant. en Pack</label>
+                                                        <input type="number" id="calc-pulpas-pack-cant" class="form-control form-control-sm text-info fw-bold" value="10" oninput="actualizarCalculadora('pulpas')">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small" style="color:var(--p-bio-green)">Dosis por Porción</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-pulpas-dosis" class="form-control text-white fw-bold" step="0.1" placeholder="Ej: 50" oninput="actualizarCalculadora('pulpas')">
+                                                            <span class="input-group-text bg-dark text-white-50 border-secondary" id="calc-pulpas-dosis-unidad">gr</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-info">% Margen Real (1 - %)</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-pulpas-margen" class="form-control text-info fw-bold" value="60" min="1" max="99" oninput="actualizarCalculadora('pulpas')">
+                                                            <span class="input-group-text bg-dark text-info border-secondary">%</span>
+                                                        </div>
+                                                        <div class="d-flex gap-1 mt-1">
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('pulpas', 40)">40%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('pulpas', 50)">50%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('pulpas', 60)">60%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('pulpas', 70)">70%</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-white-50">% Merma / Desecho</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-pulpas-merma" class="form-control text-white-50" value="0" min="0" max="90" oninput="actualizarCalculadora('pulpas')">
+                                                            <span class="input-group-text bg-dark text-white-50 border-secondary">%</span>
+                                                        </div>
+                                                        <div class="d-flex gap-1 mt-1">
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('pulpas', 0)">0%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('pulpas', 5)">5%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('pulpas', 10)">10%</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-between" style="background: rgba(0,0,0,0.7); border: 1px dashed var(--p-bio-green);">
+                                                    <div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <span class="text-white-50 small font-rajdhani">COSTO PURO PORCIÓN:</span>
+                                                            <span class="fw-bold text-white fs-6" id="calc-pulpas-res-costo-puro">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <span class="text-white-50 small font-rajdhani">COSTO REAL CON MERMA:</span>
+                                                            <span class="fw-bold text-warning fs-6" id="calc-pulpas-res-costo-merma">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom border-secondary">
+                                                            <span class="small font-rajdhani text-info">FÓRMULA MARGEN REAL:</span>
+                                                            <span class="font-monospace text-info small" id="calc-pulpas-res-formula">Costo / (1 - 0.60)</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-baseline mb-1">
+                                                            <span class="font-orbitron small text-white">PRECIO SUGERIDO:</span>
+                                                            <span class="font-orbitron fw-bold fs-4" style="color: var(--p-bio-green); text-shadow: 0 0 10px var(--p-bio-green);" id="calc-pulpas-res-precio-sugerido">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center small text-white-50 font-rajdhani">
+                                                            <span>Ganancia neta: <b class="text-success" id="calc-pulpas-res-ganancia">$0</b></span>
+                                                            <span>Margen Real: <b class="text-info" id="calc-pulpas-res-margen-real">0%</b></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-3 d-flex gap-2">
+                                                        <button type="button" class="btn btn-sm w-100 fw-bold font-orbitron text-dark" style="background: var(--p-bio-green);" onclick="aplicarCalculadoraABodega('pulpas')">
+                                                            <i class="bi bi-check-circle-fill me-1"></i> APLICAR AL FORMULARIO
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-outline-info font-rajdhani" onclick="verInsumoEnFormulas('pulpas')" title="Ver en Fórmulas">
+                                                            <i class="bi bi-flask"></i> Fórmulas
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 mb-4 mt-1 align-items-end">
                                         <input type="hidden" id="ins-id">
                                         <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">Cód. Botánico</label><input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Pulpa de Mango"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Subcategoría</label><select id="ins-subcategoria" class="form-select"><option value="Base">Base</option><option value="Semillas">Semillas</option><option value="Frutas">Frutas</option><option value="Vegetales">Vegetales</option><option value="Suplementos">Suplementos</option><option value="Frutos Secos">Frutos Secos</option><option value="Especias">Especias</option><option value="Endulzantes">Endulzantes</option><option value="Estabilizantes">Estabilizantes</option><option value="Grasas">Grasas</option><option value="Proteínas">Proteínas</option><option value="Cereales">Cereales</option></select></div>
-                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-bio-green)">Métrica</label><select id="ins-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
-                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control"></div>
-                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/KG ($)</label><input type="number" id="ins-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 3200"></div>
-                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-bio-green)">URL Imagen</label><input type="text" id="ins-imagen" class="form-control" placeholder="https://..."></div>
+                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-bio-green)">Métrica</label><select id="ins-unidad" class="form-select" onchange="actualizarBadgeCostoEnVivo('pulpas')"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
+                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-bio-green)">Volumen</label><input type="number" id="ins-stock" class="form-control" placeholder="Stock"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/KG ($)</label><input type="number" id="ins-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 3200" oninput="actualizarBadgeCostoEnVivo('pulpas')"></div>
+                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-bio-green)">Dosis Porc.</label><input type="number" id="ins-dosis" class="form-control text-white fw-bold" step="0.1" placeholder="50" oninput="actualizarBadgeCostoEnVivo('pulpas')"></div>
+                                        <div class="col-md-2"><label class="form-label-neon text-info">Costo Porción</label><div id="badge-costo-porcion-pulpas" class="form-control bg-dark text-info fw-bold text-center border-secondary fs-6 py-2">$0 / porc</div></div>
+                                        <div class="col-md-4"><label class="form-label-neon" style="color:var(--p-bio-green)">URL Imagen</label><input type="text" id="ins-imagen" class="form-control" placeholder="https://..."></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-bio-green)">Nodo Destino</label><select id="ins-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
-                                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background:var(--p-bio-green); color:#000;" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg fs-4"></i></button></div>
+                                        <div class="col-md-2"><button class="btn btn-bio w-100 py-2 fs-5 font-orbitron" style="background:var(--p-bio-green); color:#000;" onclick="guardarInsumo('pulpas')"><i class="bi bi-plus-lg me-1"></i> GUARDAR</button></div>
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table text-center align-middle m-0">
-                                            <thead class="table-dark"><tr><th style="width: 50px;">IMG</th><th>BIOLOGÍA_PULPA</th><th>ETIQUETA</th><th>NODO_BASE</th><th>VOLUMEN_ACTUAL</th><th>VALOR/KG</th><th>VALOR_TOTAL</th><th>ACCIONES</th></tr></thead>
+                                            <thead class="table-dark"><tr><th style="width: 50px;">IMG</th><th>BIOLOGÍA_PULPA</th><th>ETIQUETA</th><th>NODO_BASE</th><th>VOLUMEN_ACTUAL</th><th>VALOR/KG</th><th>DOSIS & COSTO/PORCIÓN</th><th>VALOR_TOTAL</th><th>ACCIONES</th></tr></thead>
                                             <tbody id="tabla-pulpas"></tbody>
                                         </table>
                                     </div>
@@ -825,25 +935,134 @@
                             <div class="accordion-body p-0 pt-3">
                                 <div class="table-container mb-0" style="border-top: 3px solid var(--p-cyan);">
                                     <div id="alerta-vasos-detalle-box"></div>
-                                    <div class="d-flex justify-content-end mb-1 mt-2">
+                                    <div class="d-flex justify-content-between align-items-center mb-3 mt-2 flex-wrap gap-2">
+                                        <button type="button" class="btn btn-sm btn-outline-info font-orbitron fw-bold px-3 py-2" onclick="toggleCalculadoraBodega('vasos')" style="box-shadow: 0 0 10px rgba(0,255,255,0.25);">
+                                            <i class="bi bi-calculator-fill me-2 text-info fs-5"></i> CALCULADORA DE PORCIÓN & MARGEN REAL (1 - %)
+                                        </button>
                                         <div class="p-2 border rounded" style="border-color: var(--p-cyan) !important; background: rgba(0,255,255,0.1); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
                                             <span style="color:var(--p-cyan); font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
                                             <span class="fw-bold text-white fs-4" id="total-valor-vasos" style="text-shadow: 0 0 10px rgba(0,255,255,0.5);">$0</span>
                                         </div>
                                     </div>
-                                    <div class="row g-3 mb-4 mt-1">
+
+                                    <!-- CALCULADORA DE PORCIÓN & MARGEN REAL 1-% (VASOS Y PACKAGING) -->
+                                    <div id="calc-container-vasos" class="p-3 mb-4 rounded-3" style="display: none; background: rgba(5, 12, 18, 0.95); border: 2px solid var(--p-cyan); box-shadow: 0 0 20px rgba(0,255,255,0.25);">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary">
+                                            <h6 class="font-orbitron fw-bold m-0" style="color: var(--p-cyan);">
+                                                <i class="bi bi-calculator-fill me-2"></i> CALCULADORA DE COSTO POR UNIDAD & MARGEN REAL (1 - %) • VASOS Y PACKAGING
+                                            </h6>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-sm btn-outline-info font-rajdhani" onclick="sincronizarConFormulario('vasos')">
+                                                    <i class="bi bi-arrow-repeat me-1"></i> Cargar del Formulario
+                                                </button>
+                                                <button type="button" class="btn-close btn-close-white" onclick="toggleCalculadoraBodega('vasos')"></button>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3">
+                                            <div class="col-lg-7">
+                                                <div class="row g-2">
+                                                    <div class="col-md-5">
+                                                        <label class="form-label-neon small text-info">Modo de Compra</label>
+                                                        <select id="calc-vasos-modo" class="form-select form-select-sm auth-select" onchange="actualizarCalculadora('vasos')">
+                                                            <option value="pack">📦 Por Pack / Caja (Lote)</option>
+                                                            <option value="unidad">🍏 Por Unidad Suelta</option>
+                                                            <option value="kilo">⚖️ Por Peso (gr)</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-warning">Precio Compra Pack/Base ($)</label>
+                                                        <input type="number" id="calc-vasos-costo-base" class="form-control form-control-sm text-warning fw-bold" placeholder="Ej: 25000" oninput="actualizarCalculadora('vasos')">
+                                                    </div>
+                                                    <div class="col-md-3" id="calc-vasos-pack-cant-col">
+                                                        <label class="form-label-neon small text-info">Cant. en Pack</label>
+                                                        <input type="number" id="calc-vasos-pack-cant" class="form-control form-control-sm text-info fw-bold" value="100" placeholder="100" oninput="actualizarCalculadora('vasos')">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-info">Dosis por Servicio</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-vasos-dosis" class="form-control text-white fw-bold" step="1" value="1" placeholder="1" oninput="actualizarCalculadora('vasos')">
+                                                            <span class="input-group-text bg-dark text-white-50 border-secondary" id="calc-vasos-dosis-unidad">und</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-info">% Margen Real (1 - %)</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-vasos-margen" class="form-control text-info fw-bold" value="60" min="1" max="99" oninput="actualizarCalculadora('vasos')">
+                                                            <span class="input-group-text bg-dark text-info border-secondary">%</span>
+                                                        </div>
+                                                        <div class="d-flex gap-1 mt-1">
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('vasos', 40)">40%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('vasos', 50)">50%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('vasos', 60)">60%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('vasos', 70)">70%</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-white-50">% Merma / Roturas</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-vasos-merma" class="form-control text-white-50" value="0" min="0" max="90" oninput="actualizarCalculadora('vasos')">
+                                                            <span class="input-group-text bg-dark text-white-50 border-secondary">%</span>
+                                                        </div>
+                                                        <div class="d-flex gap-1 mt-1">
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('vasos', 0)">0%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('vasos', 2)">2%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('vasos', 5)">5%</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-between" style="background: rgba(0,0,0,0.7); border: 1px dashed var(--p-cyan);">
+                                                    <div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <span class="text-white-50 small font-rajdhani">COSTO UNITARIO / PORCIÓN:</span>
+                                                            <span class="fw-bold text-white fs-6" id="calc-vasos-res-costo-puro">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <span class="text-white-50 small font-rajdhani">COSTO CON MERMA/ROTURAS:</span>
+                                                            <span class="fw-bold text-warning fs-6" id="calc-vasos-res-costo-merma">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom border-secondary">
+                                                            <span class="small font-rajdhani text-info">FÓRMULA MARGEN REAL:</span>
+                                                            <span class="font-monospace text-info small" id="calc-vasos-res-formula">Costo / (1 - 0.60)</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-baseline mb-1">
+                                                            <span class="font-orbitron small text-white">PRECIO SUGERIDO:</span>
+                                                            <span class="font-orbitron fw-bold fs-4" style="color: var(--p-cyan); text-shadow: 0 0 10px var(--p-cyan);" id="calc-vasos-res-precio-sugerido">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center small text-white-50 font-rajdhani">
+                                                            <span>Ganancia neta: <b class="text-success" id="calc-vasos-res-ganancia">$0</b></span>
+                                                            <span>Margen Real: <b class="text-info" id="calc-vasos-res-margen-real">0%</b></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-3 d-flex gap-2">
+                                                        <button type="button" class="btn btn-sm w-100 fw-bold font-orbitron text-dark" style="background: var(--p-cyan);" onclick="aplicarCalculadoraABodega('vasos')">
+                                                            <i class="bi bi-check-circle-fill me-1"></i> APLICAR AL FORMULARIO
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-outline-info font-rajdhani" onclick="verInsumoEnFormulas('vasos')" title="Ver en Fórmulas">
+                                                            <i class="bi bi-flask"></i> Fórmulas
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 mb-4 mt-1 align-items-end">
                                         <input type="hidden" id="vaso-id">
-                                        <div class="col-md-3"><label class="form-label-neon">Elemento Físico</label><input type="text" id="vaso-nombre" class="form-control"></div>
-                                        <div class="col-md-1"><label class="form-label-neon">Métrica</label><select id="vaso-unidad" class="form-select"><option value="und">Unidades</option><option value="mls">Mililitros</option><option value="gr">Gramos</option></select></div>
-                                        <div class="col-md-1"><label class="form-label-neon">Volumen</label><input type="number" id="vaso-stock" class="form-control"></div>
-                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UND ($)</label><input type="number" id="vaso-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 250"></div>
-                                        <div class="col-md-3"><label class="form-label-neon">URL Imagen</label><input type="text" id="vaso-imagen" class="form-control" placeholder="https://..."></div>
+                                        <div class="col-md-3"><label class="form-label-neon">Elemento Físico</label><input type="text" id="vaso-nombre" class="form-control" placeholder="Ej: Vaso 500ml con Tapa"></div>
+                                        <div class="col-md-1"><label class="form-label-neon">Métrica</label><select id="vaso-unidad" class="form-select" onchange="actualizarBadgeCostoEnVivo('vasos')"><option value="und">Unidades</option><option value="mls">Mililitros</option><option value="gr">Gramos</option></select></div>
+                                        <div class="col-md-1"><label class="form-label-neon">Volumen</label><input type="number" id="vaso-stock" class="form-control" placeholder="Stock"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UND ($)</label><input type="number" id="vaso-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 250" oninput="actualizarBadgeCostoEnVivo('vasos')"></div>
+                                        <div class="col-md-1"><label class="form-label-neon text-info">Dosis/Uso</label><input type="number" id="vaso-dosis" class="form-control text-white fw-bold" step="1" value="1" placeholder="1" oninput="actualizarBadgeCostoEnVivo('vasos')"></div>
+                                        <div class="col-md-2"><label class="form-label-neon text-info">Costo Porción</label><div id="badge-costo-porcion-vasos" class="form-control bg-dark text-info fw-bold text-center border-secondary fs-6 py-2">$0 / porc</div></div>
+                                        <div class="col-md-4"><label class="form-label-neon">URL Imagen</label><input type="text" id="vaso-imagen" class="form-control" placeholder="https://..."></div>
                                         <div class="col-md-2"><label class="form-label-neon">Nodo Destino</label><select id="vaso-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
-                                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-cyan); color: #000;" onclick="guardarInsumo('vasos')"><i class="bi bi-plus-lg fs-4"></i></button></div>
+                                        <div class="col-md-2"><button class="btn btn-bio w-100 py-2 fs-5 font-orbitron" style="background: var(--p-cyan); color: #000;" onclick="guardarInsumo('vasos')"><i class="bi bi-plus-lg me-1"></i> GUARDAR</button></div>
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table text-center align-middle m-0">
-                                            <thead class="table-dark"><tr><th style="width: 50px;">IMG</th><th>ELEMENTO_FÍSICO</th><th>FAMILIA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>VALOR/UND</th><th>VALOR_TOTAL</th><th>RECICLAR</th></tr></thead>
+                                            <thead class="table-dark"><tr><th style="width: 50px;">IMG</th><th>ELEMENTO_FÍSICO</th><th>FAMILIA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>VALOR/UND</th><th>DOSIS & COSTO/PORCIÓN</th><th>VALOR_TOTAL</th><th>RECICLAR</th></tr></thead>
                                             <tbody id="tabla-vasos"></tbody>
                                         </table>
                                     </div>
@@ -862,26 +1081,136 @@
                         <div id="collapseShots" class="accordion-collapse collapse" aria-labelledby="headingShots" data-bs-parent="#accordionInventario">
                             <div class="accordion-body p-0 pt-3">
                                 <div class="table-container mb-0" style="border-top: 3px solid var(--p-magenta);">
-                                    <div class="d-flex justify-content-end mb-1 mt-2">
+                                    <div class="d-flex justify-content-between align-items-center mb-3 mt-2 flex-wrap gap-2">
+                                        <button type="button" class="btn btn-sm btn-outline-danger font-orbitron fw-bold px-3 py-2" onclick="toggleCalculadoraBodega('shots')" style="box-shadow: 0 0 10px rgba(255,0,234,0.25); border-color: var(--p-magenta); color: var(--p-magenta);">
+                                            <i class="bi bi-calculator-fill me-2 fs-5"></i> CALCULADORA DE PORCIÓN & MARGEN REAL (1 - %)
+                                        </button>
                                         <div class="p-2 border rounded" style="border-color: var(--p-magenta) !important; background: rgba(255,0,234,0.1); box-shadow: 0 0 10px rgba(255,0,234,0.2);">
                                             <span style="color:var(--p-magenta); font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
                                             <span class="fw-bold text-white fs-4" id="total-valor-shots" style="text-shadow: 0 0 10px rgba(255,0,234,0.5);">$0</span>
                                         </div>
                                     </div>
-                                    <div class="row g-3 mb-4 mt-1">
+
+                                    <!-- CALCULADORA DE PORCIÓN & MARGEN REAL 1-% (SHOTS Y CALDOS) -->
+                                    <div id="calc-container-shots" class="p-3 mb-4 rounded-3" style="display: none; background: rgba(18, 5, 18, 0.95); border: 2px solid var(--p-magenta); box-shadow: 0 0 20px rgba(255,0,234,0.25);">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary">
+                                            <h6 class="font-orbitron fw-bold m-0" style="color: var(--p-magenta);">
+                                                <i class="bi bi-calculator-fill me-2"></i> CALCULADORA DE COSTO POR PORCIÓN & MARGEN REAL (1 - %) • SHOTS Y CALDOS
+                                            </h6>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-sm btn-outline-info font-rajdhani" onclick="sincronizarConFormulario('shots')">
+                                                    <i class="bi bi-arrow-repeat me-1"></i> Cargar del Formulario
+                                                </button>
+                                                <button type="button" class="btn-close btn-close-white" onclick="toggleCalculadoraBodega('shots')"></button>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3">
+                                            <div class="col-lg-7">
+                                                <div class="row g-2">
+                                                    <div class="col-md-5">
+                                                        <label class="form-label-neon small" style="color:var(--p-magenta)">Modo de Compra</label>
+                                                        <select id="calc-shots-modo" class="form-select form-select-sm auth-select" onchange="actualizarCalculadora('shots')">
+                                                            <option value="litro">💧 Por Litro / Botella (1.000 ml)</option>
+                                                            <option value="kilo">⚖️ Por Kilo (1.000 gr)</option>
+                                                            <option value="pack">📦 Por Pack / Lote</option>
+                                                            <option value="unidad">🍏 Por Unidad</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-warning">Precio Base / Litro ($)</label>
+                                                        <input type="number" id="calc-shots-costo-base" class="form-control form-control-sm text-warning fw-bold" placeholder="Ej: 8000" oninput="actualizarCalculadora('shots')">
+                                                    </div>
+                                                    <div class="col-md-3" id="calc-shots-pack-cant-col" style="display:none;">
+                                                        <label class="form-label-neon small text-info">Cant. en Pack</label>
+                                                        <input type="number" id="calc-shots-pack-cant" class="form-control form-control-sm text-info fw-bold" value="10" oninput="actualizarCalculadora('shots')">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small" style="color:var(--p-magenta)">Dosis por Shot (mls/gr)</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-shots-dosis" class="form-control text-white fw-bold" step="0.1" placeholder="Ej: 30" oninput="actualizarCalculadora('shots')">
+                                                            <span class="input-group-text bg-dark text-white-50 border-secondary" id="calc-shots-dosis-unidad">mls</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-info">% Margen Real (1 - %)</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-shots-margen" class="form-control text-info fw-bold" value="65" min="1" max="99" oninput="actualizarCalculadora('shots')">
+                                                            <span class="input-group-text bg-dark text-info border-secondary">%</span>
+                                                        </div>
+                                                        <div class="d-flex gap-1 mt-1">
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('shots', 50)">50%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('shots', 60)">60%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('shots', 65)">65%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('shots', 75)">75%</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-white-50">% Merma / Filtrado</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-shots-merma" class="form-control text-white-50" value="0" min="0" max="90" oninput="actualizarCalculadora('shots')">
+                                                            <span class="input-group-text bg-dark text-white-50 border-secondary">%</span>
+                                                        </div>
+                                                        <div class="d-flex gap-1 mt-1">
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('shots', 0)">0%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('shots', 5)">5%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('shots', 10)">10%</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-between" style="background: rgba(0,0,0,0.7); border: 1px dashed var(--p-magenta);">
+                                                    <div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <span class="text-white-50 small font-rajdhani">COSTO PURO PORCIÓN:</span>
+                                                            <span class="fw-bold text-white fs-6" id="calc-shots-res-costo-puro">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <span class="text-white-50 small font-rajdhani">COSTO REAL CON MERMA:</span>
+                                                            <span class="fw-bold text-warning fs-6" id="calc-shots-res-costo-merma">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom border-secondary">
+                                                            <span class="small font-rajdhani text-info">FÓRMULA MARGEN REAL:</span>
+                                                            <span class="font-monospace text-info small" id="calc-shots-res-formula">Costo / (1 - 0.65)</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-baseline mb-1">
+                                                            <span class="font-orbitron small text-white">PRECIO SUGERIDO:</span>
+                                                            <span class="font-orbitron fw-bold fs-4" style="color: var(--p-magenta); text-shadow: 0 0 10px var(--p-magenta);" id="calc-shots-res-precio-sugerido">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center small text-white-50 font-rajdhani">
+                                                            <span>Ganancia neta: <b class="text-success" id="calc-shots-res-ganancia">$0</b></span>
+                                                            <span>Margen Real: <b class="text-info" id="calc-shots-res-margen-real">0%</b></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-3 d-flex gap-2">
+                                                        <button type="button" class="btn btn-sm w-100 fw-bold font-orbitron text-white" style="background: var(--p-magenta);" onclick="aplicarCalculadoraABodega('shots')">
+                                                            <i class="bi bi-check-circle-fill me-1"></i> APLICAR AL FORMULARIO
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-outline-info font-rajdhani" onclick="verInsumoEnFormulas('shots')" title="Ver en Fórmulas">
+                                                            <i class="bi bi-flask"></i> Fórmulas
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 mb-4 mt-1 align-items-end">
                                         <input type="hidden" id="shot-id">
-                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-magenta)">Elemento / Extracto</label><input type="text" id="shot-nombre" class="form-control"></div>
+                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-magenta)">Elemento / Extracto</label><input type="text" id="shot-nombre" class="form-control" placeholder="Ej: Shot de Jengibre Limón"></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Subcategoría</label><select id="shot-subcategoria" class="form-select"><option value="Suplementos">Suplementos</option><option value="Base">Base</option><option value="Especias">Especias</option><option value="Frutas">Frutas</option><option value="Vegetales">Vegetales</option><option value="Endulzantes">Endulzantes</option></select></div>
-                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-magenta)">Métrica</label><select id="shot-unidad" class="form-select"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
-                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-magenta)">Volumen</label><input type="number" id="shot-stock" class="form-control"></div>
-                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UNIT ($)</label><input type="number" id="shot-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 2500"></div>
-                                        <div class="col-md-3"><label class="form-label-neon" style="color:var(--p-magenta)">URL Imagen</label><input type="text" id="shot-imagen" class="form-control" placeholder="https://..."></div>
+                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-magenta)">Métrica</label><select id="shot-unidad" class="form-select" onchange="actualizarBadgeCostoEnVivo('shots')"><option value="mls">Mililitros</option><option value="gr">Gramos</option><option value="und">Unidades</option></select></div>
+                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-magenta)">Volumen</label><input type="number" id="shot-stock" class="form-control" placeholder="Stock"></div>
+                                        <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-warning)">VALOR/UNIT o LITRO ($)</label><input type="number" id="shot-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 2500" oninput="actualizarBadgeCostoEnVivo('shots')"></div>
+                                        <div class="col-md-1"><label class="form-label-neon" style="color:var(--p-magenta)">Dosis Shot</label><input type="number" id="shot-dosis" class="form-control text-white fw-bold" step="0.1" placeholder="30" oninput="actualizarBadgeCostoEnVivo('shots')"></div>
+                                        <div class="col-md-2"><label class="form-label-neon text-info">Costo Porción</label><div id="badge-costo-porcion-shots" class="form-control bg-dark text-info fw-bold text-center border-secondary fs-6 py-2">$0 / porc</div></div>
+                                        <div class="col-md-4"><label class="form-label-neon" style="color:var(--p-magenta)">URL Imagen</label><input type="text" id="shot-imagen" class="form-control" placeholder="https://..."></div>
                                         <div class="col-md-2"><label class="form-label-neon" style="color:var(--p-magenta)">Nodo Destino</label><select id="shot-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')"><option value="Antofagasta">Antofagasta</option></select></div>
-                                        <div class="col-md-1"><button class="btn btn-bio w-100 h-100" style="background: var(--p-magenta); color: #fff;" onclick="guardarInsumo('shots')"><i class="bi bi-plus-lg fs-4"></i></button></div>
+                                        <div class="col-md-2"><button class="btn btn-bio w-100 py-2 fs-5 font-orbitron" style="background: var(--p-magenta); color: #fff;" onclick="guardarInsumo('shots')"><i class="bi bi-plus-lg me-1"></i> GUARDAR</button></div>
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table text-center align-middle m-0">
-                                            <thead class="table-dark"><tr><th style="width: 50px;">IMG</th><th>ELEMENTO_SHOT_CALDO</th><th>ETIQUETA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>VALOR/UNIT</th><th>VALOR_TOTAL</th><th>ACCIONES</th></tr></thead>
+                                            <thead class="table-dark"><tr><th style="width: 50px;">IMG</th><th>ELEMENTO_SHOT_CALDO</th><th>ETIQUETA</th><th>NODO_BASE</th><th>RESERVA_ACTUAL</th><th>VALOR/UNIT</th><th>DOSIS & COSTO/PORCIÓN</th><th>VALOR_TOTAL</th><th>ACCIONES</th></tr></thead>
                                             <tbody id="tabla-shots"></tbody>
                                         </table>
                                     </div>
@@ -900,12 +1229,120 @@
                         <div id="collapseArmaTuBatido" class="accordion-collapse collapse" aria-labelledby="headingArmaTuBatido" data-bs-parent="#accordionInventario">
                             <div class="accordion-body p-0 pt-3">
                                 <div class="table-container mb-0" style="border-top: 3px solid var(--p-warning);">
-                                    <div class="d-flex justify-content-end mb-1 mt-2">
+                                    <div class="d-flex justify-content-between align-items-center mb-3 mt-2 flex-wrap gap-2">
+                                        <button type="button" class="btn btn-sm btn-outline-warning font-orbitron fw-bold px-3 py-2" onclick="toggleCalculadoraBodega('armatubatido')" style="box-shadow: 0 0 10px rgba(255,215,0,0.25);">
+                                            <i class="bi bi-calculator-fill me-2 fs-5"></i> CALCULADORA DE PORCIÓN & MARGEN REAL (1 - %)
+                                        </button>
                                         <div class="p-2 border rounded" style="border-color: var(--p-warning) !important; background: rgba(255,215,0,0.1); box-shadow: 0 0 10px rgba(255,215,0,0.2);">
                                             <span style="color:var(--p-warning); font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
                                             <span class="fw-bold text-white fs-4" id="total-valor-armatubatido" style="text-shadow: 0 0 10px rgba(255,215,0,0.5);">$0</span>
                                         </div>
                                     </div>
+
+                                    <!-- CALCULADORA DE PORCIÓN & MARGEN REAL 1-% (ARMA TU BATIDO) -->
+                                    <div id="calc-container-armatubatido" class="p-3 mb-4 rounded-3" style="display: none; background: rgba(20, 18, 5, 0.95); border: 2px solid var(--p-warning); box-shadow: 0 0 20px rgba(255,215,0,0.25);">
+                                        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary">
+                                            <h6 class="font-orbitron fw-bold m-0" style="color: var(--p-warning);">
+                                                <i class="bi bi-calculator-fill me-2"></i> CALCULADORA DE COSTO POR PORCIÓN & MARGEN REAL (1 - %) • ARMA TU BATIDO
+                                            </h6>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-sm btn-outline-info font-rajdhani" onclick="sincronizarConFormulario('armatubatido')">
+                                                    <i class="bi bi-arrow-repeat me-1"></i> Cargar del Formulario
+                                                </button>
+                                                <button type="button" class="btn-close btn-close-white" onclick="toggleCalculadoraBodega('armatubatido')"></button>
+                                            </div>
+                                        </div>
+                                        <div class="row g-3">
+                                            <div class="col-lg-7">
+                                                <div class="row g-2">
+                                                    <div class="col-md-5">
+                                                        <label class="form-label-neon small" style="color:var(--p-warning)">Modo de Compra Insumo</label>
+                                                        <select id="calc-armatubatido-modo" class="form-select form-select-sm auth-select" onchange="actualizarCalculadora('armatubatido')">
+                                                            <option value="kilo">⚖️ Por Kilo (1.000 gr)</option>
+                                                            <option value="litro">💧 Por Litro (1.000 ml)</option>
+                                                            <option value="pack">📦 Por Pack / Bolsa</option>
+                                                            <option value="unidad">🍏 Por Unidad</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-warning">Precio Compra Insumo ($)</label>
+                                                        <input type="number" id="calc-armatubatido-costo-base" class="form-control form-control-sm text-warning fw-bold" placeholder="Ej: 8000" oninput="actualizarCalculadora('armatubatido')">
+                                                    </div>
+                                                    <div class="col-md-3" id="calc-armatubatido-pack-cant-col" style="display:none;">
+                                                        <label class="form-label-neon small text-info">Cant. Pack</label>
+                                                        <input type="number" id="calc-armatubatido-pack-cant" class="form-control form-control-sm text-info fw-bold" value="10" oninput="actualizarCalculadora('armatubatido')">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small" style="color:var(--p-warning)">Dosis en Batido (gr/mls)</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-armatubatido-dosis" class="form-control text-white fw-bold" step="0.1" placeholder="Ej: 25" oninput="actualizarCalculadora('armatubatido')">
+                                                            <span class="input-group-text bg-dark text-white-50 border-secondary" id="calc-armatubatido-dosis-unidad">gr</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-info">% Margen Real (1 - %)</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-armatubatido-margen" class="form-control text-info fw-bold" value="65" min="1" max="99" oninput="actualizarCalculadora('armatubatido')">
+                                                            <span class="input-group-text bg-dark text-info border-secondary">%</span>
+                                                        </div>
+                                                        <div class="d-flex gap-1 mt-1">
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('armatubatido', 50)">50%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('armatubatido', 60)">60%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('armatubatido', 65)">65%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('armatubatido', 70)">70%</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label class="form-label-neon small text-white-50">% Merma / Desecho</label>
+                                                        <div class="input-group input-group-sm">
+                                                            <input type="number" id="calc-armatubatido-merma" class="form-control text-white-50" value="0" min="0" max="90" oninput="actualizarCalculadora('armatubatido')">
+                                                            <span class="input-group-text bg-dark text-white-50 border-secondary">%</span>
+                                                        </div>
+                                                        <div class="d-flex gap-1 mt-1">
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('armatubatido', 0)">0%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('armatubatido', 5)">5%</button>
+                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('armatubatido', 10)">10%</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-5">
+                                                <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-between" style="background: rgba(0,0,0,0.7); border: 1px dashed var(--p-warning);">
+                                                    <div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <span class="text-white-50 small font-rajdhani">COSTO PURO PORCIÓN:</span>
+                                                            <span class="fw-bold text-white fs-6" id="calc-armatubatido-res-costo-puro">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                                            <span class="text-white-50 small font-rajdhani">COSTO CON MERMA:</span>
+                                                            <span class="fw-bold text-warning fs-6" id="calc-armatubatido-res-costo-merma">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom border-secondary">
+                                                            <span class="small font-rajdhani text-info">FÓRMULA MARGEN REAL:</span>
+                                                            <span class="font-monospace text-info small" id="calc-armatubatido-res-formula">Costo / (1 - 0.65)</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-baseline mb-1">
+                                                            <span class="font-orbitron small text-white">PRECIO VENTA PORCIÓN:</span>
+                                                            <span class="font-orbitron fw-bold fs-4" style="color: var(--p-warning); text-shadow: 0 0 10px var(--p-warning);" id="calc-armatubatido-res-precio-sugerido">$0</span>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center small text-white-50 font-rajdhani">
+                                                            <span>Ganancia neta: <b class="text-success" id="calc-armatubatido-res-ganancia">$0</b></span>
+                                                            <span>Margen Real: <b class="text-info" id="calc-armatubatido-res-margen-real">0%</b></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-3 d-flex gap-2">
+                                                        <button type="button" class="btn btn-sm w-100 fw-bold font-orbitron text-dark" style="background: var(--p-warning);" onclick="aplicarCalculadoraABodega('armatubatido')">
+                                                            <i class="bi bi-check-circle-fill me-1"></i> APLICAR PRECIO/PORCIÓN
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm btn-outline-info font-rajdhani" onclick="verInsumoEnFormulas('armatubatido')" title="Ver en Fórmulas">
+                                                            <i class="bi bi-flask"></i> Fórmulas
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="row g-3 mb-4 mt-1 align-items-end">
                                         <input type="hidden" id="armatubatido-id">
                                         <div class="col-md-3">
@@ -929,9 +1366,9 @@
                                                 <option value="Cereales">Cereales</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-1">
                                             <label class="form-label-neon" style="color:var(--p-warning)">Métrica</label>
-                                            <select id="armatubatido-unidad" class="form-select">
+                                            <select id="armatubatido-unidad" class="form-select" onchange="actualizarBadgeCostoEnVivo('armatubatido')">
                                                 <option value="gr">Gramos (gr)</option>
                                                 <option value="mls">Mililitros (mls)</option>
                                                 <option value="und">Unidades (und)</option>
@@ -939,15 +1376,19 @@
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label-neon" style="color:var(--p-warning)">Dosis Porción</label>
-                                            <input type="number" id="armatubatido-dosis" class="form-control text-warning fw-bold" step="0.1" placeholder="Ej: 30 o 0.5">
+                                            <input type="number" id="armatubatido-dosis" class="form-control text-warning fw-bold" step="0.1" placeholder="Ej: 30 o 0.5" oninput="actualizarBadgeCostoEnVivo('armatubatido')">
                                         </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label-neon" style="color:var(--p-warning)">Reserva Stock (Porciones)</label>
+                                        <div class="col-md-2">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Reserva Stock (Porc.)</label>
                                             <input type="number" id="armatubatido-stock" class="form-control" placeholder="Cant. porciones">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label-neon" style="color:var(--p-warning)">Precio / Porción ($)</label>
-                                            <input type="number" id="armatubatido-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 1000">
+                                            <input type="number" id="armatubatido-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 1000" oninput="actualizarBadgeCostoEnVivo('armatubatido')">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label-neon text-info">Análisis Porción</label>
+                                            <div id="badge-costo-porcion-armatubatido" class="form-control bg-dark text-info fw-bold text-center border-secondary fs-6 py-2">$0 / porc</div>
                                         </div>
                                         <div class="col-md-4">
                                             <label class="form-label-neon" style="color:var(--p-warning)">Foto / Video (URL o Subida)</label>
@@ -965,9 +1406,9 @@
                                                 <option value="Antofagasta">Antofagasta</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <button class="btn btn-bio w-100 py-2 fs-5 font-orbitron" style="background: var(--p-warning); color: #000;" onclick="guardarInsumo('armatubatido')">
-                                                <i class="bi bi-plus-circle-fill me-2"></i> GUARDAR / ACTUALIZAR PORCIÓN
+                                                <i class="bi bi-plus-circle-fill me-2"></i> GUARDAR / ACTUALIZAR
                                             </button>
                                         </div>
                                     </div>
@@ -3325,28 +3766,88 @@
                         <button type="button" class="btn btn-sm btn-dark position-absolute bottom-0 end-0 p-0 rounded-circle text-warning border border-warning" style="width: 18px; height: 18px; line-height: 16px; font-size: 10px;" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Tomar foto"><i class="bi bi-camera-fill"></i></button>
                     </div>
                 </td>`;
-                let dosisTdHtml = isArmaTuBatido ? `<td class="text-info fw-bold fs-5">${i.cantidadPorcion || 1} ${i.medida || 'gr'}</td>` : '';
 
-                const row = `<tr>
+                let dosisPulpa = i.cantidadPorcion || (i.medida === 'und' ? 1 : 50);
+                let costoPorcPulpa = (i.medida === 'gr' || i.medida === 'mls') ? (precioUnitario / 1000) * dosisPulpa : precioUnitario * dosisPulpa;
+
+                let dosisVaso = i.cantidadPorcion || 1;
+                let costoPorcVaso = precioUnitario * dosisVaso;
+
+                let dosisShot = i.cantidadPorcion || (i.medida === 'und' ? 1 : 30);
+                let costoPorcShot = (i.medida === 'gr' || i.medida === 'mls') ? (precioUnitario / 1000) * dosisShot : precioUnitario * dosisShot;
+
+                const rowPulpas = `<tr>
                     ${imgTdHtml}
                     <td class="fw-bold text-white fs-5">${i.nombre}</td>
                     <td><span class="badge-categoria" style="${colorBadge}">${(i.subcategoria || i.categoria || 'Pulpas').toUpperCase()}</span></td>
                     <td class="text-white">${i.sucursal}</td>
-                    ${dosisTdHtml}
                     <td>${stockHTML}</td>
                     <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
+                    <td class="fs-5 text-info fw-bold">${formatMoney(costoPorcPulpa, i.sucursal)} <small class="text-white-50 fs-6">(${dosisPulpa} ${i.medida || 'gr'})</small></td>
                     <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
                     <td>
+                        <button class="btn btn-sm text-warning border-0 me-1" onclick="abrirCalculadoraConInsumo('pulpas', ${i.idInsumo})" title="Calculadora 1-% Margen Real"><i class="bi bi-calculator fs-4"></i></button>
                         <button class="btn btn-sm text-warning border-0 me-1" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Cambiar foto de este insumo"><i class="bi bi-camera-fill fs-4"></i></button>
                         <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})" title="Editar"><i class="bi bi-pencil-square fs-3"></i></button>
                         <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})" title="Eliminar"><i class="bi bi-trash3-fill fs-3"></i></button>
                     </td>
                 </tr>`;
 
-                if (isArmaTuBatido && tbArmaTuBatido) tbArmaTuBatido.innerHTML += row;
-                else if (isVaso && tbVasos) tbVasos.innerHTML += row;
-                else if (isShot && tbShots) tbShots.innerHTML += row;
-                else if (tbPulpas) tbPulpas.innerHTML += row;
+                const rowVasos = `<tr>
+                    ${imgTdHtml}
+                    <td class="fw-bold text-white fs-5">${i.nombre}</td>
+                    <td><span class="badge-categoria" style="${colorBadge}">${(i.subcategoria || i.categoria || 'Vasos').toUpperCase()}</span></td>
+                    <td class="text-white">${i.sucursal}</td>
+                    <td>${stockHTML}</td>
+                    <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
+                    <td class="fs-5 text-info fw-bold">${formatMoney(costoPorcVaso, i.sucursal)} <small class="text-white-50 fs-6">(${dosisVaso} ${i.medida || 'und'})</small></td>
+                    <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
+                    <td>
+                        <button class="btn btn-sm text-warning border-0 me-1" onclick="abrirCalculadoraConInsumo('vasos', ${i.idInsumo})" title="Calculadora 1-% Margen Real"><i class="bi bi-calculator fs-4"></i></button>
+                        <button class="btn btn-sm text-warning border-0 me-1" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Cambiar foto de este insumo"><i class="bi bi-camera-fill fs-4"></i></button>
+                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})" title="Editar"><i class="bi bi-pencil-square fs-3"></i></button>
+                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})" title="Eliminar"><i class="bi bi-trash3-fill fs-3"></i></button>
+                    </td>
+                </tr>`;
+
+                const rowShots = `<tr>
+                    ${imgTdHtml}
+                    <td class="fw-bold text-white fs-5">${i.nombre}</td>
+                    <td><span class="badge-categoria" style="${colorBadge}">${(i.subcategoria || i.categoria || 'Shots').toUpperCase()}</span></td>
+                    <td class="text-white">${i.sucursal}</td>
+                    <td>${stockHTML}</td>
+                    <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
+                    <td class="fs-5 text-info fw-bold">${formatMoney(costoPorcShot, i.sucursal)} <small class="text-white-50 fs-6">(${dosisShot} ${i.medida || 'mls'})</small></td>
+                    <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
+                    <td>
+                        <button class="btn btn-sm text-warning border-0 me-1" onclick="abrirCalculadoraConInsumo('shots', ${i.idInsumo})" title="Calculadora 1-% Margen Real"><i class="bi bi-calculator fs-4"></i></button>
+                        <button class="btn btn-sm text-warning border-0 me-1" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Cambiar foto de este insumo"><i class="bi bi-camera-fill fs-4"></i></button>
+                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})" title="Editar"><i class="bi bi-pencil-square fs-3"></i></button>
+                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})" title="Eliminar"><i class="bi bi-trash3-fill fs-3"></i></button>
+                    </td>
+                </tr>`;
+
+                const rowArma = `<tr>
+                    ${imgTdHtml}
+                    <td class="fw-bold text-white fs-5">${i.nombre}</td>
+                    <td><span class="badge-categoria" style="${colorBadge}">${(i.subcategoria || i.categoria || 'Arma tu Batido').toUpperCase()}</span></td>
+                    <td class="text-white">${i.sucursal}</td>
+                    <td class="text-info fw-bold fs-5">${i.cantidadPorcion || 1} ${i.medida || 'gr'}</td>
+                    <td>${stockHTML}</td>
+                    <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
+                    <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
+                    <td>
+                        <button class="btn btn-sm text-warning border-0 me-1" onclick="abrirCalculadoraConInsumo('armatubatido', ${i.idInsumo})" title="Calculadora 1-% Margen Real"><i class="bi bi-calculator fs-4"></i></button>
+                        <button class="btn btn-sm text-warning border-0 me-1" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Cambiar foto de este insumo"><i class="bi bi-camera-fill fs-4"></i></button>
+                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})" title="Editar"><i class="bi bi-pencil-square fs-3"></i></button>
+                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})" title="Eliminar"><i class="bi bi-trash3-fill fs-3"></i></button>
+                    </td>
+                </tr>`;
+
+                if (isArmaTuBatido && tbArmaTuBatido) tbArmaTuBatido.innerHTML += rowArma;
+                else if (isVaso && tbVasos) tbVasos.innerHTML += rowVasos;
+                else if (isShot && tbShots) tbShots.innerHTML += rowShots;
+                else if (tbPulpas) tbPulpas.innerHTML += rowPulpas;
             });
             
             const sucMuestraPulpas = document.getElementById('ins-sucursal') ? document.getElementById('ins-sucursal').value : 'Antofagasta';
@@ -3467,32 +3968,39 @@
                 if (document.getElementById('armatubatido-sucursal')) document.getElementById('armatubatido-sucursal').value = ins.sucursal;
                 if (document.getElementById('armatubatido-precio')) document.getElementById('armatubatido-precio').value = ins.precio || 0;
                 if (document.getElementById('armatubatido-imagen')) document.getElementById('armatubatido-imagen').value = ins.imagen || '';
+                actualizarBadgeCostoEnVivo('armatubatido');
             } else if(cat.includes('vaso') || cat.includes('packaging')) {
                 document.getElementById('vaso-id').value = ins.idInsumo;
                 document.getElementById('vaso-nombre').value = ins.nombre;
                 document.getElementById('vaso-unidad').value = ins.medida || 'und';
+                if (document.getElementById('vaso-dosis')) document.getElementById('vaso-dosis').value = ins.cantidadPorcion || 1;
                 document.getElementById('vaso-stock').value = ins.unidadActual;
                 document.getElementById('vaso-sucursal').value = ins.sucursal;
                 document.getElementById('vaso-precio').value = ins.precio || 0;
                 if (document.getElementById('vaso-imagen')) document.getElementById('vaso-imagen').value = ins.imagen || '';
+                actualizarBadgeCostoEnVivo('vasos');
             } else if(cat.includes('shot') || cat.includes('caldo')) {
                 document.getElementById('shot-id').value = ins.idInsumo;
                 document.getElementById('shot-nombre').value = ins.nombre;
                 if (ins.subcategoria && document.getElementById('shot-subcategoria')) document.getElementById('shot-subcategoria').value = ins.subcategoria;
                 document.getElementById('shot-unidad').value = ins.medida || 'mls';
+                if (document.getElementById('shot-dosis')) document.getElementById('shot-dosis').value = ins.cantidadPorcion || 30;
                 document.getElementById('shot-stock').value = ins.unidadActual;
                 document.getElementById('shot-sucursal').value = ins.sucursal;
                 document.getElementById('shot-precio').value = ins.precio || 0;
                 if (document.getElementById('shot-imagen')) document.getElementById('shot-imagen').value = ins.imagen || '';
+                actualizarBadgeCostoEnVivo('shots');
             } else {
                 document.getElementById('ins-id').value = ins.idInsumo;
                 document.getElementById('ins-nombre').value = ins.nombre;
                 if (ins.subcategoria && document.getElementById('ins-subcategoria')) document.getElementById('ins-subcategoria').value = ins.subcategoria;
                 document.getElementById('ins-unidad').value = ins.medida || 'mls';
+                if (document.getElementById('ins-dosis')) document.getElementById('ins-dosis').value = ins.cantidadPorcion || 50;
                 document.getElementById('ins-stock').value = ins.unidadActual;
                 document.getElementById('ins-sucursal').value = ins.sucursal;
                 document.getElementById('ins-precio').value = ins.precio || 0;
                 if (document.getElementById('ins-imagen')) document.getElementById('ins-imagen').value = ins.imagen || '';
+                actualizarBadgeCostoEnVivo('pulpas');
             }
             window.scrollTo({top:0, behavior:'smooth'});
         }
@@ -3517,6 +4025,7 @@
             cat='Pulpas'; 
             subcat=document.getElementById('ins-subcategoria')?document.getElementById('ins-subcategoria').value:'Vegetales'; 
             uni=document.getElementById('ins-unidad').value; 
+            dosisVal=parseFloat(document.getElementById('ins-dosis') ? document.getElementById('ins-dosis').value : 50) || 50;
             stock=document.getElementById('ins-stock').value; 
             suc=document.getElementById('ins-sucursal').value;
             precioVal = normalizarPrecioCLP(document.getElementById('ins-precio').value);
@@ -3527,6 +4036,7 @@
             cat='Insumos Vaso'; 
             subcat='Packaging'; 
             uni=document.getElementById('vaso-unidad').value; 
+            dosisVal=parseFloat(document.getElementById('vaso-dosis') ? document.getElementById('vaso-dosis').value : 1) || 1;
             stock=document.getElementById('vaso-stock').value; 
             suc=document.getElementById('vaso-sucursal').value;
             precioVal = normalizarPrecioCLP(document.getElementById('vaso-precio').value);
@@ -3537,6 +4047,7 @@
             cat='Shots y Caldos'; 
             subcat=document.getElementById('shot-subcategoria')?document.getElementById('shot-subcategoria').value:'Suplementos'; 
             uni=document.getElementById('shot-unidad').value; 
+            dosisVal=parseFloat(document.getElementById('shot-dosis') ? document.getElementById('shot-dosis').value : 30) || 30;
             stock=document.getElementById('shot-stock').value; 
             suc=document.getElementById('shot-sucursal').value;
             precioVal = normalizarPrecioCLP(document.getElementById('shot-precio').value);
@@ -3552,6 +4063,7 @@
             unidadActual: parseFloat(stock)||0, 
             precio: precioVal, 
             sucursal: suc, 
+            cantidadPorcion: dosisVal,
             actorAdmin: rolUsuario==='SUPREMO' ? 'SUPREMO' : ('Admin ' + sucursalAdmin)
         };
         if(dosisVal !== undefined && dosisVal !== null) { payload.cantidadPorcion = dosisVal; }
@@ -3579,15 +4091,309 @@
             if (document.getElementById('shot-imagen')) document.getElementById('shot-imagen').value='';
             if (document.getElementById('ins-nombre')) document.getElementById('ins-nombre').value=''; 
             if (document.getElementById('ins-stock')) document.getElementById('ins-stock').value='';
+            if (document.getElementById('ins-dosis')) document.getElementById('ins-dosis').value='';
+            if (document.getElementById('ins-precio')) document.getElementById('ins-precio').value='';
             if (document.getElementById('vaso-nombre')) document.getElementById('vaso-nombre').value=''; 
             if (document.getElementById('vaso-stock')) document.getElementById('vaso-stock').value='';
+            if (document.getElementById('vaso-dosis')) document.getElementById('vaso-dosis').value='';
+            if (document.getElementById('vaso-precio')) document.getElementById('vaso-precio').value='';
             if (document.getElementById('shot-nombre')) document.getElementById('shot-nombre').value=''; 
             if (document.getElementById('shot-stock')) document.getElementById('shot-stock').value='';
+            if (document.getElementById('shot-dosis')) document.getElementById('shot-dosis').value='';
+            if (document.getElementById('shot-precio')) document.getElementById('shot-precio').value='';
+            actualizarBadgeCostoEnVivo('pulpas');
+            actualizarBadgeCostoEnVivo('vasos');
+            actualizarBadgeCostoEnVivo('shots');
+            actualizarBadgeCostoEnVivo('armatubatido');
             cargarInsumos(); playSound('click');
         }).catch(err => {
             console.error("Error guardando insumo:", err);
             playSound('error');
         });
+    }
+
+    // =========================================================================
+    // CALCULADORAS DE PORCIONES Y MARGEN REAL (1 - %) PARA BODEGAS
+    // =========================================================================
+    function toggleCalculadoraBodega(tipo) {
+        const box = document.getElementById(`calc-container-${tipo}`);
+        if (!box) return;
+        playSound('hover');
+        if (box.style.display === 'none' || !box.style.display) {
+            box.style.display = 'block';
+            sincronizarConFormulario(tipo);
+        } else {
+            box.style.display = 'none';
+        }
+    }
+
+    function sincronizarConFormulario(tipo) {
+        let precio = 0;
+        let dosis = 0;
+        let unidad = 'gr';
+
+        if (tipo === 'pulpas') {
+            precio = parseFloat(document.getElementById('ins-precio')?.value) || 0;
+            dosis = parseFloat(document.getElementById('ins-dosis')?.value) || 50;
+            unidad = document.getElementById('ins-unidad')?.value || 'gr';
+            if (document.getElementById('calc-pulpas-modo')) {
+                document.getElementById('calc-pulpas-modo').value = (unidad === 'mls') ? 'litro' : ((unidad === 'und') ? 'unidad' : 'kilo');
+            }
+        } else if (tipo === 'vasos') {
+            precio = parseFloat(document.getElementById('vaso-precio')?.value) || 0;
+            dosis = parseFloat(document.getElementById('vaso-dosis')?.value) || 1;
+            unidad = document.getElementById('vaso-unidad')?.value || 'und';
+            if (document.getElementById('calc-vasos-modo')) {
+                document.getElementById('calc-vasos-modo').value = 'pack';
+            }
+        } else if (tipo === 'shots') {
+            precio = parseFloat(document.getElementById('shot-precio')?.value) || 0;
+            dosis = parseFloat(document.getElementById('shot-dosis')?.value) || 30;
+            unidad = document.getElementById('shot-unidad')?.value || 'mls';
+            if (document.getElementById('calc-shots-modo')) {
+                document.getElementById('calc-shots-modo').value = (unidad === 'mls') ? 'litro' : 'kilo';
+            }
+        } else if (tipo === 'armatubatido') {
+            precio = parseFloat(document.getElementById('armatubatido-precio')?.value) || 0;
+            dosis = parseFloat(document.getElementById('armatubatido-dosis')?.value) || 25;
+            unidad = document.getElementById('armatubatido-unidad')?.value || 'gr';
+            if (document.getElementById('calc-armatubatido-modo')) {
+                document.getElementById('calc-armatubatido-modo').value = (unidad === 'mls') ? 'litro' : 'kilo';
+            }
+        }
+
+        const inpCostoBase = document.getElementById(`calc-${tipo}-costo-base`);
+        if (inpCostoBase && (precio > 0 || !inpCostoBase.value)) {
+            inpCostoBase.value = precio > 0 ? precio : (tipo === 'vasos' ? 25000 : 5000);
+        }
+
+        const inpDosis = document.getElementById(`calc-${tipo}-dosis`);
+        if (inpDosis) {
+            inpDosis.value = dosis > 0 ? dosis : (tipo === 'vasos' ? 1 : (tipo === 'shots' ? 30 : 50));
+        }
+
+        actualizarCalculadora(tipo);
+    }
+
+    function abrirCalculadoraConInsumo(tipo, id) {
+        playSound('click');
+        let ins = insMem.find(i => i.idInsumo === id);
+        if (!ins) return;
+
+        const box = document.getElementById(`calc-container-${tipo}`);
+        if (box) box.style.display = 'block';
+
+        const modoSelect = document.getElementById(`calc-${tipo}-modo`);
+        const costoBaseInp = document.getElementById(`calc-${tipo}-costo-base`);
+        const dosisInp = document.getElementById(`calc-${tipo}-dosis`);
+
+        let precio = normalizarPrecioCLP(ins.precio || 0);
+        let dosis = ins.cantidadPorcion || (ins.medida === 'und' ? 1 : (tipo === 'shots' ? 30 : 50));
+
+        if (costoBaseInp) costoBaseInp.value = precio;
+        if (dosisInp) dosisInp.value = dosis;
+
+        if (modoSelect) {
+            if (ins.medida === 'mls') modoSelect.value = 'litro';
+            else if (ins.medida === 'und') modoSelect.value = (tipo === 'vasos' ? 'pack' : 'unidad');
+            else modoSelect.value = 'kilo';
+        }
+
+        actualizarCalculadora(tipo);
+        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function setMargenCalc(tipo, pct) {
+        const inp = document.getElementById(`calc-${tipo}-margen`);
+        if (inp) {
+            inp.value = pct;
+            actualizarCalculadora(tipo);
+            playSound('hover');
+        }
+    }
+
+    function setMermaCalc(tipo, pct) {
+        const inp = document.getElementById(`calc-${tipo}-merma`);
+        if (inp) {
+            inp.value = pct;
+            actualizarCalculadora(tipo);
+            playSound('hover');
+        }
+    }
+
+    function actualizarCalculadora(tipo) {
+        const modoEl = document.getElementById(`calc-${tipo}-modo`);
+        if (!modoEl) return;
+        const modo = modoEl.value;
+        const costoBase = parseFloat(document.getElementById(`calc-${tipo}-costo-base`)?.value) || 0;
+        const dosis = parseFloat(document.getElementById(`calc-${tipo}-dosis`)?.value) || 0;
+        const margenPct = parseFloat(document.getElementById(`calc-${tipo}-margen`)?.value) || 0;
+        const mermaPct = parseFloat(document.getElementById(`calc-${tipo}-merma`)?.value) || 0;
+        const packCant = parseFloat(document.getElementById(`calc-${tipo}-pack-cant`)?.value) || 1;
+
+        const packCol = document.getElementById(`calc-${tipo}-pack-cant-col`);
+        if (packCol) {
+            packCol.style.display = (modo === 'pack') ? 'block' : 'none';
+        }
+
+        const dosisUnidadSpan = document.getElementById(`calc-${tipo}-dosis-unidad`);
+        if (dosisUnidadSpan) {
+            if (modo === 'kilo') dosisUnidadSpan.innerText = 'gr';
+            else if (modo === 'litro') dosisUnidadSpan.innerText = 'mls';
+            else if (modo === 'pack' || modo === 'unidad') dosisUnidadSpan.innerText = 'und';
+        }
+
+        // 1. Costo Puro por Porción
+        let costoPorcion = 0;
+        if (modo === 'kilo' || modo === 'litro') {
+            costoPorcion = (costoBase / 1000) * dosis;
+        } else if (modo === 'pack') {
+            let costoUnitario = packCant > 0 ? (costoBase / packCant) : 0;
+            costoPorcion = costoUnitario * (dosis > 0 ? dosis : 1);
+        } else {
+            costoPorcion = costoBase * (dosis > 0 ? dosis : 1);
+        }
+
+        // 2. Costo Real con Merma usando fórmula 1 - %:
+        let factorMerma = (mermaPct > 0 && mermaPct < 100) ? (1 - (mermaPct / 100)) : 1;
+        let costoRealConMerma = factorMerma > 0 ? (costoPorcion / factorMerma) : costoPorcion;
+
+        // 3. Fórmula del Margen Real: Precio = Costo / (1 - Margen%)
+        let factorMargen = (margenPct > 0 && margenPct < 100) ? (1 - (margenPct / 100)) : 1;
+        let precioSugerido = (factorMargen > 0 && factorMargen < 1) ? (costoRealConMerma / factorMargen) : costoRealConMerma;
+
+        let gananciaNeta = Math.max(0, precioSugerido - costoRealConMerma);
+        let margenRealEfectivo = precioSugerido > 0 ? ((gananciaNeta / precioSugerido) * 100) : 0;
+
+        const suc = 'Antofagasta';
+        const elCostoPuro = document.getElementById(`calc-${tipo}-res-costo-puro`);
+        if (elCostoPuro) elCostoPuro.innerText = formatMoney(costoPorcion, suc);
+
+        const elCostoMerma = document.getElementById(`calc-${tipo}-res-costo-merma`);
+        if (elCostoMerma) elCostoMerma.innerText = formatMoney(costoRealConMerma, suc) + (mermaPct > 0 ? ` (1-${mermaPct}%)` : '');
+
+        const elFormula = document.getElementById(`calc-${tipo}-res-formula`);
+        if (elFormula) elFormula.innerText = `Costo / (1 - ${(margenPct/100).toFixed(2)}) = Costo / ${factorMargen.toFixed(2)}`;
+
+        const elPrecioSug = document.getElementById(`calc-${tipo}-res-precio-sugerido`);
+        if (elPrecioSug) elPrecioSug.innerText = formatMoney(Math.round(precioSugerido), suc);
+
+        const elGanancia = document.getElementById(`calc-${tipo}-res-ganancia`);
+        if (elGanancia) elGanancia.innerText = formatMoney(Math.round(gananciaNeta), suc);
+
+        const elMargenReal = document.getElementById(`calc-${tipo}-res-margen-real`);
+        if (elMargenReal) elMargenReal.innerText = margenRealEfectivo.toFixed(1) + '%';
+    }
+
+    function aplicarCalculadoraABodega(tipo) {
+        const modo = document.getElementById(`calc-${tipo}-modo`)?.value || 'kilo';
+        const costoBase = parseFloat(document.getElementById(`calc-${tipo}-costo-base`)?.value) || 0;
+        const dosis = parseFloat(document.getElementById(`calc-${tipo}-dosis`)?.value) || 0;
+        const margenPct = parseFloat(document.getElementById(`calc-${tipo}-margen`)?.value) || 0;
+        const mermaPct = parseFloat(document.getElementById(`calc-${tipo}-merma`)?.value) || 0;
+        const packCant = parseFloat(document.getElementById(`calc-${tipo}-pack-cant`)?.value) || 1;
+
+        let factorMerma = (mermaPct > 0 && mermaPct < 100) ? (1 - (mermaPct / 100)) : 1;
+        let factorMargen = (margenPct > 0 && margenPct < 100) ? (1 - (margenPct / 100)) : 1;
+
+        let costoPorcion = 0;
+        if (modo === 'kilo' || modo === 'litro') {
+            costoPorcion = (costoBase / 1000) * dosis;
+        } else if (modo === 'pack') {
+            costoPorcion = (packCant > 0 ? costoBase / packCant : 0) * (dosis > 0 ? dosis : 1);
+        } else {
+            costoPorcion = costoBase * (dosis > 0 ? dosis : 1);
+        }
+        let costoRealConMerma = factorMerma > 0 ? (costoPorcion / factorMerma) : costoPorcion;
+        let precioSugerido = (factorMargen > 0 && factorMargen < 1) ? (costoRealConMerma / factorMargen) : costoRealConMerma;
+
+        if (tipo === 'pulpas') {
+            if (costoBase > 0) document.getElementById('ins-precio').value = Math.round(costoBase);
+            if (dosis > 0) document.getElementById('ins-dosis').value = dosis;
+            if (modo === 'kilo') document.getElementById('ins-unidad').value = 'gr';
+            else if (modo === 'litro') document.getElementById('ins-unidad').value = 'mls';
+            else if (modo === 'unidad') document.getElementById('ins-unidad').value = 'und';
+            actualizarBadgeCostoEnVivo('pulpas');
+        } else if (tipo === 'vasos') {
+            let precioUnitarioVaso = (modo === 'pack' && packCant > 0) ? (costoBase / packCant) : costoBase;
+            if (precioUnitarioVaso > 0) document.getElementById('vaso-precio').value = Math.round(precioUnitarioVaso);
+            if (dosis > 0) document.getElementById('vaso-dosis').value = dosis;
+            document.getElementById('vaso-unidad').value = 'und';
+            actualizarBadgeCostoEnVivo('vasos');
+        } else if (tipo === 'shots') {
+            if (costoBase > 0) document.getElementById('shot-precio').value = Math.round(costoBase);
+            if (dosis > 0) document.getElementById('shot-dosis').value = dosis;
+            if (modo === 'litro') document.getElementById('shot-unidad').value = 'mls';
+            else if (modo === 'kilo') document.getElementById('shot-unidad').value = 'gr';
+            else document.getElementById('shot-unidad').value = 'und';
+            actualizarBadgeCostoEnVivo('shots');
+        } else if (tipo === 'armatubatido') {
+            if (dosis > 0) document.getElementById('armatubatido-dosis').value = dosis;
+            document.getElementById('armatubatido-precio').value = Math.round(precioSugerido);
+            if (modo === 'kilo') document.getElementById('armatubatido-unidad').value = 'gr';
+            else if (modo === 'litro') document.getElementById('armatubatido-unidad').value = 'mls';
+            else document.getElementById('armatubatido-unidad').value = 'und';
+            actualizarBadgeCostoEnVivo('armatubatido');
+        }
+        playSound('click');
+    }
+
+    function limpiarCalculadora(tipo) {
+        if (document.getElementById(`calc-${tipo}-costo-base`)) document.getElementById(`calc-${tipo}-costo-base`).value = '';
+        if (document.getElementById(`calc-${tipo}-dosis`)) document.getElementById(`calc-${tipo}-dosis`).value = '';
+        if (document.getElementById(`calc-${tipo}-merma`)) document.getElementById(`calc-${tipo}-merma`).value = '0';
+        actualizarCalculadora(tipo);
+        playSound('hover');
+    }
+
+    function actualizarBadgeCostoEnVivo(tipo) {
+        const suc = 'Antofagasta';
+        if (tipo === 'pulpas') {
+            const precio = parseFloat(document.getElementById('ins-precio')?.value) || 0;
+            const dosis = parseFloat(document.getElementById('ins-dosis')?.value) || 50;
+            const unidad = document.getElementById('ins-unidad')?.value || 'gr';
+            let costo = (unidad === 'gr' || unidad === 'mls') ? (precio / 1000) * dosis : precio * dosis;
+            const b = document.getElementById('badge-costo-porcion-pulpas');
+            if (b) b.innerText = `${formatMoney(costo, suc)} / porc (${dosis}${unidad})`;
+        } else if (tipo === 'vasos') {
+            const precio = parseFloat(document.getElementById('vaso-precio')?.value) || 0;
+            const dosis = parseFloat(document.getElementById('vaso-dosis')?.value) || 1;
+            const unidad = document.getElementById('vaso-unidad')?.value || 'und';
+            let costo = precio * dosis;
+            const b = document.getElementById('badge-costo-porcion-vasos');
+            if (b) b.innerText = `${formatMoney(costo, suc)} / porc (${dosis}${unidad})`;
+        } else if (tipo === 'shots') {
+            const precio = parseFloat(document.getElementById('shot-precio')?.value) || 0;
+            const dosis = parseFloat(document.getElementById('shot-dosis')?.value) || 30;
+            const unidad = document.getElementById('shot-unidad')?.value || 'mls';
+            let costo = (unidad === 'gr' || unidad === 'mls') ? (precio / 1000) * dosis : precio * dosis;
+            const b = document.getElementById('badge-costo-porcion-shots');
+            if (b) b.innerText = `${formatMoney(costo, suc)} / porc (${dosis}${unidad})`;
+        } else if (tipo === 'armatubatido') {
+            const precio = parseFloat(document.getElementById('armatubatido-precio')?.value) || 0;
+            const dosis = parseFloat(document.getElementById('armatubatido-dosis')?.value) || 25;
+            const unidad = document.getElementById('armatubatido-unidad')?.value || 'gr';
+            const b = document.getElementById('badge-costo-porcion-armatubatido');
+            if (b) b.innerText = `Venta: ${formatMoney(precio, suc)} (${dosis}${unidad})`;
+        }
+    }
+
+    function verInsumoEnFormulas(tipo) {
+        const tabRecetasBtn = document.querySelector('button[data-bs-target="#tab-recetas"]');
+        if (tabRecetasBtn) {
+            tabRecetasBtn.click();
+            playSound('click');
+            if (tipo === 'pulpas') {
+                const c = document.getElementById('collapseRecetasPulpas');
+                if (c && !c.classList.contains('show')) new bootstrap.Collapse(c, { toggle: true });
+            } else if (tipo === 'vasos') {
+                const c = document.getElementById('collapseRecetasVasos');
+                if (c && !c.classList.contains('show')) new bootstrap.Collapse(c, { toggle: true });
+            } else if (tipo === 'shots') {
+                const c = document.getElementById('collapseRecetasShots');
+                if (c && !c.classList.contains('show')) new bootstrap.Collapse(c, { toggle: true });
+            }
+        }
     }
 
     function eliminarInsumo(id) { if(confirm("¿Reciclar material?")) fetch(`/api/insumos/${id}`,{method:'DELETE'}).then(()=>cargarInsumos()); }
@@ -3869,10 +4675,29 @@
             }); 
             
             if (costoTotal > 0) {
+                let margenFormula = 65; // Margen real estándar 65%
+                let divisorMargen = (1 - (margenFormula / 100));
+                let precioVentaSugerido = Math.round(costoTotal / divisorMargen);
+                let gananciaFormula = precioVentaSugerido - costoTotal;
+
                 tb.innerHTML += `<tr style="border-top: 2px solid var(--p-magenta);">
                     <td colspan="2" class="text-end fw-bold fs-3" style="color:var(--p-magenta)">COSTO TOTAL FÓRMULA:</td>
                     <td class="fw-bold fs-3" style="color:var(--p-magenta); text-shadow: var(--magenta-glow);">${formatMoney(costoTotal, suc)}</td>
                     <td></td>
+                </tr>
+                <tr style="border-top: 1px dashed var(--p-warning); background: rgba(255, 215, 0, 0.05);">
+                    <td colspan="4" class="p-3 text-start">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div>
+                                <span class="badge bg-warning text-dark font-orbitron me-2">MARGEN REAL (1 - %)</span>
+                                <span class="text-white small font-rajdhani">Fórmula Real: <code>Costo / (1 - ${margenFormula}%)</code> = <code>Costo / ${divisorMargen.toFixed(2)}</code></span>
+                            </div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div><small class="text-white-50">PRECIO VENTA SUGERIDO (MARGEN REAL):</small> <span class="text-warning fw-bold fs-4 font-orbitron">${formatMoney(precioVentaSugerido, suc)}</span></div>
+                                <div><small class="text-white-50">GANANCIA NETA:</small> <span class="text-success fw-bold fs-5 font-orbitron">${formatMoney(gananciaFormula, suc)}</span></div>
+                            </div>
+                        </div>
+                    </td>
                 </tr>`;
             }
         } catch(e) {} 
