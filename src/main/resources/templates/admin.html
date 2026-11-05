@@ -220,280 +220,202 @@
             100% { transform: scale(1); }
         }
 
-        /* ESTILOS CATÁLOGO EN TARJETAS ACORDEÓN */
+        /* =========================================================================
+           TARJETAS DE MATRIZ TOTAL & BODEGAS (DISEÑO BIEN DIMENSIONADO & ESTÉTICO)
+           ========================================================================= */
+
+        /* --- 1. MATRIZ TOTAL: TARJETAS ACORDEÓN --- */
         .catalogo-acordeon-item {
-            background: rgba(0, 7, 16, 0.92) !important;
+            background: linear-gradient(135deg, rgba(6, 18, 36, 0.95) 0%, rgba(2, 8, 20, 0.98) 100%) !important;
             border: 1px solid rgba(0, 229, 255, 0.25) !important;
             border-radius: 12px !important;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.7);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         .catalogo-acordeon-item:hover {
-            border-color: var(--p-cyan) !important;
-            box-shadow: 0 8px 30px rgba(0, 229, 255, 0.2);
+            border-color: rgba(0, 229, 255, 0.6) !important;
+            box-shadow: 0 6px 22px rgba(0, 229, 255, 0.2) !important;
             transform: translateY(-2px);
         }
         .catalogo-acordeon-item .accordion-button {
-            background: linear-gradient(90deg, rgba(1, 16, 32, 0.95), rgba(0, 6, 14, 0.95)) !important;
-            color: #fff !important;
-            padding: 14px 18px;
-            box-shadow: none !important;
+            background: transparent !important;
+            color: #ffffff !important;
+            padding: 10px 18px !important;
             border: none !important;
+            box-shadow: none !important;
         }
         .catalogo-acordeon-item .accordion-button:not(.collapsed) {
-            background: linear-gradient(90deg, rgba(255, 0, 234, 0.12), rgba(0, 229, 255, 0.08)) !important;
-            border-bottom: 1px solid rgba(255, 0, 234, 0.4) !important;
-            color: #fff !important;
+            background: linear-gradient(90deg, rgba(0, 229, 255, 0.08), rgba(255, 0, 234, 0.05)) !important;
+            border-bottom: 1px dashed rgba(0, 229, 255, 0.3) !important;
         }
         .catalogo-acordeon-item .accordion-button::after {
             filter: invert(1) drop-shadow(0 0 5px var(--p-cyan));
             transition: transform 0.3s ease;
+            margin-left: 12px;
         }
-        
-        /* =========================================================================
-           TERMINAL DE BODEGAS: TARJETAS COMPACTAS, ELEGANTES Y ORGANIZADAS (CYBER-GRID)
-           ========================================================================= */
-        .bodega-cards-grid {
-            display: grid !important;
-            grid-template-columns: repeat(auto-fill, minmax(285px, 1fr)) !important;
-            gap: 14px !important;
-            align-items: stretch !important;
+        .catalogo-acordeon-item .accordion-body {
+            background: rgba(2, 6, 16, 0.98) !important;
+            padding: 18px 22px !important;
         }
 
-        .bodega-cards-grid .empty-bodega-msg {
-            grid-column: 1 / -1;
-        }
-
-        .insumo-card-compact {
-            background: linear-gradient(145deg, rgba(8, 20, 38, 0.94) 0%, rgba(3, 10, 22, 0.98) 100%) !important;
+        /* --- 2. BODEGAS: TARJETAS PLEGABLES DE INSUMOS --- */
+        .insumo-tarjeta-cyber {
+            background: linear-gradient(135deg, rgba(6, 18, 36, 0.92) 0%, rgba(2, 7, 18, 0.97) 100%) !important;
             border-radius: 12px !important;
-            border: 1px solid rgba(0, 229, 255, 0.22);
-            border-top: 3px solid var(--card-accent, #00e5ff) !important;
+            border: 1px solid rgba(0, 229, 255, 0.2);
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.2s ease, border-color 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            margin-bottom: 8px;
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-
-        .insumo-card-compact:hover {
+        .insumo-tarjeta-cyber:hover {
             transform: translateY(-2px);
-            border-color: rgba(var(--card-rgb, 0, 229, 255), 0.55) !important;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75), 0 0 16px rgba(var(--card-rgb, 0, 229, 255), 0.25) !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 15px rgba(var(--card-rgb, 0, 229, 255), 0.25) !important;
+            border-color: rgba(var(--card-rgb, 0, 229, 255), 0.5) !important;
+        }
+        .insumo-tarjeta-cyber .accordion-button {
+            background: transparent !important;
+            color: #ffffff !important;
+            padding: 10px 16px !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        .insumo-tarjeta-cyber .accordion-button:not(.collapsed) {
+            background: linear-gradient(90deg, rgba(var(--card-rgb, 0, 229, 255), 0.1), transparent) !important;
+            border-bottom: 1px dashed rgba(var(--card-rgb, 0, 229, 255), 0.3) !important;
+        }
+        .insumo-tarjeta-cyber .accordion-button::after {
+            display: none !important;
         }
 
-        /* Card Header */
-        .insumo-card-head {
-            padding: 10px 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .insumo-card-thumb {
+        /* Avatar del Insumo / Producto */
+        .card-avatar-box {
             position: relative;
-            width: 42px;
-            height: 42px;
+            width: 44px;
+            height: 44px;
             border-radius: 10px;
+            padding: 2px;
+            border: 1.5px solid var(--p-cyan);
+            background: #020712;
             flex-shrink: 0;
             overflow: hidden;
             cursor: pointer;
-            border: 1.5px solid var(--card-accent, #00e5ff);
-            box-shadow: 0 0 8px rgba(var(--card-rgb, 0, 229, 255), 0.35);
-            background: #020712;
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
         }
-
-        .insumo-card-thumb img {
+        .card-avatar-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            border-radius: 8px;
         }
-
-        .insumo-card-thumb:hover .thumb-cam-overlay {
-            opacity: 1;
-        }
-
-        .thumb-cam-overlay {
+        .card-avatar-box .cam-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0,0,0,0.7);
+            color: #00e5ff;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #00e5ff;
             font-size: 0.8rem;
             opacity: 0;
             transition: opacity 0.2s ease;
         }
-
-        .insumo-card-info {
-            flex: 1;
-            min-width: 0;
+        .card-avatar-box:hover .cam-overlay {
+            opacity: 1;
         }
 
-        .insumo-card-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.88rem;
-            font-weight: 700;
-            color: #ffffff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            letter-spacing: 0.5px;
-            margin-bottom: 3px;
-        }
-
-        .insumo-card-tags {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
-
-        .insumo-mini-badge {
-            font-size: 0.65rem;
-            font-weight: 600;
-            padding: 1px 6px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Card Body: 2x2 Metric Grid */
-        .insumo-card-metrics {
-            padding: 10px 12px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            background: rgba(2, 8, 18, 0.45);
-        }
-
-        .insumo-metric-tile {
-            background: rgba(6, 16, 32, 0.75);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 6px;
-            padding: 5px 8px;
+        /* Chips métricos horizontales en cabecera */
+        .hud-metric-pill {
+            background: rgba(4, 12, 26, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 7px;
+            padding: 4px 10px;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            min-width: 90px;
         }
-
-        .insumo-metric-label {
+        .hud-metric-pill-label {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.62rem;
+            font-size: 0.6rem;
             color: rgba(255, 255, 255, 0.5);
-            letter-spacing: 0.6px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
             display: flex;
             align-items: center;
             gap: 4px;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
-
-        .insumo-metric-val {
+        .hud-metric-pill-val {
             font-family: 'Share Tech Mono', monospace;
-            font-size: 0.92rem;
+            font-size: 0.95rem;
             font-weight: 700;
             line-height: 1.1;
         }
 
-        /* Card Footer: Action Bar */
-        .insumo-card-actions {
-            padding: 8px 12px;
-            display: flex;
+        /* Botones de comando rápidos */
+        .hud-btn-action {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.8);
+            display: inline-flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            background: rgba(2, 6, 14, 0.6);
+            justify-content: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-
-        .insumo-btn-calc {
+        .hud-btn-action:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.18);
+        }
+        .hud-btn-action.purge:hover {
+            background: rgba(255, 0, 85, 0.25);
+            border-color: #ff0055;
+            color: #ff0055;
+        }
+        .hud-btn-calc {
             font-family: 'Orbitron', sans-serif;
             font-size: 0.68rem;
             font-weight: 700;
-            padding: 4px 10px;
-            border-radius: 6px;
-            background: rgba(var(--card-rgb, 0, 229, 255), 0.12);
+            padding: 5px 10px;
+            border-radius: 7px;
+            background: rgba(var(--card-rgb, 0, 229, 255), 0.15);
             border: 1px solid rgba(var(--card-rgb, 0, 229, 255), 0.45);
             color: var(--card-accent, #00e5ff);
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             transition: all 0.2s ease;
         }
-
-        .insumo-btn-calc:hover {
-            background: rgba(var(--card-rgb, 0, 229, 255), 0.28);
+        .hud-btn-calc:hover {
+            background: rgba(var(--card-rgb, 0, 229, 255), 0.3);
             box-shadow: 0 0 10px rgba(var(--card-rgb, 0, 229, 255), 0.4);
             color: #fff;
         }
-
-        .insumo-btn-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            color: rgba(255, 255, 255, 0.7);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .insumo-btn-icon:hover {
-            color: #fff;
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .insumo-btn-icon.purge:hover {
-            background: rgba(255, 0, 85, 0.2);
-            border-color: #ff0055;
-            color: #ff0055;
-        }
-
-        .insumo-btn-toggle-details {
+        .hud-expand-trigger {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.65rem;
-            color: rgba(255, 255, 255, 0.5);
-            background: transparent;
-            border: none;
-            cursor: pointer;
+            font-size: 0.68rem;
+            color: rgba(255, 255, 255, 0.55);
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 2px 4px;
+            padding: 4px 6px;
         }
 
-        .insumo-btn-toggle-details:hover {
-            color: #00e5ff;
-        }
-
-        /* Card Collapsible Drawer */
-        .insumo-card-drawer {
-            background: rgba(2, 6, 16, 0.95);
+        /* Consola expandida de Insumo */
+        .insumo-console-body {
+            background: rgba(2, 6, 16, 0.98);
             border-top: 1px dashed rgba(var(--card-rgb, 0, 229, 255), 0.3);
-            padding: 8px 12px;
-            font-size: 0.75rem;
-            display: none;
-        }
-
-        .insumo-card-drawer.show {
-            display: block;
-        }
-
-        .catalogo-acordeon-item .accordion-body {
-            background: rgba(0, 3, 8, 0.98) !important;
-            border-top: 1px solid rgba(0, 229, 255, 0.2);
-            padding: 24px;
+            padding: 14px 18px;
         }
         .badge-dto-pill {
             background: linear-gradient(135deg, #ff0055, #ff5500);
@@ -894,7 +816,7 @@
                                             <span class="text-white-50 font-orbitron small" style="color:var(--p-bio-green) !important;"><i class="bi bi-boxes me-1"></i> INSUMOS EN BODEGA (TARJETAS PLEGABLES)</span>
                                             <small class="text-info font-orbitron"><i class="bi bi-info-circle me-1"></i> Haz clic en cualquier tarjeta para desplegar el detalle u operar</small>
                                         </div>
-                                        <div id="tabla-pulpas" class="bodega-cards-grid"></div>
+                                        <div id="tabla-pulpas" class="accordion d-flex flex-column gap-2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1042,7 +964,7 @@
                                             <span class="text-white-50 font-orbitron small" style="color:var(--p-cyan) !important;"><i class="bi bi-boxes me-1"></i> SUMINISTROS EN BODEGA (TARJETAS PLEGABLES)</span>
                                             <small class="text-info font-orbitron"><i class="bi bi-info-circle me-1"></i> Haz clic en cualquier tarjeta para desplegar el detalle u operar</small>
                                         </div>
-                                        <div id="tabla-vasos" class="bodega-cards-grid"></div>
+                                        <div id="tabla-vasos" class="accordion d-flex flex-column gap-2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1191,7 +1113,7 @@
                                             <span class="text-white-50 font-orbitron small" style="color:var(--p-magenta) !important;"><i class="bi bi-boxes me-1"></i> EXTRACTOS EN BODEGA (TARJETAS PLEGABLES)</span>
                                             <small class="text-info font-orbitron"><i class="bi bi-info-circle me-1"></i> Haz clic en cualquier tarjeta para desplegar el detalle u operar</small>
                                         </div>
-                                        <div id="tabla-shots" class="bodega-cards-grid"></div>
+                                        <div id="tabla-shots" class="accordion d-flex flex-column gap-2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1396,7 +1318,7 @@
                                             <span class="text-white-50 font-orbitron small" style="color:var(--p-warning) !important;"><i class="bi bi-boxes me-1"></i> PORCIONES EN BODEGA (TARJETAS PLEGABLES)</span>
                                             <small class="text-info font-orbitron"><i class="bi bi-info-circle me-1"></i> Haz clic en cualquier tarjeta para desplegar el detalle u operar</small>
                                         </div>
-                                        <div id="tabla-armatubatido" class="bodega-cards-grid"></div>
+                                        <div id="tabla-armatubatido" class="accordion d-flex flex-column gap-2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1595,7 +1517,7 @@
                                             <span class="text-white-50 font-orbitron small" style="color:#bd00ff !important;"><i class="bi bi-boxes me-1"></i> LÍNEA EXÓTICOS (TARJETAS PLEGABLES)</span>
                                             <small class="text-info font-orbitron"><i class="bi bi-info-circle me-1"></i> Haz clic en cualquier tarjeta para desplegar el detalle u operar</small>
                                         </div>
-                                        <div id="tabla-exoticos" class="bodega-cards-grid"></div>
+                                        <div id="tabla-exoticos" class="accordion d-flex flex-column gap-2"></div>
                                     </div>
                                 </div>
                             </div>
@@ -2442,13 +2364,18 @@
     // =======================================================
     // SINTETIZADOR GENÉTICO (PRODUCCIÓN CON FECHAS)
     // =======================================================
-    function esPulpaOPack(p) {
+    function esProductoProduccion(p) {
         if (!p) return false;
         const n = normalizarStr(p.nombre || '');
         const c = normalizarStr(p.categoria || '');
-        if (c.includes('arma') || c.includes('batido') || n.includes('arma') || n.includes('porci')) return false;
-        if (c.includes('shot') || c.includes('caldo') || c.includes('500') || c.includes('elixir') || n.includes('shot')) return false;
-        return c.includes('pack') || c.includes('pulpa') || n.includes('pulpa') || n.includes('pack');
+        // Excluir materias primas e insumos que no son productos terminados
+        if (c.includes('arma') || c.includes('batido') || n.includes('arma') || n.includes('porci') || c.includes('vaso') || c.includes('packaging')) return false;
+        // Permitir Elíxires (500 mls), Packs de Pulpas, Shots, Exóticos y productos creados
+        return true;
+    }
+
+    function esPulpaOPack(p) {
+        return esProductoProduccion(p);
     }
 
     async function cargarProductosSelect() {
@@ -3915,71 +3842,97 @@
         const stockCant = (Number(i.unidadActual) || 0).toFixed(0);
 
         return `
-        <div class="insumo-card-compact" id="card-insumo-${id}" style="--card-accent: ${color}; --card-rgb: ${rgb};">
-            <!-- Encabezado de la tarjeta -->
-            <div class="insumo-card-head">
-                <div class="insumo-card-thumb" onclick="iniciarSubidaFotoInsumo(${id})" title="Actualizar foto">
-                    <img src="${img}" id="img-insumo-${id}" onerror="this.src='${fallback}'">
-                    <div class="thumb-cam-overlay"><i class="bi bi-camera-fill"></i></div>
+        <div class="accordion-item insumo-tarjeta-cyber" id="card-insumo-${id}" style="border-left: 4px solid ${color} !important; --card-accent: ${color}; --card-rgb: ${rgb};">
+            <div class="accordion-header" id="heading-ins-${id}">
+                <div class="accordion-button collapsed d-flex justify-content-between align-items-center flex-wrap gap-2"
+                     data-bs-toggle="collapse"
+                     data-bs-target="#collapse-ins-${id}"
+                     aria-expanded="false"
+                     aria-controls="collapse-ins-${id}"
+                     style="cursor: pointer;">
+                     
+                     <!-- ZONA 1: ESPECIMEN / IDENTIDAD -->
+                     <div class="d-flex align-items-center gap-3" style="min-width: 240px; max-width: 340px;">
+                         <div class="card-avatar-box" onclick="event.stopPropagation(); iniciarSubidaFotoInsumo(${id})" title="Actualizar foto" style="border-color: ${color}; box-shadow: 0 0 8px rgba(${rgb}, 0.35);">
+                             <img src="${img}" id="img-insumo-${id}" onerror="this.src='${fallback}'">
+                             <div class="cam-overlay"><i class="bi bi-camera-fill"></i></div>
+                         </div>
+                         <div class="overflow-hidden">
+                             <div class="fw-bold font-orbitron fs-6 text-white text-truncate" style="letter-spacing: 0.5px;">${nombre}</div>
+                             <div class="d-flex align-items-center gap-1 mt-1 flex-wrap">
+                                 <span class="badge" style="${cfg.colorBadge}; font-size:0.65rem;">${subcat}</span>
+                                 <span class="badge bg-dark border border-cyan text-info" style="font-size:0.65rem;">${nodo}</span>
+                                 ${stockHtml}
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- ZONA 2: TELEMETRÍA FINANCIERA HORIZONTAL -->
+                     <div class="d-flex align-items-center gap-2 flex-wrap">
+                         <div class="hud-metric-pill" style="border-left: 2px solid var(--p-cyan);">
+                             <span class="hud-metric-pill-label"><i class="bi bi-sliders text-info"></i> DOSIS</span>
+                             <span class="hud-metric-pill-val text-info">${dosisTxt}</span>
+                         </div>
+                         <div class="hud-metric-pill" style="border-left: 2px solid var(--p-warning);">
+                             <span class="hud-metric-pill-label"><i class="bi bi-cash-stack text-warning"></i> VALOR/BASE</span>
+                             <span class="hud-metric-pill-val text-warning">${precioBaseTxt}</span>
+                         </div>
+                         <div class="hud-metric-pill" style="border-left: 2px solid ${color}; background: rgba(${rgb}, 0.08);">
+                             <span class="hud-metric-pill-label" style="color:${color};"><i class="bi bi-pie-chart-fill"></i> COSTO/PORC</span>
+                             <span class="hud-metric-pill-val" style="color:${color}; text-shadow: 0 0 8px rgba(${rgb}, 0.5);">${costoPorcTxt}</span>
+                         </div>
+                         <div class="hud-metric-pill d-none d-lg-flex" style="border-left: 2px solid var(--p-bio-green);">
+                             <span class="hud-metric-pill-label text-success"><i class="bi bi-shield-check"></i> TOTAL NODO</span>
+                             <span class="hud-metric-pill-val text-success">${valorTotalTxt}</span>
+                         </div>
+                     </div>
+
+                     <!-- ZONA 3: ACCIONES & EXPANSOR -->
+                     <div class="d-flex align-items-center gap-2 ms-auto">
+                         <button class="hud-btn-calc" type="button" onclick="event.stopPropagation(); abrirCalculadoraConInsumo('${tipo}', ${id})" title="Calculadora 1-% Margen Real">
+                             <i class="bi bi-calculator-fill"></i> <span>1-% MARGEN</span>
+                         </button>
+                         <button class="hud-btn-action" type="button" onclick="event.stopPropagation(); editarInsumo(${id})" title="Editar Insumo">
+                             <i class="bi bi-pencil-square"></i>
+                         </button>
+                         <button class="hud-btn-action purge" type="button" onclick="event.stopPropagation(); eliminarInsumo(${id})" title="Eliminar de Bodega">
+                             <i class="bi bi-trash3-fill"></i>
+                         </button>
+                         <div class="hud-expand-trigger">
+                             <i class="bi bi-chevron-down"></i>
+                         </div>
+                     </div>
                 </div>
-                <div class="insumo-card-info">
-                    <div class="insumo-card-title" title="${nombre}">${nombre}</div>
-                    <div class="insumo-card-tags">
-                        <span class="insumo-mini-badge" style="${cfg.colorBadge}">${subcat}</span>
-                        <span class="insumo-mini-badge bg-dark border border-cyan text-info">${nodo}</span>
-                        ${stockHtml}
+            </div>
+
+            <!-- CUERPO EXPANDIDO / CONSOLA DE DETALLES -->
+            <div id="collapse-ins-${id}" class="accordion-collapse collapse" aria-labelledby="heading-ins-${id}">
+                <div class="insumo-console-body">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-md-3">
+                            <div class="p-2 border rounded text-center" style="border-color: rgba(${rgb}, 0.3); background: rgba(0,0,0,0.5);">
+                                <span class="d-block font-orbitron small text-white-50">CÓDIGO NODO</span>
+                                <span class="fw-bold text-info font-monospace">#MP-${id}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-2 border rounded text-center" style="border-color: rgba(${rgb}, 0.3); background: rgba(0,0,0,0.5);">
+                                <span class="d-block font-orbitron small text-white-50">STOCK FÍSICO</span>
+                                <span class="fw-bold text-white font-monospace">${stockCant} ${i.medida || 'ud'}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-2 border rounded text-center" style="border-color: rgba(${rgb}, 0.3); background: rgba(0,0,0,0.5);">
+                                <span class="d-block font-orbitron small text-white-50">SUCURSAL</span>
+                                <span class="fw-bold text-warning font-orbitron">${nodo}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-sm btn-outline-info font-orbitron w-100 py-2" type="button" onclick="iniciarSubidaFotoInsumo(${id})">
+                                <i class="bi bi-camera me-1"></i> CAMBIAR FOTO
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="d-flex gap-1 ms-1">
-                    <button class="insumo-btn-icon" type="button" onclick="editarInsumo(${id})" title="Editar Insumo"><i class="bi bi-pencil"></i></button>
-                    <button class="insumo-btn-icon purge" type="button" onclick="eliminarInsumo(${id})" title="Eliminar"><i class="bi bi-trash3"></i></button>
-                </div>
-            </div>
-
-            <!-- Telemetría 2x2 compacta y organizada -->
-            <div class="insumo-card-metrics">
-                <div class="insumo-metric-tile">
-                    <span class="insumo-metric-label"><i class="bi bi-sliders text-info"></i> DOSIS</span>
-                    <span class="insumo-metric-val text-info">${dosisTxt}</span>
-                </div>
-                <div class="insumo-metric-tile">
-                    <span class="insumo-metric-label"><i class="bi bi-cash-stack text-warning"></i> VALOR/BASE</span>
-                    <span class="insumo-metric-val text-warning">${precioBaseTxt}</span>
-                </div>
-                <div class="insumo-metric-tile" style="border-left: 2px solid ${color};">
-                    <span class="insumo-metric-label" style="color: ${color};"><i class="bi bi-pie-chart-fill"></i> COSTO/P</span>
-                    <span class="insumo-metric-val" style="color: ${color}; text-shadow: 0 0 6px rgba(${rgb}, 0.5);">${costoPorcTxt}</span>
-                </div>
-                <div class="insumo-metric-tile">
-                    <span class="insumo-metric-label text-success"><i class="bi bi-shield-check"></i> TOTAL</span>
-                    <span class="insumo-metric-val text-success">${valorTotalTxt}</span>
-                </div>
-            </div>
-
-            <!-- Barra de acciones inferior -->
-            <div class="insumo-card-actions">
-                <button class="insumo-btn-calc" type="button" onclick="abrirCalculadoraConInsumo('${tipo}', ${id})" title="Calculadora Margen Real 1-%">
-                    <i class="bi bi-calculator-fill"></i> <span>1-% MARGEN</span>
-                </button>
-                <button class="insumo-btn-toggle-details" type="button" onclick="toggleDetallesInsumo(${id})" title="Ver detalles técnicos">
-                    <span id="txt-detalles-${id}">DETALLES</span>
-                    <i class="bi bi-chevron-down" id="icon-detalles-${id}"></i>
-                </button>
-            </div>
-
-            <!-- Cajón plegable de telemetría detallada -->
-            <div class="insumo-card-drawer" id="drawer-insumo-${id}">
-                <div class="d-flex justify-content-between align-items-center mb-1 text-white-50">
-                    <span>ID MATERIA PRIMA:</span>
-                    <span class="font-monospace text-info">#MP-${id}</span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mb-1 text-white-50">
-                    <span>STOCK ACTUAL:</span>
-                    <span class="font-monospace text-white">${stockCant} ${i.medida || 'ud'}</span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center text-white-50">
-                    <span>SUCURSAL NODO:</span>
-                    <span class="text-white">${nodo}</span>
                 </div>
             </div>
         </div>
