@@ -260,7 +260,38 @@
             padding: 18px 22px !important;
         }
 
-        /* --- 2. BODEGAS: TARJETAS PLEGABLES DE INSUMOS --- */
+        /* --- 2. BODEGAS: TARJETAS NORMALES Y COMPACTAS --- */
+        .tarjeta-insumo-normal {
+            background: linear-gradient(135deg, rgba(8, 16, 28, 0.94) 0%, rgba(3, 8, 16, 0.98) 100%);
+            border: 1px solid rgba(0, 229, 255, 0.22);
+            border-radius: 8px;
+            margin-bottom: 5px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+        }
+        .tarjeta-insumo-normal:hover {
+            border-color: rgba(0, 229, 255, 0.55);
+            background: linear-gradient(135deg, rgba(12, 24, 40, 0.98) 0%, rgba(5, 12, 24, 1) 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 229, 255, 0.15);
+        }
+        .metric-box-mini {
+            background: rgba(0, 0, 0, 0.55);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 3px 8px;
+            min-width: 82px;
+            text-align: center;
+        }
+        .metric-box-lbl {
+            display: block;
+            font-size: 0.62rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+            margin-bottom: 0px;
+        }
+
         .insumo-tarjeta-cyber {
             background: linear-gradient(135deg, rgba(6, 18, 36, 0.92) 0%, rgba(2, 7, 18, 0.97) 100%) !important;
             border-radius: 12px !important;
@@ -2119,6 +2150,7 @@
                             <button type="button" class="categoria-filtro-btn" data-cat="500 mls" onclick="filtrarCategoriaAcordeon('500 mls', this)">ELÍXIRES</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Packs" onclick="filtrarCategoriaAcordeon('Packs', this)">PACK DE PULPAS</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Shots" onclick="filtrarCategoriaAcordeon('Shots', this)">SHOTS</button>
+                            <button type="button" class="categoria-filtro-btn" data-cat="Arma tu Batido" onclick="filtrarCategoriaAcordeon('Arma tu Batido', this)">ARMA TU BATIDO</button>
                             <button type="button" class="categoria-filtro-btn" data-cat="Exóticos" onclick="filtrarCategoriaAcordeon('Exóticos', this)">EXÓTICOS</button>
                             
                             <div class="btn-group ms-1">
@@ -2674,6 +2706,9 @@
 
         if (catNorm.includes('exot') || nomNorm.includes('exot') || nomNorm.includes('pitahaya') || nomNorm.includes('dragon')) {
             return { key: 'Exóticos', nombre: 'Exóticos', esExotico: true };
+        }
+        if (catNorm.includes('arma tu batido') || nomNorm.includes('arma tu batido') || catNorm.includes('porciones')) {
+            return { key: 'Arma tu Batido', nombre: 'Arma tu Batido', esArmaTuBatido: true };
         }
         if (catNorm.includes('shot') || nomNorm.includes('shot')) {
             return { key: 'Shots', nombre: 'Shots', esShot: true };
@@ -4266,6 +4301,78 @@
         `;
     }
 
+    function crearTarjetaInsumoNormal(i, tipoBodega, cfg) {
+        const id = i.idInsumo;
+        const nombre = i.nombre || 'Insumo';
+        const subcat = (i.subcategoria || i.categoria || tipoBodega).toUpperCase();
+        const nodo = i.sucursal || 'Antofagasta';
+        const imgUrl = (i.imagen && i.imagen.trim() !== '') ? i.imagen.trim() : cfg.defaultFallback;
+        const borderImg = cfg.borderImg || 'border-info';
+        const dosisTxt = `${cfg.dosis} ${i.medida || 'gr'}`;
+        const costoPorcTxt = formatMoney(cfg.costoPorcion, i.sucursal);
+        const precioBaseTxt = formatMoney(i.precio || 0, i.sucursal);
+        const valorTotalTxt = formatMoney(cfg.valorInsumo, i.sucursal);
+        const stockHtml = cfg.stockHTML;
+        const colorTheme = cfg.colorTheme || 'var(--p-cyan)';
+
+        return `
+        <div class="tarjeta-insumo-normal" id="card-insumo-${id}" style="border-left: 4px solid ${colorTheme} !important;">
+            <div class="d-flex align-items-center justify-content-between p-2 px-3 gap-2 flex-wrap">
+                <!-- IZQUIERDA: MINIATURA Y NOMBRE -->
+                <div class="d-flex align-items-center gap-2" style="min-width: 200px; max-width: 280px;">
+                    <div class="position-relative flex-shrink-0" onclick="iniciarSubidaFotoInsumo(${id})" style="cursor: pointer;" title="Subir / Cambiar foto">
+                        <img src="${imgUrl}" id="img-insumo-${id}" class="rounded-2 border ${borderImg}" style="width: 44px; height: 44px; object-fit: cover;" onerror="this.src='${cfg.defaultFallback}'">
+                        <span class="position-absolute bottom-0 end-0 bg-dark rounded-circle text-warning border border-warning d-flex align-items-center justify-content-center" style="width: 16px; height: 16px; font-size: 9px;"><i class="bi bi-camera-fill"></i></span>
+                    </div>
+                    <div class="overflow-hidden">
+                        <div class="fw-bold font-orbitron text-white fs-6 text-truncate" title="${nombre}">${nombre}</div>
+                        <div class="d-flex align-items-center gap-1 mt-1 flex-wrap">
+                            <span class="badge bg-dark border text-truncate" style="border-color:${colorTheme}; color:${colorTheme}; font-size: 0.65rem; max-width: 130px;">${subcat}</span>
+                            <span class="badge bg-dark border border-secondary text-white-50" style="font-size: 0.65rem;">${nodo}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CENTRO: MÉTRICAS COMPACTAS EN LÍNEA -->
+                <div class="d-flex align-items-center gap-2 flex-wrap flex-grow-1 justify-content-center">
+                    <div class="metric-box-mini">
+                        <span class="metric-box-lbl">STOCK</span>
+                        ${stockHtml}
+                    </div>
+                    <div class="metric-box-mini">
+                        <span class="metric-box-lbl">PRECIO BASE</span>
+                        <span class="text-warning fw-bold font-orbitron fs-6">${precioBaseTxt}</span>
+                    </div>
+                    <div class="metric-box-mini">
+                        <span class="metric-box-lbl">DOSIS</span>
+                        <span class="text-info fw-bold font-orbitron fs-6">${dosisTxt}</span>
+                    </div>
+                    <div class="metric-box-mini">
+                        <span class="metric-box-lbl">COSTO/PORC</span>
+                        <span class="fw-bold font-orbitron fs-6" style="color:${colorTheme};">${costoPorcTxt}</span>
+                    </div>
+                    <div class="metric-box-mini d-none d-lg-block">
+                        <span class="metric-box-lbl">VALOR TOTAL</span>
+                        <span class="text-success fw-bold font-orbitron fs-6">${valorTotalTxt}</span>
+                    </div>
+                </div>
+
+                <!-- DERECHA: BOTONES DE ACCIÓN HORIZONTALES -->
+                <div class="d-flex align-items-center gap-1 ms-auto flex-shrink-0">
+                    <button class="btn btn-sm btn-outline-warning font-orbitron px-2 py-1" onclick="abrirCalculadoraConInsumo('${tipoBodega}', ${id})" title="Calculadora 1-% Margen Real">
+                        <i class="bi bi-calculator me-1"></i> <span class="d-none d-md-inline" style="font-size: 0.75rem;">1-%</span>
+                    </button>
+                    <button class="btn btn-sm btn-outline-info px-2 py-1" onclick="editarInsumo(${id})" title="Editar Insumo">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger px-2 py-1" onclick="eliminarInsumo(${id})" title="Eliminar Insumo">
+                        <i class="bi bi-trash3-fill"></i>
+                    </button>
+                </div>
+            </div>
+        </div>`;
+    }
+
     async function cargarInsumos() {
         try {
             const res = await fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' });
@@ -4340,52 +4447,35 @@
 
                 let stockHTML = '';
                 if (stockTotal <= 0) {
-                    stockHTML = `<span class="badge bg-danger text-white fs-6 font-orbitron px-2 py-1"><i class="bi bi-x-circle-fill me-1"></i> AGOTADO (0)</span>`;
+                    stockHTML = `<span class="badge bg-danger text-white font-orbitron px-2 py-0 small"><i class="bi bi-x-circle-fill me-1"></i> AGOTADO</span>`;
                 } else if (isArmaTuBatido) {
                     if (stockTotal <= 10) {
-                        stockHTML = `<span class="badge bg-warning text-dark fs-6 font-orbitron px-2 py-1 fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ¡ÚLTIMAS ${Math.floor(stockTotal)} porc!</span>`;
+                        stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${Math.floor(stockTotal)} porc</span>`;
                     } else {
-                        stockHTML = `<span class="text-warning fw-bold fs-4">${Math.floor(stockTotal)} <span class="fs-6 text-white-50">porc</span></span>`;
+                        stockHTML = `<span class="text-warning fw-bold font-orbitron fs-6">${Math.floor(stockTotal)} <span class="small text-white-50">porc</span></span>`;
                     }
                 } else if (isVaso) {
                     if (stockTotal <= 10) {
-                        stockHTML = `<span class="badge bg-warning text-dark fs-6 font-orbitron px-2 py-1 fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ¡ÚLTIMAS ${Math.floor(stockTotal)} und!</span>`;
+                        stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${Math.floor(stockTotal)} und</span>`;
                     } else {
-                        stockHTML = `<span class="text-info fw-bold fs-4">${Math.floor(stockTotal)} <span class="fs-6 text-white-50">und</span></span>`;
+                        stockHTML = `<span class="text-info fw-bold font-orbitron fs-6">${Math.floor(stockTotal)} <span class="small text-white-50">und</span></span>`;
                     }
                 } else if (isShot) {
                     if (stockTotal <= 10) {
-                        stockHTML = `<span class="badge bg-warning text-dark fs-6 font-orbitron px-2 py-1 fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ¡ÚLTIMAS ${stockTotal.toFixed(0)} ${i.medida || 'und'}!</span>`;
+                        stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${stockTotal.toFixed(0)} ${i.medida || 'und'}</span>`;
                     } else {
-                        stockHTML = `<span class="fw-bold fs-4" style="color:var(--p-magenta) !important;">${stockTotal.toFixed(1)} <span class="fs-6 text-white-50">${i.medida || 'mls'}</span></span>`;
+                        stockHTML = `<span class="fw-bold font-orbitron fs-6" style="color:var(--p-magenta) !important;">${stockTotal.toFixed(1)} <span class="small text-white-50">${i.medida || 'mls'}</span></span>`;
                     }
                 } else {
                     let porcEquiv = (i.medida === 'gr' || i.medida === 'mls') ? Math.floor(stockTotal / (i.cantidadPorcion || 30)) : Math.floor(stockTotal);
                     if (stockTotal <= 10 || porcEquiv <= 10) {
-                        stockHTML = `<span class="badge bg-warning text-dark fs-6 font-orbitron px-2 py-1 fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ¡ÚLTIMAS ${porcEquiv} porc! (${stockTotal.toFixed(0)} ${i.medida || 'gr'})</span>`;
+                        stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${porcEquiv} porc</span>`;
                     } else {
-                        stockHTML = `<span class="fw-bold fs-4" style="color:var(--p-bio-green);">${stockTotal.toFixed(0)} <span class="fs-6 text-white-50">${i.medida || 'gr'}</span></span>`;
+                        stockHTML = `<span class="fw-bold font-orbitron fs-6" style="color:var(--p-bio-green);">${stockTotal.toFixed(0)} <span class="small text-white-50">${i.medida || 'gr'}</span></span>`;
                     }
                 }
 
-                let colorBadge = 'color:var(--p-bio-green); border-color:var(--p-bio-green); box-shadow:0 0 10px var(--p-bio-green);';
-                if (isArmaTuBatido) colorBadge = 'color:var(--p-warning); border-color:var(--p-warning); box-shadow:0 0 10px var(--p-warning);';
-                else if (isVaso) colorBadge = 'color:var(--p-cyan); border-color:var(--p-cyan); box-shadow:0 0 10px var(--p-cyan);';
-                else if (isShot) colorBadge = 'color:var(--p-magenta); border-color:var(--p-magenta); box-shadow:0 0 10px var(--p-magenta);';
 
-                let defaultFallback = 'default-batido.png';
-                if (isVaso) defaultFallback = 'https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?auto=format&fit=crop&w=350&q=80';
-                else if (isShot) defaultFallback = 'https://images.unsplash.com/photo-1514733670139-4d87a1941d55?auto=format&fit=crop&w=350&q=80';
-                else if (!isArmaTuBatido) defaultFallback = 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80';
-
-                const urlInsumoImg = (i.imagen && i.imagen.trim() !== '') ? i.imagen.trim() : defaultFallback;
-                let borderImg = isArmaTuBatido ? 'border-warning' : (isExotico ? 'border-light' : (isVaso ? 'border-info' : (isShot ? 'border-danger' : 'border-success')));
-                let imgTdHtml = `<td>
-                    <div class="position-relative d-inline-block">
-                        <img src="${urlInsumoImg}" id="img-insumo-${i.idInsumo}" class="rounded border ${borderImg}" style="width: 44px; height: 44px; object-fit: cover; cursor: pointer;" title="Cambiar foto de este insumo" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" onerror="this.src='${defaultFallback}'">
-                        <button type="button" class="btn btn-sm btn-dark position-absolute bottom-0 end-0 p-0 rounded-circle text-warning border border-warning" style="width: 18px; height: 18px; line-height: 16px; font-size: 10px;" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Tomar foto"><i class="bi bi-camera-fill"></i></button>
-                    </div>
-                </td>`;
 
                 let dosisPulpa = i.cantidadPorcion || (i.medida === 'und' ? 1 : 50);
                 let costoPorcPulpa = (i.medida === 'gr' || i.medida === 'mls') ? (precioUnitario / 1000) * dosisPulpa : precioUnitario * dosisPulpa;
@@ -4396,99 +4486,62 @@
                 let dosisShot = i.cantidadPorcion || (i.medida === 'und' ? 1 : 30);
                 let costoPorcShot = (i.medida === 'gr' || i.medida === 'mls') ? (precioUnitario / 1000) * dosisShot : precioUnitario * dosisShot;
 
-                const rowPulpas = `<tr>
-                    ${imgTdHtml}
-                    <td class="fw-bold text-white fs-5">${i.nombre}</td>
-                    <td><span class="badge-categoria" style="${colorBadge}">${(i.subcategoria || i.categoria || 'Pulpas').toUpperCase()}</span></td>
-                    <td class="text-white">${i.sucursal}</td>
-                    <td>${stockHTML}</td>
-                    <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
-                    <td class="fs-5 text-info fw-bold">${formatMoney(costoPorcPulpa, i.sucursal)} <small class="text-white-50 fs-6">(${dosisPulpa} ${i.medida || 'gr'})</small></td>
-                    <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
-                    <td>
-                        <button class="btn btn-sm text-warning border-0 me-1" onclick="abrirCalculadoraConInsumo('pulpas', ${i.idInsumo})" title="Calculadora 1-% Margen Real"><i class="bi bi-calculator fs-4"></i></button>
-                        <button class="btn btn-sm text-warning border-0 me-1" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Cambiar foto de este insumo"><i class="bi bi-camera-fill fs-4"></i></button>
-                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})" title="Editar"><i class="bi bi-pencil-square fs-3"></i></button>
-                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})" title="Eliminar"><i class="bi bi-trash3-fill fs-3"></i></button>
-                    </td>
-                </tr>`;
-
-                const rowVasos = `<tr>
-                    ${imgTdHtml}
-                    <td class="fw-bold text-white fs-5">${i.nombre}</td>
-                    <td><span class="badge-categoria" style="${colorBadge}">${(i.subcategoria || i.categoria || 'Vasos').toUpperCase()}</span></td>
-                    <td class="text-white">${i.sucursal}</td>
-                    <td>${stockHTML}</td>
-                    <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
-                    <td class="fs-5 text-info fw-bold">${formatMoney(costoPorcVaso, i.sucursal)} <small class="text-white-50 fs-6">(${dosisVaso} ${i.medida || 'und'})</small></td>
-                    <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
-                    <td>
-                        <button class="btn btn-sm text-warning border-0 me-1" onclick="abrirCalculadoraConInsumo('vasos', ${i.idInsumo})" title="Calculadora 1-% Margen Real"><i class="bi bi-calculator fs-4"></i></button>
-                        <button class="btn btn-sm text-warning border-0 me-1" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Cambiar foto de este insumo"><i class="bi bi-camera-fill fs-4"></i></button>
-                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})" title="Editar"><i class="bi bi-pencil-square fs-3"></i></button>
-                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})" title="Eliminar"><i class="bi bi-trash3-fill fs-3"></i></button>
-                    </td>
-                </tr>`;
-
-                const rowShots = `<tr>
-                    ${imgTdHtml}
-                    <td class="fw-bold text-white fs-5">${i.nombre}</td>
-                    <td><span class="badge-categoria" style="${colorBadge}">${(i.subcategoria || i.categoria || 'Shots').toUpperCase()}</span></td>
-                    <td class="text-white">${i.sucursal}</td>
-                    <td>${stockHTML}</td>
-                    <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
-                    <td class="fs-5 text-info fw-bold">${formatMoney(costoPorcShot, i.sucursal)} <small class="text-white-50 fs-6">(${dosisShot} ${i.medida || 'mls'})</small></td>
-                    <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
-                    <td>
-                        <button class="btn btn-sm text-warning border-0 me-1" onclick="abrirCalculadoraConInsumo('shots', ${i.idInsumo})" title="Calculadora 1-% Margen Real"><i class="bi bi-calculator fs-4"></i></button>
-                        <button class="btn btn-sm text-warning border-0 me-1" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Cambiar foto de este insumo"><i class="bi bi-camera-fill fs-4"></i></button>
-                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})" title="Editar"><i class="bi bi-pencil-square fs-3"></i></button>
-                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})" title="Eliminar"><i class="bi bi-trash3-fill fs-3"></i></button>
-                    </td>
-                </tr>`;
-
-                
                 let dosisExotico = i.cantidadPorcion || (i.medida === 'und' ? 1 : 50);
                 let costoPorcExotico = (i.medida === 'gr' || i.medida === 'mls') ? (precioUnitario / 1000) * dosisExotico : precioUnitario * dosisExotico;
 
-                const rowExoticos = `<tr>
-                    ${imgTdHtml}
-                    <td class="fw-bold text-white fs-5">${i.nombre}</td>
-                    <td><span class="badge-categoria" style="${colorBadge}">${(i.subcategoria || i.categoria || 'Exóticos').toUpperCase()}</span></td>
-                    <td class="text-white">${i.sucursal}</td>
-                    <td>${stockHTML}</td>
-                    <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
-                    <td class="fs-5 text-info fw-bold">${formatMoney(costoPorcExotico, i.sucursal)} <small class="text-white-50 fs-6">(${dosisExotico} ${i.medida || 'gr'})</small></td>
-                    <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
-                    <td>
-                        <button class="btn btn-sm text-warning border-0 me-1" onclick="abrirCalculadoraConInsumo('exoticos', ${i.idInsumo})" title="Calculadora 1-% Margen Real"><i class="bi bi-calculator fs-4"></i></button>
-                        <button class="btn btn-sm text-warning border-0 me-1" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Cambiar foto de este insumo"><i class="bi bi-camera-fill fs-4"></i></button>
-                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})" title="Editar"><i class="bi bi-pencil-square fs-3"></i></button>
-                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})" title="Eliminar"><i class="bi bi-trash3-fill fs-3"></i></button>
-                    </td>
-                </tr>`;
+                let dosisArma = i.cantidadPorcion || 1;
+                let costoPorcArma = precioUnitario;
 
-                const rowArma = `<tr>
-                    ${imgTdHtml}
-                    <td class="fw-bold text-white fs-5">${i.nombre}</td>
-                    <td><span class="badge-categoria" style="${colorBadge}">${(i.subcategoria || i.categoria || 'Arma tu Batido').toUpperCase()}</span></td>
-                    <td class="text-white">${i.sucursal}</td>
-                    <td class="text-info fw-bold fs-5">${i.cantidadPorcion || 1} ${i.medida || 'gr'}</td>
-                    <td>${stockHTML}</td>
-                    <td class="text-warning fw-bold fs-5">${formatMoney(i.precio || 0, i.sucursal)}</td>
-                    <td class="text-success fw-bold fs-5" style="text-shadow: 0 0 5px rgba(0,255,0,0.5);">${formatMoney(valorInsumo, i.sucursal)}</td>
-                    <td>
-                        <button class="btn btn-sm text-warning border-0 me-1" onclick="abrirCalculadoraConInsumo('armatubatido', ${i.idInsumo})" title="Calculadora 1-% Margen Real"><i class="bi bi-calculator fs-4"></i></button>
-                        <button class="btn btn-sm text-warning border-0 me-1" onclick="iniciarSubidaFotoInsumo(${i.idInsumo})" title="Subir / Cambiar foto de este insumo"><i class="bi bi-camera-fill fs-4"></i></button>
-                        <button class="btn btn-sm text-info border-0 me-1" onclick="editarInsumo(${i.idInsumo})" title="Editar"><i class="bi bi-pencil-square fs-3"></i></button>
-                        <button class="btn btn-sm text-danger border-0" onclick="eliminarInsumo(${i.idInsumo})" title="Eliminar"><i class="bi bi-trash3-fill fs-3"></i></button>
-                    </td>
-                </tr>`;
+                let tipoBodega = 'pulpas';
+                let colorTheme = 'var(--p-bio-green)';
+                let defaultFallback = 'default-batido.png';
+                let borderImg = 'border-success';
+                let dosis = dosisPulpa;
+                let costoPorc = costoPorcPulpa;
 
-                if (isArmaTuBatido && tbArmaTuBatido) tbArmaTuBatido.innerHTML += rowArma;
-                else if (isVaso && tbVasos) tbVasos.innerHTML += rowVasos;
-                else if (isShot && tbShots) tbShots.innerHTML += rowShots;
-                else if (tbPulpas) tbPulpas.innerHTML += rowPulpas;
+                if (isArmaTuBatido) {
+                    tipoBodega = 'armatubatido';
+                    colorTheme = 'var(--p-warning)';
+                    borderImg = 'border-warning';
+                    dosis = dosisArma;
+                    costoPorc = costoPorcArma;
+                } else if (isExotico) {
+                    tipoBodega = 'exoticos';
+                    colorTheme = '#bd00ff';
+                    borderImg = 'border-light';
+                    dosis = dosisExotico;
+                    costoPorc = costoPorcExotico;
+                } else if (isVaso) {
+                    tipoBodega = 'vasos';
+                    colorTheme = 'var(--p-cyan)';
+                    borderImg = 'border-info';
+                    defaultFallback = 'https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?auto=format&fit=crop&w=350&q=80';
+                    dosis = dosisVaso;
+                    costoPorc = costoPorcVaso;
+                } else if (isShot) {
+                    tipoBodega = 'shots';
+                    colorTheme = 'var(--p-magenta)';
+                    borderImg = 'border-danger';
+                    defaultFallback = 'https://images.unsplash.com/photo-1514733670139-4d87a1941d55?auto=format&fit=crop&w=350&q=80';
+                    dosis = dosisShot;
+                    costoPorc = costoPorcShot;
+                }
+
+                const cardHtml = crearTarjetaInsumoNormal(i, tipoBodega, {
+                    colorTheme,
+                    defaultFallback,
+                    borderImg,
+                    dosis,
+                    costoPorcion: costoPorc,
+                    valorInsumo,
+                    stockHTML
+                });
+
+                if (isArmaTuBatido && tbArmaTuBatido) tbArmaTuBatido.innerHTML += cardHtml;
+                else if (isExotico && tbExoticos) tbExoticos.innerHTML += cardHtml;
+                else if (isVaso && tbVasos) tbVasos.innerHTML += cardHtml;
+                else if (isShot && tbShots) tbShots.innerHTML += cardHtml;
+                else if (tbPulpas) tbPulpas.innerHTML += cardHtml;
             });
             
 
@@ -5587,6 +5640,7 @@
                     <option value="500 mls" ${catActual === '500 mls' ? 'selected' : ''}>Elíxires (500 mls)</option>
                     <option value="Packs" ${catActual === 'Packs' ? 'selected' : ''}>Pack de Pulpas</option>
                     <option value="Shots" ${catActual === 'Shots' ? 'selected' : ''}>Shots</option>
+                    <option value="Arma tu Batido" ${catActual === 'Arma tu Batido' ? 'selected' : ''}>Arma tu Batido</option>
                     <option value="Exóticos" ${catActual === 'Exóticos' ? 'selected' : ''}>Exóticos</option>
                 `;
 
@@ -6107,6 +6161,8 @@
                     coincideCat = (cat === '500 mls');
                 } else if (f === 'shots') {
                     coincideCat = (cat === 'shots');
+                } else if (f.includes('arma')) {
+                    coincideCat = cat.includes('arma');
                 } else if (f.includes('exot')) {
                     coincideCat = cat.includes('exot');
                 } else {
