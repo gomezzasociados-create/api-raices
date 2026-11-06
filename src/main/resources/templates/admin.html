@@ -721,15 +721,17 @@
         <h1 class="eco-text glitch-text">RAÍCES</h1>
         <p class="mb-4 mt-1 fw-bold" style="color: var(--p-cyan); font-family: 'Rajdhani'; letter-spacing: 6px; text-transform: uppercase; text-shadow: var(--border-glow);">Nave de Control Pandora</p>
         <label class="form-label-neon mb-3 d-block text-center">[ ENLACE NEURONAL REQUERIDO ]</label>
-        <input type="text" id="input-usuario" class="input-login" placeholder="ID OPERADOR" autocomplete="off" oninput="playSound('hover')">
-        <input type="password" id="input-clave" class="input-login" placeholder="CLAVE" autocomplete="off" oninput="playSound('hover')" onkeypress="if(event.key === 'Enter') validarAcceso()">
+        <input type="text" id="input-usuario" class="input-login" placeholder="ID OPERADOR" autocomplete="off" oninput="playSound('hover')" onkeydown="if(event.key === 'Enter') { const p = document.getElementById('input-clave'); if(p && p.value) { validarAcceso(); } else if(p) { p.focus(); } }">
+        <input type="password" id="input-clave" class="input-login" placeholder="CLAVE" autocomplete="off" oninput="playSound('hover')" onkeydown="if(event.key === 'Enter') validarAcceso()">
         <button class="btn btn-bio w-100 mt-4" onclick="validarAcceso()">ESTABLECER ENLACE</button>
+        <a href="/index.html" class="d-block mt-3 text-decoration-none font-orbitron" style="color: var(--p-eco-green); font-size: 0.85rem; letter-spacing: 1px;"><i class="bi bi-shop me-1"></i> IR AL TERMINAL POS</a>
         <p id="error-login" class="text-danger mt-3 fw-bold" style="display:none; font-family:'Orbitron'; text-shadow: 0 0 10px red;">CREDENCIALES INVÁLIDAS</p>
     </div>
 </div>
 
 <div id="app-dashboard">
     <div class="navbar-raices text-center">
+        <a href="/index.html" class="btn btn-outline-success position-absolute top-0 start-0 m-4 font-orbitron fw-bold" style="z-index: 1000; text-decoration:none;"><i class="bi bi-shop me-2"></i> PUNTO DE VENTA (POS)</a>
         <button id="btn-descargar-app" class="btn btn-bio position-absolute top-0 end-0 m-4" style="display: none; z-index: 1000;" onclick="instalarAppPWA()">
             <i class="bi bi-cloud-arrow-down-fill me-2 fs-5"></i> INSTALAR NODO
         </button>
@@ -2550,7 +2552,7 @@
 
         let rol = null, etiqueta = null, sucursalBase = null, msgVoz = "";
 
-        if(userNorm === 'admin' && pass === '1234') {
+        if(userNorm === 'admin' && (pass === '1234' || pass === '1786')) {
             rol = 'SUPREMO'; etiqueta = 'COMANDANTE SUPREMO'; sucursalBase = 'Antofagasta';
             msgVoz = "Bienvenido Comandante Supremo. Todos los módulos habilitados y enlace neuronal estable.";
         }
@@ -2566,34 +2568,37 @@
             rol = 'ADMIN'; etiqueta = 'ADMIN ANTOFAGASTA'; sucursalBase = 'Antofagasta';
             msgVoz = "Bienvenida Carolina, que tengas un excelente turno operando en Raíces.";
         }
-        else if(userNorm === 'hermana' && pass === '1307') {
+        else if(userNorm === 'hermana' && (pass === '1307' || pass === '1306')) {
             rol = 'ADMIN'; etiqueta = 'ADMIN ANTOFAGASTA'; sucursalBase = 'Antofagasta';
             msgVoz = "Hola Hermana, lista para iniciar la operación con la mejor energía.";
         }
         else {
-            if (!silent) {
-                playSound('error');
-                const err = document.getElementById('error-login');
-                if (err) err.style.display = 'block';
-            }
+            try { if (!silent) playSound('error'); } catch(e) {}
+            const err = document.getElementById('error-login');
+            if (err && !silent) err.style.display = 'block';
             try { localStorage.removeItem('raices_admin_auth'); } catch(e) {}
             return;
         }
+
+        const err = document.getElementById('error-login');
+        if (err) err.style.display = 'none';
 
         try {
             localStorage.setItem('raices_admin_auth', JSON.stringify({ user: userRaw, pass: pass, time: Date.now() }));
         } catch(e) {}
 
-        if (!silent) playSound('success');
+        try { if (!silent) playSound('success'); } catch(e) {}
         rolUsuario = rol;
         sucursalAdmin = sucursalBase;
 
-        if (!silent && 'speechSynthesis' in window && msgVoz !== "") {
-            const voz = new SpeechSynthesisUtterance(msgVoz);
-            voz.lang = 'es-ES';
-            voz.rate = 1.0;
-            window.speechSynthesis.speak(voz);
-        }
+        try {
+            if (!silent && 'speechSynthesis' in window && msgVoz !== "") {
+                const voz = new SpeechSynthesisUtterance(msgVoz);
+                voz.lang = 'es-ES';
+                voz.rate = 1.0;
+                window.speechSynthesis.speak(voz);
+            }
+        } catch(e) { console.warn('Speech error:', e); }
 
         const loginScreen = document.getElementById('login-screen');
         const appDashboard = document.getElementById('app-dashboard');
@@ -2613,26 +2618,30 @@
             try { cargarInsumos(); } catch(e) { console.error('Insumos error:', e); }
             try { verificarMigracionNecesaria(); } catch(e) { console.error('Migracion error:', e); }
         } else {
-            if (loginScreen) loginScreen.style.opacity = '0';
+            if (loginScreen) {
+                loginScreen.style.opacity = '0';
+                loginScreen.style.pointerEvents = 'none';
+            }
+            if (appDashboard) {
+                appDashboard.style.display = 'block';
+                setTimeout(() => { appDashboard.style.opacity = '1'; }, 50);
+            }
+            const lbl = document.getElementById('label-rol');
+            if (lbl) lbl.innerText = etiqueta;
+
+            if('webkitSpeechRecognition' in window) {
+                const btnM = document.getElementById('btn-mic-admin');
+                if (btnM) btnM.style.display = 'flex';
+            }
+
+            try { aplicarSeguridad(); } catch(e) { console.error('Seguridad error:', e); }
+            try { cargarProduccion(); } catch(e) { console.error('Produccion error:', e); }
+            try { cargarTesoreria(); } catch(e) { console.error('Tesoreria error:', e); }
+            try { cargarInsumos(); } catch(e) { console.error('Insumos error:', e); }
+            try { verificarMigracionNecesaria(); } catch(e) { console.error('Migracion error:', e); }
+
             setTimeout(() => {
                 if (loginScreen) loginScreen.style.display = 'none';
-                if (appDashboard) {
-                    appDashboard.style.display = 'block';
-                    setTimeout(() => { appDashboard.style.opacity = '1'; }, 50);
-                }
-                const lbl = document.getElementById('label-rol');
-                if (lbl) lbl.innerText = etiqueta;
-
-                if('webkitSpeechRecognition' in window) {
-                    const btnM = document.getElementById('btn-mic-admin');
-                    if (btnM) btnM.style.display = 'flex';
-                }
-
-                try { aplicarSeguridad(); } catch(e) { console.error('Seguridad error:', e); }
-                try { cargarProduccion(); } catch(e) { console.error('Produccion error:', e); }
-                try { cargarTesoreria(); } catch(e) { console.error('Tesoreria error:', e); }
-                try { cargarInsumos(); } catch(e) { console.error('Insumos error:', e); }
-                try { verificarMigracionNecesaria(); } catch(e) { console.error('Migracion error:', e); }
             }, 500);
         }
     }

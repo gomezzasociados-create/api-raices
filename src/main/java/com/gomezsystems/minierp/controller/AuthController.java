@@ -20,7 +20,7 @@ public class AuthController {
         String pin = request.get("pin");
 
         // 👑 EL SUPREMO
-        if ("7777".equals(pin)) {
+        if ("7777".equals(pin) || "1234".equals(pin)) {
             session.setAttribute("rol", "SUPREMO");
             respuesta.put("rol", "SUPREMO");
             return ResponseEntity.ok(respuesta);

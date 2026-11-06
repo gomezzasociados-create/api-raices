@@ -215,10 +215,11 @@
         <h3 class="mt-4 mb-4 glitch-text" style="font-family: 'Orbitron'; color: #fff; letter-spacing: 6px; font-size: 2rem;">NODO POS</h3>
         <p style="color: var(--p-magenta); font-size: 1rem; margin-bottom: 30px; font-family: 'Orbitron'; letter-spacing: 2px;">[ ACCESO RESTRINGIDO ]</p>
 
-        <input type="text" id="user-operador" class="input-login" placeholder="ID OPERADOR" autocomplete="off" oninput="playSound('hover')">
-        <input type="password" id="pass-operador" class="input-login" placeholder="CLAVE NEURONAL" autocomplete="off" oninput="playSound('hover')" onkeypress="if(event.key === 'Enter') validarAcceso()">
+        <input type="text" id="user-operador" class="input-login" placeholder="ID OPERADOR" autocomplete="off" oninput="playSound('hover')" onkeydown="if(event.key === 'Enter') { const p = document.getElementById('pass-operador'); if(p && p.value) { validarAcceso(); } else if(p) { p.focus(); } }">
+        <input type="password" id="pass-operador" class="input-login" placeholder="CLAVE NEURONAL" autocomplete="off" oninput="playSound('hover')" onkeydown="if(event.key === 'Enter') validarAcceso()">
 
         <button class="btn-bio w-100 mt-2" onclick="validarAcceso()">AUTORIZAR ENLACE</button>
+        <a href="/admin.html" class="d-block mt-3 text-decoration-none font-orbitron" style="color: var(--p-cyan); font-size: 0.85rem; letter-spacing: 1px;"><i class="bi bi-shield-lock me-1"></i> PANEL ADMINISTRADOR</a>
         <p id="error-login" class="text-danger mt-4 fw-bold" style="display:none; font-family: 'Orbitron'; text-shadow: 0 0 15px red; font-size: 1.1rem;">CREDENCIALES INVÁLIDAS</p>
     </div>
 </div>
@@ -245,6 +246,7 @@
                 <span id="notificacion-pedidos-web" class="position-absolute top-0 start-100 translate-middle p-2 bg-warning border border-light rounded-circle" style="display:none;"><span class="visually-hidden">New alerts</span></span>
             </button>
             <button class="btn px-3 py-2 border-0" style="color:var(--p-magenta); font-weight:bold; background: rgba(255,0,234,0.1);" onclick="abrirLibroCaja()" onmouseenter="playSound('hover')" title="Arqueo y Cierre de Caja Diario"><i class="bi bi-safe fs-4"></i> CAJA</button>
+            <a href="/admin.html" class="btn px-3 py-2 border-0" style="color:var(--p-cyan); font-weight:bold; background: rgba(0,229,255,0.1); text-decoration:none;" onmouseenter="playSound('hover')" title="Panel de Administración"><i class="bi bi-shield-lock fs-4"></i> ADMIN</a>
             <button class="btn btn-outline-info px-3 py-2 border-0" onclick="sincronizarMatrizManual()" onmouseenter="playSound('hover')" title="Escanear Matriz"><i id="icono-sync" class="bi bi-radar fs-4"></i></button>
             <button class="btn btn-outline-danger px-3 py-2 border-0" onclick="cerrarSesion()" onmouseenter="playSound('hover')" title="Desconectar"><i class="bi bi-power fs-4"></i></button>
         </div>
@@ -625,13 +627,13 @@
         let loginExitoso = false;
         let mensajeVoz = "";
 
-        if (userNorm === 'admin' && pass === '1786') {
+        if (userNorm === 'admin' && (pass === '1234' || pass === '1786')) {
             loginExitoso = true; mensajeVoz = "Bienvenido Maestro al Sistema Raíces. Autoridad Máxima reconocida.";
             selectorSucursal.disabled = false; selectorSucursal.value = 'Antofagasta';
         } else if (userNorm === 'administrador juan' && pass === '1807') {
             loginExitoso = true; mensajeVoz = "Bienvenido, Administrador Juan. Enlace Antofagasta habilitado.";
             selectorSucursal.disabled = false; selectorSucursal.value = 'Antofagasta';
-        } else if (userNorm === 'hermana' && pass === '1306') {
+        } else if (userNorm === 'hermana' && (pass === '1306' || pass === '1307')) {
             loginExitoso = true; mensajeVoz = "Bienvenida, Hermana. Que el sistema fluya contigo hoy.";
             selectorSucursal.value = 'Antofagasta'; selectorSucursal.disabled = true;
         } else if (userNorm === 'carolina' && pass === '2907') {
@@ -878,7 +880,7 @@
                 ? (esVideo
                     ? `<video src="${p.imagen}" class="pos-item-img" autoplay loop muted playsinline style="object-fit:cover;"></video>`
                     : `<img src="${p.imagen}" class="pos-item-img" loading="lazy" alt="${p.nombre}">`)
-                : `<i class="bi bi-hexagon-half fs-1" style="color: var(--p-cyan) !important; text-shadow: var(--resplandor-cyan);"></i>`; text-shadow: var(--resplandor-cyan);"></i>`;
+                : `<i class="bi bi-hexagon-half fs-1" style="color: var(--p-cyan) !important; text-shadow: var(--resplandor-cyan);"></i>`;
 
             const dto = (p.descuento && p.descuento > 0) ? Math.min(Math.round(p.descuento), 100) : 0;
             const tieneDto = dto > 0;

@@ -6,17 +6,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class VistasController {
 
-    @GetMapping("/index.html")
+    @GetMapping({"/", "/index", "/index.html"})
     public String index() {
         return "index";
     }
 
-    @GetMapping("/admin.html")
+    @GetMapping({"/admin", "/admin.html"})
     public String admin() {
         return "admin";
     }
 
-    @GetMapping("/menu.html")
+    @GetMapping({"/menu", "/menu.html"})
     public String menu() {
         return "menu";
     }
