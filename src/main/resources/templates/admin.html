@@ -4429,21 +4429,49 @@
                     if (!sucIns.includes(sucFiltro)) return;
                 }
 
-                let valorInsumo = 0;
                 let stockTotal = parseFloat(i.unidadActual) || 0;
                 let precioUnitario = normalizarPrecioCLP(i.precio || 0);
-                
+
+                let dosisPulpa = i.cantidadPorcion || (i.medida === 'und' ? 1 : 50);
+                let costoPorcPulpa = (i.medida === 'gr' || i.medida === 'mls') ? (precioUnitario / 1000) * dosisPulpa : precioUnitario * dosisPulpa;
+
+                let dosisVaso = i.cantidadPorcion || 1;
+                let costoPorcVaso = precioUnitario * dosisVaso;
+
+                let dosisShot = i.cantidadPorcion || (i.medida === 'und' ? 1 : 30);
+                let costoPorcShot = (i.medida === 'gr' || i.medida === 'mls') ? (precioUnitario / 1000) * dosisShot : precioUnitario * dosisShot;
+
+                let dosisExotico = i.cantidadPorcion || (i.medida === 'und' ? 1 : 50);
+                let costoPorcExotico = (i.medida === 'gr' || i.medida === 'mls') ? (precioUnitario / 1000) * dosisExotico : precioUnitario * dosisExotico;
+
+                let dosisArma = i.cantidadPorcion || 1;
+                let costoPorcArma = precioUnitario;
+
+                // Detección automática para Exóticos: si el stock almacenado es menor que la dosis (ej: 13 < 30), el usuario ingresó porciones:
+                let exoticoEsModoPorc = isExotico && (i.medida === 'gr' || i.medida === 'mls') && dosisExotico > 1 && stockTotal < dosisExotico && stockTotal > 0;
+                let porcEquivExotico = exoticoEsModoPorc ? stockTotal : ((i.medida === 'gr' || i.medida === 'mls') ? Math.floor(stockTotal / dosisExotico) : Math.floor(stockTotal));
+                let stockGramosExotico = exoticoEsModoPorc ? (stockTotal * dosisExotico) : stockTotal;
+
+                let valorInsumo = 0;
                 if (isArmaTuBatido) {
                     valorInsumo = stockTotal * precioUnitario;
                     totalArmaTuBatido += valorInsumo;
+                } else if (isExotico) {
+                    if (exoticoEsModoPorc) {
+                        valorInsumo = stockTotal * costoPorcExotico;
+                    } else if (i.medida === 'gr' || i.medida === 'mls') {
+                        valorInsumo = (stockTotal / 1000) * precioUnitario;
+                    } else {
+                        valorInsumo = stockTotal * precioUnitario;
+                    }
+                    totalExoticos += valorInsumo;
                 } else if (i.medida === 'gr' || i.medida === 'mls') {
                     valorInsumo = (stockTotal / 1000) * precioUnitario;
                 } else {
                     valorInsumo = stockTotal * precioUnitario;
                 }
                 
-                if (isArmaTuBatido) { /* Sumado arriba */ }
-                else if (isExotico) { totalExoticos += valorInsumo; }
+                if (isArmaTuBatido || isExotico) { /* Sumado arriba */ }
                 else if (isVaso) { 
                     totalVasos += valorInsumo; 
                     // REGLA: Alerta de umbral bajo solo para bodega de vasos 500 mls (stock <= 10 unidades o agotado)
@@ -4472,11 +4500,10 @@
                         stockHTML = `<span class="text-warning fw-bold font-orbitron fs-6">${Math.floor(stockTotal)} <span class="small text-white-50">porc</span></span>`;
                     }
                 } else if (isExotico) {
-                    let porcEquiv = (i.medida === 'gr' || i.medida === 'mls') ? Math.floor(stockTotal / (i.cantidadPorcion || 30)) : Math.floor(stockTotal);
-                    if (porcEquiv <= 10) {
-                        stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${porcEquiv} porc <small class="text-dark opacity-75">(${stockTotal.toFixed(0)}${i.medida || 'gr'})</small></span>`;
+                    if (porcEquivExotico <= 10) {
+                        stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${Math.floor(porcEquivExotico)} porc <small class="text-dark opacity-75">(${stockGramosExotico.toFixed(0)}${i.medida || 'gr'})</small></span>`;
                     } else {
-                        stockHTML = `<span class="fw-bold font-orbitron fs-6" style="color:#bd00ff;">${porcEquiv} porc <span class="small text-white-50">(${stockTotal.toFixed(0)}${i.medida || 'gr'})</span></span>`;
+                        stockHTML = `<span class="fw-bold font-orbitron fs-6" style="color:#bd00ff;">${Math.floor(porcEquivExotico)} porc <span class="small text-white-50">(${stockGramosExotico.toFixed(0)}${i.medida || 'gr'})</span></span>`;
                     }
                 } else if (isVaso) {
                     if (stockTotal <= 10) {
@@ -4500,21 +4527,6 @@
                 }
 
 
-
-                let dosisPulpa = i.cantidadPorcion || (i.medida === 'und' ? 1 : 50);
-                let costoPorcPulpa = (i.medida === 'gr' || i.medida === 'mls') ? (precioUnitario / 1000) * dosisPulpa : precioUnitario * dosisPulpa;
-
-                let dosisVaso = i.cantidadPorcion || 1;
-                let costoPorcVaso = precioUnitario * dosisVaso;
-
-                let dosisShot = i.cantidadPorcion || (i.medida === 'und' ? 1 : 30);
-                let costoPorcShot = (i.medida === 'gr' || i.medida === 'mls') ? (precioUnitario / 1000) * dosisShot : precioUnitario * dosisShot;
-
-                let dosisExotico = i.cantidadPorcion || (i.medida === 'und' ? 1 : 50);
-                let costoPorcExotico = (i.medida === 'gr' || i.medida === 'mls') ? (precioUnitario / 1000) * dosisExotico : precioUnitario * dosisExotico;
-
-                let dosisArma = i.cantidadPorcion || 1;
-                let costoPorcArma = precioUnitario;
 
                 let tipoBodega = 'pulpas';
                 let colorTheme = 'var(--p-bio-green)';
