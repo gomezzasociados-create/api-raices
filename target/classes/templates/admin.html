@@ -4501,9 +4501,9 @@
                     }
                 } else if (isExotico) {
                     if (porcEquivExotico <= 10) {
-                        stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${Math.floor(porcEquivExotico)} porc <small class="text-dark opacity-75">(${stockGramosExotico.toFixed(0)}${i.medida || 'gr'})</small></span>`;
+                        stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${Math.floor(porcEquivExotico)} porc</span>`;
                     } else {
-                        stockHTML = `<span class="fw-bold font-orbitron fs-6" style="color:#bd00ff;">${Math.floor(porcEquivExotico)} porc <span class="small text-white-50">(${stockGramosExotico.toFixed(0)}${i.medida || 'gr'})</span></span>`;
+                        stockHTML = `<span class="fw-bold font-orbitron fs-6" style="color:#bd00ff;">${Math.floor(porcEquivExotico)} porc</span>`;
                     }
                 } else if (isVaso) {
                     if (stockTotal <= 10) {
