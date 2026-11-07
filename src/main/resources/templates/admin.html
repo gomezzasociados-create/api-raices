@@ -1739,8 +1739,8 @@
                                             <input type="number" id="exoticos-dosis" class="form-control fw-bold" style="color: #bd00ff;" step="0.1" placeholder="Ej: 50" oninput="actualizarBadgeCostoEnVivo('exoticos')">
                                         </div>
                                         <div class="col-md-2">
-                                            <label class="form-label-neon" style="color: #bd00ff;">Reserva Stock</label>
-                                            <input type="number" id="exoticos-stock" class="form-control" placeholder="Cant. stock">
+                                            <label class="form-label-neon" style="color: #bd00ff;" id="lbl-exoticos-stock">Reserva Stock (gr)</label>
+                                            <input type="number" id="exoticos-stock" class="form-control" placeholder="Cant. en gr (ej: 1000)">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label-neon text-warning">Precio Compra ($)</label>
@@ -4468,9 +4468,9 @@
                 } else if (isExotico) {
                     let porcEquiv = (i.medida === 'gr' || i.medida === 'mls') ? Math.floor(stockTotal / (i.cantidadPorcion || 30)) : Math.floor(stockTotal);
                     if (stockTotal <= 10 || porcEquiv <= 10) {
-                        stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${porcEquiv} porc</span>`;
+                        stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${stockTotal.toFixed(0)} ${i.medida || 'gr'} (${porcEquiv} porc)</span>`;
                     } else {
-                        stockHTML = `<span class="fw-bold font-orbitron fs-6" style="color:#bd00ff;">${stockTotal.toFixed(0)} <span class="small text-white-50">${i.medida || 'gr'}</span></span>`;
+                        stockHTML = `<span class="fw-bold font-orbitron fs-6" style="color:#bd00ff;">${stockTotal.toFixed(0)} <span class="small text-white-50">${i.medida || 'gr'}</span> <span class="badge bg-dark border border-secondary text-info ms-1" style="font-size:0.7rem;">${porcEquiv} porc</span></span>`;
                     }
                 } else if (isVaso) {
                     if (stockTotal <= 10) {
@@ -5161,6 +5161,10 @@
             const precio = parseFloat(document.getElementById('exoticos-precio')?.value) || 0;
             const dosis = parseFloat(document.getElementById('exoticos-dosis')?.value) || 50;
             const unidad = document.getElementById('exoticos-unidad')?.value || 'gr';
+            const lblStock = document.getElementById('lbl-exoticos-stock');
+            const inpStock = document.getElementById('exoticos-stock');
+            if (lblStock) lblStock.innerText = `Reserva Stock (${unidad})`;
+            if (inpStock && (!inpStock.value || inpStock.placeholder.includes('Cant.'))) inpStock.placeholder = `Ej: 1000 ${unidad}`;
             let costo = (unidad === 'gr' || unidad === 'mls') ? (precio / 1000) * dosis : precio * dosis;
             const b = document.getElementById('badge-costo-porcion-exoticos');
             if (b) b.innerText = `${formatMoney(costo, suc)} / porc (${dosis}${unidad})`;
