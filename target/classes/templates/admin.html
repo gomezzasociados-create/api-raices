@@ -4413,6 +4413,7 @@
 
                 let selectFiltroId = 'ins-sucursal';
                 if (isArmaTuBatido) selectFiltroId = 'armatubatido-sucursal';
+                else if (isExotico) selectFiltroId = 'exoticos-sucursal';
                 else if (isVaso) selectFiltroId = 'vaso-sucursal';
                 else if (isShot) selectFiltroId = 'shot-sucursal';
 
@@ -4436,6 +4437,7 @@
                 }
                 
                 if (isArmaTuBatido) { /* Sumado arriba */ }
+                else if (isExotico) { totalExoticos += valorInsumo; }
                 else if (isVaso) { 
                     totalVasos += valorInsumo; 
                     // REGLA: Alerta de umbral bajo solo para bodega de vasos 500 mls (stock <= 10 unidades o agotado)
@@ -4462,6 +4464,13 @@
                         stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${Math.floor(stockTotal)} porc</span>`;
                     } else {
                         stockHTML = `<span class="text-warning fw-bold font-orbitron fs-6">${Math.floor(stockTotal)} <span class="small text-white-50">porc</span></span>`;
+                    }
+                } else if (isExotico) {
+                    let porcEquiv = (i.medida === 'gr' || i.medida === 'mls') ? Math.floor(stockTotal / (i.cantidadPorcion || 30)) : Math.floor(stockTotal);
+                    if (stockTotal <= 10 || porcEquiv <= 10) {
+                        stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${porcEquiv} porc</span>`;
+                    } else {
+                        stockHTML = `<span class="fw-bold font-orbitron fs-6" style="color:#bd00ff;">${stockTotal.toFixed(0)} <span class="small text-white-50">${i.medida || 'gr'}</span></span>`;
                     }
                 } else if (isVaso) {
                     if (stockTotal <= 10) {
@@ -4587,6 +4596,10 @@
             const tbVArmaTuBatido = document.getElementById('total-valor-armatubatido');
             if (tbVArmaTuBatido) tbVArmaTuBatido.innerText = formatMoney(totalArmaTuBatido, sucMuestraArmaTuBatido);
 
+            const sucMuestraExoticos = document.getElementById('exoticos-sucursal') ? document.getElementById('exoticos-sucursal').value : 'Antofagasta';
+            const tbVExoticos = document.getElementById('total-valor-exoticos');
+            if (tbVExoticos) tbVExoticos.innerText = formatMoney(totalExoticos, sucMuestraExoticos);
+
             // GESTIÓN DE ALERTAS DE UMBRAL BAJO EXCLUSIVO PARA BODEGA DE VASOS 500 MLS
             procesarAlertasVasosAdmin(alertasVasos500);
 
@@ -4679,7 +4692,12 @@
         let ins = insMem.find(i => i.idInsumo === id);
         if(ins) {
             const cat = (ins.categoria || '').toLowerCase();
-            if(cat.includes('arma tu batido') || cat.includes('porciones')) {
+            const sub = (ins.subcategoria || '').toLowerCase();
+            const nom = (ins.nombre || '').toLowerCase();
+            const isArmaTuBatido = cat.includes('arma tu batido') || cat.includes('porciones');
+            const isExotico = !isArmaTuBatido && (cat.includes('exot') || cat.includes('exótico') || sub.includes('exot') || nom.includes('exot'));
+
+            if(isArmaTuBatido) {
                 if (document.getElementById('armatubatido-id')) document.getElementById('armatubatido-id').value = ins.idInsumo;
                 if (document.getElementById('armatubatido-nombre')) document.getElementById('armatubatido-nombre').value = ins.nombre;
                 if (ins.subcategoria && document.getElementById('armatubatido-subcategoria')) document.getElementById('armatubatido-subcategoria').value = ins.subcategoria;
@@ -4690,6 +4708,17 @@
                 if (document.getElementById('armatubatido-precio')) document.getElementById('armatubatido-precio').value = ins.precio || 0;
                 if (document.getElementById('armatubatido-imagen')) document.getElementById('armatubatido-imagen').value = ins.imagen || '';
                 actualizarBadgeCostoEnVivo('armatubatido');
+            } else if(isExotico) {
+                if (document.getElementById('exoticos-id')) document.getElementById('exoticos-id').value = ins.idInsumo;
+                if (document.getElementById('exoticos-nombre')) document.getElementById('exoticos-nombre').value = ins.nombre;
+                if (ins.subcategoria && document.getElementById('exoticos-subcategoria')) document.getElementById('exoticos-subcategoria').value = ins.subcategoria;
+                if (document.getElementById('exoticos-unidad')) document.getElementById('exoticos-unidad').value = ins.medida || 'gr';
+                if (document.getElementById('exoticos-dosis')) document.getElementById('exoticos-dosis').value = ins.cantidadPorcion || 50;
+                if (document.getElementById('exoticos-stock')) document.getElementById('exoticos-stock').value = ins.unidadActual || 0;
+                if (document.getElementById('exoticos-sucursal')) document.getElementById('exoticos-sucursal').value = ins.sucursal;
+                if (document.getElementById('exoticos-precio')) document.getElementById('exoticos-precio').value = ins.precio || 0;
+                if (document.getElementById('exoticos-imagen')) document.getElementById('exoticos-imagen').value = ins.imagen || '';
+                actualizarBadgeCostoEnVivo('exoticos');
             } else if(cat.includes('vaso') || cat.includes('packaging')) {
                 document.getElementById('vaso-id').value = ins.idInsumo;
                 document.getElementById('vaso-nombre').value = ins.nombre;
@@ -4773,6 +4802,17 @@
             suc=document.getElementById('shot-sucursal').value;
             precioVal = normalizarPrecioCLP(document.getElementById('shot-precio').value);
             imgVal = document.getElementById('shot-imagen') ? document.getElementById('shot-imagen').value.trim() : '';
+        } else if(tipo==='exoticos') {
+            id = document.getElementById('exoticos-id') ? document.getElementById('exoticos-id').value : ''; 
+            nombre = document.getElementById('exoticos-nombre') ? document.getElementById('exoticos-nombre').value.trim() : ''; 
+            cat='Exóticos'; 
+            subcat=document.getElementById('exoticos-subcategoria')?document.getElementById('exoticos-subcategoria').value:'Frutas Exóticas'; 
+            uni=document.getElementById('exoticos-unidad') ? document.getElementById('exoticos-unidad').value : 'gr'; 
+            dosisVal=parseFloat(document.getElementById('exoticos-dosis') ? document.getElementById('exoticos-dosis').value : 50) || 50;
+            stock=document.getElementById('exoticos-stock') ? document.getElementById('exoticos-stock').value : 0; 
+            suc=document.getElementById('exoticos-sucursal') ? document.getElementById('exoticos-sucursal').value : 'Antofagasta';
+            precioVal = normalizarPrecioCLP(document.getElementById('exoticos-precio') ? document.getElementById('exoticos-precio').value : 0);
+            imgVal = document.getElementById('exoticos-imagen') ? document.getElementById('exoticos-imagen').value.trim() : '';
         }
         if(!nombre) return alert("Ingresa al menos el nombre del insumo.");
 
@@ -4822,10 +4862,17 @@
             if (document.getElementById('shot-stock')) document.getElementById('shot-stock').value='';
             if (document.getElementById('shot-dosis')) document.getElementById('shot-dosis').value='';
             if (document.getElementById('shot-precio')) document.getElementById('shot-precio').value='';
+            if (document.getElementById('exoticos-id')) document.getElementById('exoticos-id').value=''; 
+            if (document.getElementById('exoticos-nombre')) document.getElementById('exoticos-nombre').value=''; 
+            if (document.getElementById('exoticos-stock')) document.getElementById('exoticos-stock').value='';
+            if (document.getElementById('exoticos-dosis')) document.getElementById('exoticos-dosis').value='';
+            if (document.getElementById('exoticos-precio')) document.getElementById('exoticos-precio').value='';
+            if (document.getElementById('exoticos-imagen')) document.getElementById('exoticos-imagen').value='';
             actualizarBadgeCostoEnVivo('pulpas');
             actualizarBadgeCostoEnVivo('vasos');
             actualizarBadgeCostoEnVivo('shots');
             actualizarBadgeCostoEnVivo('armatubatido');
+            actualizarBadgeCostoEnVivo('exoticos');
             cargarInsumos(); playSound('click');
         }).catch(err => {
             console.error("Error guardando insumo:", err);
@@ -4880,6 +4927,13 @@
             unidad = document.getElementById('armatubatido-unidad')?.value || 'gr';
             if (document.getElementById('calc-armatubatido-modo')) {
                 document.getElementById('calc-armatubatido-modo').value = (unidad === 'mls') ? 'litro' : 'kilo';
+            }
+        } else if (tipo === 'exoticos') {
+            precio = parseFloat(document.getElementById('exoticos-precio')?.value) || 0;
+            dosis = parseFloat(document.getElementById('exoticos-dosis')?.value) || 50;
+            unidad = document.getElementById('exoticos-unidad')?.value || 'gr';
+            if (document.getElementById('calc-exoticos-modo')) {
+                document.getElementById('calc-exoticos-modo').value = (unidad === 'mls') ? 'litro' : ((unidad === 'und') ? 'unidad' : 'kilo');
             }
         }
 
@@ -5055,6 +5109,13 @@
             else if (modo === 'litro') document.getElementById('armatubatido-unidad').value = 'mls';
             else document.getElementById('armatubatido-unidad').value = 'und';
             actualizarBadgeCostoEnVivo('armatubatido');
+        } else if (tipo === 'exoticos') {
+            if (costoBase > 0) document.getElementById('exoticos-precio').value = Math.round(costoBase);
+            if (dosis > 0) document.getElementById('exoticos-dosis').value = dosis;
+            if (modo === 'kilo') document.getElementById('exoticos-unidad').value = 'gr';
+            else if (modo === 'litro') document.getElementById('exoticos-unidad').value = 'mls';
+            else if (modo === 'unidad') document.getElementById('exoticos-unidad').value = 'und';
+            actualizarBadgeCostoEnVivo('exoticos');
         }
         playSound('click');
     }
@@ -5096,6 +5157,13 @@
             const unidad = document.getElementById('armatubatido-unidad')?.value || 'gr';
             const b = document.getElementById('badge-costo-porcion-armatubatido');
             if (b) b.innerText = `Venta: ${formatMoney(precio, suc)} (${dosis}${unidad})`;
+        } else if (tipo === 'exoticos') {
+            const precio = parseFloat(document.getElementById('exoticos-precio')?.value) || 0;
+            const dosis = parseFloat(document.getElementById('exoticos-dosis')?.value) || 50;
+            const unidad = document.getElementById('exoticos-unidad')?.value || 'gr';
+            let costo = (unidad === 'gr' || unidad === 'mls') ? (precio / 1000) * dosis : precio * dosis;
+            const b = document.getElementById('badge-costo-porcion-exoticos');
+            if (b) b.innerText = `${formatMoney(costo, suc)} / porc (${dosis}${unidad})`;
         }
     }
 
@@ -5112,6 +5180,9 @@
                 if (c && !c.classList.contains('show')) new bootstrap.Collapse(c, { toggle: true });
             } else if (tipo === 'shots') {
                 const c = document.getElementById('collapseRecetasShots');
+                if (c && !c.classList.contains('show')) new bootstrap.Collapse(c, { toggle: true });
+            } else if (tipo === 'exoticos') {
+                const c = document.getElementById('collapseRecetasExoticos');
                 if (c && !c.classList.contains('show')) new bootstrap.Collapse(c, { toggle: true });
             }
         }
