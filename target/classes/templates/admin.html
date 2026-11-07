@@ -1739,8 +1739,14 @@
                                             <input type="number" id="exoticos-dosis" class="form-control fw-bold" style="color: #bd00ff;" step="0.1" placeholder="Ej: 50" oninput="actualizarBadgeCostoEnVivo('exoticos')">
                                         </div>
                                         <div class="col-md-2">
-                                            <label class="form-label-neon" style="color: #bd00ff;" id="lbl-exoticos-stock">Reserva Stock (gr)</label>
-                                            <input type="number" id="exoticos-stock" class="form-control" placeholder="Cant. en gr (ej: 1000)">
+                                            <label class="form-label-neon" style="color: #bd00ff;" id="lbl-exoticos-stock">Reserva Stock</label>
+                                            <div class="input-group">
+                                                <input type="number" id="exoticos-stock" class="form-control fw-bold" placeholder="13" oninput="actualizarBadgeCostoEnVivo('exoticos')">
+                                                <select id="exoticos-stock-tipo" class="form-select bg-dark text-info border-secondary fw-bold" style="max-width: 95px; font-size: 0.8rem; padding: 2px 6px;" onchange="actualizarBadgeCostoEnVivo('exoticos')">
+                                                    <option value="porc" selected>Porc.</option>
+                                                    <option value="fisico">Gramos</option>
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label-neon text-warning">Precio Compra ($)</label>
@@ -3449,7 +3455,7 @@
 
     // --- MÓDULO PROFESIONAL DE IMPRESIÓN Y CAJA ---
     function formatMoney(amount, nodo) {
-        let num = normalizarPrecioCLP(amount);
+        let num = (typeof amount === 'number') ? amount : (parseFloat((amount || 0).toString().replace(/[$€\s]/g, '').replace(',', '.')) || 0);
         return '$' + Math.round(num).toLocaleString('es-CL');
     }
 
@@ -4467,10 +4473,10 @@
                     }
                 } else if (isExotico) {
                     let porcEquiv = (i.medida === 'gr' || i.medida === 'mls') ? Math.floor(stockTotal / (i.cantidadPorcion || 30)) : Math.floor(stockTotal);
-                    if (stockTotal <= 10 || porcEquiv <= 10) {
-                        stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${stockTotal.toFixed(0)} ${i.medida || 'gr'} (${porcEquiv} porc)</span>`;
+                    if (porcEquiv <= 10) {
+                        stockHTML = `<span class="badge bg-warning text-dark font-orbitron px-2 py-0 small fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${porcEquiv} porc <small class="text-dark opacity-75">(${stockTotal.toFixed(0)}${i.medida || 'gr'})</small></span>`;
                     } else {
-                        stockHTML = `<span class="fw-bold font-orbitron fs-6" style="color:#bd00ff;">${stockTotal.toFixed(0)} <span class="small text-white-50">${i.medida || 'gr'}</span> <span class="badge bg-dark border border-secondary text-info ms-1" style="font-size:0.7rem;">${porcEquiv} porc</span></span>`;
+                        stockHTML = `<span class="fw-bold font-orbitron fs-6" style="color:#bd00ff;">${porcEquiv} porc <span class="small text-white-50">(${stockTotal.toFixed(0)}${i.medida || 'gr'})</span></span>`;
                     }
                 } else if (isVaso) {
                     if (stockTotal <= 10) {
@@ -4713,8 +4719,22 @@
                 if (document.getElementById('exoticos-nombre')) document.getElementById('exoticos-nombre').value = ins.nombre;
                 if (ins.subcategoria && document.getElementById('exoticos-subcategoria')) document.getElementById('exoticos-subcategoria').value = ins.subcategoria;
                 if (document.getElementById('exoticos-unidad')) document.getElementById('exoticos-unidad').value = ins.medida || 'gr';
-                if (document.getElementById('exoticos-dosis')) document.getElementById('exoticos-dosis').value = ins.cantidadPorcion || 50;
-                if (document.getElementById('exoticos-stock')) document.getElementById('exoticos-stock').value = ins.unidadActual || 0;
+                let dosisIns = ins.cantidadPorcion || 50;
+                if (document.getElementById('exoticos-dosis')) document.getElementById('exoticos-dosis').value = dosisIns;
+                let stockFisico = parseFloat(ins.unidadActual) || 0;
+                let porcEquiv = (dosisIns > 0 && (ins.medida === 'gr' || ins.medida === 'mls')) ? (stockFisico / dosisIns) : stockFisico;
+                if (document.getElementById('exoticos-stock')) {
+                    if (stockFisico > 0 && stockFisico < dosisIns) {
+                        document.getElementById('exoticos-stock').value = stockFisico;
+                        if (document.getElementById('exoticos-stock-tipo')) document.getElementById('exoticos-stock-tipo').value = 'porc';
+                    } else if (Number.isInteger(porcEquiv) && porcEquiv > 0 && porcEquiv <= 500) {
+                        document.getElementById('exoticos-stock').value = porcEquiv;
+                        if (document.getElementById('exoticos-stock-tipo')) document.getElementById('exoticos-stock-tipo').value = 'porc';
+                    } else {
+                        document.getElementById('exoticos-stock').value = stockFisico;
+                        if (document.getElementById('exoticos-stock-tipo')) document.getElementById('exoticos-stock-tipo').value = 'fisico';
+                    }
+                }
                 if (document.getElementById('exoticos-sucursal')) document.getElementById('exoticos-sucursal').value = ins.sucursal;
                 if (document.getElementById('exoticos-precio')) document.getElementById('exoticos-precio').value = ins.precio || 0;
                 if (document.getElementById('exoticos-imagen')) document.getElementById('exoticos-imagen').value = ins.imagen || '';
@@ -4809,7 +4829,9 @@
             subcat=document.getElementById('exoticos-subcategoria')?document.getElementById('exoticos-subcategoria').value:'Frutas Exóticas'; 
             uni=document.getElementById('exoticos-unidad') ? document.getElementById('exoticos-unidad').value : 'gr'; 
             dosisVal=parseFloat(document.getElementById('exoticos-dosis') ? document.getElementById('exoticos-dosis').value : 50) || 50;
-            stock=document.getElementById('exoticos-stock') ? document.getElementById('exoticos-stock').value : 0; 
+            let stockRaw = parseFloat(document.getElementById('exoticos-stock') ? document.getElementById('exoticos-stock').value : 0) || 0;
+            let modoStock = document.getElementById('exoticos-stock-tipo') ? document.getElementById('exoticos-stock-tipo').value : 'porc';
+            stock = (modoStock === 'porc' && (uni === 'gr' || uni === 'mls')) ? (stockRaw * dosisVal) : stockRaw;
             suc=document.getElementById('exoticos-sucursal') ? document.getElementById('exoticos-sucursal').value : 'Antofagasta';
             precioVal = normalizarPrecioCLP(document.getElementById('exoticos-precio') ? document.getElementById('exoticos-precio').value : 0);
             imgVal = document.getElementById('exoticos-imagen') ? document.getElementById('exoticos-imagen').value.trim() : '';
@@ -5161,13 +5183,24 @@
             const precio = parseFloat(document.getElementById('exoticos-precio')?.value) || 0;
             const dosis = parseFloat(document.getElementById('exoticos-dosis')?.value) || 50;
             const unidad = document.getElementById('exoticos-unidad')?.value || 'gr';
-            const lblStock = document.getElementById('lbl-exoticos-stock');
-            const inpStock = document.getElementById('exoticos-stock');
-            if (lblStock) lblStock.innerText = `Reserva Stock (${unidad})`;
-            if (inpStock && (!inpStock.value || inpStock.placeholder.includes('Cant.'))) inpStock.placeholder = `Ej: 1000 ${unidad}`;
-            let costo = (unidad === 'gr' || unidad === 'mls') ? (precio / 1000) * dosis : precio * dosis;
+            const modoStock = document.getElementById('exoticos-stock-tipo')?.value || 'porc';
+            const stockInpVal = parseFloat(document.getElementById('exoticos-stock')?.value) || 0;
+
+            const optFisico = document.querySelector('#exoticos-stock-tipo option[value="fisico"]');
+            if (optFisico) optFisico.innerText = (unidad === 'gr' ? 'Gramos' : (unidad === 'mls' ? 'Mls' : 'Unidades'));
+
+            let costoPorc = (unidad === 'gr' || unidad === 'mls') ? (precio / 1000) * dosis : precio * dosis;
+            let stockPorc = (modoStock === 'porc') ? stockInpVal : ((dosis > 0 && (unidad === 'gr' || unidad === 'mls')) ? (stockInpVal / dosis) : stockInpVal);
+            let totalStockVal = stockPorc * costoPorc;
+
             const b = document.getElementById('badge-costo-porcion-exoticos');
-            if (b) b.innerText = `${formatMoney(costo, suc)} / porc (${dosis}${unidad})`;
+            if (b) {
+                if (stockInpVal > 0) {
+                    b.innerText = `${formatMoney(costoPorc, suc)} / porc • Total Stock (${Math.round(stockPorc)} porc): ${formatMoney(totalStockVal, suc)}`;
+                } else {
+                    b.innerText = `${formatMoney(costoPorc, suc)} / porc (${dosis}${unidad})`;
+                }
+            }
         }
     }
 
