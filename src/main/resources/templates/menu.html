@@ -543,6 +543,40 @@ section>.max-w-7xl{position:relative;z-index:2}
 </div>
 </aside>
 
+<!-- MODAL DE LECTURA DE ARTÍCULO BLOG Y COMUNIDAD -->
+<div id="modal-blog-articulo" class="fixed inset-0 z-[120] hidden items-center justify-center p-4 bg-black/85 backdrop-blur-2xl transition-all">
+  <div class="relative w-full max-w-3xl max-h-[90vh] bg-[#030905] border border-emerald-500/30 rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.9),0_0_40px_rgba(34,197,94,0.15)] flex flex-col overflow-hidden text-left">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/40">
+      <div id="blog-modal-badges" class="flex items-center gap-2 flex-wrap"></div>
+      <button onclick="cerrarModalArticulo()" class="w-10 h-10 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 grid place-items-center transition-colors" aria-label="Cerrar"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="overflow-y-auto px-6 py-6 space-y-6" id="blog-modal-cuerpo">
+      <div id="blog-modal-media" class="w-full h-64 md:h-80 rounded-2xl overflow-hidden bg-black/50 border border-white/10"></div>
+      <div>
+        <h2 id="blog-modal-titulo" class="font-cinzel text-2xl md:text-3xl font-black text-white leading-tight mb-3"></h2>
+        <div class="flex items-center justify-between text-xs text-slate-400 pb-3 border-b border-white/10">
+          <span id="blog-modal-autor"></span>
+          <button id="blog-modal-like-btn" class="flex items-center gap-2 px-4 py-2 rounded-full bg-ruby-500/20 border border-ruby-500/40 text-ruby-400 font-semibold hover:bg-ruby-500/30 transition-all"></button>
+        </div>
+      </div>
+      <div id="blog-modal-contenido" class="text-slate-200 text-sm md:text-base leading-relaxed font-light whitespace-pre-line"></div>
+      <div class="pt-6 border-t border-white/10 space-y-4">
+        <h3 class="font-cinzel text-lg font-bold text-emerald-400 flex items-center gap-2"><i class="bi bi-chat-dots-fill"></i> Comentarios de la comunidad</h3>
+        <div class="flex gap-2">
+          <input type="text" id="blog-comentario-input" placeholder="Escribe tu reflexión sobre este artículo..." class="input-bio flex-1 text-xs">
+          <button id="blog-comentario-btn" onclick="comentarEnArticuloModal()" class="btn btn-leaf px-5 py-2.5 text-xs"><i class="bi bi-send-fill"></i></button>
+        </div>
+        <div id="blog-modal-lista-comentarios" class="space-y-3 pt-2"></div>
+      </div>
+    </div>
+    <div class="px-6 py-4 border-t border-white/10 bg-black/40 flex justify-between items-center text-xs text-slate-400">
+      <span>¿Te gustó el artículo? Comparte con tu comunidad</span>
+      <button onclick="cerrarModalArticulo()" class="btn btn-ghost px-4 py-2 text-xs">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+
 <footer class="relative z-10 text-slate-400 py-16 border-t border-white/5">
 <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-8">
 <div class="text-center md:text-left"><div class="flex items-center gap-3 mb-2 justify-center md:justify-start"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#22c55e]"></span><span class="font-cinzel font-black text-2xl tracking-[.22em] text-white">RAÍCES</span></div><p class="text-sm font-light">Elixir botánico de alta densidad, prensado en frío.</p></div>
@@ -843,20 +877,105 @@ function toggleAudio() {
 
 /* 6. Catálogo, carrito y checkout */
 var productos = [], carrito = [], categoriaActual = '500 mls';
+var insumosReales = [];
 function initNodo() {
-    var pais = new URLSearchParams(window.location.search).get('pais') || 'Colombia';
+    var p = new URLSearchParams(window.location.search);
+    var nodoParam = p.get('sucursal') || p.get('nodo') || p.get('pais') || 'Antofagasta';
     var nodo = $('display-nodo-actual'), suc = $('sucursal-activa');
-    if (pais.toLowerCase() === 'chile') { nodo.innerText = '🇨🇱 Nodo Las Condes'; suc.value = 'Chile'; }
-    else if (pais.toLowerCase() === 'espana' || pais.toLowerCase() === 'españa') { nodo.innerText = '🇪🇸 Nodo Chamberí'; suc.value = 'España'; }
-    else { nodo.innerText = '🇨🇴 Cosecha Tuluá'; suc.value = 'Colombia'; }
+    if (suc) suc.value = nodoParam;
+    if (nodo) {
+        if (nodoParam.toLowerCase().includes('anto') || nodoParam.toLowerCase() === 'chile') {
+            nodo.innerText = '🇨🇱 Nodo Antofagasta';
+        } else if (nodoParam.toLowerCase().includes('espana') || nodoParam.toLowerCase().includes('españa')) {
+            nodo.innerText = '🇪🇸 Nodo Chamberí';
+        } else if (nodoParam.toLowerCase().includes('tulu') || nodoParam.toLowerCase() === 'colombia') {
+            nodo.innerText = '🇨🇴 Cosecha Tuluá';
+        } else {
+            nodo.innerText = '🇨🇱 Nodo ' + nodoParam;
+        }
+    }
     $('grid-menu').innerHTML = '<div class="skel"></div><div class="skel hidden md:block"></div><div class="skel hidden lg:block"></div>';
-    cargarCatalogo(suc.value);
+    cargarCatalogo(nodoParam);
+    cargarInsumosReales(nodoParam);
 }
+
 function cargarCatalogo(sucursal) {
-    fetch('/api/productos/sucursal/' + encodeURIComponent(sucursal))
-        .then(function(res) { if (!res.ok) throw new Error('Error en red al cargar productos'); return res.json(); })
-        .then(function(data) { productos = data; renderCatalogo(); })
-        .catch(function(err) { console.error('Error API:', err); renderFallbackCatalogo(); });
+    var url = '/api/productos/sucursal/' + encodeURIComponent(sucursal) + '?_t=' + Date.now();
+    fetch(url, { cache: 'no-store' })
+        .then(function(res) { return res.ok ? res.json() : []; })
+        .then(function(data) {
+            if (!data || !data.length) {
+                return fetch('/api/productos?_t=' + Date.now(), { cache: 'no-store' }).then(function(r) { return r.ok ? r.json() : []; });
+            }
+            return data;
+        })
+        .then(function(data) {
+            if (data && data.length) {
+                productos = data;
+            } else {
+                renderFallbackCatalogo();
+                return;
+            }
+            renderCatalogo();
+        })
+        .catch(function(err) {
+            console.error('Error API productos:', err);
+            fetch('/api/productos?_t=' + Date.now())
+                .then(function(r) { return r.ok ? r.json() : []; })
+                .then(function(d) {
+                    if (d && d.length) { productos = d; renderCatalogo(); }
+                    else { renderFallbackCatalogo(); }
+                })
+                .catch(function() { renderFallbackCatalogo(); });
+        });
+}
+
+function cargarInsumosReales(sucursal) {
+    var url = '/api/insumos/sucursal/' + encodeURIComponent(sucursal) + '?_t=' + Date.now();
+    fetch(url, { cache: 'no-store' })
+        .then(function(r) { return r.ok ? r.json() : []; })
+        .then(function(data) {
+            if (!data || !data.length) {
+                return fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' }).then(function(r) { return r.ok ? r.json() : []; });
+            }
+            return data;
+        })
+        .then(function(data) {
+            if (data && data.length) {
+                insumosReales = data;
+                adaptarInsumosParaBlender(data);
+            }
+        })
+        .catch(function(err) {
+            console.warn('Error cargando insumos:', err);
+        });
+}
+
+function adaptarInsumosParaBlender(insumos) {
+    var basesDb = insumos.filter(function(i) {
+        var sub = (i.subcategoria || '').toLowerCase();
+        var cat = (i.categoria || '').toLowerCase();
+        var nom = (i.nombre || '').toLowerCase();
+        return sub.includes('base') || nom.includes('leche') || nom.includes('agua de coco') || nom.includes('aloe');
+    });
+    if (basesDb.length > 0) {
+        BASES = basesDb.map(function(b) {
+            return [b.nombre, Number(b.precio) || 0, b.idInsumo];
+        });
+    }
+
+    var ingsDb = insumos.filter(function(i) {
+        var cat = (i.categoria || '').toLowerCase();
+        var sub = (i.subcategoria || '').toLowerCase();
+        return (cat.includes('arma') || cat.includes('batido') || sub.includes('fruta') || sub.includes('vegetal') || sub.includes('semilla')) && !sub.includes('base');
+    });
+    if (ingsDb.length > 0) {
+        var colores = ['#22c55e', '#a3e635', '#f59e0b', '#fbbf24', '#e60049', '#94a3b8', '#facc15', '#d946ef', '#fb923c', '#bef264', '#38bdf8', '#c084fc'];
+        ING_B = ingsDb.slice(0, 16).map(function(item, idx) {
+            var color = colores[idx % colores.length];
+            return [item.nombre, Number(item.precio) || 1000, color, item.idInsumo, item.imagen];
+        });
+    }
 }
 function renderFallbackCatalogo() {
     productos = [
@@ -1274,30 +1393,285 @@ function renderShots() {
         '<p class="text-yellow-300 text-sm font-semibold mb-8">Próximamente</p><a class="btn btn-leaf px-8 py-4" target="_blank" rel="noopener" href="' + wa('Hola RAÍCES, quiero que me avisen cuando salgan los Shots Rubí Vital') + '" onclick="trackEvent(\'Lead\',{content_name:\'Shots\'})"><i class="bi bi-whatsapp"></i>Avísame cuando salgan</a></div>';
 }
 
-function renderComunidad() {
-    $('grid-menu').innerHTML = '<div class="col-span-full text-center py-8"><span class="text-xs text-slate-400">Cargando comunidad...</span></div>';
-    fetch('/api/blog/articulos')
-        .then(function(r) { return r.json(); })
+var pestanaComunidadActual = 'articulos';
+var articulosBlogCache = [];
+var comentariosComunidadCache = [];
+var articuloActivoId = null;
+
+function renderComunidad(pestana) {
+    if (!pestana) pestana = pestanaComunidadActual || 'articulos';
+    pestanaComunidadActual = pestana;
+    var grid = $('grid-menu');
+    if (!grid) return;
+    
+    if ($('barra-busqueda')) $('barra-busqueda').style.display = 'none';
+
+    var navHtml = '<div class="col-span-full mb-8"><div class="spot rim rounded-[28px] p-6 md:p-8 text-center overflow-hidden">' +
+        '<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-400/50 shadow-[0_0_20px_rgba(34,197,94,0.3)] backdrop-blur-md mb-3 text-emerald-300 text-xs font-bold tracking-wider uppercase">' +
+        '<i class="bi bi-broadcast"></i> COMUNIDAD BIO-ACTIVA & BLOG</div>' +
+        '<h2 class="font-cinzel font-black text-2xl md:text-4xl text-white mb-2">Espacio de Conocimiento & Conexión Vital</h2>' +
+        '<p class="text-slate-400 text-sm max-w-2xl mx-auto mb-6 font-light">Fundamentos de nutrición celular, notas del laboratorio RAÍCES y propuestas de nuevos sabores de la comunidad.</p>' +
+        '<div class="flex justify-center gap-3 flex-wrap">' +
+        '<button class="btn ' + (pestana === 'articulos' ? 'btn-leaf' : 'btn-ghost') + ' px-5 py-2.5 text-xs" onclick="renderComunidad(\'articulos\')"><i class="bi bi-newspaper me-1"></i> Artículos & Guías</button>' +
+        '<button class="btn ' + (pestana === 'buzon' ? 'btn-leaf' : 'btn-ghost') + ' px-5 py-2.5 text-xs" onclick="renderComunidad(\'buzon\')"><i class="bi bi-lightbulb-fill me-1"></i> Buzón & Propuestas</button>' +
+        '<button class="btn ' + (pestana === 'escribir' ? 'btn-leaf' : 'btn-ghost') + ' px-5 py-2.5 text-xs" onclick="renderComunidad(\'escribir\')"><i class="bi bi-pencil-square me-1"></i> Nueva Propuesta</button>' +
+        '</div></div></div>' +
+        '<div id="contenedor-dinamico-comunidad" class="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>';
+
+    grid.innerHTML = navHtml;
+
+    if (pestana === 'articulos') cargarArticulosBlogVista();
+    else if (pestana === 'buzon') cargarBuzonComunidadVista('TODOS');
+    else if (pestana === 'escribir') cargarFormularioPropuestaVista();
+}
+
+function cargarArticulosBlogVista() {
+    var cont = $('contenedor-dinamico-comunidad');
+    if (!cont) return;
+    cont.innerHTML = '<div class="col-span-full text-center py-12"><div class="inline-block w-8 h-8 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin mb-3"></div><p class="text-xs text-slate-400">Cargando artículos del laboratorio...</p></div>';
+
+    fetch('/api/blog/articulos?_t=' + Date.now())
+        .then(function(r) { return r.ok ? r.json() : []; })
         .then(function(arts) {
-            var html = '';
+            articulosBlogCache = arts;
             if (!arts || !arts.length) {
-                var P = [ ['Por qué prensamos en frío', 'El calor destruye enzimas. Así protegemos cada botella.'], ['Qué mirar en la etiqueta de un jugo', 'Azúcares añadidos y conservantes: cómo detectarlos.'], ['Tu primera semana de protocolo', 'Qué esperar de las tres fases y cómo combinarlas.'] ];
-                html = P.map(function(p) { return '<a href="#" class="spot rounded-[28px] p-8 block"><i class="bi bi-stars text-emerald-400 text-xl"></i><h3 class="font-cinzel text-xl font-bold mt-4 mb-2">' + p[0] + '</h3><p class="text-slate-400 text-sm font-light">' + p[1] + '</p></a>'; }).join('');
-            } else {
-                html = arts.map(function(a) {
-                    return '<div class="spot rounded-[28px] p-8 block text-left"><span class="text-xs text-emerald-400 font-semibold uppercase tracking-wider block mb-2">' + esc(a.categoria || 'Bitácora') + '</span>' +
-                           '<h3 class="font-cinzel text-xl font-bold mb-3 text-white">' + esc(a.titulo) + '</h3>' +
-                           '<p class="text-slate-300 text-sm font-light leading-relaxed mb-4">' + esc(a.contenido || '') + '</p>' +
-                           '<div class="flex items-center justify-between text-xs text-slate-400 pt-3 border-t border-white/10"><span>Por ' + esc(a.autor || 'Equipo RAÍCES') + '</span><span class="text-ruby-400 font-semibold"><i class="bi bi-heart-fill me-1"></i>' + (a.likes || 0) + '</span></div></div>';
-                }).join('');
+                cont.innerHTML = '<div class="col-span-full text-center py-16"><i class="bi bi-journal-x text-4xl text-emerald-400 block mb-3"></i><p class="text-slate-400 text-sm">Aún no hay artículos publicados en el blog. ¡Vuelve pronto!</p></div>';
+                return;
             }
-            $('grid-menu').innerHTML = html + '<div class="col-span-full text-center pt-6"><a class="btn btn-leaf px-8 py-4" target="_blank" rel="noopener" href="' + wa('Hola RAÍCES, quiero unirme a la comunidad') + '"><i class="bi bi-whatsapp"></i>Unirme a la comunidad</a></div>';
+            cont.innerHTML = arts.map(function(art, i) {
+                var img = (art.imagen && art.imagen.trim()) ? art.imagen.trim() : 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80';
+                var esVideo = /\.(mp4|webm|mov)/i.test(img);
+                var media = esVideo
+                    ? '<video src="' + esc(img) + '" autoplay loop muted playsinline class="w-full h-48 object-cover"></video>'
+                    : '<img src="' + esc(img) + '" alt="' + esc(art.titulo) + '" class="w-full h-48 object-cover" onerror="this.src=\'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80\'">';
+                
+                return '<div class="spot rim rounded-[28px] overflow-hidden flex flex-col justify-between cursor-pointer group transition-transform hover:-translate-y-1.5" onclick="abrirModalArticulo(' + Number(art.id) + ')">' +
+                    '<div><div class="relative overflow-hidden">' + media +
+                    '<span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-emerald-400/50 text-emerald-300">' + esc(art.categoria || 'Nutrición') + '</span></div>' +
+                    '<div class="p-6"><h3 class="font-cinzel text-xl font-bold mb-2 text-white group-hover:text-emerald-300 transition-colors">' + esc(art.titulo) + '</h3>' +
+                    '<p class="text-slate-300 text-xs font-light leading-relaxed line-clamp-3 mb-4">' + esc(art.resumen || art.contenido || '') + '</p></div></div>' +
+                    '<div class="px-6 pb-6 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-slate-400">' +
+                    '<span><i class="bi bi-person me-1"></i>' + esc(art.autor || 'Equipo RAÍCES') + '</span>' +
+                    '<span class="text-ruby-400 font-semibold flex items-center gap-1"><i class="bi bi-heart-fill"></i> ' + (art.likes || 0) + '</span>' +
+                    '</div></div>';
+            }).join('');
         })
-        .catch(function() {
-            var P = [ ['Por qué prensamos en frío', 'El calor destruye enzimas. Así protegemos cada botella.'], ['Qué mirar en la etiqueta de un jugo', 'Azúcares añadidos y conservantes: cómo detectarlos.'], ['Tu primera semana de protocolo', 'Qué esperar de las tres fases y cómo combinarlas.'] ];
-            $('grid-menu').innerHTML = P.map(function(p) { return '<a href="#" class="spot rounded-[28px] p-8 block"><i class="bi bi-stars text-emerald-400 text-xl"></i><h3 class="font-cinzel text-xl font-bold mt-4 mb-2">' + p[0] + '</h3><p class="text-slate-400 text-sm font-light">' + p[1] + '</p></a>'; }).join('') +
-                '<div class="col-span-full text-center pt-6"><a class="btn btn-leaf px-8 py-4" target="_blank" rel="noopener" href="' + wa('Hola RAÍCES, quiero unirme a la comunidad') + '"><i class="bi bi-whatsapp"></i>Unirme a la comunidad</a></div>';
+        .catch(function(e) {
+            console.warn('Error cargando artículos:', e);
+            cont.innerHTML = '<div class="col-span-full text-center py-12 text-slate-400">Error al cargar artículos.</div>';
         });
+}
+
+function abrirModalArticulo(id) {
+    articuloActivoId = id;
+    var art = (articulosBlogCache || []).find(function(a) { return Number(a.id) === Number(id); });
+    if (!art) return;
+    
+    var modal = $('modal-blog-articulo');
+    if (!modal) return;
+    
+    var img = (art.imagen && art.imagen.trim()) ? art.imagen.trim() : 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80';
+    var esVideo = /\.(mp4|webm|mov)/i.test(img);
+    $('blog-modal-media').innerHTML = esVideo
+        ? '<video src="' + esc(img) + '" autoplay loop muted playsinline class="w-full h-full object-cover"></video>'
+        : '<img src="' + esc(img) + '" class="w-full h-full object-cover" onerror="this.src=\'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80\'">';
+    
+    $('blog-modal-badges').innerHTML = '<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-950/80 border border-emerald-400/50 text-emerald-300"><i class="bi bi-journal-text me-1"></i>' + esc(art.categoria || 'Blog') + '</span>' +
+        '<span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/5 border border-white/10 text-slate-300"><i class="bi bi-person me-1"></i>' + esc(art.autor || 'Equipo RAÍCES') + '</span>';
+    
+    $('blog-modal-titulo').innerText = art.titulo || '';
+    $('blog-modal-autor').innerText = 'Publicación Oficial RAÍCES';
+    $('blog-modal-like-btn').innerHTML = '<i class="bi bi-heart-fill"></i> ' + (art.likes || 0) + ' Aplausos';
+    $('blog-modal-like-btn').onclick = function() { darLikeArticulo(art.id); };
+    
+    $('blog-modal-contenido').innerHTML = esc(art.contenido || art.resumen || '').replace(/\n/g, '<br><br>');
+    
+    cargarComentariosArticulo(art.id);
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+function cerrarModalArticulo() {
+    var modal = $('modal-blog-articulo');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function darLikeArticulo(id) {
+    fetch('/api/blog/articulos/' + id + '/like', { method: 'POST' })
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(data) {
+            if (data && isFinite(data.likes)) {
+                var btn = $('blog-modal-like-btn');
+                if (btn) btn.innerHTML = '<i class="bi bi-heart-fill"></i> ' + data.likes + ' Aplausos';
+                var art = (articulosBlogCache || []).find(function(a) { return Number(a.id) === Number(id); });
+                if (art) art.likes = data.likes;
+                toast('¡Gracias por tu apoyo! ❤️');
+            }
+        });
+}
+
+function cargarComentariosArticulo(artId) {
+    var cont = $('blog-modal-lista-comentarios');
+    if (!cont) return;
+    cont.innerHTML = '<p class="text-xs text-slate-400">Cargando comentarios...</p>';
+    fetch('/api/blog/comentarios?articuloId=' + artId + '&_t=' + Date.now())
+        .then(function(r) { return r.ok ? r.json() : []; })
+        .then(function(comms) {
+            if (!comms || !comms.length) {
+                cont.innerHTML = '<p class="text-xs text-slate-500 italic">Aún no hay comentarios en este artículo. ¡Sé el primero en compartir tu opinión!</p>';
+                return;
+            }
+            cont.innerHTML = comms.map(function(c) {
+                return '<div class="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 space-y-1">' +
+                    '<div class="flex items-center justify-between text-xs"><span class="font-bold text-emerald-300">' + esc(c.nombre || 'Explorador') + '</span><span class="text-slate-500">' + formatearFecha(c.fecha) + '</span></div>' +
+                    '<p class="text-slate-300 text-xs leading-relaxed font-light">' + esc(c.mensaje) + '</p>' +
+                    '</div>';
+            }).join('');
+        });
+}
+
+function comentarEnArticuloModal() {
+    var inp = $('blog-comentario-input');
+    if (!inp || !inp.value.trim() || !articuloActivoId) return;
+    var msg = inp.value.trim();
+    var nom = ($('nombreCliente') && $('nombreCliente').value.trim()) ? $('nombreCliente').value.trim() : 'Explorador RAÍCES';
+    fetch('/api/blog/comentarios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ articuloId: articuloActivoId, nombre: nom, tipo: 'COMENTARIO', mensaje: msg })
+    }).then(function(r) {
+        if (r.ok) {
+            inp.value = '';
+            toast('Comentario publicado');
+            cargarComentariosArticulo(articuloActivoId);
+        } else {
+            toast('No se pudo publicar el comentario');
+        }
+    });
+}
+
+function cargarBuzonComunidadVista(filtroTipo) {
+    if (!filtroTipo) filtroTipo = 'TODOS';
+    var cont = $('contenedor-dinamico-comunidad');
+    if (!cont) return;
+    cont.innerHTML = '<div class="col-span-full text-center py-12"><div class="inline-block w-8 h-8 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin mb-3"></div><p class="text-xs text-slate-400">Cargando buzón de propuestas...</p></div>';
+
+    var url = '/api/blog/comentarios?_t=' + Date.now();
+    if (filtroTipo !== 'TODOS') url += '&tipo=' + encodeURIComponent(filtroTipo);
+
+    fetch(url)
+        .then(function(r) { return r.ok ? r.json() : []; })
+        .then(function(comms) {
+            comentariosComunidadCache = comms;
+            var filtrosHtml = '<div class="col-span-full mb-4 flex items-center justify-between gap-3 flex-wrap p-4 rounded-2xl bg-black/40 border border-white/10">' +
+                '<div class="flex items-center gap-2 flex-wrap text-xs">' +
+                '<span class="text-slate-400 font-semibold me-1">Filtrar:</span>' +
+                '<button class="px-3 py-1 rounded-full border transition-all ' + (filtroTipo === 'TODOS' ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 font-bold' : 'border-white/10 text-slate-400 hover:text-white') + '" onclick="cargarBuzonComunidadVista(\'TODOS\')">Todos (' + comms.length + ')</button>' +
+                '<button class="px-3 py-1 rounded-full border transition-all ' + (filtroTipo === 'SUGERENCIA' ? 'bg-amber-500/20 border-amber-400 text-amber-300 font-bold' : 'border-white/10 text-slate-400 hover:text-white') + '" onclick="cargarBuzonComunidadVista(\'SUGERENCIA\')">💡 Sugerencias</button>' +
+                '<button class="px-3 py-1 rounded-full border transition-all ' + (filtroTipo === 'PETICIÓN' || filtroTipo === 'PETICION' ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold' : 'border-white/10 text-slate-400 hover:text-white') + '" onclick="cargarBuzonComunidadVista(\'PETICIÓN\')">📋 Peticiones de sabor</button>' +
+                '<button class="px-3 py-1 rounded-full border transition-all ' + (filtroTipo === 'COMENTARIO' ? 'bg-ruby-500/20 border-ruby-400 text-ruby-300 font-bold' : 'border-white/10 text-slate-400 hover:text-white') + '" onclick="cargarBuzonComunidadVista(\'COMENTARIO\')">💬 Comentarios</button>' +
+                '</div>' +
+                '<button class="btn btn-leaf px-4 py-2 text-xs" onclick="renderComunidad(\'escribir\')"><i class="bi bi-plus-circle me-1"></i> Dejar mi idea</button>' +
+                '</div>';
+
+            if (!comms || !comms.length) {
+                cont.innerHTML = filtrosHtml + '<div class="col-span-full text-center py-16"><i class="bi bi-chat-square-dots text-4xl text-amber-400 block mb-3"></i><p class="text-slate-400 text-sm mb-4">Aún no hay propuestas en esta categoría. ¡Sé el primero en pedir un ingrediente o dejar tu sugerencia!</p><button class="btn btn-leaf px-6 py-3 text-xs" onclick="renderComunidad(\'escribir\')">Dejar propuesta ahora</button></div>';
+                return;
+            }
+
+            var cardsHtml = comms.map(function(c) {
+                var tipo = (c.tipo || 'COMENTARIO').toUpperCase();
+                var badgeCls = tipo === 'SUGERENCIA' ? 'bg-amber-500/20 text-amber-300 border-amber-400/40' : (tipo === 'PETICIÓN' || tipo === 'PETICION') ? 'bg-cyan-500/20 text-cyan-300 border-cyan-400/40' : 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40';
+                var icon = tipo === 'SUGERENCIA' ? 'bi-lightbulb-fill' : (tipo === 'PETICIÓN' || tipo === 'PETICION') ? 'bi-cup-straw' : 'bi-chat-dots-fill';
+
+                return '<div class="spot rim rounded-[28px] p-6 flex flex-col justify-between text-left">' +
+                    '<div><div class="flex items-center justify-between mb-3"><span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ' + badgeCls + '"><i class="bi ' + icon + ' me-1"></i>' + esc(tipo) + '</span><span class="text-xs text-slate-500">' + formatearFecha(c.fecha) + '</span></div>' +
+                    '<h4 class="font-cinzel text-base font-bold text-white mb-2">' + esc(c.nombre || 'Explorador') + '</h4>' +
+                    '<p class="text-slate-300 text-xs font-light leading-relaxed mb-4">' + esc(c.mensaje) + '</p></div>' +
+                    '<div class="pt-3 border-t border-white/5 flex items-center justify-between"><button class="btn btn-ghost px-3.5 py-1.5 text-xs text-ruby-400 hover:text-ruby-300" onclick="darLikeComentario(' + Number(c.id) + ', this)"><i class="bi bi-heart-fill me-1.5"></i> Apoyar (' + (c.likes || 0) + ')</button></div>' +
+                    '</div>';
+            }).join('');
+
+            cont.innerHTML = filtrosHtml + cardsHtml;
+        });
+}
+
+function darLikeComentario(id, btn) {
+    fetch('/api/blog/comentarios/' + id + '/like', { method: 'POST' })
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(data) {
+            if (data && isFinite(data.likes) && btn) {
+                btn.innerHTML = '<i class="bi bi-heart-fill me-1.5"></i> Apoyar (' + data.likes + ')';
+                toast('¡Propuesta apoyada!');
+            }
+        });
+}
+
+function cargarFormularioPropuestaVista() {
+    var cont = $('contenedor-dinamico-comunidad');
+    if (!cont) return;
+    var nomGuardado = ($('nombreCliente') && $('nombreCliente').value.trim()) ? $('nombreCliente').value.trim() : '';
+
+    cont.innerHTML = '<div class="col-span-full max-w-2xl mx-auto w-full"><div class="spot rim rounded-[32px] p-8 md:p-10">' +
+        '<div class="flex items-center gap-3 mb-6 pb-4 border-b border-white/10"><i class="bi bi-chat-heart-fill text-2xl text-emerald-400"></i><div><h3 class="font-cinzel text-xl font-bold text-white">Buzón de Co-Creación RAÍCES</h3><p class="text-xs text-slate-400 font-light">Cuéntanos qué nuevo sabor, vegetal exótico o mejora te gustaría ver en el laboratorio.</p></div></div>' +
+        '<form onsubmit="enviarPropuestaComunidad(event)" class="space-y-4">' +
+        '<div><label class="label-bio">Tu nombre o apodo</label><input type="text" id="prop-nombre" required class="input-bio" value="' + esc(nomGuardado) + '" placeholder="Ej. Camila Alquimista"></div>' +
+        '<div><label class="label-bio">Tipo de Aporte</label><div class="grid grid-cols-3 gap-2.5">' +
+        '<label class="flex items-center gap-2 p-3 rounded-2xl bg-white/[0.03] border border-white/10 cursor-pointer hover:border-emerald-500/40 text-xs font-semibold text-slate-300"><input type="radio" name="propTipo" value="SUGERENCIA" checked class="accent-emerald-500"> 💡 Sugerencia</label>' +
+        '<label class="flex items-center gap-2 p-3 rounded-2xl bg-white/[0.03] border border-white/10 cursor-pointer hover:border-emerald-500/40 text-xs font-semibold text-slate-300"><input type="radio" name="propTipo" value="PETICIÓN" class="accent-emerald-500"> 📋 Petición</label>' +
+        '<label class="flex items-center gap-2 p-3 rounded-2xl bg-white/[0.03] border border-white/10 cursor-pointer hover:border-emerald-500/40 text-xs font-semibold text-slate-300"><input type="radio" name="propTipo" value="COMENTARIO" class="accent-emerald-500"> 💬 Mensaje</label>' +
+        '</div></div>' +
+        '<div><label class="label-bio">Tu propuesta o comentario en detalle</label><textarea id="prop-mensaje" required rows="4" class="input-bio resize-none" placeholder="Escribe aquí tu propuesta... Ej: Me gustaría que agreguen Pitahaya Dragón o Leche de Avena con Canela en Arma tu Batido."></textarea></div>' +
+        '<div class="flex items-center justify-between pt-4 border-t border-white/10"><button type="button" class="btn btn-ghost px-5 py-3 text-xs" onclick="renderComunidad(\'buzon\')">Cancelar</button>' +
+        '<button type="submit" id="btn-enviar-prop" class="btn btn-leaf px-8 py-3.5 text-xs"><i class="bi bi-send-fill me-1.5"></i> Publicar en la comunidad</button></div>' +
+        '</form></div></div>';
+}
+
+function enviarPropuestaComunidad(e) {
+    e.preventDefault();
+    var nom = $('prop-nombre').value.trim() || 'Explorador RAÍCES';
+    var msg = $('prop-mensaje').value.trim();
+    var tipoRadio = document.querySelector('input[name="propTipo"]:checked');
+    var tipo = tipoRadio ? tipoRadio.value : 'SUGERENCIA';
+    var btn = $('btn-enviar-prop');
+    if (btn) btn.disabled = true;
+
+    fetch('/api/blog/comentarios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre: nom, tipo: tipo, mensaje: msg })
+    })
+    .then(function(r) {
+        if (r.ok) {
+            toast('¡Tu propuesta fue publicada en el buzón!');
+            renderComunidad('buzon');
+        } else {
+            toast('No se pudo publicar la propuesta');
+            if (btn) btn.disabled = false;
+        }
+    })
+    .catch(function() {
+        toast('Error de red al enviar');
+        if (btn) btn.disabled = false;
+    });
+}
+
+function formatearFecha(fIso) {
+    if (!fIso) return 'Reciente';
+    try {
+        var d = new Date(fIso), now = new Date(), diff = now - d;
+        var min = Math.floor(diff / 60000);
+        if (min < 2) return 'Hace un momento';
+        if (min < 60) return 'Hace ' + min + ' min';
+        var h = Math.floor(min / 60);
+        if (h < 24) return 'Hace ' + h + ' h';
+        var days = Math.floor(h / 24);
+        if (days < 30) return 'Hace ' + days + ' días';
+        return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+    } catch(e) { return 'Reciente'; }
 }
 
 /* 10. Chimpancé tomando un batido RAÍCES */
