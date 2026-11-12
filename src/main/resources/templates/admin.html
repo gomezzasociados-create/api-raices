@@ -790,6 +790,7 @@
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pdf" type="button" onclick="cargarDocumentosPdf(); playSound('click')"><i class="bi bi-file-earmark-pdf-fill me-1"></i> CENTRO PDF & RECETAS</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-precios" type="button" onclick="cargarCatalogo(); playSound('click')"><i class="bi bi-hdd-network me-1"></i> MATRIZ TOTAL</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-blog-admin" type="button" onclick="cargarBlogAdmin(); playSound('click')"><i class="bi bi-chat-heart-fill me-1"></i> COMUNIDAD & BLOG</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-comando-web" type="button" onclick="cargarAjustesWeb(); playSound('click')"><i class="bi bi-sliders2-vertical me-1"></i> COMANDO WEB & EFECTOS</button></li>
         </ul>
 
         <div class="tab-content" id="pills-tabContent">
@@ -2461,8 +2462,153 @@
                 </div>
             </div>
 
+            <!-- ============================================================== -->
+            <!-- TAB: COMANDO WEB & EFECTOS (PUBLICIDAD, TEXTOS Y DINÁMICAS)   -->
+            <!-- ============================================================== -->
+            <div class="tab-pane fade" id="tab-comando-web" role="tabpanel">
+                <div class="table-container mb-4" style="border-top: 3px solid var(--p-cyan);">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="fw-bold font-orbitron m-0" style="color: var(--p-cyan); text-shadow: var(--border-glow);">
+                            <i class="bi bi-sliders2-vertical me-2"></i> CENTRO DE COMANDO: PUBLICIDAD, INFORMACIÓN & EFECTOS
+                        </h4>
+                        <button type="button" class="btn btn-outline-info font-orbitron fw-bold px-3 py-1" onclick="cargarAjustesWeb(); playSound('click')">
+                            <i class="bi bi-arrow-clockwise me-1"></i> RECARGAR
+                        </button>
+                    </div>
+                    <p class="text-white-50 font-rajdhani mb-4" style="font-size: 1.05rem;">
+                        Controla en tiempo real los textos publicitarios, marquesinas y la activación de los efectos interactivos (simios curiosos, vegetación y licuadora) del portal de clientes sin tocar código.
+                    </p>
 
-        </div>
+                    <form id="form-ajustes-web" onsubmit="guardarAjustesWeb(event)">
+                        <div class="row g-4">
+                            <!-- COLUMNA 1: PUBLICIDAD E INFORMACIÓN -->
+                            <div class="col-lg-6">
+                                <div class="p-3 rounded" style="background: rgba(0, 229, 255, 0.04); border: 1px solid rgba(0, 229, 255, 0.2);">
+                                    <h5 class="font-orbitron text-info fw-bold mb-3">
+                                        <i class="bi bi-megaphone-fill me-2"></i> PUBLICIDAD & MENSAJES DEL PORTAL
+                                    </h5>
+
+                                    <div class="mb-3">
+                                        <label class="form-label-neon">TÍTULO PRINCIPAL (HERO)</label>
+                                        <input type="text" id="web-hero-titulo" class="form-control" placeholder="Ej: RAÍCES" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label-neon">SUBTÍTULO / PROPUESTA DE VALOR</label>
+                                        <textarea id="web-hero-subtitulo" class="form-control" rows="2" placeholder="Descripción principal del elixir"></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label-neon">MARQUESINA SUPERIOR / TICKER (Frases separadas por barra |)</label>
+                                        <textarea id="web-marquesina-texto" class="form-control" rows="2" placeholder="Prensado en frío | Sin azúcar añadida | Sin conservantes | Cosecha < 24 horas"></textarea>
+                                        <small class="text-white-50 font-rajdhani d-block mt-1">Cada frase separada por el símbolo <strong>|</strong> se mostrará con un destello botánico en la marquesina animada.</small>
+                                    </div>
+
+                                    <div class="p-3 rounded mb-3" style="background: rgba(255, 215, 0, 0.05); border: 1px dashed rgba(255, 215, 0, 0.3);">
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" id="web-banner-promo-activo">
+                                            <label class="form-check-label font-orbitron text-warning fw-bold" for="web-banner-promo-activo">
+                                                BARRA DE ANUNCIO SUPERIOR DESTACADA
+                                            </label>
+                                        </div>
+                                        <input type="text" id="web-banner-promo-texto" class="form-control" placeholder="Ej: 🌿 Envíos gratis hoy por compras sobre $60.000 en Tuluá">
+                                    </div>
+
+                                    <div class="row g-2">
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label-neon">WHATSAPP PEDIDOS (con código país)</label>
+                                            <input type="text" id="web-whatsapp-numero" class="form-control" placeholder="573177651016">
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label-neon">TELÉFONO DE CONTACTO</label>
+                                            <input type="text" id="web-telefono-contacto" class="form-control" placeholder="3177651016">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- COLUMNA 2: EFECTOS DINÁMICOS Y VISUALES -->
+                            <div class="col-lg-6">
+                                <div class="p-3 rounded h-100" style="background: rgba(255, 0, 234, 0.04); border: 1px solid rgba(255, 0, 234, 0.2);">
+                                    <h5 class="font-orbitron text-warning fw-bold mb-3">
+                                        <i class="bi bi-magic me-2"></i> EFECTOS QUE SALEN EN LA PÁGINA
+                                    </h5>
+                                    <p class="text-white-50 font-rajdhani small mb-3">
+                                        Activa o suspende cualquiera de los efectos dinámicos en vivo según la campaña o preferencia:
+                                    </p>
+
+                                    <div class="d-flex flex-column gap-3">
+                                        <div class="p-2.5 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                            <div>
+                                                <div class="font-orbitron fw-bold text-success" style="font-size: 0.95rem;">
+                                                    <i class="bi bi-emoji-sunglasses me-2"></i> SIMIOS CURIOSOS ASOMADOS
+                                                </div>
+                                                <small class="text-white-50 font-rajdhani">Personajes que se asoman en los bordes, siguen el cursor con la mirada y celebran las compras.</small>
+                                            </div>
+                                            <div class="form-check form-switch m-0 fs-5">
+                                                <input class="form-check-input" type="checkbox" id="web-efecto-simios">
+                                            </div>
+                                        </div>
+
+                                        <div class="p-2.5 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                            <div>
+                                                <div class="font-orbitron fw-bold text-info" style="font-size: 0.95rem;">
+                                                    <i class="bi bi-flower1 me-2"></i> VEGETACIÓN & FLORA PROCEDURAL
+                                                </div>
+                                                <small class="text-white-50 font-rajdhani">Hojas vivas de monstera, helechos y rocío dinámico con rotación reactiva al scroll.</small>
+                                            </div>
+                                            <div class="form-check form-switch m-0 fs-5">
+                                                <input class="form-check-input" type="checkbox" id="web-efecto-flora">
+                                            </div>
+                                        </div>
+
+                                        <div class="p-2.5 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                            <div>
+                                                <div class="font-orbitron fw-bold text-warning" style="font-size: 0.95rem;">
+                                                    <i class="bi bi-stars me-2"></i> PARTÍCULAS & AURAS DEL CHIMPANCÉ
+                                                </div>
+                                                <small class="text-white-50 font-rajdhani">Canvas de destellos bioluminiscentes, anillos de choque y auras reactivas al sorbo.</small>
+                                            </div>
+                                            <div class="form-check form-switch m-0 fs-5">
+                                                <input class="form-check-input" type="checkbox" id="web-efecto-particulas">
+                                            </div>
+                                        </div>
+
+                                        <div class="p-2.5 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                            <div>
+                                                <div class="font-orbitron fw-bold" style="color: #e879f9; font-size: 0.95rem;">
+                                                    <i class="bi bi-cup-straw me-2"></i> LICUADORA PROCEDURAL EN ARMA TU BATIDO
+                                                </div>
+                                                <small class="text-white-50 font-rajdhani">Simulación visual de mezcla de pigmentos botánicos, líquido y espuma en tiempo real.</small>
+                                            </div>
+                                            <div class="form-check form-switch m-0 fs-5">
+                                                <input class="form-check-input" type="checkbox" id="web-efecto-licuadora">
+                                            </div>
+                                        </div>
+
+                                        <div class="p-2.5 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                            <div>
+                                                <div class="font-orbitron fw-bold text-white" style="font-size: 0.95rem;">
+                                                    <i class="bi bi-volume-up-fill me-2"></i> MÚSICA & EFECTOS DE AUDIO
+                                                </div>
+                                                <small class="text-white-50 font-rajdhani">Banda sonora bio-ambient y efectos auditivos al agregar elixires a la orden.</small>
+                                            </div>
+                                            <div class="form-check form-switch m-0 fs-5">
+                                                <input class="form-check-input" type="checkbox" id="web-efecto-audio">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top border-secondary d-flex justify-content-end gap-3">
+                            <button type="submit" id="btn-guardar-ajustes-web" class="btn btn-outline-success font-orbitron fw-bold px-4 py-2" style="font-size: 1.1rem; box-shadow: 0 0 15px rgba(34,197,94,0.3);">
+                                <i class="bi bi-floppy-fill me-2"></i> APLICAR Y GUARDAR COMANDO WEB
+                            </button>
+                        </div>
+                    </form>
+                </div>
     </div>
 </div>
 
@@ -7265,6 +7411,96 @@
             }
         } catch (e) {
             alert('Error de conexión: ' + e.message);
+        }
+    }
+
+    // ==========================================
+    // CENTRO DE COMANDO WEB (PUBLICIDAD & EFECTOS)
+    // ==========================================
+    async function cargarAjustesWeb() {
+        try {
+            const res = await fetch('/api/ajustes-web');
+            if (!res.ok) throw new Error('Error al consultar configuración web');
+            const data = await res.json();
+
+            // Llenar campos de publicidad e información
+            const heroTit = document.getElementById('web-hero-titulo');
+            if (heroTit) heroTit.value = data.heroTitulo || 'RAÍCES';
+            const heroSub = document.getElementById('web-hero-subtitulo');
+            if (heroSub) heroSub.value = data.heroSubtitulo || '';
+            const marq = document.getElementById('web-marquesina-texto');
+            if (marq) marq.value = data.marquesinaTexto || '';
+
+            const bpAct = document.getElementById('web-banner-promo-activo');
+            if (bpAct) bpAct.checked = data.bannerPromoActivo !== false;
+            const bpTxt = document.getElementById('web-banner-promo-texto');
+            if (bpTxt) bpTxt.value = data.bannerPromoTexto || '';
+
+            const wa = document.getElementById('web-whatsapp-numero');
+            if (wa) wa.value = data.whatsappNumero || '573177651016';
+            const tel = document.getElementById('web-telefono-contacto');
+            if (tel) tel.value = data.telefonoContacto || '3177651016';
+
+            // Llenar switches de efectos
+            const efSimios = document.getElementById('web-efecto-simios');
+            if (efSimios) efSimios.checked = data.efectoSimiosActivo !== false;
+            const efFlora = document.getElementById('web-efecto-flora');
+            if (efFlora) efFlora.checked = data.efectoFloraActivo !== false;
+            const efPart = document.getElementById('web-efecto-particulas');
+            if (efPart) efPart.checked = data.efectoParticulasChimp !== false;
+            const efLic = document.getElementById('web-efecto-licuadora');
+            if (efLic) efLic.checked = data.efectoLicuadoraActivo !== false;
+            const efAud = document.getElementById('web-efecto-audio');
+            if (efAud) efAud.checked = data.efectoAudioFondo !== false;
+
+        } catch (e) {
+            console.error('Error al cargar ajustes web:', e);
+        }
+    }
+
+    async function guardarAjustesWeb(e) {
+        if (e) e.preventDefault();
+        const btn = document.getElementById('btn-guardar-ajustes-web');
+        const origHtml = btn ? btn.innerHTML : '';
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> GUARDANDO EN MATRIZ...';
+        }
+
+        const payload = {
+            id: 1,
+            heroTitulo: document.getElementById('web-hero-titulo').value.trim() || 'RAÍCES',
+            heroSubtitulo: document.getElementById('web-hero-subtitulo').value.trim(),
+            marquesinaTexto: document.getElementById('web-marquesina-texto').value.trim(),
+            bannerPromoActivo: document.getElementById('web-banner-promo-activo').checked,
+            bannerPromoTexto: document.getElementById('web-banner-promo-texto').value.trim(),
+            whatsappNumero: document.getElementById('web-whatsapp-numero').value.trim() || '573177651016',
+            telefonoContacto: document.getElementById('web-telefono-contacto').value.trim(),
+            efectoSimiosActivo: document.getElementById('web-efecto-simios').checked,
+            efectoFloraActivo: document.getElementById('web-efecto-flora').checked,
+            efectoParticulasChimp: document.getElementById('web-efecto-particulas').checked,
+            efectoLicuadoraActivo: document.getElementById('web-efecto-licuadora').checked,
+            efectoAudioFondo: document.getElementById('web-efecto-audio').checked
+        };
+
+        try {
+            const res = await fetch('/api/ajustes-web', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) throw new Error('Error al guardar ajustes');
+            playSound('success');
+            alert('¡COMANDO WEB ACTUALIZADO CON ÉXITO!\nLa publicidad y efectos del portal han sido guardados.');
+        } catch (err) {
+            playSound('error');
+            alert('Error al guardar configuración web: ' + err.message);
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = origHtml;
+            }
         }
     }
 

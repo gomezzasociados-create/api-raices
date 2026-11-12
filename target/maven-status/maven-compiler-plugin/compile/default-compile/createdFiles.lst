@@ -6,10 +6,13 @@ com\gomezsystems\minierp\controller\DocumentoPdfController.class
 com\gomezsystems\minierp\controller\MediaUploadController.class
 com\gomezsystems\minierp\repository\ComentarioComunidadRepository.class
 com\gomezsystems\minierp\model\ComentarioComunidad.class
+com\gomezsystems\minierp\controller\AjustesWebController.class
 com\gomezsystems\minierp\controller\BlogComunidadController.class
 com\gomezsystems\minierp\model\DocumentoPdf.class
+com\gomezsystems\minierp\model\AjustesWeb.class
 com\gomezsystems\minierp\repository\CategoriaBadgeRepository.class
 com\gomezsystems\minierp\model\CategoriaBadge.class
 com\gomezsystems\minierp\repository\ArticuloBlogRepository.class
 com\gomezsystems\minierp\config\WebConfig$1.class
+com\gomezsystems\minierp\repository\AjustesWebRepository.class
 com\gomezsystems\minierp\config\WebConfig.class

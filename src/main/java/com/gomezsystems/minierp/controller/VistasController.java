@@ -20,4 +20,9 @@ public class VistasController {
     public String menu() {
         return "menu";
     }
+
+    @GetMapping({"/menu-clasico", "/menu-clasico.html"})
+    public String menuClasico() {
+        return "menu-clasico";
+    }
 }

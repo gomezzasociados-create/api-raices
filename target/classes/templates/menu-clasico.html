@@ -1,0 +1,3332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RAÍCES - Portal Bio-Nutricional</title>
+
+    <link rel="manifest" href="manifest-menu.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#01120a">
+
+    <!-- PRECONEXIÓN Y DNS-PREFETCH EXPRESS PARA CARGA INSTANTÁNEA -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://res.cloudinary.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://res.cloudinary.com">
+
+    <!-- PRELOAD IMAGEN PRINCIPAL (OPTIMIZADA) -->
+    <link rel="preload" as="image" href="puerta-magica.jpg">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            --bio-oro: #ffd700;
+            --bio-aqua: #00f0ff;
+            --borde-madera: #2d180b;
+            --v-profundo: #01120a;
+            --resplandor-divino: 0 0 35px rgba(255, 215, 0, 0.6);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--v-profundo);
+            background-image:
+                linear-gradient(rgba(1, 10, 5, 0.2), rgba(1, 10, 5, 0.5)),
+                url('https://res.cloudinary.com/doi0o3hlr/image/upload/q_auto,f_auto,w_1000/v1774759858/Gemini_Generated_Image_2ocvdw2ocvdw2ocv_ixqdsz.png');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            color: #fff; min-height: 100vh; margin: 0; overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #pantalla-inicio {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center;
+            overflow: hidden;
+        }
+
+        .fondo-puerta-viva {
+            position: absolute; top: -5%; left: -5%; width: 110%; height: 110%;
+            background-color: #050505;
+            background-image: linear-gradient(rgba(1, 18, 10, 0.2), rgba(1, 18, 10, 0.6)), url('puerta-magica.jpg');
+            background-size: cover; background-position: center;
+            z-index: 1;
+            animation: respiracionMagica 6s infinite alternate ease-in-out;
+            transition: transform 1.5s cubic-bezier(0.5, 0, 0.2, 1), filter 1.5s ease-in;
+        }
+
+        @keyframes respiracionMagica {
+            0% { transform: scale(1); filter: brightness(0.95) contrast(1.05) hue-rotate(0deg); }
+            100% { transform: scale(1.04); filter: brightness(1.2) contrast(1.15) hue-rotate(8deg); }
+        }
+
+        .contenido-inicio {
+            position: relative; z-index: 10;
+            display: flex; flex-direction: column; align-items: center;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            width: 100%;
+        }
+
+        /* NUEVOS BOTONES DE NODO (PAÍSES) */
+        .btn-nodo {
+            background: radial-gradient(circle, rgba(10, 20, 15, 0.8) 0%, rgba(0, 0, 0, 0.9) 100%);
+            backdrop-filter: blur(10px); color: var(--bio-oro); border: 2px solid var(--bio-oro);
+            padding: 15px 20px; font-family: 'Orbitron'; font-size: 1.1rem; font-weight: 900;
+            letter-spacing: 2px; cursor: pointer; border-radius: 12px;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2), inset 0 0 10px rgba(255, 215, 0, 0.1);
+            transition: all 0.3s ease; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-nodo:hover, .btn-nodo:active {
+            color: #fff; border-color: var(--bio-aqua); background: rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 30px var(--bio-aqua), inset 0 0 15px var(--bio-aqua);
+            text-shadow: 0 0 8px #fff, 0 0 15px var(--bio-aqua); transform: scale(1.03);
+        }
+
+        .efecto-wow-puerta {
+            transform: scale(5) translateZ(0) !important; filter: brightness(3) contrast(1.5) blur(3px) !important;
+        }
+
+        #destello-luz {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #ffffff 10%, #ccffff 90%);
+            z-index: 99999; opacity: 0; pointer-events: none;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1); mix-blend-mode: screen;
+        }
+
+        /* ========================================================= */
+
+        .scanlines {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,255,136,0.03) 50%, rgba(0,255,136,0.03));
+            background-size: 100% 8px; z-index: 9998; pointer-events: none;
+            opacity: 1; animation: scrollScanlines 10s linear infinite;
+        }
+        @keyframes scrollScanlines { from { background-position: 0 0; } to { background-position: 0 100vh; } }
+
+        .video-fondo-catalogo {
+            position: fixed; top: 50%; left: 50%;
+            min-width: 100vw; min-height: 100vh;
+            width: auto; height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            z-index: 0; pointer-events: none;
+        }
+
+        .video-fondo-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(1, 15, 8, 0.4), rgba(1, 15, 8, 0.72));
+            z-index: 1; pointer-events: none;
+        }
+
+        .fireflies { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+        .firefly { position: absolute; border-radius: 50%; opacity: 0; animation: float-up linear infinite, parpadeo ease-in-out infinite alternate; }
+        @keyframes float-up { 0% { transform: translateY(105vh) translateX(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(-15vh) translateX(50px); opacity: 0; } }
+        @keyframes parpadeo { 0% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .header-raices { position: relative; z-index: 10; padding: 40px 15px 20px; text-align: center; }
+
+        /* BOTÓN DE AUDIO */
+        .btn-audio-toggle {
+            position: absolute; top: 15px; left: 15px;
+            background: rgba(0, 240, 255, 0.1); color: var(--bio-aqua); border: 1px solid var(--bio-aqua);
+            width: 45px; height: 45px; border-radius: 50%; font-size: 1.2rem;
+            cursor: pointer; z-index: 100; box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); backdrop-filter: blur(5px);
+            transition: 0.3s; display: flex; justify-content: center; align-items: center;
+        }
+        .btn-audio-toggle:hover { background: var(--bio-aqua); color: #000; box-shadow: 0 0 20px rgba(0, 240, 255, 0.6); }
+
+        /* BOTÓN DE INSTALAR APP */
+        .btn-instalar-app {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(0, 240, 255, 0.1); color: var(--bio-aqua); border: 1px solid var(--bio-aqua);
+            padding: 8px 15px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 700;
+            cursor: pointer; z-index: 100; box-shadow: 0 0 10px rgba(0, 240, 255, 0.2); backdrop-filter: blur(5px);
+            transition: 0.3s;
+        }
+        .btn-instalar-app:hover { background: var(--bio-aqua); color: #000; box-shadow: 0 0 20px rgba(0, 240, 255, 0.6); }
+
+        .titulo-raices {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5.2rem;
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 1.8px #ffd700;
+            background: linear-gradient(180deg, #ffffff 0%, #fff6b3 25%, #ffd700 55%, #00ffaa 85%, #00f0ff 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            text-shadow: 
+                0 0 18px rgba(0, 255, 170, 0.75),
+                0 0 35px rgba(255, 215, 0, 0.7),
+                0 0 65px rgba(0, 240, 255, 0.5),
+                0 8px 30px rgba(0, 0, 0, 0.95);
+            letter-spacing: 14px;
+            margin-bottom: 6px;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            animation: auraBosqueEncantado 3.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes auraBosqueEncantado {
+            0% {
+                filter: drop-shadow(0 0 10px rgba(0, 255, 170, 0.4)) drop-shadow(0 0 25px rgba(255, 215, 0, 0.4));
+                transform: scale(1);
+            }
+            100% {
+                filter: drop-shadow(0 0 22px rgba(0, 255, 170, 0.85)) drop-shadow(0 0 45px rgba(255, 215, 0, 0.75)) drop-shadow(0 0 70px rgba(0, 240, 255, 0.55));
+                transform: scale(1.02);
+            }
+        }
+
+        /* BADGE INDICADOR DE SUCURSAL / TALISMÁN DE NODO */
+        .badge-nodo-actual {
+            background: linear-gradient(135deg, rgba(2, 28, 16, 0.95) 0%, rgba(5, 14, 28, 0.96) 100%);
+            border: 2px solid rgba(0, 255, 170, 0.75);
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.18rem;
+            font-weight: 800;
+            padding: 10px 28px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 3px;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 170, 0.45),
+                0 0 35px rgba(255, 215, 0, 0.25),
+                inset 0 0 15px rgba(0, 255, 170, 0.2),
+                0 8px 25px rgba(0,0,0,0.9);
+            backdrop-filter: blur(8px);
+            margin-top: 8px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px #00ffaa, 0 0 18px rgba(255,215,0,0.7);
+            transition: all 0.3s ease;
+        }
+        .badge-nodo-actual:hover {
+            border-color: #ffd700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6), 0 0 50px rgba(0, 255, 170, 0.5);
+            transform: scale(1.03);
+        }
+
+        .contenedor-categorias { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 24px 16px; 
+            justify-content: center; 
+            margin: 38px auto 35px; 
+            z-index: 10; 
+            position: relative; 
+            max-width: 1200px;
+            padding: 0 10px;
+        }
+        .categoria-badge { 
+            position: relative; 
+            background: linear-gradient(145deg, rgba(3, 26, 16, 0.94) 0%, rgba(1, 12, 7, 0.98) 100%); 
+            color: rgba(255,255,255,0.92); 
+            padding: 16px 30px; 
+            border-radius: 14px; 
+            border: 2.5px solid rgba(0, 255, 170, 0.55); 
+            font-weight: 800; 
+            letter-spacing: 2px; 
+            font-family: 'Orbitron', sans-serif; 
+            font-size: 1.12rem; 
+            text-transform: uppercase; 
+            cursor: pointer; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.9), 0 0 15px rgba(0, 255, 170, 0.25); 
+            backdrop-filter: blur(8px); 
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            min-height: 56px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+        }
+        .categoria-badge:hover {
+            border-color: #00ffaa;
+            color: #ffffff;
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 
+                0 12px 30px rgba(0,0,0,0.95), 
+                0 0 25px rgba(0, 255, 170, 0.6), 
+                0 0 45px rgba(0, 240, 255, 0.4);
+        }
+
+        /* ========================================================= */
+        /* CINTA / LISTÓN NEÓN REAL SOBRE CATEGORÍAS (ALTO IMPACTO) */
+        /* ========================================================= */
+        .liston-categoria-neon {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 3px 18px;
+            border-radius: 4px;
+            font-family: 'Orbitron', sans-serif !important;
+            font-size: 0.70rem !important;
+            font-weight: 900 !important;
+            letter-spacing: 2px !important;
+            text-transform: uppercase !important;
+            white-space: nowrap !important;
+            z-index: 100 !important;
+            pointer-events: none !important;
+            line-height: 1.2 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.9) !important;
+        }
+
+        /* Puntas de cinta / listón estilo banderín diamantado */
+        .liston-categoria-neon::before,
+        .liston-categoria-neon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 7px;
+            height: 7px;
+            transform: translateY(-50%) rotate(45deg);
+            z-index: 1;
+        }
+        .liston-categoria-neon::before { left: -4px; }
+        .liston-categoria-neon::after { right: -4px; }
+
+        /* MAGENTA (FUCSIA ELÉCTRICO NEÓN) */
+        .liston-neon-magenta,
+        .neon-magenta {
+            background: #0d0111 !important;
+            border: 2px solid #ff00ea !important;
+            box-shadow: 
+                0 0 10px #ff00ea, 
+                0 0 25px rgba(255, 0, 234, 0.7), 
+                inset 0 0 8px rgba(255, 0, 234, 0.4),
+                0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonMagenta 1.8s infinite alternate !important;
+        }
+        .liston-neon-magenta,
+        .neon-magenta,
+        .liston-neon-magenta *,
+        .neon-magenta * {
+            color: #ff33db !important;
+            text-shadow: 
+                0 0 2px #ffffff, 
+                0 0 8px #ff00ea, 
+                0 0 18px #ff00ea, 
+                0 0 32px #d000ff !important;
+        }
+        .liston-neon-magenta::before,
+        .liston-neon-magenta::after,
+        .neon-magenta::before,
+        .neon-magenta::after {
+            background: #ff00ea !important;
+            box-shadow: 0 0 8px #ff00ea !important;
+        }
+        @keyframes pulsoNeonMagenta {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 8px #ff00ea, 0 0 18px rgba(255, 0, 234, 0.6), inset 0 0 6px rgba(255, 0, 234, 0.3), 0 4px 10px rgba(0,0,0,0.95);
+                text-shadow: 0 0 2px #fff, 0 0 6px #ff00ea, 0 0 14px #ff00ea;
+            }
+            100% {
+                transform: translateX(-50%) scale(1.06);
+                box-shadow: 0 0 16px #ff00ea, 0 0 35px rgba(255, 0, 234, 0.95), inset 0 0 12px rgba(255, 0, 234, 0.5), 0 4px 12px rgba(0,0,0,0.95);
+                text-shadow: 0 0 3px #fff, 0 0 10px #ff00ea, 0 0 24px #ff00ea, 0 0 40px #d000ff;
+            }
+        }
+
+        /* ORO (DORADO / FUEGO OFERTAS) */
+        .liston-neon-oro,
+        .neon-oro {
+            background: #140d00 !important;
+            border: 2px solid #ffd700 !important;
+            box-shadow: 
+                0 0 10px #ffd700, 
+                0 0 25px rgba(255, 215, 0, 0.7), 
+                inset 0 0 8px rgba(255, 215, 0, 0.4),
+                0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonOro 1.8s infinite alternate !important;
+        }
+        .liston-neon-oro,
+        .neon-oro,
+        .liston-neon-oro *,
+        .neon-oro * {
+            color: #ffe600 !important;
+            text-shadow: 
+                0 0 2px #ffffff, 
+                0 0 8px #ffd700, 
+                0 0 18px #ff9900, 
+                0 0 32px #ff5500 !important;
+        }
+        .liston-neon-oro::before,
+        .liston-neon-oro::after,
+        .neon-oro::before,
+        .neon-oro::after {
+            background: #ffd700 !important;
+            box-shadow: 0 0 8px #ffd700 !important;
+        }
+        @keyframes pulsoNeonOro {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 8px #ffd700, 0 0 18px rgba(255, 215, 0, 0.6), inset 0 0 6px rgba(255, 215, 0, 0.3), 0 4px 10px rgba(0,0,0,0.95);
+                text-shadow: 0 0 2px #fff, 0 0 6px #ffd700, 0 0 14px #ff9900;
+            }
+            100% {
+                transform: translateX(-50%) scale(1.06);
+                box-shadow: 0 0 16px #ffd700, 0 0 35px rgba(255, 215, 0, 0.95), inset 0 0 12px rgba(255, 215, 0, 0.5), 0 4px 12px rgba(0,0,0,0.95);
+                text-shadow: 0 0 3px #fff, 0 0 10px #ffd700, 0 0 24px #ff9900, 0 0 40px #ff3300;
+            }
+        }
+
+        /* CYAN (AQUA ELÉCTRICO) */
+        .liston-neon-cyan,
+        .neon-cyan {
+            background: #001018 !important;
+            border: 2px solid #00f0ff !important;
+            box-shadow: 
+                0 0 10px #00f0ff, 
+                0 0 25px rgba(0, 240, 255, 0.7), 
+                inset 0 0 8px rgba(0, 240, 255, 0.4),
+                0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonCyan 1.8s infinite alternate !important;
+        }
+        .liston-neon-cyan,
+        .neon-cyan,
+        .liston-neon-cyan *,
+        .neon-cyan * {
+            color: #00f0ff !important;
+            text-shadow: 
+                0 0 2px #ffffff, 
+                0 0 8px #00f0ff, 
+                0 0 18px #00aaff, 
+                0 0 32px #0066ff !important;
+        }
+        .liston-neon-cyan::before,
+        .liston-neon-cyan::after,
+        .neon-cyan::before,
+        .neon-cyan::after {
+            background: #00f0ff !important;
+            box-shadow: 0 0 8px #00f0ff !important;
+        }
+        @keyframes pulsoNeonCyan {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 8px #00f0ff, 0 0 18px rgba(0, 240, 255, 0.6), inset 0 0 6px rgba(0, 240, 255, 0.3), 0 4px 10px rgba(0,0,0,0.95);
+            }
+            100% {
+                transform: translateX(-50%) scale(1.06);
+                box-shadow: 0 0 16px #00f0ff, 0 0 35px rgba(0, 240, 255, 0.95), inset 0 0 12px rgba(0, 240, 255, 0.5), 0 4px 12px rgba(0,0,0,0.95);
+            }
+        }
+
+        /* VERDE (BIO NEÓN) */
+        .liston-neon-verde,
+        .neon-verde {
+            background: #001509 !important;
+            border: 2px solid #00ff88 !important;
+            box-shadow: 
+                0 0 10px #00ff88, 
+                0 0 25px rgba(0, 255, 136, 0.7), 
+                inset 0 0 8px rgba(0, 255, 136, 0.4),
+                0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonVerde 1.8s infinite alternate !important;
+        }
+        .liston-neon-verde,
+        .neon-verde,
+        .liston-neon-verde *,
+        .neon-verde * {
+            color: #00ff88 !important;
+            text-shadow: 
+                0 0 2px #ffffff, 
+                0 0 8px #00ff88, 
+                0 0 18px #00cc66, 
+                0 0 32px #008833 !important;
+        }
+        .liston-neon-verde::before,
+        .liston-neon-verde::after,
+        .neon-verde::before,
+        .neon-verde::after {
+            background: #00ff88 !important;
+            box-shadow: 0 0 8px #00ff88 !important;
+        }
+        @keyframes pulsoNeonVerde {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 8px #00ff88, 0 0 18px rgba(0, 255, 136, 0.6);
+            }
+            100% {
+                transform: translateX(-50%) scale(1.06);
+                box-shadow: 0 0 16px #00ff88, 0 0 35px rgba(0, 255, 136, 0.95);
+            }
+        }
+
+        /* ROJO (ALERTA / FLASH) */
+        .liston-neon-rojo,
+        .neon-rojo {
+            background: #180005 !important;
+            border: 2px solid #ff1744 !important;
+            box-shadow: 
+                0 0 10px #ff1744, 
+                0 0 25px rgba(255, 23, 68, 0.7), 
+                inset 0 0 8px rgba(255, 23, 68, 0.4),
+                0 4px 12px rgba(0,0,0,0.95) !important;
+            animation: pulsoNeonRojo 1.8s infinite alternate !important;
+        }
+        .liston-neon-rojo,
+        .neon-rojo,
+        .liston-neon-rojo *,
+        .neon-rojo * {
+            color: #ff3355 !important;
+            text-shadow: 
+                0 0 2px #ffffff, 
+                0 0 8px #ff1744, 
+                0 0 18px #ff0033, 
+                0 0 32px #990000 !important;
+        }
+        .liston-neon-rojo::before,
+        .liston-neon-rojo::after,
+        .neon-rojo::before,
+        .neon-rojo::after {
+            background: #ff1744 !important;
+            box-shadow: 0 0 8px #ff1744 !important;
+        }
+        @keyframes pulsoNeonRojo {
+            0% {
+                transform: translateX(-50%) scale(1);
+                box-shadow: 0 0 8px #ff1744, 0 0 18px rgba(255, 23, 68, 0.6);
+            }
+            100% {
+                transform: translateX(-50%) scale(1.06);
+                box-shadow: 0 0 16px #ff1744, 0 0 35px rgba(255, 23, 68, 0.95);
+            }
+        }
+
+        .categoria-badge.active { 
+            background: linear-gradient(145deg, rgba(255, 215, 0, 0.32) 0%, rgba(0, 255, 170, 0.24) 100%) !important; 
+            color: #ffffff !important; 
+            border-color: #ffd700 !important; 
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #00ffaa, 0 0 35px rgba(255, 215, 0, 0.85) !important;
+            box-shadow: 
+                0 0 28px rgba(255, 215, 0, 0.75), 
+                0 0 55px rgba(0, 255, 170, 0.5), 
+                inset 0 0 18px rgba(255, 215, 0, 0.35) !important; 
+            transform: translateY(-3px) scale(1.04);
+        }
+
+        .item-tarjeta { position: relative; z-index: 1; transition: z-index 0.2s; }
+        .item-tarjeta:hover { z-index: 100; }
+
+        .card-escena { perspective: 1000px; width: 100%; height: 440px; position: relative; margin-bottom: 25px; }
+        .card-flipper { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-escena.flipped .card-flipper { transform: rotateY(180deg); }
+
+        .card-front, .card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; border: 6px solid #3e2312; border-bottom-color: #1a0f07; border-right-color: #1a0f07; border-top-color: #5a361d; border-left-color: #5a361d; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.95), inset 0 0 30px rgba(0,0,0,0.9); backdrop-filter: blur(5px); }
+        .card-front { background: linear-gradient(rgba(20, 10, 2, 0.7), rgba(20, 10, 2, 0.9)), #180b06; padding: 16px 14px 18px 14px; justify-content: space-between; display: flex; flex-direction: column; }
+        .card-back { background: #0a0502; transform: rotateY(180deg); padding: 30px 20px; border-color: var(--bio-oro); }
+
+        .enredadera-magica { position: absolute; top: -12px; left: -12px; right: -12px; bottom: -12px; background-image: url('lianas-limpias.png'); background-size: 100% 100%; background-position: center; background-repeat: no-repeat; pointer-events: none; z-index: 15; }
+        .card-escena.flipped .enredadera-magica { opacity: 0; transition: opacity 0.3s; }
+
+        .img-zona { height: 165px; display: flex; justify-content: center; align-items: center; position: relative; z-index: 10; margin-top: 15px; margin-bottom: 5px; }
+        .img-batido { width: 80%; height: 80%; object-fit: contain; z-index: 2; filter: drop-shadow(0 15px 25px rgba(0,0,0,1)); animation: flotar 4s infinite alternate ease-in-out; }
+        @keyframes flotar { from { transform: translateY(5px); } to { transform: translateY(-5px); } }
+
+        .nombre-prod { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: #fff; text-transform: uppercase; margin-bottom: 2px; text-shadow: 0 3px 8px #000, 0 0 15px rgba(0,0,0,0.9); text-align: center; position: relative; z-index: 25; }
+        .info-prod-box { position: relative; z-index: 25; text-align: center; width: 100%; }
+        .precio-container { position: relative; z-index: 25; min-height: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+        .precio-prod { font-family: 'Orbitron', sans-serif; color: var(--bio-oro); font-weight: 900; font-size: 1.4rem; text-shadow: 0 3px 8px #000, 0 0 15px rgba(0,0,0,0.9); text-align: center; position: relative; z-index: 25; line-height: 1.1; }
+
+        .btn-info-flip { position: absolute; top: 10px; right: 10px; background: rgba(5, 2, 0, 0.85); color: var(--bio-oro); border: 1px solid var(--bio-oro); width: auto; padding: 6px 14px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; z-index: 30; box-shadow: 0 5px 10px rgba(0,0,0,0.8); backdrop-filter: blur(5px); cursor: pointer; transition: 0.3s; }
+        .btn-info-flip:hover { background: var(--bio-oro); color: #000; }
+
+        .badge-descuento {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(135deg, #ff0055 0%, #ff5500 100%);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            z-index: 30;
+            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: pulse-dto 2s infinite alternate;
+        }
+        @keyframes pulse-dto {
+            0% { transform: scale(1); box-shadow: 0 4px 15px rgba(255, 0, 85, 0.6); }
+            100% { transform: scale(1.06); box-shadow: 0 4px 25px rgba(255, 85, 0, 0.9); }
+        }
+        .precio-original-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(10, 5, 2, 0.85);
+            padding: 2px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 75, 75, 0.4);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+            margin-bottom: 2px;
+            position: relative;
+            z-index: 26;
+        }
+        .precio-original-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: #ff4d6d;
+            letter-spacing: 0.8px;
+        }
+        .precio-original {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.88rem;
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: line-through;
+
+            text-decoration-color: #ff3355;
+            text-decoration-thickness: 1.5px;
+            font-weight: 700;
+            position: relative;
+            z-index: 26;
+            text-shadow: 0 2px 4px #000;
+
+
+
+        }
+
+        .btn-extraer { background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.3) 100%); color: var(--bio-oro); border: 1px solid var(--bio-oro); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.6); position: relative; z-index: 25; flex-shrink: 0 !important; margin-top: auto !important;}
+
+        .btn-disabled-pago { background: rgba(50, 50, 50, 0.5); color: rgba(255, 255, 255, 0.5); border: 1px dashed rgba(255, 255, 255, 0.3); padding: 12px; border-radius: 8px; font-family: 'Orbitron', sans-serif; font-weight: 900; width: 100%; text-transform: uppercase; letter-spacing: 2px; cursor: not-allowed; }
+
+        .back-titulo { font-family: 'Orbitron'; color: var(--bio-oro); font-size: 1rem; border-bottom: 1px solid var(--bio-oro); padding-bottom: 10px; margin-bottom: 15px; text-align: center;}
+        .back-desc { font-size: 0.95rem; color: #fff; line-height: 1.5; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; touch-action: pan-y !important; overscroll-behavior: contain; text-align: left; padding-right: 5px; height: 160px; font-weight: 500;}
+        .btn-cerrar-flip { position: absolute; top: 10px; right: 10px; color: #fff; background: none; border: none; font-size: 1.5rem; opacity: 0.7; cursor: pointer;}
+
+        .carrito-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 95%; max-width: 400px; background: rgba(10, 5, 2, 0.98); border: 2px solid var(--bio-oro); padding: 12px 20px; border-radius: 12px; display: none; justify-content: space-between; align-items: center; box-shadow: 0 15px 40px rgba(0,0,0,0.9); z-index: 1000; cursor: pointer;}
+
+        .modal-content { background: #0a0502; background-image: url('https://www.transparenttextures.com/patterns/wood-burn-pattern.png'); border: 2px solid var(--bio-oro); border-radius: 15px; color: white; }
+
+        .input-bio { background: rgba(5, 2, 0, 0.8); border: 1px solid var(--bio-oro); color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; border-radius: 8px; padding: 10px 15px; width: 100%; margin-bottom: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); transition: all 0.3s ease; }
+        .input-bio:focus { outline: none; border-color: var(--bio-aqua); box-shadow: 0 0 10px rgba(0, 240, 255, 0.3), inset 0 2px 5px rgba(0,0,0,0.8); }
+        .input-bio::placeholder { color: rgba(255, 215, 0, 0.4); font-size: 0.95rem;}
+        .label-bio { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; color: var(--bio-aqua); margin-bottom: 5px; display: block; letter-spacing: 1px; font-weight: 700; }
+
+        /* ESTILOS DEL BOTÓN DEL MICRÓFONO PARA CLIENTES */
+        .btn-mic-flotante {
+            position: fixed; bottom: 90px; right: 20px; width: 60px; height: 60px;
+            border-radius: 50%; background: rgba(10, 20, 15, 0.85); border: 2px solid var(--bio-aqua);
+            color: var(--bio-aqua); display: flex; justify-content: center; align-items: center;
+            font-size: 1.8rem; cursor: pointer; z-index: 999; box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+            backdrop-filter: blur(10px); transition: all 0.3s ease;
+        }
+        .btn-mic-flotante.escuchando { animation: latidoMic 1s infinite; border-color: var(--bio-oro); color: var(--bio-oro); box-shadow: 0 0 30px var(--bio-oro); }
+        @keyframes latidoMic { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+        /* BADGES Y TARJETAS INTELIGENTES: ARMA TU BATIDO CON STOCK */
+        .badge-stock-estado {
+            border-radius: 6px;
+            font-size: 0.72rem;
+            padding: 4px 6px;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+        }
+        .badge-disponible {
+            background: rgba(0, 255, 128, 0.12);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 128, 0.4);
+        }
+        .badge-ultimas {
+            background: rgba(255, 193, 7, 0.18);
+            color: #ffc107;
+            border: 1px solid #ffc107;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
+            animation: pulsoUltimas 2s infinite ease-in-out;
+        }
+        .badge-agotado {
+            background: rgba(220, 53, 69, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(220, 53, 69, 0.5);
+        }
+        @keyframes pulsoUltimas {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 8px rgba(255, 193, 7, 0.3); }
+            50% { transform: scale(1.02); box-shadow: 0 0 14px rgba(255, 193, 7, 0.7); }
+        }
+        .card-ingrediente-batido {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .card-ingrediente-batido:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 229, 255, 0.25) !important;
+        }
+        .ingrediente-agotado {
+            opacity: 0.65;
+            filter: grayscale(40%);
+        }
+        .ingrediente-ultimas {
+            border-color: rgba(255, 193, 7, 0.8) !important;
+        }
+
+        /* ========================================================= */
+        /* OPTIMIZACIÓN INTELIGENTE PARA CELULARES (MANTIENE LA MAGIA LIGERA) */
+        @media (max-width: 768px) {
+            .titulo-raices {
+                font-size: 3.4rem !important;
+                letter-spacing: 6px !important;
+                -webkit-text-stroke: 1.2px #ffd700 !important;
+                margin-bottom: 8px !important;
+            }
+            .badge-nodo-actual {
+                font-size: 1.05rem !important;
+                padding: 8px 22px !important;
+                letter-spacing: 2px !important;
+                border-radius: 25px !important;
+                margin-bottom: 22px !important;
+            }
+            .contenedor-categorias {
+                gap: 22px 10px !important;
+                margin: 28px 0 26px !important;
+                padding: 0 6px !important;
+            }
+            .categoria-badge {
+                font-size: 1.02rem !important;
+                padding: 15px 18px !important;
+                border-radius: 12px !important;
+                letter-spacing: 1.2px !important;
+                min-height: 52px !important;
+                border-width: 2px !important;
+                flex: 1 1 calc(50% - 12px) !important;
+                max-width: calc(50% - 8px) !important;
+                text-align: center !important;
+                justify-content: center !important;
+            }
+            /* El quinto botón (Comunidad & Blog) ocupa el ancho completo para balance perfecto en móvil */
+            .categoria-badge:nth-child(5) {
+                flex: 1 1 100% !important;
+                max-width: 100% !important;
+            }
+            .liston-categoria-neon {
+                top: -14px !important;
+                font-size: 0.68rem !important;
+                padding: 3px 12px !important;
+                letter-spacing: 1.5px !important;
+            }
+            .card-front, .card-back { backdrop-filter: none; box-shadow: 0 5px 15px rgba(0,0,0,0.9); border-radius: 12px;}
+            .card-escena { height: 450px !important; margin-bottom: 25px !important; }
+            .img-zona { height: 160px !important; }
+            .card-ingrediente-batido { padding: 12px 8px !important; min-height: 280px !important; }
+            .btn-extraer { font-size: 0.85rem !important; padding: 10px !important; letter-spacing: 1px !important; }
+            body { background-attachment: scroll; }
+        }
+    
+        /* ========================================================= */
+        /* CRÉDITOS Y AVISO PUBLICITARIO GÓMEZ SYSTEMS */
+        /* ========================================================= */
+        .footer-creditos-gomez {
+            background: radial-gradient(circle at center, rgba(0, 240, 255, 0.08) 0%, rgba(1, 18, 10, 0.88) 100%);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 16px;
+            padding: 24px 20px;
+            margin: 35px auto 85px auto;
+            max-width: 540px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85), 0 0 25px rgba(0, 240, 255, 0.2);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            position: relative;
+            z-index: 20;
+        }
+        .footer-creditos-gomez .credito-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.65);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .link-gomez-systems {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.18), rgba(255, 215, 0, 0.18));
+            border: 2px solid var(--bio-aqua);
+            border-radius: 12px;
+            padding: 12px 24px;
+            color: #ffffff !important;
+            text-decoration: none !important;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.35), inset 0 0 12px rgba(0, 240, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            cursor: pointer;
+        }
+        .link-gomez-systems:hover, .link-gomez-systems:active {
+            color: #000000 !important;
+            background: linear-gradient(135deg, var(--bio-aqua), var(--bio-oro));
+            border-color: var(--bio-oro);
+            box-shadow: 0 0 35px var(--bio-aqua), 0 0 25px var(--bio-oro);
+            transform: translateY(-2px) scale(1.03);
+            text-shadow: none;
+        }
+        .link-gomez-systems .logo-gs-chip {
+            background: #000;
+            color: var(--bio-aqua);
+            border: 1px solid var(--bio-aqua);
+            border-radius: 6px;
+            padding: 2px 8px;
+            font-size: 0.85rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .link-gomez-systems:hover .logo-gs-chip {
+            background: #000000;
+            color: var(--bio-oro);
+            border-color: var(--bio-oro);
+        }
+        .footer-creditos-gomez .subtexto-gs {
+            font-family: 'Rajdhani', sans-serif;
+            color: rgba(255, 215, 0, 0.85);
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            margin-top: 12px;
+            margin-bottom: 0;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+        }
+
+
+        /* ========================================================= */
+        /* MODAL DE VISTA AMPLIADA VERTICAL (PRODUCTOS E INSUMOS) */
+        /* ========================================================= */
+        .modal-ampliado-dialog {
+            max-width: 680px;
+            width: 96vw;
+            margin: 12px auto;
+            height: 94vh;
+            height: 94dvh;
+            display: flex;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .modal-ampliado-dialog {
+                width: 97vw !important;
+                max-width: 97vw !important;
+                margin: 6px auto !important;
+                height: 95vh !important;
+                height: 95dvh !important;
+            }
+        }
+
+        .modal-ampliado-content {
+            background: linear-gradient(180deg, #180d05 0%, #08120e 100%) !important;
+            background-image: url('https://www.transparenttextures.com/patterns/wood-burn-pattern.png'), linear-gradient(180deg, rgba(24, 13, 5, 0.98) 0%, rgba(8, 18, 14, 0.98) 100%) !important;
+            border: 2px solid var(--bio-oro) !important;
+            border-radius: 20px !important;
+            color: white !important;
+            box-shadow: 0 0 35px rgba(0, 240, 255, 0.35), 0 25px 60px rgba(0, 0, 0, 0.95), inset 0 0 35px rgba(0, 0, 0, 0.9) !important;
+            backdrop-filter: blur(16px) !important;
+            -webkit-backdrop-filter: blur(16px) !important;
+            height: 100% !important;
+            max-height: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+            position: relative;
+        }
+
+        #contenido-detalle-ampliado {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-height: 100%;
+            min-height: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .enredadera-ampliada {
+            position: absolute;
+            top: -6px; left: -6px; right: -6px; bottom: -6px;
+            background-image: url('lianas-limpias.png');
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            pointer-events: none;
+            z-index: 12;
+            opacity: 0.55;
+        }
+
+        .btn-cerrar-ampliado {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(10, 5, 2, 0.88);
+            border: 1px solid var(--bio-oro);
+            color: var(--bio-oro);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            cursor: pointer;
+            z-index: 40;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+            transition: all 0.2s ease;
+        }
+        .btn-cerrar-ampliado:hover, .btn-cerrar-ampliado:active {
+            background: var(--bio-oro);
+            color: #000;
+            transform: scale(1.08);
+        }
+
+        .img-zona-ampliada {
+            width: 100%;
+            height: 310px;
+            min-height: 260px;
+            max-height: 350px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 20;
+            background: radial-gradient(circle at center, rgba(0, 240, 255, 0.15) 0%, rgba(0, 0, 0, 0.4) 80%);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.25);
+            padding: 12px;
+            flex-shrink: 0;
+        }
+
+        .img-ampliada {
+            width: 100%;
+            height: 100%;
+            max-width: 96%;
+            max-height: 96%;
+            object-fit: contain;
+            border-radius: 12px;
+            filter: drop-shadow(0 15px 30px rgba(0,0,0,0.95));
+            animation: flotar 4s infinite alternate ease-in-out;
+        }
+
+        .img-zona-blog-ampliada {
+            width: 100%;
+            min-height: 300px;
+            max-height: 430px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 20;
+            background: radial-gradient(circle at center, rgba(0, 240, 255, 0.18) 0%, rgba(0, 0, 0, 0.55) 85%);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            border-radius: 16px;
+            padding: 10px;
+            margin-bottom: 18px;
+            overflow: hidden;
+        }
+
+        .img-blog-ampliada {
+            width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 12px;
+            filter: drop-shadow(0 12px 28px rgba(0,0,0,0.95));
+        }
+
+        .cuerpo-scroll-ampliado {
+            flex: 1 1 auto !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y !important;
+            overscroll-behavior: contain !important;
+            min-height: 0 !important;
+            padding: 18px 22px;
+            position: relative;
+            z-index: 25;
+        }
+
+        .cuerpo-scroll-ampliado::-webkit-scrollbar {
+            width: 6px;
+        }
+        .cuerpo-scroll-ampliado::-webkit-scrollbar-track {
+            background: rgba(10, 5, 2, 0.6);
+            border-radius: 4px;
+        }
+        .cuerpo-scroll-ampliado::-webkit-scrollbar-thumb {
+            background: var(--bio-oro);
+            border-radius: 4px;
+        }
+
+        .nombre-prod-ampliado {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+            line-height: 1.25;
+        }
+
+        .precio-ampliado-box {
+            display: flex;
+            align-items: center;
+        }
+
+        .card-bio-info {
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .texto-descripcion-ampliada {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.38rem;
+            line-height: 1.75;
+            color: #ffffff;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .footer-accion-ampliado {
+            padding: 14px 20px;
+            background: rgba(8, 4, 2, 0.96);
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            position: relative;
+            z-index: 30;
+            flex-shrink: 0;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .btn-extraer-ampliado {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.18) 0%, rgba(255, 215, 0, 0.38) 100%);
+            color: var(--bio-oro);
+            border: 1.5px solid var(--bio-oro);
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.25);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.25s ease;
+        }
+        .btn-extraer-ampliado:hover, .btn-extraer-ampliado:active {
+            background: var(--bio-oro);
+            color: #000;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+        }
+        .precio-btn-extraer {
+            font-size: 1.25rem;
+            font-weight: 900;
+        }
+
+        /* ========================================================= */
+        /* ESTILOS DE COMUNIDAD & BLOG INFORMATIVO */
+        /* ========================================================= */
+        .banner-comunidad-hero {
+            background: radial-gradient(circle at top, rgba(0, 240, 255, 0.16) 0%, rgba(5, 12, 10, 0.96) 100%);
+            border: 2px solid var(--bio-aqua);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 25px rgba(0, 240, 255, 0.25);
+        }
+
+        .card-blog-post {
+            background: linear-gradient(180deg, rgba(16, 22, 20, 0.95) 0%, rgba(8, 12, 10, 0.98) 100%);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .card-blog-post:hover {
+            transform: translateY(-5px);
+            border-color: var(--bio-oro);
+            box-shadow: 0 12px 30px rgba(255, 215, 0, 0.2), 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .img-blog-header {
+            height: 240px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background: #020605;
+        }
+        .img-blog-header img, .img-blog-header video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .card-blog-post:hover .img-blog-header img {
+            transform: scale(1.05);
+        }
+
+        .card-comentario-item {
+            background: rgba(10, 15, 14, 0.94);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-left: 5px solid var(--bio-oro);
+            padding: 16px 20px;
+            margin-bottom: 14px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+            transition: all 0.2s ease;
+        }
+        .card-comentario-item.tipo-peticion {
+            border-left-color: var(--bio-aqua);
+        }
+        .card-comentario-item.tipo-sugerencia {
+            border-left-color: #ffc107;
+        }
+        .card-comentario-item.tipo-comentario {
+            border-left-color: #00ffaa;
+        }
+
+        .btn-like-pill {
+            background: rgba(255, 0, 85, 0.12);
+            border: 1px solid rgba(255, 0, 85, 0.4);
+            color: #ff4d6d;
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.85rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-like-pill:hover, .btn-like-pill.active {
+            background: #ff0055;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+            transform: scale(1.05);
+        }
+
+        .pill-tipo-filtro {
+            cursor: pointer;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+    </style>
+</head>
+<body>
+
+<video id="video-fondo-catalogo" class="video-fondo-catalogo" preload="none" loop muted playsinline poster="https://res.cloudinary.com/doi0o3hlr/image/upload/q_auto,f_auto,w_1000/v1774759858/Gemini_Generated_Image_2ocvdw2ocvdw2ocv_ixqdsz.png">
+    <source src="fondo-catalogo.mp4" type="video/mp4">
+    <source src="/fondo-catalogo.mp4" type="video/mp4">
+</video>
+<div class="video-fondo-overlay"></div>
+
+<div id="destello-luz"></div>
+<div class="scanlines"></div>
+
+<audio id="mainAudio" preload="none" loop>
+    <source src="audio_fondo.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="sfxCash" preload="none">
+    <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=cash-register-purchase-87313.mp3" type="audio/mpeg">
+</audio>
+
+<div id="pantalla-inicio">
+    <div id="fondo-puerta" class="fondo-puerta-viva"></div>
+    <div class="contenido-inicio px-3" id="contenido-textos-inicio">
+        <h1 style="font-family: 'Orbitron'; color: var(--bio-aqua); margin-bottom: 5px; font-size: 4rem; text-shadow: 0 0 30px rgba(0,0,0,0.9), 0 0 20px rgba(0, 240, 255, 0.8);">RAÍCES</h1>
+        <p style="color: var(--bio-oro); font-family: 'Rajdhani'; letter-spacing: 6px; font-weight: 700; margin-bottom: 40px; text-shadow: 0 0 15px rgba(0,0,0,0.9);">B I O - N U T R I C I Ó N</p>
+
+        <p style="color: var(--bio-aqua); font-family: 'Orbitron'; letter-spacing: 2px; margin-bottom: 20px; font-size: 0.95rem; text-shadow: 0 0 10px rgba(0,240,255,0.5);">SELECCIONA TU CÁPSULA VITAL</p>
+
+        <div class="d-flex flex-column gap-3 w-100" style="max-width: 320px;">
+            <button class="btn-nodo" onclick="iniciarExperiencia('Antofagasta')">
+                <span style="font-size: 1.5rem;">🇨🇱</span> NODO ANTOFAGASTA
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="fireflies" id="firefly-container"></div>
+
+<div class="header-raices" id="main-content" style="display: none;">
+    <button id="btn-audio-toggle" class="btn-audio-toggle" onclick="toggleAudio()" style="display: none;">
+        <i class="bi bi-volume-up-fill" id="icono-audio"></i>
+    </button>
+
+    <button id="btnInstalarApp" class="btn-instalar-app" style="display: none;">
+        <i class="bi bi-phone-vibrate"></i> APP
+    </button>
+
+    <h1 class="titulo-raices">RAÍCES</h1>
+
+    <div id="display-nodo-actual" class="badge-nodo-actual"><i class="bi bi-stars text-warning me-1"></i>🇨🇱 NODO ANTOFAGASTA<i class="bi bi-stars text-warning ms-1"></i></div>
+    <input type="hidden" id="sucursal-activa" value="Antofagasta"> <div class="contenedor-categorias">
+    <button class="categoria-badge active" onclick="filtrar('500 mls', this)" data-cat="500 mls"><span class="liston-categoria-neon" id="badge-cat-500-mls" style="display:none;"></span><i class="bi bi-droplet-half text-warning me-2"></i>Elíxires</button>
+    <button class="categoria-badge" onclick="filtrar('Packs', this)" data-cat="Packs"><span class="liston-categoria-neon" id="badge-cat-Packs" style="display:none;"></span><i class="bi bi-box-seam-fill text-success me-2"></i>Pack de Pulpas</button>
+    <button class="categoria-badge" onclick="filtrar('Arma tu Batido', this)" data-cat="Arma tu Batido"><span class="liston-categoria-neon" id="badge-cat-Arma-tu-Batido" style="display:none;"></span><i class="bi bi-magic text-info me-2"></i>Arma tu Batido</button>
+    <button class="categoria-badge" onclick="filtrar('Shots', this)" data-cat="Shots"><span class="liston-categoria-neon liston-neon-magenta neon-magenta" id="badge-cat-Shots"><i class="bi bi-clock-history me-1"></i>PRÓXIMAMENTE</span><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Shots</button>
+    <button class="categoria-badge" onclick="filtrar('Exóticos', this)" data-cat="Exóticos"><span class="liston-categoria-neon" id="badge-cat-Exoticos" style="display:none;"></span><i class="bi bi-stars text-warning me-2"></i>Exóticos</button>
+    <button class="categoria-badge" onclick="filtrar('Comunidad', this)" data-cat="Comunidad"><span class="liston-categoria-neon" id="badge-cat-Comunidad" style="display:none;"></span><i class="bi bi-chat-heart-fill me-2 text-info"></i>Comunidad & Blog</button>
+</div>
+
+    <div class="container px-2">
+                <div id="grid-menu" class="row g-3 mb-4"></div>
+
+        <!-- AVISO PUBLICITARIO Y CRÉDITOS GÓMEZ SYSTEMS (ENLACE VIVO) -->
+        <div class="footer-creditos-gomez">
+            <div class="credito-label">
+                <i class="bi bi-cpu-fill me-1 text-info"></i> TECNOLOGÍA & DESARROLLO POR
+            </div>
+            <a href="https://front.gomezsystems.online/" target="_blank" rel="noopener noreferrer" class="link-gomez-systems" title="Ir a Gómez Systems">
+                <span class="logo-gs-chip">GS</span>
+                <span>GÓMEZ SYSTEMS</span>
+                <i class="bi bi-box-arrow-up-right fs-6"></i>
+            </a>
+            <p class="subtexto-gs">
+                <i class="bi bi-stars me-1 text-warning"></i> Soluciones Digitales & Arquitectura de Software
+            </p>
+        </div>
+    </div>
+</div>
+
+<button id="btn-mic-cliente" class="btn-mic-flotante" onclick="iniciarVozCliente()" style="display: none;" title="Hablar con el Biosistema">
+    <i class="bi bi-mic"></i>
+</button>
+
+<div id="carrito-bar" class="carrito-bar" onclick="abrirModalCarrito()">
+    <div class="d-flex flex-column">
+        <span class="fw-bold" style="font-size: 0.75rem; color: var(--bio-aqua); font-family: 'Orbitron';">RESERVA VITAL (<span id="items-count">0</span>)</span>
+        <span id="total-precio" style="font-size: 1.4rem; font-weight: 900; color: var(--bio-oro); font-family: 'Orbitron'; text-shadow: 0 2px 5px #000;">$0</span>
+    </div>
+    <button class="btn btn-warning fw-bold text-dark px-3 py-2" style="font-size: 0.9rem;" onclick="event.stopPropagation(); abrirModalCarrito()">EXTRAER</button>
+</div>
+
+<div class="modal fade" id="modalCarritoCliente" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0 pt-4 px-3">
+                <h5 class="modal-title font-orbitron" style="color: var(--bio-oro); font-weight: 900; font-size: 1.1rem;"><i class="bi bi-box-seam me-2"></i> TRANSFERENCIA</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body px-3">
+                <button id="btn-mic-modal" class="btn btn-outline-info w-100 mb-4 py-2 font-orbitron fw-bold" onclick="iniciarVozModal()" style="border-radius: 8px; border-color: var(--bio-aqua); color: var(--bio-aqua); letter-spacing: 1px;">
+                    <i class="bi bi-mic-fill me-2"></i> DICTAR DATOS POR VOZ
+                </button>
+
+                <div class="datos-cliente mb-4 pb-3" style="border-bottom: 1px dashed rgba(255,215,0,0.3);">
+                    <label class="label-bio">IDENTIFICACIÓN (NOMBRE)</label>
+                    <input type="text" id="nombreCliente" class="input-bio" placeholder="Ej. Gabriel Gómez" autocomplete="name">
+
+                    <label class="label-bio">COORDENADAS (DIRECCIÓN)</label>
+                    <input type="text" id="direccionCliente" class="input-bio" placeholder="Ubicación de entrega" autocomplete="street-address">
+
+                    <label class="label-bio">ENLACE COMUNICACIÓN (TELÉFONO)</label>
+                    <input type="tel" id="telefonoCliente" class="input-bio" placeholder="Número de contacto" autocomplete="tel">
+                </div>
+
+                <label class="label-bio mb-3">ELÍXIRES EXTRAÍDOS</label>
+                <div id="lista-carrito-modal" class="mb-2"></div>
+
+                <div class="mt-3 pt-3" style="border-top: 1px dashed rgba(255,215,0,0.3);" id="desglose-totales-carrito">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span style="font-family: 'Rajdhani'; font-size: 0.9rem;">TOTAL:</span>
+                        <span id="total-modal-caja" style="color: var(--bio-oro); font-weight: 900; font-size: 1.5rem; font-family: 'Orbitron';">$0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer border-0 pt-0 pb-4 px-3">
+                <div id="contenedor-botones-pago" class="w-100"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DE VISTA AMPLIADA VERTICAL (PRODUCTOS E INSUMOS) -->
+<div class="modal fade" id="modalDetalleAmpliado" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-ampliado-dialog">
+        <div class="modal-content modal-ampliado-content">
+            <div id="contenido-detalle-ampliado"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // ==========================================
+    // LÓGICA DE INSTALACIÓN PWA (APP CELULAR)
+    // ==========================================
+    let eventoInstalacion;
+    const btnInstalar = document.getElementById('btnInstalarApp');
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                console.log('PWA Lista');
+            }).catch(err => console.log('Error PWA', err));
+        });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        eventoInstalacion = e;
+        if (btnInstalar) btnInstalar.style.display = 'block';
+    });
+
+    if (btnInstalar) {
+        btnInstalar.addEventListener('click', async () => {
+            if (eventoInstalacion) {
+                eventoInstalacion.prompt();
+                const resultado = await eventoInstalacion.userChoice;
+                if (resultado.outcome === 'accepted') {
+                    console.log('El usuario instaló la App RAÍCES');
+                }
+                eventoInstalacion = null;
+                btnInstalar.style.display = 'none';
+            }
+        });
+    }
+
+    // ==========================================
+    // ANIMACIÓN INICIAL, SELECCIÓN DE NODO Y AUDIO
+    // ==========================================
+    let mainAudio = document.getElementById('mainAudio');
+    let cashSound = document.getElementById('sfxCash');
+
+    function toggleAudio() {
+        const icono = document.getElementById('icono-audio');
+        if (mainAudio.paused) {
+            mainAudio.play();
+            icono.className = 'bi bi-volume-up-fill';
+        } else {
+            mainAudio.pause();
+            icono.className = 'bi bi-volume-mute-fill';
+        }
+    }
+
+    function iniciarExperiencia(paisSeleccionado = 'Antofagasta') {
+        const nodoInput = document.getElementById('sucursal-activa');
+        if (nodoInput) nodoInput.value = 'Antofagasta';
+        const displayNodo = document.getElementById('display-nodo-actual');
+        if (displayNodo) displayNodo.innerHTML = '<i class="bi bi-stars text-warning me-1"></i>🇨🇱 NODO ANTOFAGASTA<i class="bi bi-stars text-warning ms-1"></i>';
+
+        const puerta = document.getElementById('fondo-puerta');
+        const pantallaInicio = document.getElementById('pantalla-inicio');
+        const textosInicio = document.getElementById('contenido-textos-inicio');
+        const destello = document.getElementById('destello-luz');
+        const btnMic = document.getElementById('btn-mic-cliente');
+        const btnAudio = document.getElementById('btn-audio-toggle');
+
+        if (textosInicio) {
+            textosInicio.style.transform = 'scale(0.8)';
+            textosInicio.style.opacity = '0';
+        }
+
+        if (puerta) puerta.classList.add('efecto-wow-puerta');
+
+        try {
+            const vidFondo = document.getElementById('video-fondo-catalogo');
+            if (vidFondo && vidFondo.paused) {
+                vidFondo.play().catch(e => console.warn('Video background play:', e));
+            }
+        } catch(e) {}
+
+        try {
+            if (mainAudio) {
+                mainAudio.play().catch(e => {
+                    console.error('Música bloquedada', e);
+                    const icono = document.getElementById('icono-audio');
+                    if (icono) icono.className = 'bi bi-volume-mute-fill';
+                });
+            }
+        } catch(e) {}
+
+        if (destello) setTimeout(() => { destello.style.opacity = '1'; }, 600);
+
+        setTimeout(() => {
+            if (pantallaInicio) pantallaInicio.style.display = 'none';
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) mainContent.style.display = 'block';
+            if (btnAudio) btnAudio.style.display = 'flex';
+            if (btnMic && 'webkitSpeechRecognition' in window) { btnMic.style.display = 'flex'; }
+            cargarMenu();
+        }, 1200);
+
+        if (destello) {
+            setTimeout(() => {
+                destello.style.transition = 'opacity 1.5s ease-out';
+                destello.style.opacity = '0';
+            }, 1500);
+        }
+    }
+
+    function playCashSound() { cashSound.currentTime = 0; cashSound.play().catch(e => console.error(e)); }
+
+    const containerL = document.getElementById('firefly-container');
+    const colores = ['#ffd700', '#00ff88', '#00e5ff'];
+    const esCelular = window.innerWidth <= 768;
+    const cantidadLuciernagas = esCelular ? 12 : 40; // Magia ligera en celular, intensa en PC
+
+    for(let i=0; i<cantidadLuciernagas; i++) {
+        let f = document.createElement('div'); f.className = 'firefly';
+        let size = Math.random() * 4 + 2;
+        f.style.width = size + 'px'; f.style.height = size + 'px';
+        f.style.background = colores[Math.floor(Math.random() * colores.length)];
+        
+        if (!esCelular) {
+            // Sombra súper pesada solo para computadores grandes
+            f.style.boxShadow = `0 0 ${size*3}px ${size}px ${f.style.background}`;
+        } else {
+            // Brillo sencillo en celular para proteger el procesador
+            f.style.boxShadow = `0 0 5px ${f.style.background}`;
+        }
+        
+        f.style.left = Math.random() * 100 + 'vw';
+        f.style.animationDuration = (Math.random() * 8 + 8) + 's, ' + (Math.random() * 2 + 1) + 's';
+        f.style.animationDelay = (Math.random() * 5) + 's, 0s';
+        containerL.appendChild(f);
+    }
+
+    // ==========================================
+    // LÓGICA DE MENÚ Y CARRITO
+    // ==========================================
+    // ==========================================
+    // MOTOR DE CARGA EXPRESS INSTANTÁNEA (SWR + PRE-WARM CACHE)
+    // ==========================================
+    let productosRaw = []; let carrito = []; let filtroActual = '500 mls'; let simboloActual = '$'; let modalCarritoCliente; let modalDetalleAmpliado; let globalInsumosArmado = [];
+    const FALLBACK_SMOOTHIE_IMG = 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80';
+    const LOCAL_FALLBACK_IMG = 'default-batido.png';
+    let categoriaBadgesConfig = [];
+
+    const CACHE_EXPRESS_PRODS = 'raices_express_prods_';
+    const CACHE_EXPRESS_BADGES = 'raices_express_badges';
+    const CACHE_EXPRESS_INSUMOS = 'raices_express_insumos_';
+
+    function hidratarDesdeCacheInstantaneo(nodo) {
+        try {
+            const rawBadges = localStorage.getItem(CACHE_EXPRESS_BADGES);
+            if (rawBadges && (!categoriaBadgesConfig || categoriaBadgesConfig.length === 0)) {
+                categoriaBadgesConfig = JSON.parse(rawBadges);
+                aplicarBadgesCategorias();
+            }
+            const rawProds = localStorage.getItem(CACHE_EXPRESS_PRODS + (nodo || 'Antofagasta'));
+            if (rawProds && (!productosRaw || productosRaw.length === 0)) {
+                productosRaw = JSON.parse(rawProds);
+                renderizar();
+                aplicarBadgesCategorias();
+            }
+        } catch(e) {
+            console.warn("Hydrate express cache:", e);
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => { 
+        modalCarritoCliente = new bootstrap.Modal(document.getElementById('modalCarritoCliente'));
+        const modalAmpEl = document.getElementById('modalDetalleAmpliado');
+        if (modalAmpEl) modalDetalleAmpliado = new bootstrap.Modal(modalAmpEl);
+        // Pre-carga inmediata en segundo plano: al abrir la web, calentar memoria antes de que toque la puerta
+        const nodo = document.getElementById('sucursal-activa')?.value || 'Antofagasta';
+        hidratarDesdeCacheInstantaneo(nodo);
+        cargarMenu();
+        cargarBadgesCategorias();
+    });
+
+    // Resetea el estado del asistente de voz del modal cuando lo cierran
+    document.getElementById('modalCarritoCliente').addEventListener('hidden.bs.modal', function () {
+        estadoModalVoz = 'LIBRE';
+        window.speechSynthesis.cancel();
+        if(recVozModal) recVozModal.stop();
+    });
+
+    async function cargarMenu() {
+        const grid = document.getElementById('grid-menu'); 
+        const nodo = document.getElementById('sucursal-activa')?.value || 'Antofagasta';
+
+        if (!productosRaw || productosRaw.length === 0) {
+            hidratarDesdeCacheInstantaneo(nodo);
+        }
+        if ((!productosRaw || productosRaw.length === 0) && grid) {
+            grid.innerHTML = '<div class="col-12 text-center text-white py-5 font-orbitron"><span class="spinner-border text-warning me-2"></span>Sincronizando con el Núcleo...</div>';
+        }
+        try {
+            let res = await fetch('/api/productos/sucursal/' + nodo + '?_t=' + Date.now(), { cache: 'no-store' });
+            if(res.ok) { productosRaw = await res.json(); } else { productosRaw = []; }
+            if(!productosRaw || productosRaw.length === 0) {
+                res = await fetch('/api/productos?_t=' + Date.now(), { cache: 'no-store' });
+                if(res.ok) { productosRaw = await res.json(); }
+            }
+            if(Array.isArray(productosRaw)) {
+                productosRaw = productosRaw.filter(p => {
+                    const cat = (p.categoria || '').toLowerCase();
+                    const nom = (p.nombre || '').toLowerCase();
+                    return !cat.includes('personalizado') && !cat.includes('custom') && !nom.startsWith('batido armado') && !nom.startsWith('batido personalizado');
+                });
+                productosRaw.forEach(p => {
+                    let num = Number(p.precio) || 0;
+                    if (num > 0 && num <= 100) num = num * 1000;
+                    p.precio = Math.round(num);
+                    p.descuento = Number(p.descuento) || 0;
+                });
+                try { localStorage.setItem(CACHE_EXPRESS_PRODS + nodo, JSON.stringify(productosRaw)); } catch(e) {}
+            }
+            renderizar();
+            aplicarBadgesCategorias();
+        } catch (e) {
+            console.warn("Fetch fresco falló, manteniendo datos locales:", e);
+            renderizar();
+            aplicarBadgesCategorias();
+        }
+    }
+
+    async function cargarBadgesCategorias() {
+        try {
+            const res = await fetch('/api/categorias/badges?_t=' + Date.now(), { cache: 'no-store' });
+            if (res.ok) {
+                categoriaBadgesConfig = await res.json();
+            }
+        } catch(e) {
+            console.warn("No se pudieron cargar badges de categorías desde API:", e);
+        }
+        aplicarBadgesCategorias();
+    }
+
+    function aplicarBadgesCategorias() {
+        const catMap = {
+            '500 mls': document.getElementById('badge-cat-500-mls'),
+            'Packs': document.getElementById('badge-cat-Packs'),
+            'Arma tu Batido': document.getElementById('badge-cat-Arma-tu-Batido'),
+            'Shots': document.getElementById('badge-cat-Shots'),
+            'Exóticos': document.getElementById('badge-cat-Exoticos')
+        };
+
+        const configMap = {};
+        if (Array.isArray(categoriaBadgesConfig)) {
+            categoriaBadgesConfig.forEach(b => { configMap[b.categoriaKey] = b; });
+        }
+
+        // Evaluar ofertas automáticamente en base a productos cargados
+        const ofertasPorCat = {};
+        if (Array.isArray(productosRaw)) {
+            productosRaw.forEach(p => {
+                const c = p.categoria || '';
+                const dto = Number(p.descuento) || 0;
+                if (dto > 0) {
+                    if (!ofertasPorCat[c] || dto > ofertasPorCat[c]) {
+                        ofertasPorCat[c] = dto;
+                    }
+                }
+            });
+        }
+
+        for (const [key, span] of Object.entries(catMap)) {
+            if (!span) continue;
+            const cfg = configMap[key];
+
+            let activo = cfg ? cfg.activo : (key === 'Shots');
+            let texto = cfg ? (cfg.texto || '').trim() : (key === 'Shots' ? 'PRÓXIMAMENTE' : '');
+            let color = cfg ? (cfg.color || 'neon-magenta') : (key === 'Shots' ? 'neon-magenta' : 'neon-oro');
+            let autoOferta = cfg ? cfg.autoOferta : true;
+
+            // Si está activo pero sin texto manual, verificar auto-oferta
+            if (activo && !texto && autoOferta) {
+                const maxDto = ofertasPorCat[key];
+                if (maxDto && maxDto > 0) {
+                    texto = `¡OFERTA -${Math.round(maxDto)}%!`;
+                    color = color || 'neon-oro';
+                }
+            }
+
+            if (activo && texto) {
+                const colClase = color.startsWith('liston-') ? color : `liston-${color}`;
+                span.className = `liston-categoria-neon ${colClase} ${color}`;
+                let icono = '';
+                const txtUpper = texto.toUpperCase();
+                if (txtUpper.includes('PROX') || txtUpper.includes('PRONTO')) {
+                    icono = '<i class="bi bi-clock-history me-1"></i>';
+                } else if (txtUpper.includes('OFERTA') || txtUpper.includes('PROMO') || txtUpper.includes('%')) {
+                    icono = '<i class="bi bi-tag-fill me-1"></i>';
+                } else if (txtUpper.includes('NUEVO') || txtUpper.includes('NEW')) {
+                    icono = '<i class="bi bi-stars me-1"></i>';
+                } else if (txtUpper.includes('POPULAR') || txtUpper.includes('TOP')) {
+                    icono = '<i class="bi bi-fire me-1"></i>';
+                }
+                span.innerHTML = `${icono}${texto}`;
+                span.style.display = 'inline-flex';
+            } else {
+                span.style.display = 'none';
+            }
+        }
+    }
+
+    // Llamada inicial para cargar badges de inmediato
+    cargarBadgesCategorias();
+
+    let porcionesArmado = {};
+    let insumosInfoMap = {};
+    const normalizarStr = (str) => {
+        if (!str) return '';
+        let s = String(str)
+            .replace(/Ã‘|Ã±/g, 'n')
+            .replace(/Ã¡|Ã /g, 'a')
+            .replace(/Ã©|Ã¨/g, 'e')
+            .replace(/Ã­|Ã¬/g, 'i')
+            .replace(/Ã³|Ã²/g, 'o')
+            .replace(/Ãº|Ã¹/g, 'u')
+            .replace(/ñ/g, 'n')
+            .replace(/Ñ/g, 'n');
+        return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]/g, "").trim();
+    };
+
+    function renderizar() {
+        const grid = document.getElementById('grid-menu'); grid.innerHTML = '';
+        const nodo = document.getElementById('sucursal-activa').value; simboloActual = '$';
+
+        if (filtroActual === 'Arma tu Batido') {
+            renderizarArmaTuBatido(nodo);
+            return;
+        }
+
+        if (filtroActual === 'Comunidad' || filtroActual === 'Blog') {
+            renderizarBlogComunidad();
+            return;
+        }
+
+        const NOMBRES_INSUMOS_CRUDOS_SET = new Set([
+            'agua de coco', 'espinaca', 'apio', 'pepino', 'manzana verde', 'limon', 'limón', 'jengibre', 'menta', 'piña',
+            'semillas de calabaza', 'papaya', 'ajo', 'betarraga', 'zanahoria', 'naranja', 'platano', 'plátano', 'avena',
+            'mantequilla de mani', 'mantequilla de maní', 'cilantro', 'perejil', 'espirulina', 'chlorella',
+            'vaso biodegradable 500ml', 'tapa domo compostable', 'bombilla de bambu / polipapel', 'bombilla de bambú / polipapel', 'bolsa kraft ecologica', 'bolsa kraft ecológica',
+            'caldo de huesos', 'jengibre concentrado', 'curcuma concentrada', 'cúrcuma concentrada', 'pimienta negra', 'limon concentrado', 'limón concentrado', 'berries prensados', 'botellita shot 60ml', 'tapa botellita 60ml',
+            'pulpa de pitahaya dragon', 'pulpa de pitahaya dragón', 'acai puro del amazonas', 'açai puro del amazonas', 'camu camu silvestre', 'guarana en polvo', 'guaraná en polvo', 'leche de coco cremosa', 'botella cristal exoticos 350ml', 'botella cristal exóticos 350ml', 'tapa dorada hermetica', 'tapa dorada hermética',
+            'porcion proteina vegana', 'porción proteína vegana', 'porcion creatina creapure', 'porción creatina creapure', 'porcion semillas de chia', 'porción semillas de chía', 'porcion colageno hidrolizado', 'porción colágeno hidrolizado', 'porcion frutos rojos silvestres', 'porción frutos rojos silvestres', 'porcion cacao organico', 'porción cacao orgánico'
+        ]);
+
+        function esInsumoCrudo(nombre) {
+            if (!nombre) return false;
+            const norm = normalizarStr(nombre);
+            if (norm.startsWith('porcion') || norm.includes('insumo') || norm.includes('packaging') || norm.includes('vaso') || norm.includes('tapa ') || norm.includes('botellita') || norm.includes('bombilla') || norm.includes('bolsa ')) return true;
+            for (const ins of NOMBRES_INSUMOS_CRUDOS_SET) {
+                const insNorm = normalizarStr(ins);
+                if (norm === insNorm || (norm.startsWith(insNorm) && !norm.includes('pulpas') && !norm.includes('pack') && !norm.includes('imperial'))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        let lista = productosRaw.filter(p => {
+            const cat = normalizarStr(p.categoria || '');
+            const nom = normalizarStr(p.nombre || '');
+            const f = normalizarStr(filtroActual);
+            
+            // Los insumos crudos y de "Arma tu Batido" pertenecen exclusivamente a sus bodegas
+            if (esInsumoCrudo(nom)) return false;
+            if (cat.includes('arma') || cat.includes('batido') || cat.includes('porcion') || nom.includes('porcion') || nom.includes('porción')) {
+                return false;
+            }
+
+            const esExotico = cat.includes('exot') || nom.includes('exot') || nom.includes('pitahaya') || nom.includes('dragon');
+            const esPulpa = nom.startsWith('pulpas ') || nom.includes('pack') || nom.includes('pulpas');
+            const esPack = cat.includes('pack') || esPulpa;
+            const esShot = cat.includes('shot') || nom.includes('shot');
+
+            if (f.includes('exot')) {
+                return esExotico;
+            }
+            if (f.includes('pack') || f.includes('pulpa')) {
+                return esPack && !esExotico && !esShot;
+            }
+            if (f.includes('shot')) {
+                return esShot && !esPack && !esExotico;
+            }
+            // Categoría Elíxires (500 mls): no debe incluir ni packs, ni pulpas, ni shots, ni exóticos
+            return !esPack && !esShot && !esExotico;
+        });
+
+        // Deduplicar por nombre normalizado en Frontend
+        const vistosMenu = new Set();
+        lista = lista.filter(p => {
+            if (!p || !p.nombre) return false;
+            const key = normalizarStr(p.nombre);
+            if (vistosMenu.has(key)) return false;
+            vistosMenu.add(key);
+            return true;
+        });
+
+        if (lista.length === 0) {
+            grid.innerHTML = `<div class="col-12 text-center text-white-50 py-5 fs-4 font-orbitron">No se encontraron productos disponibles en la categoría ${filtroActual.toUpperCase()} para el NODO ${nodo.toUpperCase()}.</div>`;
+            return;
+        }
+
+        let htmlCards = '';
+        lista.forEach(p => {
+            let desc = (p.descripcion || "").replace(/\n/g, '<br>');
+            let img = (p.imagen && p.imagen.trim() !== '') ? p.imagen.trim() : FALLBACK_SMOOTHIE_IMG;
+            const precioBase = Number(p.precio) || 0;
+            const dto = (p.descuento && p.descuento > 0) ? Math.min(Math.round(p.descuento), 100) : 0;
+            const tieneDto = dto > 0;
+            const precioFinal = tieneDto ? Math.round(precioBase * (1 - dto / 100)) : precioBase;
+
+            const badgeDto = tieneDto ? `<div class="badge-descuento">-${dto}% OFF</div>` : '';
+            const precioHtml = tieneDto
+                ? `<div class="precio-container">
+                       <div class="precio-original-wrap">
+                           <span class="precio-original-label">ANTES</span>
+                           <span class="precio-original">${simboloActual}${precioBase.toLocaleString('es-CL')}</span>
+                       </div>
+                       <div class="precio-prod">${simboloActual}${precioFinal.toLocaleString('es-CL')}</div>
+                   </div>`
+                : `<div class="precio-container">
+                       <div class="precio-prod">${simboloActual}${precioBase.toLocaleString('es-CL')}</div>
+                   </div>`;
+
+            const esVideo = img && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(img.trim());
+            const mediaTag = esVideo
+                ? `<video src="${img}" class="img-batido" autoplay loop muted playsinline style="object-fit:cover;"></video>`
+                : `<img src="${img}" class="img-batido" decoding="async" onerror="if(this.src!=='default-batido.png') this.src='default-batido.png';">`;
+
+            const tieneStock = (p.stock !== undefined && p.stock !== null && Number(p.stock) > 0);
+            const esUltimas = tieneStock && Number(p.stock) <= 5;
+            let badgeStockCard = '';
+            if (esUltimas) {
+                badgeStockCard = `<div class="badge-stock-card badge-ultimas" style="position:absolute; top:12px; left:12px; background:rgba(255,193,7,0.95); color:#000; font-family:'Orbitron'; font-size:0.75rem; padding:4px 8px; border-radius:4px; font-weight:bold; z-index:20; box-shadow:0 0 10px rgba(255,193,7,0.5);"><i class="bi bi-exclamation-triangle-fill me-1"></i>¡ÚLTIMAS ${p.stock}!</div>`;
+            }
+
+            htmlCards += `
+                <div class="col-12 col-md-6 col-lg-4 col-xl-3 item-tarjeta">
+                    <div class="card-escena" id="card-${p.id}">
+                        <div class="card-flipper">
+                            <div class="card-front" onclick="abrirDetalleProducto('${p.id}')" style="cursor: pointer;">
+                                <div class="enredadera-magica"></div>
+                                ${badgeDto}
+                                ${badgeStockCard}
+                                <button class="btn-info-flip" onclick="event.stopPropagation(); abrirDetalleProducto('${p.id}')">INFORMACIÓN <i class="bi bi-info-circle ms-2"></i></button>
+                                <div class="img-zona">${mediaTag}</div>
+                                <div class="info-prod-box"><div class="nombre-prod text-truncate">${p.nombre}</div>${precioHtml}</div>
+                                <button class="btn-extraer" onclick="event.stopPropagation(); agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase})">EXTRAER</button>
+                            </div>
+                            <div class="card-back" onclick="event.stopPropagation(); abrirDetalleProducto('${p.id}')" style="cursor: pointer;">
+                                <button class="btn-cerrar-flip" onclick="event.stopPropagation(); flip('${p.id}')"><i class="bi bi-x-lg"></i></button>
+                                <div class="back-titulo">BIO-ANÁLISIS</div><div class="back-desc">${desc}</div>
+                                <button class="btn-extraer mt-auto" style="background:var(--bio-oro); color:#000;" onclick="event.stopPropagation(); abrirDetalleProducto('${p.id}')">AMPLIAR INFORMACIÓN</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        });
+        grid.innerHTML = htmlCards;
+    }
+
+    let subcategoriaFiltroActual = 'Todas';
+
+    function obtenerSubcategoriaInsumo(i) {
+        if (i.subcategoria && i.subcategoria.trim() !== '') return i.subcategoria;
+        const nom = (i.nombre || '').toLowerCase();
+        const cat = (i.categoria || '').toLowerCase();
+        if (cat.includes('base') || nom.includes('leche') || nom.includes('agua') || nom.includes('aloe') || nom.includes('base') || nom.includes('yogur')) return 'Base';
+        if (cat.includes('semilla') || nom.includes('chía') || nom.includes('chia') || nom.includes('linaza') || nom.includes('sésamo') || nom.includes('sesamo')) return 'Semillas';
+        if (cat.includes('fruta') || nom.includes('piña') || nom.includes('pina') || nom.includes('manzana') || nom.includes('limón') || nom.includes('limon') || nom.includes('betarraga') || nom.includes('frut') || nom.includes('mango') || nom.includes('platano') || nom.includes('plátano')) return 'Frutas';
+        if (cat.includes('vegetal') || cat.includes('verdura') || nom.includes('espinaca') || nom.includes('apio') || nom.includes('zanahoria') || nom.includes('acelga') || nom.includes('pepino')) return 'Vegetales';
+        if (cat.includes('especia') || nom.includes('canela') || nom.includes('jengibre') || nom.includes('cúrcuma') || nom.includes('curcuma') || nom.includes('pimienta') || nom.includes('clavo')) return 'Especias';
+        if (cat.includes('endulzante') || cat.includes('miel') || nom.includes('stevia') || nom.includes('estevia') || nom.includes('miel') || nom.includes('agave') || nom.includes('azúcar') || nom.includes('azucar')) return 'Endulzantes';
+        if (cat.includes('estabilizante') || nom.includes('goma') || nom.includes('xantana') || nom.includes('pectina') || nom.includes('agar')) return 'Estabilizantes';
+        if (cat.includes('grasa') || nom.includes('palta') || nom.includes('mantequilla') || nom.includes('cacao')) return 'Grasas';
+        if (cat.includes('proteína') || cat.includes('proteina') || nom.includes('whey') || nom.includes('proteina') || nom.includes('proteína')) return 'Proteínas';
+        if (cat.includes('cereal') || nom.includes('avena') || nom.includes('quinoa') || nom.includes('quinua') || nom.includes('arroz') || nom.includes('mandioca')) return 'Cereales';
+        if (cat.includes('suplemento') || nom.includes('espirulina') || nom.includes('maca') || nom.includes('aceite') || nom.includes('colágeno')) return 'Suplementos';
+        if (cat.includes('seco') || nom.includes('maní') || nom.includes('mani') || nom.includes('nuez') || nom.includes('nueces') || nom.includes('almendra')) return 'Frutos Secos';
+        return 'Vegetales';
+    }
+
+    function filtrarSubcategoriaArmaTuBatido(subcat) {
+        subcategoriaFiltroActual = subcat;
+        const nodo = document.getElementById('sucursal-activa').value;
+        renderizarArmaTuBatido(nodo);
+    }
+
+    const CATALOGO_IMAGENES_INGREDIENTES = {
+        'pina': 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80',
+        'piña': 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80',
+        'aloe': 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=350&q=80',
+        'chia': 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=350&q=80',
+        'chía': 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=350&q=80',
+        'mucilago': 'https://images.unsplash.com/photo-1589135233689-d56128fa7cbf?auto=format&fit=crop&w=350&q=80',
+        'stevia': 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=350&q=80',
+        'betarraga': 'https://images.unsplash.com/photo-1593105544559-ecb03bf76f82?auto=format&fit=crop&w=350&q=80',
+        'remolacha': 'https://images.unsplash.com/photo-1593105544559-ecb03bf76f82?auto=format&fit=crop&w=350&q=80',
+        'manzana roja': 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=350&q=80',
+        'manzana verde': 'https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?auto=format&fit=crop&w=350&q=80',
+        'manzana': 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=350&q=80',
+        'palta': 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=350&q=80',
+        'aguacate': 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=350&q=80',
+        'nuez': 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=350&q=80',
+        'nueces': 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=350&q=80',
+        'canela': 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=350&q=80',
+        'zanahoria': 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=350&q=80',
+        'calabaza': 'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?auto=format&fit=crop&w=350&q=80',
+        'zapallo': 'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?auto=format&fit=crop&w=350&q=80',
+        'coco': 'https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=350&q=80',
+        'linaza': 'https://images.unsplash.com/photo-1589135233689-d56128fa7cbf?auto=format&fit=crop&w=350&q=80',
+        'clavo': 'https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&w=350&q=80',
+        'limon': 'https://images.unsplash.com/photo-1533082602674-463fb1674274?auto=format&fit=crop&w=350&q=80',
+        'limón': 'https://images.unsplash.com/photo-1533082602674-463fb1674274?auto=format&fit=crop&w=350&q=80',
+        'cilantro': 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=350&q=80',
+        'espirulina': 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=350&q=80',
+        'cereal': 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=350&q=80',
+        'avena': 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=350&q=80',
+        'mani': 'https://images.unsplash.com/photo-1568283096533-078a24930eb8?auto=format&fit=crop&w=350&q=80',
+        'maní': 'https://images.unsplash.com/photo-1568283096533-078a24930eb8?auto=format&fit=crop&w=350&q=80',
+        'maca': 'https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&w=350&q=80',
+        'leche': 'https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=350&q=80',
+        'espinaca': 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=350&q=80',
+        'platano': 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=350&q=80',
+        'plátano': 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=350&q=80',
+        'banana': 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=350&q=80',
+        'frutilla': 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=350&q=80',
+        'fresa': 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=350&q=80',
+        'arandano': 'https://images.unsplash.com/photo-1498557850523-fd3d118b962e?auto=format&fit=crop&w=350&q=80',
+        'arándano': 'https://images.unsplash.com/photo-1498557850523-fd3d118b962e?auto=format&fit=crop&w=350&q=80',
+        'jengibre': 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=350&q=80',
+        'curcuma': 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=350&q=80',
+        'cúrcuma': 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=350&q=80',
+        'miel': 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=350&q=80',
+        'proteina': 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=350&q=80',
+        'proteína': 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=350&q=80',
+        'whey': 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=350&q=80'
+    };
+
+    function obtenerImagenIngrediente(ins) {
+        if (ins.imagen && ins.imagen.trim() !== '') return ins.imagen.trim();
+        const nomLimpio = normalizarStr(ins.nombre || '');
+        const prodMatch = (productosRaw || []).find(p => p.imagen && p.imagen.trim() !== '' && (normalizarStr(p.nombre).includes(nomLimpio) || nomLimpio.includes(normalizarStr(p.nombre))));
+        if (prodMatch && prodMatch.imagen) return prodMatch.imagen;
+
+        for (const [clave, url] of Object.entries(CATALOGO_IMAGENES_INGREDIENTES)) {
+            if (nomLimpio.includes(clave)) return url;
+        }
+        return FALLBACK_SMOOTHIE_IMG;
+    }
+
+    async function renderizarArmaTuBatido(nodo) {
+        const grid = document.getElementById('grid-menu');
+        if (!grid) return;
+
+        let insumosBase = [];
+        let insumosArmado = [];
+
+        // Hidratar Arma tu Batido desde caché local instantáneamente (0ms)
+        try {
+            const cachedIns = localStorage.getItem(CACHE_EXPRESS_INSUMOS + nodo);
+            if (cachedIns) {
+                insumosBase = JSON.parse(cachedIns);
+            }
+        } catch(e) {}
+        if (!insumosBase || insumosBase.length === 0) {
+            grid.innerHTML = '<div class="col-12 text-center text-white py-5 font-orbitron"><span class="spinner-border text-warning me-2"></span>Cargando Bodega Arma tu Batido...</div>';
+        }
+
+        try {
+            let resI = await fetch('/api/insumos/sucursal/' + nodo + '?_t=' + Date.now(), { cache: 'no-store' });
+            if (resI.ok) insumosBase = await resI.json();
+            if (!insumosBase || insumosBase.length === 0) {
+                resI = await fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' });
+                if (resI.ok) insumosBase = await resI.json();
+            }
+            if (Array.isArray(insumosBase) && insumosBase.length > 0) {
+                try { localStorage.setItem(CACHE_EXPRESS_INSUMOS + nodo, JSON.stringify(insumosBase)); } catch(e) {}
+            }
+        } catch(e) { console.error("Error al obtener datos de Bodega Arma tu Batido:", e); }
+
+        // 1. Cargar EXCLUSIVAMENTE ingredientes de la Bodega Arma Tu Batido
+        (insumosBase || []).forEach(ins => {
+            if (!ins || !ins.nombre) return;
+            const cat = normalizarStr(ins.categoria || '');
+            if (cat.includes('arma') || cat.includes('porcion')) {
+                const porcionDosis = (ins.cantidadPorcion && ins.cantidadPorcion > 0) ? ins.cantidadPorcion : 1;
+                let precioPorc = Number(ins.precio) || 0;
+                if (precioPorc > 0 && precioPorc <= 100) precioPorc = precioPorc * 1000;
+
+                // Reconciliar en tiempo real con productosRaw (Catálogo Virtual de Administrador)
+                const nomLimpio = normalizarStr(ins.nombre);
+                const prodMatch = (productosRaw || []).find(p => normalizarStr(p.nombre) === nomLimpio);
+                let stockVal = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
+                let dtoVal = Number(ins.descuento) || 0;
+                let precioVal = Math.round(precioPorc);
+                let imgVal = ins.imagen || '';
+
+                if (prodMatch) {
+                    if (prodMatch.stock !== undefined && prodMatch.stock !== null) {
+                        const stockProd = Number(prodMatch.stock);
+                        // Si el catálogo tiene stock configurado (ej: 6) y el insumo estaba en 0 o negativo, o el catálogo es mayor
+                        if (stockVal <= 0 || stockProd > stockVal) {
+                            stockVal = stockProd;
+                        }
+                    }
+                    if (prodMatch.descuento !== undefined && prodMatch.descuento !== null && prodMatch.descuento > 0) {
+                        dtoVal = Number(prodMatch.descuento);
+                    }
+                    if (prodMatch.precio !== undefined && prodMatch.precio !== null && Number(prodMatch.precio) > 0) {
+                        precioVal = Math.round(Number(prodMatch.precio));
+                    }
+                    if (prodMatch.imagen && prodMatch.imagen.trim() !== '') {
+                        imgVal = prodMatch.imagen.trim();
+                    }
+                }
+                if (stockVal < 0) stockVal = 0;
+
+                insumosArmado.push({
+                    idInsumo: ins.idInsumo || ins.id,
+                    nombre: ins.nombre,
+                    subcategoria: ins.subcategoria || obtenerSubcategoriaInsumo(ins),
+                    categoria: ins.categoria,
+                    precio: precioVal,
+                    descuento: dtoVal,
+                    unidadActual: stockVal,
+                    sizePorcion: porcionDosis,
+                    medida: ins.medida || 'gr',
+                    imagen: imgVal
+                });
+            }
+        });
+
+        globalInsumosArmado = insumosArmado;
+        if (insumosArmado.length === 0) {
+            grid.innerHTML = `
+                <div class="col-12 text-center text-white-50 py-5 font-orbitron">
+                    <i class="bi bi-info-circle fs-1 text-warning d-block mb-3"></i>
+                    <h4 class="text-warning mb-2">SIN PORCIONES EN BODEGA ARMA TU BATIDO</h4>
+                    <p class="fs-6 font-rajdhani text-white-50 max-w-600 mx-auto">Aún no hay porciones registradas en la <b>Bodega Arma Tu Batido</b> para el NODO ${nodo.toUpperCase()}. Puedes agregarlas desde el Administrador en la pestaña Bodega -> Bodega de Porciones.</p>
+                </div>`;
+            return;
+        }
+
+        let htmlBuilder = `
+            <div class="col-12 mb-4">
+                <div class="p-4 rounded-3 text-center" style="background: rgba(10, 20, 15, 0.9); border: 2px solid var(--bio-oro); box-shadow: 0 0 25px rgba(255,215,0,0.3); backdrop-filter: blur(10px);">
+                    <h3 class="font-orbitron fw-bold text-warning mb-2" style="letter-spacing:2px;"><i class="bi bi-sliders me-2"></i> ARMA TU BATIDO PERSONALIZADO</h3>
+                    <p class="text-white fs-6 mb-3 font-rajdhani">Selecciona la cantidad de porciones de cada ingrediente. Conexión en tiempo real con inventario y aviso de stock.</p>
+
+                    <div class="p-3 rounded-3 mb-2" style="background: rgba(0,0,0,0.6); border: 1px dashed var(--bio-aqua);">
+                        <div class="fs-6 fw-bold text-info font-orbitron mb-1">INGREDIENTES SELECCIONADOS:</div>
+                        <div id="resumen-ingredientes-custom" class="fs-6 text-white fw-bold mb-2">Ningún ingrediente seleccionado aún</div>
+                        <div class="fs-3 font-orbitron text-warning fw-bold mb-3" id="precio-total-custom">${simboloActual}0</div>
+                        
+                        <button id="btn-agregar-custom" class="btn-extraer py-3 fs-5" style="max-width: 400px; margin: 0 auto; display: block;" onclick="agregarBatidoCustomAlCarrito()">
+                            <i class="bi bi-cart-plus-fill me-2"></i> INCLUIR BATIDO ARMADO AL CARRITO
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mb-3">
+                <h4 class="font-orbitron text-center text-white fw-bold mb-3" style="letter-spacing:1px;"><i class="bi bi-grid-3x3-gap-fill text-warning me-2"></i> CATÁLOGO DE INGREDIENTES DISPONIBLES</h4>
+                <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Todas'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Todas')">✨ TODAS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Base'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Base')">🥛 BASE</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Semillas'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Semillas')">🌱 SEMILLAS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Frutas'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Frutas')">🍓 FRUTAS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Vegetales'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Vegetales')">🥬 VEGETALES</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Suplementos'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Suplementos')">⚡ SUPLEMENTOS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Frutos Secos'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Frutos Secos')">🥜 FRUTOS SECOS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Especias'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Especias')">🌶️ ESPECIAS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Endulzantes'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Endulzantes')">🍯 ENDULZANTES</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Estabilizantes'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Estabilizantes')">🧪 ESTABILIZANTES</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Grasas'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Grasas')">🥑 GRASAS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Proteínas'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Proteínas')">💪 PROTEÍNAS</button>
+                    <button class="btn btn-sm ${subcategoriaFiltroActual==='Cereales'?'btn-warning text-dark fw-bold':'btn-outline-light'}" onclick="filtrarSubcategoriaArmaTuBatido('Cereales')">🌾 CEREALES</button>
+                </div>
+            </div>
+        `;
+
+        let insumosFiltrados = insumosArmado;
+        if (subcategoriaFiltroActual !== 'Todas') {
+            insumosFiltrados = insumosArmado.filter(i => (i.subcategoria || obtenerSubcategoriaInsumo(i)).toLowerCase() === subcategoriaFiltroActual.toLowerCase());
+        }
+
+        if (insumosFiltrados.length === 0) {
+            htmlBuilder += `<div class="col-12 text-center text-white-50 py-5 fs-6 font-orbitron">No hay ingredientes disponibles en la subcategoría <b>${subcategoriaFiltroActual.toUpperCase()}</b>.</div>`;
+        }
+
+        insumosFiltrados.forEach(ins => {
+            let idInsClean = String(ins.idInsumo || ins.id || 'ins').replace(/'/g, "\\'");
+            let cantPorc = porcionesArmado[idInsClean] || porcionesArmado[ins.idInsumo] || 0;
+            let precioBasePorc = ins.precio || 0;
+            let dtoPorc = (ins.descuento && ins.descuento > 0) ? Math.min(Math.round(ins.descuento), 100) : 0;
+            let precioFinalPorc = dtoPorc > 0 ? Math.round(precioBasePorc * (1 - dtoPorc / 100)) : precioBasePorc;
+            let sizePorcion = (ins.sizePorcion && Number(ins.sizePorcion) > 0) ? Number(ins.sizePorcion) : 1;
+            let stockRaw = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
+            let porcionesDisponibles = (sizePorcion > 5 && stockRaw >= sizePorcion)
+                ? Math.floor(stockRaw / sizePorcion)
+                : Math.max(0, Math.floor(stockRaw));
+
+            const esAgotado = porcionesDisponibles <= 0;
+            const esUltimas = porcionesDisponibles > 0 && porcionesDisponibles <= 10;
+            const esDisponible = porcionesDisponibles > 10;
+
+            let porcTexto = `${sizePorcion} ${ins.medida || 'gr'}`;
+            let subcatLabel = (ins.subcategoria || obtenerSubcategoriaInsumo(ins)).toUpperCase();
+            let nombreEscape = (ins.nombre || '').replace(/'/g, "\\'");
+            let imgUrl = obtenerImagenIngrediente(ins);
+
+            let ribbonDto = '';
+            if (dtoPorc > 0) {
+                ribbonDto = `
+                    <span class="badge bg-danger font-orbitron position-absolute top-0 end-0 m-1 fw-bold shadow-lg" 
+                          style="font-size: 0.72rem; letter-spacing: 0.5px; z-index: 6; box-shadow: 0 0 12px rgba(220,53,69,0.9); border: 1px solid #ff4d5a;">
+                        <i class="bi bi-tag-fill me-1"></i>-${dtoPorc}% OFF
+                    </span>
+                `;
+            }
+
+            let badgeStock = '';
+            let bordeCard = 'border: 1px solid rgba(0, 229, 255, 0.25);';
+            let bordeImg = 'border-info border-opacity-50';
+            let overlayImg = '';
+
+            if (esAgotado) {
+                badgeStock = `<div class="badge-stock-estado badge-agotado mb-2"><i class="bi bi-x-circle-fill me-1"></i> AGOTADO (0 DISP)</div>`;
+                bordeCard = 'border: 1px solid rgba(220, 53, 69, 0.5);';
+                bordeImg = 'border-danger';
+                overlayImg = `
+                    <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" style="background: rgba(0,0,0,0.7); z-index: 4;">
+                        <span class="badge bg-danger font-orbitron px-2 py-1 fs-7 fw-bold" style="box-shadow: 0 0 10px red;">
+                            <i class="bi bi-slash-circle me-1"></i> AGOTADO
+                        </span>
+                    </div>
+                `;
+            } else if (esUltimas) {
+                badgeStock = `<div class="badge-stock-estado badge-ultimas mb-2"><i class="bi bi-exclamation-triangle-fill me-1"></i> ¡ÚLTIMAS ${porcionesDisponibles} UNIDADES!</div>`;
+                bordeCard = 'border: 2px solid #ffc107; box-shadow: 0 0 15px rgba(255, 193, 7, 0.3);';
+                bordeImg = 'border-warning';
+                overlayImg = `
+                    <span class="badge bg-warning text-dark font-orbitron position-absolute bottom-0 end-0 m-1 fw-bold" style="font-size: 0.65rem; box-shadow: 0 0 8px rgba(255,193,7,0.8); z-index: 5;">
+                        ¡QUEDAN ${porcionesDisponibles}!
+                    </span>
+                `;
+            } else {
+                badgeStock = `<div class="badge-stock-estado badge-disponible mb-2"><i class="bi bi-check-circle-fill me-1"></i> EN STOCK</div>`;
+            }
+
+            const disMinus = cantPorc <= 0 ? 'disabled' : '';
+            const classMinus = cantPorc > 0 ? 'btn-outline-warning text-warning' : 'btn-outline-secondary text-white-50';
+            let btnMinus = `<button id="btn-minus-${idInsClean}" class="btn ${classMinus} fw-bold px-2 py-1" style="border-radius: 8px; min-width: 36px; min-height: 36px;" ${disMinus} onclick="modificarPorcionInsumo('${idInsClean}', -1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">-</button>`;
+
+            const disPlus = (esAgotado || cantPorc >= porcionesDisponibles) ? 'disabled' : '';
+            const classPlus = (!esAgotado && cantPorc < porcionesDisponibles) ? 'btn-warning text-dark' : 'btn-secondary text-white-50';
+            const titlePlus = esAgotado ? 'Agotado en Bodega' : (cantPorc >= porcionesDisponibles ? 'Máximo stock alcanzado' : 'Añadir porción');
+            let btnPlus = `<button id="btn-plus-${idInsClean}" class="btn ${classPlus} fw-bold px-2 py-1 shadow-sm" style="border-radius: 8px; min-width: 36px; min-height: 36px;" ${disPlus} onclick="modificarPorcionInsumo('${idInsClean}', 1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})" title="${titlePlus}">+</button>`;
+
+            const esVideoIng = imgUrl && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(imgUrl.trim());
+            const mediaIngTag = esVideoIng
+                ? `<video src="${imgUrl}" autoplay loop muted playsinline class="w-100 h-100" style="object-fit: cover; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}"></video>`
+                : `<img src="${imgUrl}" alt="${ins.nombre}" decoding="async" class="w-100 h-100" style="object-fit: cover; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}" onerror="if(this.src!=='default-batido.png') this.src='default-batido.png';">`;
+
+            let precioHtml = (dtoPorc > 0)
+                ? `<div class="mb-2 font-orbitron">
+                     <span class="text-white-50 text-decoration-line-through small me-1" style="font-size: 0.82rem;">${simboloActual}${precioBasePorc.toLocaleString('es-CL')}</span>
+                     <span class="text-warning fw-bold fs-5">${simboloActual}${precioFinalPorc.toLocaleString('es-CL')}</span>
+                   </div>`
+                : `<div class="text-warning fw-bold fs-5 mb-2 font-orbitron">${simboloActual}${precioBasePorc.toLocaleString('es-CL')}</div>`;
+
+            htmlBuilder += `
+                <div class="col-6 col-md-4 col-lg-3 mb-3">
+                    <div class="card-ingrediente-batido p-3 rounded-3 text-center h-100 d-flex flex-column justify-content-between position-relative ${esAgotado ? 'ingrediente-agotado' : (esUltimas ? 'ingrediente-ultimas' : '')}" 
+                         onclick="abrirDetalleInsumo('${idInsClean}')"
+                         style="cursor: pointer; background: rgba(10, 14, 18, 0.92); ${bordeCard}; box-shadow: 0 5px 15px rgba(0,0,0,0.8); backdrop-filter: blur(8px);">
+                        <div>
+                            <!-- IMAGEN/VIDEO DEL INGREDIENTE -->
+                            <div class="position-relative mb-2 overflow-hidden rounded-3 border ${bordeImg}" style="background: rgba(0,0,0,0.6); height: 125px;">
+                                ${mediaIngTag}
+                                
+                                <span class="badge bg-dark bg-opacity-75 text-warning font-orbitron position-absolute top-0 start-0 m-1 border border-warning" style="font-size: 0.65rem; letter-spacing: 0.5px; z-index: 5;">
+                                    ${subcatLabel}
+                                </span>
+
+                                ${ribbonDto}
+                                ${overlayImg}
+                            </div>
+
+                            <!-- DATOS Y STOCK -->
+                            <h5 class="fw-bold text-white fs-6 text-uppercase mb-1 font-rajdhani text-truncate" title="${ins.nombre}">${ins.nombre}</h5>
+
+                            
+                            <!-- SEMÁFORO DE INVENTARIO (UMBRAL 10 A 0) -->
+                            ${badgeStock}
+
+                            ${precioHtml}
+                        </div>
+
+                        <!-- CONTROLES DE PORCIONES -->
+                        <div class="d-flex align-items-center justify-content-center gap-2 mt-2 pt-2 border-top border-secondary border-opacity-25">
+                            ${btnMinus}
+                            <span id="cant-porc-${idInsClean}" class="fw-bold fs-4 text-white font-orbitron px-2">${cantPorc}</span>
+                            ${btnPlus}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        grid.innerHTML = htmlBuilder;
+        actualizarResumenCustom();
+    }
+
+    function modificarPorcionInsumo(idInsumo, delta, precio, nombre, maxPorciones, sizePorcion = 1) {
+        if (!porcionesArmado[idInsumo]) porcionesArmado[idInsumo] = 0;
+        let actual = porcionesArmado[idInsumo];
+        if (delta > 0) {
+            if (maxPorciones <= 0) {
+                alert(`El ingrediente "${nombre}" se encuentra AGOTADO en inventario.`);
+                return;
+            }
+            if (actual >= maxPorciones) {
+                alert(`¡Reserva de inventario alcanzada! Solo quedan ${maxPorciones} unidades disponibles de "${nombre}".`);
+                return;
+            }
+        }
+        porcionesArmado[idInsumo] = Math.max(0, actual + delta);
+        
+        insumosInfoMap[idInsumo] = { nombre: nombre, precio: precio, cantidad: porcionesArmado[idInsumo], sizePorcion: sizePorcion };
+        
+        const spanCant = document.getElementById(`cant-porc-${idInsumo}`);
+        if (spanCant) spanCant.innerText = porcionesArmado[idInsumo];
+        const spanCantModal = document.getElementById(`cant-porc-modal-${idInsumo}`);
+        if (spanCantModal) spanCantModal.innerText = porcionesArmado[idInsumo];
+        const btnMinusModal = document.getElementById(`btn-minus-modal-${idInsumo}`);
+        if (btnMinusModal) {
+            btnMinusModal.disabled = (porcionesArmado[idInsumo] <= 0);
+            btnMinusModal.className = (porcionesArmado[idInsumo] <= 0)
+                ? 'btn btn-outline-secondary text-white-50 fw-bold px-3 py-1'
+                : 'btn btn-outline-warning text-warning fw-bold px-3 py-1';
+        }
+        const btnPlusModal = document.getElementById(`btn-plus-modal-${idInsumo}`);
+        if (btnPlusModal) {
+            btnPlusModal.disabled = (porcionesArmado[idInsumo] >= maxPorciones);
+            btnPlusModal.className = (porcionesArmado[idInsumo] >= maxPorciones)
+                ? 'btn btn-secondary text-white-50 fw-bold px-3 py-1 shadow-sm'
+                : 'btn btn-warning text-dark fw-bold px-3 py-1 shadow-sm';
+        }
+        
+        const btnPlus = document.getElementById(`btn-plus-${idInsumo}`);
+        if (btnPlus) {
+            btnPlus.disabled = (porcionesArmado[idInsumo] >= maxPorciones);
+            if (btnPlus.disabled) {
+                btnPlus.className = 'btn btn-secondary text-white-50 fw-bold px-3 py-1 shadow-sm';
+            } else {
+                btnPlus.className = 'btn btn-warning text-dark fw-bold px-3 py-1 shadow-sm';
+            }
+        }
+        const btnMinus = document.getElementById(`btn-minus-${idInsumo}`);
+        if (btnMinus) {
+            btnMinus.disabled = (porcionesArmado[idInsumo] <= 0);
+            if (btnMinus.disabled) {
+                btnMinus.className = 'btn btn-outline-secondary text-white-50 fw-bold px-3 py-1';
+            } else {
+                btnMinus.className = 'btn btn-outline-warning text-warning fw-bold px-3 py-1';
+            }
+        }
+        
+        actualizarResumenCustom();
+    }
+
+    function actualizarResumenCustom() {
+        let resumenDiv = document.getElementById('resumen-ingredientes-custom');
+        let precioTotalSpan = document.getElementById('precio-total-custom');
+        if (!resumenDiv || !precioTotalSpan) return;
+
+        let lista = [];
+        let total = 0;
+
+        for (let id in porcionesArmado) {
+            let cant = porcionesArmado[id];
+            if (cant > 0 && insumosInfoMap[id]) {
+                let info = insumosInfoMap[id];
+                lista.push(`${cant}x ${info.nombre}`);
+                total += (cant * info.precio);
+            }
+        }
+
+        if (lista.length === 0) {
+            resumenDiv.innerText = "Ningún ingrediente seleccionado aún";
+            precioTotalSpan.innerText = simboloActual + "0";
+        } else {
+            resumenDiv.innerText = lista.join(", ");
+            precioTotalSpan.innerText = simboloActual + total.toLocaleString('es-CL');
+        }
+    }
+
+    function agregarBatidoCustomAlCarrito() {
+        let lista = [];
+        let lineasReceta = [];
+        let total = 0;
+
+        for (let id in porcionesArmado) {
+            let cant = porcionesArmado[id];
+            if (cant > 0 && insumosInfoMap[id]) {
+                let info = insumosInfoMap[id];
+                lista.push(`${cant}x ${info.nombre}`);
+                lineasReceta.push(`${info.nombre}:${cant}`);
+                total += (cant * info.precio);
+            }
+        }
+
+        if (lista.length === 0 || total === 0) {
+            alert("Por favor selecciona al menos una porción de ingrediente para armar tu batido.");
+            return;
+        }
+
+        let itemCustom = {
+            id: 'custom_' + Date.now(),
+            nombre: 'Batido Armado 500cc: ' + lista.join(', '),
+            categoria: 'Arma tu Batido',
+            precio: total,
+            recetaDetalle: lineasReceta.join('\n'),
+            esCustom: true
+        };
+
+        carrito.push(itemCustom);
+        actualizarCarrito();
+        playCashSound();
+
+        // Resetear selección
+        porcionesArmado = {};
+        insumosInfoMap = {};
+        renderizar();
+    }
+
+    
+    function cerrarModalAmpliado() {
+        if (modalDetalleAmpliado) {
+            modalDetalleAmpliado.hide();
+        }
+    }
+
+    function obtenerDescripcionInsumo(ins) {
+        if (ins.descripcion && ins.descripcion.trim() !== '') {
+            return ins.descripcion.replace(/\n/g, '<br>');
+        }
+        const nom = (ins.nombre || '').toLowerCase();
+        const sub = (ins.subcategoria || obtenerSubcategoriaInsumo(ins)).toLowerCase();
+        
+        if (sub.includes('fruta') || nom.includes('piña') || nom.includes('fresa') || nom.includes('frutilla') || nom.includes('arándano') || nom.includes('platano') || nom.includes('mango') || nom.includes('manzana')) {
+            return "Fruta seleccionada en su punto óptimo de maduración natural. Aporta azúcares bio-compatibles de absorción gradual, alta concentración de vitamina C, polifenoles antioxidantes y fibra soluble para equilibrar la microbiota y potenciar el sabor de tu elíxir.";
+        }
+        if (sub.includes('vegetal') || nom.includes('espinaca') || nom.includes('apio') || nom.includes('pepino') || nom.includes('zanahoria') || nom.includes('remolacha') || nom.includes('betarraga')) {
+            return "Vegetal fresco prensado en frío de cultivo libre de pesticidas. Rico en clorofila viva, nitratos vasodilatadores naturales, potasio y micronutrientes alcalinizantes que favorecen la oxigenación celular, la detoxificación hepática y la vitalidad.";
+        }
+        if (sub.includes('semilla') || nom.includes('chía') || nom.includes('chia') || nom.includes('linaza') || nom.includes('sésamo')) {
+            return "Semilla bio-activa rica en ácidos grasos esenciales Omega 3 (ALA), fibra soluble formadora de mucílago prebiótico y calcio de origen vegetal. Apoya el tránsito digestivo regular y la salud cardiovascular.";
+        }
+        if (sub.includes('suplemento') || nom.includes('espirulina') || nom.includes('maca') || nom.includes('colágeno')) {
+            return "Superalimento funcional de alta densidad nutricional y biodisponibilidad. Brinda soporte adaptógeno contra la fatiga mental y física, antioxidantes enzimáticos y aminoácidos esenciales para la vitalidad diaria.";
+        }
+        if (sub.includes('proteína') || nom.includes('whey') || nom.includes('proteina')) {
+            return "Aislado proteico de rápida asimilación con perfil completo de aminoácidos ramificados (BCAA). Ideal para la regeneración miofibrilar, saciedad prolongada y síntesis tisular post-esfuerzo.";
+        }
+        if (sub.includes('seco') || nom.includes('nuez') || nom.includes('almendra') || nom.includes('maní')) {
+            return "Fruto seco de primera selección tostado suavemente sin aditivos. Fuente insustituible de grasas monoinsaturadas cardiosaludables, vitamina E liposoluble, magnesio y energía limpia de larga duración.";
+        }
+        if (sub.includes('especia') || nom.includes('jengibre') || nom.includes('cúrcuma') || nom.includes('canela')) {
+            return "Especia medicinal de acción termogénica y antiinflamatoria sistémica. Contiene fitoquímicos bio-activos que estimulan el fuego digestivo, modulan la respuesta inmune y revitalizan el metabolismo basal.";
+        }
+        if (sub.includes('base') || nom.includes('leche') || nom.includes('agua') || nom.includes('aloe')) {
+            return "Base bio-líquida pura y equilibrada. Garantiza la textura suave, la emulsión perfecta de los ingredientes y una hidratación profunda a nivel celular con electrolitos naturales.";
+        }
+        return "Ingrediente 100% puro y bio-seleccionado para tu formulación personalizada. Aporta pureza, frescura y sinergia nutricional a tu batido en RAÍCES.";
+    }
+
+    function abrirDetalleProducto(id) {
+        const p = (productosRaw || []).find(prod => String(prod.id) === String(id));
+        if (!p) return;
+
+        let desc = (p.descripcion || "Bio-fórmula natural y energizante preparada al momento para potenciar tu vitalidad celular.").replace(/\n/g, '<br>');
+        let img = (p.imagen && p.imagen.trim() !== '') ? p.imagen.trim() : FALLBACK_SMOOTHIE_IMG;
+        const precioBase = Number(p.precio) || 0;
+        const dto = (p.descuento && p.descuento > 0) ? Math.min(Math.round(p.descuento), 100) : 0;
+        const tieneDto = dto > 0;
+        const precioFinal = tieneDto ? Math.round(precioBase * (1 - dto / 100)) : precioBase;
+
+        const badgeDto = tieneDto ? `<span class="badge bg-danger font-orbitron fw-bold" style="letter-spacing:1px; box-shadow:0 0 10px rgba(220,53,69,0.8);"><i class="bi bi-tag-fill me-1"></i>-${dto}% OFF</span>` : '';
+        const badgeStock = (p.stock !== undefined && p.stock !== null && Number(p.stock) > 0)
+            ? (p.stock <= 5 
+                ? `<span class="badge bg-warning text-dark font-orbitron fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>¡ÚLTIMAS ${p.stock} UNID!</span>` 
+                : `<span class="badge bg-success bg-opacity-75 font-orbitron"><i class="bi bi-check-circle me-1"></i>EN STOCK</span>`)
+            : `<span class="badge bg-success bg-opacity-75 font-orbitron"><i class="bi bi-check-circle me-1"></i>DISPONIBLE</span>`;
+
+        const precioHtmlAmpliado = tieneDto
+            ? `<div class="d-flex align-items-baseline gap-2">
+                   <span class="text-white-50 text-decoration-line-through font-orbitron" style="font-size: 1.05rem; text-decoration-color:#ff3355;">${simboloActual}${precioBase.toLocaleString('es-CL')}</span>
+                   <span class="font-orbitron fw-bold fs-3 text-warning" style="text-shadow: 0 0 15px rgba(255,215,0,0.6);">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span>
+               </div>`
+            : `<div class="font-orbitron fw-bold fs-3 text-warning" style="text-shadow: 0 0 15px rgba(255,215,0,0.6);">${simboloActual}${precioBase.toLocaleString('es-CL')}</div>`;
+
+        const esVideo = img && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(img.trim());
+        const mediaTag = esVideo
+            ? `<video src="${img}" class="img-ampliada" autoplay loop muted playsinline></video>`
+            : `<img src="${img}" class="img-ampliada" decoding="async" onerror="if(this.src!=='default-batido.png') this.src='default-batido.png';">`;
+
+
+        const htmlContent = `
+            <div class="enredadera-ampliada"></div>
+            <button type="button" class="btn-cerrar-ampliado" onclick="cerrarModalAmpliado()" title="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="px-4 pt-3 pb-2 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
+                <span class="badge bg-dark border border-warning text-warning font-orbitron px-3 py-2" style="font-size: 0.85rem; letter-spacing: 1px;">
+                    <i class="bi bi-tag-fill me-1"></i>${(p.categoria || 'ELÍXIR').toUpperCase()}
+                </span>
+                ${badgeDto}
+                ${badgeStock}
+            </div>
+
+            <div class="cuerpo-scroll-ampliado">
+                <div class="img-zona-ampliada rounded-4 mb-3" style="border: 1px solid rgba(255, 215, 0, 0.3);">
+                    ${mediaTag}
+                </div>
+
+                <h2 class="nombre-prod-ampliado mb-2">${p.nombre}</h2>
+                <div class="precio-ampliado-box mb-3">
+                    ${precioHtmlAmpliado}
+                </div>
+
+                <div class="card-bio-info p-4 rounded-3 mb-3">
+                    <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-warning border-opacity-25">
+                        <i class="bi bi-activity text-warning fs-4"></i>
+                        <span class="font-orbitron fw-bold text-warning" style="font-size: 1.02rem; letter-spacing: 1px;">BIO-ANÁLISIS & PROPIEDADES</span>
+                    </div>
+                    <div class="texto-descripcion-ampliada">
+                        ${desc}
+                    </div>
+                </div>
+
+
+                <div class="text-center text-white font-rajdhani mt-2 mb-1" style="font-size: 1.05rem; opacity: 0.85;">
+                    <i class="bi bi-shield-check text-info me-1"></i> Formulación 100% viva, sin conservantes ni azúcares añadidos.
+                </div>
+            </div>
+
+            <div class="footer-accion-ampliado">
+                <button class="btn-extraer-ampliado w-100" onclick="agregar('${p.id}', '${p.nombre.replace(/'/g, "\\'")}', ${precioFinal}, this, ${dto}, ${precioBase}); cerrarModalAmpliado();">
+                    <span class="d-flex align-items-center gap-2">
+                        <i class="bi bi-cart-plus-fill fs-5"></i>
+                        <span>EXTRAER AL PEDIDO</span>
+                    </span>
+                    <span class="precio-btn-extraer font-orbitron">${simboloActual}${precioFinal.toLocaleString('es-CL')}</span>
+                </button>
+            </div>
+        `;
+
+        const contenedor = document.getElementById('contenido-detalle-ampliado');
+        if (contenedor) {
+            contenedor.innerHTML = htmlContent;
+            if (modalDetalleAmpliado) modalDetalleAmpliado.show();
+        }
+    }
+
+    function abrirDetalleInsumo(idInsumo) {
+        const ins = (globalInsumosArmado || []).find(i => String(i.idInsumo || i.id) === String(idInsumo));
+        if (!ins) return;
+
+        let idInsClean = String(ins.idInsumo || ins.id || 'ins').replace(/'/g, "\\'");
+        let cantPorc = porcionesArmado[idInsClean] || porcionesArmado[ins.idInsumo] || 0;
+        let precioBasePorc = ins.precio || 0;
+        let dtoPorc = (ins.descuento && ins.descuento > 0) ? Math.min(Math.round(ins.descuento), 100) : 0;
+        let precioFinalPorc = dtoPorc > 0 ? Math.round(precioBasePorc * (1 - dtoPorc / 100)) : precioBasePorc;
+        let sizePorcion = (ins.sizePorcion && Number(ins.sizePorcion) > 0) ? Number(ins.sizePorcion) : 1;
+        let stockRaw = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
+        let porcionesDisponibles = (sizePorcion > 5 && stockRaw >= sizePorcion)
+            ? Math.floor(stockRaw / sizePorcion)
+            : Math.max(0, Math.floor(stockRaw));
+
+        const esAgotado = porcionesDisponibles <= 0;
+        const esUltimas = porcionesDisponibles > 0 && porcionesDisponibles <= 10;
+        let subcatLabel = (ins.subcategoria || obtenerSubcategoriaInsumo(ins)).toUpperCase();
+        let porcTexto = `${sizePorcion} ${ins.medida || 'gr'}`;
+        let nombreEscape = (ins.nombre || '').replace(/'/g, "\\'");
+        let imgUrl = obtenerImagenIngrediente(ins);
+
+        let ribbonDto = (dtoPorc > 0)
+            ? `<span class="badge bg-danger font-orbitron fw-bold" style="letter-spacing:1px; box-shadow:0 0 10px rgba(220,53,69,0.8);"><i class="bi bi-tag-fill me-1"></i>-${dtoPorc}% OFF</span>`
+            : '';
+
+        let badgeStock = '';
+        if (esAgotado) {
+            badgeStock = `<span class="badge bg-danger bg-opacity-75 font-orbitron"><i class="bi bi-x-circle me-1"></i>AGOTADO (0 DISP)</span>`;
+        } else if (esUltimas) {
+            badgeStock = `<span class="badge bg-warning text-dark font-orbitron fw-bold"><i class="bi bi-exclamation-triangle-fill me-1"></i>¡ÚLTIMAS ${porcionesDisponibles} PORCIONES!</span>`;
+        } else {
+            badgeStock = `<span class="badge bg-success bg-opacity-75 font-orbitron"><i class="bi bi-check-circle me-1"></i>EN STOCK (${porcionesDisponibles} DISP)</span>`;
+        }
+
+        const esVideoIng = imgUrl && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(imgUrl.trim());
+        const mediaIngTag = esVideoIng
+            ? `<video src="${imgUrl}" autoplay loop muted playsinline class="img-ampliada" style="object-fit: contain; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}"></video>`
+            : `<img src="${imgUrl}" alt="${ins.nombre}" decoding="async" class="img-ampliada" style="object-fit: contain; ${esAgotado ? 'filter: grayscale(80%) opacity(0.5);' : ''}" onerror="if(this.src!=='default-batido.png') this.src='default-batido.png';">`;
+
+        let precioHtmlInsumo = (dtoPorc > 0)
+            ? `<div class="font-orbitron">
+                 <span class="text-white-50 text-decoration-line-through small me-1" style="font-size: 0.85rem; text-decoration-color:#ff3355;">${simboloActual}${precioBasePorc.toLocaleString('es-CL')}</span>
+                 <span class="text-warning fw-bold fs-4">${simboloActual}${precioFinalPorc.toLocaleString('es-CL')}</span>
+                 <span class="text-white-50 small d-block font-rajdhani">por porción</span>
+               </div>`
+            : `<div class="font-orbitron"><span class="text-warning fw-bold fs-4">${simboloActual}${precioBasePorc.toLocaleString('es-CL')}</span> <span class="text-white-50 small d-block font-rajdhani">por porción</span></div>`;
+
+        let descInsumo = obtenerDescripcionInsumo(ins);
+
+        const disMinus = cantPorc <= 0 ? 'disabled' : '';
+        const classMinus = cantPorc > 0 ? 'btn-outline-warning text-warning' : 'btn-outline-secondary text-white-50';
+        let btnMinusModal = `<button id="btn-minus-modal-${idInsClean}" class="btn ${classMinus} fw-bold px-3 py-1" style="border-radius: 8px; min-width: 42px; min-height: 40px; font-size: 1.2rem;" ${disMinus} onclick="modificarPorcionInsumo('${idInsClean}', -1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">-</button>`;
+
+        const disPlus = (esAgotado || cantPorc >= porcionesDisponibles) ? 'disabled' : '';
+        const classPlus = (!esAgotado && cantPorc < porcionesDisponibles) ? 'btn-warning text-dark' : 'btn-secondary text-white-50';
+        let btnPlusModal = `<button id="btn-plus-modal-${idInsClean}" class="btn ${classPlus} fw-bold px-3 py-1 shadow-sm" style="border-radius: 8px; min-width: 42px; min-height: 40px; font-size: 1.2rem;" ${disPlus} onclick="modificarPorcionInsumo('${idInsClean}', 1, ${precioFinalPorc}, '${nombreEscape}', ${porcionesDisponibles}, ${sizePorcion})">+</button>`;
+
+        const htmlContent = `
+            <div class="enredadera-ampliada"></div>
+            <button type="button" class="btn-cerrar-ampliado" onclick="cerrarModalAmpliado()" title="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="px-4 pt-3 pb-2 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
+                <span class="badge bg-dark border border-warning text-warning font-orbitron px-3 py-2" style="font-size: 0.85rem; letter-spacing: 1px;">
+                    <i class="bi bi-cup-straw me-1"></i>ARMA TU BATIDO
+                </span>
+                <span class="badge bg-dark border border-info text-info font-orbitron px-3 py-2" style="font-size: 0.85rem; letter-spacing: 1px;">
+                    ${subcatLabel}
+                </span>
+                ${ribbonDto}
+                ${badgeStock}
+            </div>
+
+            <div class="cuerpo-scroll-ampliado">
+                <div class="img-zona-ampliada rounded-4 mb-3" style="border: 1px solid rgba(255, 215, 0, 0.3);">
+                    ${mediaIngTag}
+                </div>
+
+                <h2 class="nombre-prod-ampliado mb-2">${ins.nombre}</h2>
+
+                <div class="d-flex align-items-center justify-content-between mb-3 p-3 rounded-3" style="background: rgba(0,0,0,0.55); border: 1px solid rgba(255,215,0,0.25);">
+                    <div>
+                        <span class="text-white-50 d-block font-rajdhani fw-bold" style="font-size: 0.98rem; letter-spacing:1px;">DOSIS / PORCIÓN:</span>
+                        <span class="text-info font-orbitron fw-bold" style="font-size: 1.2rem;">${porcTexto}</span>
+                    </div>
+                    <div class="text-end">
+                        ${precioHtmlInsumo}
+                    </div>
+                </div>
+
+                <div class="card-bio-info p-4 rounded-3 mb-3">
+                    <div class="d-flex align-items-center gap-2 mb-2 pb-2 border-bottom border-warning border-opacity-25">
+                        <i class="bi bi-flower1 text-warning fs-4"></i>
+                        <span class="font-orbitron fw-bold text-warning" style="font-size: 1.02rem; letter-spacing: 1px;">PROPIEDADES & APORTE VITAL</span>
+                    </div>
+                    <div class="texto-descripcion-ampliada">
+                        ${descInsumo}
+                    </div>
+                </div>
+
+                <div class="text-center text-white font-rajdhani mt-2 mb-1" style="font-size: 1.05rem; opacity: 0.85;">
+                    <i class="bi bi-check2-circle text-warning me-1"></i> Selecciona la cantidad de porciones para tu fórmula personalizada.
+                </div>
+            </div>
+
+            <div class="footer-accion-ampliado">
+                <div class="d-flex align-items-center justify-content-between mb-2 px-1">
+                    <span class="font-orbitron text-white-50" style="font-size: 0.85rem; letter-spacing: 1px;">PORCIONES AÑADIDAS:</span>
+                    <div class="d-flex align-items-center gap-2">
+                        ${btnMinusModal}
+                        <span id="cant-porc-modal-${idInsClean}" class="fw-bold fs-3 text-white font-orbitron px-2">${cantPorc}</span>
+                        ${btnPlusModal}
+                    </div>
+                </div>
+                <button class="btn btn-warning w-100 py-2 fw-bold text-dark font-orbitron shadow-sm" onclick="cerrarModalAmpliado()" style="border-radius: 8px; letter-spacing: 1px;">
+                    <i class="bi bi-check-lg me-1"></i> ACEPTAR Y CONTINUAR
+                </button>
+            </div>
+        `;
+
+        const contenedor = document.getElementById('contenido-detalle-ampliado');
+        if (contenedor) {
+            contenedor.innerHTML = htmlContent;
+            if (modalDetalleAmpliado) modalDetalleAmpliado.show();
+        }
+    }
+
+    
+    // ==========================================
+    // SISTEMA DE COMUNIDAD BIO-ACTIVA & BLOG
+    // ==========================================
+    let pestanaComunidadActual = 'articulos';
+    let articulosBlogCache = [];
+    let comentariosComunidadCache = [];
+    let filtroTipoComentariosActual = 'TODOS';
+
+    async function renderizarBlogComunidad(pestana = 'articulos') {
+        pestanaComunidadActual = pestana;
+        const grid = document.getElementById('grid-menu');
+        if (!grid) return;
+
+        grid.innerHTML = `
+            <div id="contenedor-contenido-comunidad" class="row g-3 w-100 m-0 mb-3">
+                <div class="col-12 text-center text-white py-4 font-orbitron">
+                    <span class="spinner-border text-info me-2"></span>Cargando contenidos de la comunidad...
+                </div>
+            </div>
+
+            <div class="col-12 mt-2 mb-4">
+                <div class="banner-comunidad-hero p-4 rounded-4 text-center position-relative overflow-hidden">
+                    <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-2 font-orbitron" 
+                         style="background: rgba(0, 240, 255, 0.12); border: 1px solid var(--bio-aqua); color: var(--bio-aqua); font-size: 0.8rem; letter-spacing: 2px;">
+                        <i class="bi bi-broadcast"></i> COMUNIDAD BIO-ACTIVA & BLOG
+                    </div>
+                    <h2 class="font-rajdhani fw-bold text-white fs-2 text-uppercase mb-2" style="letter-spacing: 1px;">
+                        ESPACIO DE CONOCIMIENTO & CONEXIÓN VITAL
+                    </h2>
+                    <p class="font-rajdhani text-white-50 mx-auto mb-3" style="max-width: 650px; font-size: 1.05rem; line-height: 1.5;">
+                        Descubre los fundamentos de la nutrición celular viva, novedades del laboratorio RAÍCES y comparte tus sugerencias y peticiones de nuevos sabores para construir la comunidad.
+                    </p>
+
+                    <!-- NAVEGACIÓN INTERNA DE COMUNIDAD -->
+                    <div class="d-flex justify-content-center gap-2 flex-wrap mt-3">
+                        <button class="btn ${pestana === 'articulos' ? 'btn-info text-dark fw-bold' : 'btn-outline-info text-white'} font-orbitron px-3 py-2 shadow-sm" style="border-radius: 10px; font-size: 0.82rem;" onclick="renderizarBlogComunidad('articulos')">
+                            <i class="bi bi-newspaper me-1"></i> ARTÍCULOS & GUÍAS
+                        </button>
+                        <button class="btn ${pestana === 'buzon' ? 'btn-warning text-dark fw-bold' : 'btn-outline-warning text-white'} font-orbitron px-3 py-2 shadow-sm" style="border-radius: 10px; font-size: 0.82rem;" onclick="renderizarBlogComunidad('buzon')">
+                            <i class="bi bi-lightbulb-fill me-1"></i> BUZÓN & PETICIONES
+                        </button>
+                        <button class="btn ${pestana === 'escribir' ? 'btn-success text-dark fw-bold' : 'btn-outline-success text-white'} font-orbitron px-3 py-2 shadow-sm" style="border-radius: 10px; font-size: 0.82rem;" onclick="renderizarBlogComunidad('escribir')">
+                            <i class="bi bi-pencil-square me-1"></i> DEJAR PROPUESTA / IDEA
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        if (pestana === 'articulos') {
+            await cargarArticulosBlogVista();
+        } else if (pestana === 'buzon') {
+            await cargarBuzonComunidadVista();
+        } else if (pestana === 'escribir') {
+            cargarFormularioPropuestaVista();
+        }
+    }
+
+    async function cargarArticulosBlogVista() {
+        const cont = document.getElementById('contenedor-contenido-comunidad');
+        if (!cont) return;
+
+        try {
+            const res = await fetch('/api/blog/articulos?_t=' + Date.now());
+            if (res.ok) {
+                articulosBlogCache = await res.json();
+            }
+        } catch (e) {
+            console.warn("Error cargando artículos de blog:", e);
+        }
+
+        if (!articulosBlogCache || articulosBlogCache.length === 0) {
+            cont.innerHTML = `
+                <div class="col-12 text-center text-white-50 py-5 font-orbitron">
+                    <i class="bi bi-journal-x fs-1 text-info d-block mb-3"></i>
+                    Aún no hay artículos publicados en el blog. ¡Vuelve pronto para nuevas guías de salud!
+                </div>`;
+            return;
+        }
+
+        let html = '';
+        articulosBlogCache.forEach(art => {
+            const img = (art.imagen && art.imagen.trim() !== '') ? art.imagen.trim() : 'default-batido.png';
+            const cat = art.categoria || 'Nutrición';
+            const autor = art.autor || 'Equipo RAÍCES';
+            const likes = art.likes || 0;
+            const esVideo = /\.(mp4|webm|mov)/i.test(img);
+            const mediaTag = esVideo
+                ? `<video src="${img}" autoplay loop muted playsinline></video>`
+                : `<img src="${img}" alt="${art.titulo}" decoding="async" onerror="this.src='default-batido.png'">`;
+
+            html += `
+                <div class="col-12 col-md-6 col-lg-4 mb-3">
+                    <div class="card-blog-post" onclick="abrirArticuloBlog(${art.id})" style="cursor: pointer;">
+                        <div class="img-blog-header">
+                            ${mediaTag}
+                            <span class="badge bg-dark border border-info text-info font-orbitron position-absolute top-0 start-0 m-2 px-2 py-1" style="font-size: 0.8rem; letter-spacing: 0.8px;">
+                                <i class="bi bi-tag-fill me-1"></i>${cat.toUpperCase()}
+                            </span>
+                        </div>
+                        <div class="p-3 d-flex flex-column flex-grow-1 justify-content-between">
+                            <div>
+                                <h4 class="font-rajdhani fw-bold text-white text-uppercase mb-2" style="font-size: 1.45rem; line-height: 1.3;">
+                                    ${art.titulo}
+                                </h4>
+                                <p class="text-white font-rajdhani mb-3" style="font-size: 1.15rem; line-height: 1.6; opacity: 0.9;">
+                                    ${art.resumen || ''}
+                                </p>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-between pt-2 border-top border-secondary border-opacity-25">
+                                <span class="text-info font-orbitron small" style="font-size: 0.8rem;">
+                                    <i class="bi bi-person-fill me-1"></i>${autor}
+                                </span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button class="btn-like-pill" onclick="event.stopPropagation(); darLikeArticulo(${art.id}, this)">
+                                        <i class="bi bi-heart-fill me-1"></i>${likes}
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold px-3 py-1" style="font-size: 0.82rem;">
+                                        LEER <i class="bi bi-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        cont.innerHTML = html;
+    }
+
+    async function abrirArticuloBlog(id) {
+        const art = (articulosBlogCache || []).find(a => Number(a.id) === Number(id));
+        if (!art) return;
+
+        const img = (art.imagen && art.imagen.trim() !== '') ? art.imagen.trim() : 'default-batido.png';
+        const esVideo = /\.(mp4|webm|mov)/i.test(img);
+        const mediaTag = esVideo
+            ? `<video src="${img}" class="img-blog-ampliada" autoplay loop muted playsinline></video>`
+            : `<img src="${img}" class="img-blog-ampliada" decoding="async" onerror="this.src='default-batido.png'">`;
+
+        const contenidoFormateado = (art.contenido || art.resumen || '').replace(/\n/g, '<br><br>');
+
+        const htmlModal = `
+            <div class="enredadera-ampliada"></div>
+            <button type="button" class="btn-cerrar-ampliado" onclick="cerrarModalAmpliado()" title="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <div class="px-4 pt-3 pb-2 d-flex align-items-center gap-2 flex-wrap position-relative" style="z-index: 25;">
+                <span class="badge bg-dark border border-info text-info font-orbitron px-3 py-2" style="font-size: 0.88rem; letter-spacing: 1px;">
+                    <i class="bi bi-journal-richtext me-1"></i>${(art.categoria || 'BLOG').toUpperCase()}
+                </span>
+                <span class="badge bg-dark border border-secondary text-white font-orbitron px-3 py-2" style="font-size: 0.85rem;">
+                    <i class="bi bi-person-fill me-1"></i>${art.autor || 'Equipo RAÍCES'}
+                </span>
+            </div>
+
+            <div class="cuerpo-scroll-ampliado">
+                <div class="img-zona-blog-ampliada">
+                    ${mediaTag}
+                </div>
+
+                <h2 class="nombre-prod-ampliado mb-2" style="font-size: 2.05rem;">${art.titulo}</h2>
+                
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-info border-opacity-25">
+                    <span class="text-white-50 font-rajdhani" style="font-size: 1.05rem;">Publicación Oficial de RAÍCES</span>
+                    <button id="btn-like-modal-${art.id}" class="btn-like-pill" style="font-size: 0.95rem; padding: 6px 14px;" onclick="darLikeArticulo(${art.id}, this)">
+                        <i class="bi bi-heart-fill me-1"></i> ${art.likes || 0} APLAUSOS
+                    </button>
+                </div>
+
+                <div class="card-bio-info p-4 rounded-3 mb-4">
+                    <div class="texto-descripcion-ampliada font-rajdhani" style="font-size: 1.42rem; line-height: 1.8; color: #ffffff; font-weight: 600;">
+                        ${contenidoFormateado}
+                    </div>
+                </div>
+
+                <!-- SECCIÓN DE COMENTARIOS PARA ESTE ARTÍCULO -->
+                <div class="border-top border-warning border-opacity-25 pt-3">
+                    <h5 class="font-orbitron fw-bold text-warning fs-5 mb-3">
+                        <i class="bi bi-chat-dots-fill me-1"></i> COMENTARIOS DE LECTORES
+                    </h5>
+                    <div class="d-flex gap-2 mb-3">
+                        <input type="text" id="comentario-input-art-${art.id}" class="form-control bg-dark border-secondary text-white font-rajdhani" placeholder="Escribe tu reflexión sobre este artículo..." style="font-size: 1.1rem; padding: 10px 14px;">
+                        <button class="btn btn-warning fw-bold font-orbitron px-3 text-nowrap" onclick="comentarEnArticulo(${art.id})">
+                            <i class="bi bi-send-fill"></i>
+                        </button>
+                    </div>
+                    <div id="lista-comentarios-art-${art.id}">
+                        <div class="text-white-50 font-rajdhani" style="font-size: 1.05rem;">Cargando comentarios...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-accion-ampliado d-flex justify-content-between align-items-center gap-2">
+                <span class="text-white font-rajdhani" style="font-size: 1.08rem; opacity: 0.85;">¿Te gustó el artículo? Comparte con tu comunidad</span>
+                <button class="btn btn-outline-warning font-orbitron fw-bold px-4 py-2" style="font-size: 0.95rem;" onclick="cerrarModalAmpliado()">
+                    VOLVER AL MENÚ
+                </button>
+            </div>
+        `;
+
+        const contenedor = document.getElementById('contenido-detalle-ampliado');
+        if (contenedor) {
+            contenedor.innerHTML = htmlModal;
+            if (modalDetalleAmpliado) modalDetalleAmpliado.show();
+            cargarComentariosArticuloModal(art.id);
+        }
+    }
+
+    async function darLikeArticulo(id, btn) {
+        try {
+            const res = await fetch(`/api/blog/articulos/${id}/like`, { method: 'POST' });
+            if (res.ok) {
+                const data = await res.json();
+                if (btn) {
+                    btn.innerHTML = `<i class="bi bi-heart-fill me-1"></i>${data.likes}`;
+                    btn.classList.add('active');
+                }
+                const btnModal = document.getElementById(`btn-like-modal-${id}`);
+                if (btnModal) {
+                    btnModal.innerHTML = `<i class="bi bi-heart-fill me-1"></i> ${data.likes} APLAUSOS`;
+                    btnModal.classList.add('active');
+                }
+                const art = (articulosBlogCache || []).find(a => Number(a.id) === Number(id));
+                if (art) art.likes = data.likes;
+            }
+        } catch(e) { console.warn("Error dar like:", e); }
+    }
+
+    async function cargarComentariosArticuloModal(articuloId) {
+        const cont = document.getElementById(`lista-comentarios-art-${articuloId}`);
+        if (!cont) return;
+        try {
+            const res = await fetch(`/api/blog/comentarios?articuloId=${articuloId}&_t=` + Date.now());
+            if (res.ok) {
+                const coms = await res.json();
+                if (coms.length === 0) {
+                    cont.innerHTML = '<div class="text-white-50 small font-rajdhani">Sé el primero en dejar un comentario o sugerencia.</div>';
+                    return;
+                }
+                let html = '';
+                coms.forEach(c => {
+                    html += `
+                        <div class="p-2 mb-2 rounded bg-black bg-opacity-50 border border-secondary border-opacity-25 font-rajdhani">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="text-info fw-bold small">${c.nombre || 'Explorador'}</span>
+                                <span class="text-white-50" style="font-size: 0.7rem;">${formatearFechaRelativa(c.fecha)}</span>
+                            </div>
+                            <div class="text-white small">${c.mensaje}</div>
+                        </div>
+                    `;
+                });
+                cont.innerHTML = html;
+            }
+        } catch (e) {
+            cont.innerHTML = '<div class="text-white-50 small">Comunidad activa.</div>';
+        }
+    }
+
+    async function comentarEnArticulo(articuloId) {
+        const input = document.getElementById(`comentario-input-art-${articuloId}`);
+        if (!input || !input.value.trim()) return;
+        const msg = input.value.trim();
+        const nombreGuardado = document.getElementById('nombreCliente')?.value || 'Explorador RAÍCES';
+
+        try {
+            const res = await fetch('/api/blog/comentarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    articuloId: articuloId,
+                    nombre: nombreGuardado,
+                    tipo: 'COMENTARIO',
+                    mensaje: msg
+                })
+            });
+            if (res.ok) {
+                input.value = '';
+                cargarComentariosArticuloModal(articuloId);
+            }
+        } catch(e) { alert("Error al publicar comentario."); }
+    }
+
+    async function cargarBuzonComunidadVista(filtroTipo = 'TODOS') {
+        filtroTipoComentariosActual = filtroTipo;
+        const cont = document.getElementById('contenedor-contenido-comunidad');
+        if (!cont) return;
+
+        try {
+            let url = '/api/blog/comentarios?_t=' + Date.now();
+            if (filtroTipo !== 'TODOS') url += '&tipo=' + encodeURIComponent(filtroTipo);
+            const res = await fetch(url);
+            if (res.ok) {
+                comentariosComunidadCache = await res.json();
+            }
+        } catch(e) { console.warn("Error cargando comentarios:", e); }
+
+        let html = `
+            <div class="col-12 mb-3">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 p-3 rounded-3" 
+                     style="background: rgba(0,0,0,0.6); border: 1px solid rgba(255,215,0,0.25);">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="text-white-50 font-orbitron small me-1">FILTRAR POR:</span>
+                        <span class="pill-tipo-filtro ${filtroTipo==='TODOS'?'bg-warning text-dark':'btn-outline-secondary text-white'}" onclick="cargarBuzonComunidadVista('TODOS')">
+                            TODOS (${comentariosComunidadCache.length})
+                        </span>
+                        <span class="pill-tipo-filtro ${filtroTipo==='SUGERENCIA'?'bg-warning text-dark':'btn-outline-warning text-warning'}" onclick="cargarBuzonComunidadVista('SUGERENCIA')">
+                            💡 SUGERENCIAS
+                        </span>
+                        <span class="pill-tipo-filtro ${filtroTipo==='PETICIÓN'?'bg-info text-dark':'btn-outline-info text-info'}" onclick="cargarBuzonComunidadVista('PETICIÓN')">
+                            📋 PETICIONES DE SABOR
+                        </span>
+                        <span class="pill-tipo-filtro ${filtroTipo==='COMENTARIO'?'bg-success text-dark':'btn-outline-success text-success'}" onclick="cargarBuzonComunidadVista('COMENTARIO')">
+                            💬 COMENTARIOS
+                        </span>
+                    </div>
+                    <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold" onclick="renderizarBlogComunidad('escribir')">
+                        <i class="bi bi-plus-circle me-1"></i> NUEVA PROPUESTA
+                    </button>
+                </div>
+            </div>
+        `;
+
+        if (!comentariosComunidadCache || comentariosComunidadCache.length === 0) {
+            html += `
+                <div class="col-12 text-center text-white-50 py-5 font-orbitron">
+                    <i class="bi bi-chat-square-text fs-1 text-warning d-block mb-3"></i>
+                    Aún no hay propuestas en esta categoría. ¡Sé el primero en dejar una sugerencia o pedir tu ingrediente soñado!
+                    <div class="mt-3">
+                        <button class="btn btn-warning font-orbitron fw-bold text-dark px-4 py-2" onclick="renderizarBlogComunidad('escribir')">
+                            DEJAR MI IDEA AHORA
+                        </button>
+                    </div>
+                </div>`;
+            cont.innerHTML = html;
+            return;
+        }
+
+        comentariosComunidadCache.forEach(c => {
+            const tipo = (c.tipo || 'COMENTARIO').toUpperCase();
+            let claseTipo = 'tipo-comentario';
+            let badgeTipo = '<span class="badge bg-success bg-opacity-75 font-orbitron me-2"><i class="bi bi-chat-dots-fill me-1"></i>COMENTARIO</span>';
+            if (tipo === 'SUGERENCIA') {
+                claseTipo = 'tipo-sugerencia';
+                badgeTipo = '<span class="badge bg-warning text-dark font-orbitron me-2"><i class="bi bi-lightbulb-fill me-1"></i>SUGERENCIA</span>';
+            } else if (tipo === 'PETICIÓN' || tipo === 'PETICION') {
+                claseTipo = 'tipo-peticion';
+                badgeTipo = '<span class="badge bg-info text-dark font-orbitron me-2"><i class="bi bi-cup-straw me-1"></i>PETICIÓN DE INGREDIENTE</span>';
+            }
+
+            html += `
+                <div class="col-12 col-md-6 mb-3">
+                    <div class="card-comentario-item ${claseTipo}">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center">
+                                ${badgeTipo}
+                                <span class="text-white fw-bold font-rajdhani fs-6">${c.nombre || 'Explorador'}</span>
+                            </div>
+                            <span class="text-white-50 font-rajdhani small" style="font-size: 0.75rem;">
+                                ${formatearFechaRelativa(c.fecha)}
+                            </span>
+                        </div>
+                        <p class="text-white font-rajdhani mb-3" style="font-size: 1.05rem; line-height: 1.5;">
+                            "${c.mensaje}"
+                        </p>
+                        <div class="d-flex justify-content-end align-items-center">
+                            <button class="btn-like-pill" onclick="darLikeComentario(${c.id}, this)">
+                                <i class="bi bi-heart-fill me-1"></i> APOYAR IDEA (${c.likes || 0})
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        cont.innerHTML = html;
+    }
+
+    async function darLikeComentario(id, btn) {
+        try {
+            const res = await fetch(`/api/blog/comentarios/${id}/like`, { method: 'POST' });
+            if (res.ok) {
+                const data = await res.json();
+                if (btn) {
+                    btn.innerHTML = `<i class="bi bi-heart-fill me-1"></i> APOYAR IDEA (${data.likes})`;
+                    btn.classList.add('active');
+                }
+            }
+        } catch(e) { console.warn("Error like comentario:", e); }
+    }
+
+    function cargarFormularioPropuestaVista() {
+        const cont = document.getElementById('contenedor-contenido-comunidad');
+        if (!cont) return;
+
+        const nombreClienteGuardado = document.getElementById('nombreCliente')?.value || '';
+
+        cont.innerHTML = `
+            <div class="col-12 col-md-8 mx-auto mb-4">
+                <div class="p-4 rounded-4" style="background: linear-gradient(180deg, rgba(16, 24, 20, 0.96) 0%, rgba(6, 12, 10, 0.98) 100%); border: 2px solid var(--bio-oro); box-shadow: 0 10px 35px rgba(0,0,0,0.9), 0 0 25px rgba(255,215,0,0.25);">
+                    <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-warning border-opacity-25">
+                        <i class="bi bi-chat-heart-fill text-warning fs-4"></i>
+                        <h4 class="font-orbitron fw-bold text-warning mb-0 fs-5">BUZÓN COMUNITARIO RAÍCES</h4>
+                    </div>
+                    <p class="text-white-50 font-rajdhani mb-4" style="font-size: 1.05rem;">
+                        Tu opinión da forma a nuestro menú. ¿Tienes una sugerencia de servicio, deseas un ingrediente o quieres compartir tu experiencia?
+                    </p>
+
+                    <form onsubmit="enviarPropuestaComunidad(event)">
+                        <div class="mb-3">
+                            <label class="form-label font-orbitron text-info small fw-bold">TU IDENTIFICACIÓN O NOMBRE</label>
+                            <input type="text" id="form-comunidad-nombre" class="form-control bg-dark text-white border-secondary font-rajdhani fs-6" placeholder="Ej. Camila Navarro" value="${nombreClienteGuardado}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label font-orbitron text-info small fw-bold">¿QUÉ DESEAS COMPARTIR?</label>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <label class="btn btn-outline-warning text-white font-orbitron small px-3 py-2 flex-fill" style="cursor: pointer;">
+                                    <input type="radio" name="tipoAporte" value="SUGERENCIA" class="me-1" checked> 💡 SUGERENCIA
+                                </label>
+                                <label class="btn btn-outline-info text-white font-orbitron small px-3 py-2 flex-fill" style="cursor: pointer;">
+                                    <input type="radio" name="tipoAporte" value="PETICIÓN" class="me-1"> 📋 PETICIÓN DE SABOR / INGREDIENTE
+                                </label>
+                                <label class="btn btn-outline-success text-white font-orbitron small px-3 py-2 flex-fill" style="cursor: pointer;">
+                                    <input type="radio" name="tipoAporte" value="COMENTARIO" class="me-1"> 💬 COMENTARIO VITAL
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label font-orbitron text-info small fw-bold">TU PROPUESTA O COMENTARIO</label>
+                            <textarea id="form-comunidad-mensaje" class="form-control bg-dark text-white border-secondary font-rajdhani fs-6" rows="4" placeholder="Escribe aquí tu propuesta en detalle... Ej: Me gustaría que incluyan Pitahaya y Guaraná en polvo en Arma tu Batido para más energía pre-entreno." required></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="button" class="btn btn-outline-secondary font-orbitron px-3" onclick="renderizarBlogComunidad('buzon')">
+                                CANCELAR
+                            </button>
+                            <button type="submit" id="btn-enviar-aporte" class="btn btn-warning font-orbitron fw-bold text-dark px-4 py-2 shadow-lg" style="letter-spacing: 1px;">
+                                <i class="bi bi-send-fill me-2"></i> PUBLICAR EN LA COMUNIDAD
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+    }
+
+    async function enviarPropuestaComunidad(event) {
+        event.preventDefault();
+        const nombreInput = document.getElementById('form-comunidad-nombre');
+        const mensajeInput = document.getElementById('form-comunidad-mensaje');
+        const tipoRadio = document.querySelector('input[name="tipoAporte"]:checked');
+        const btn = document.getElementById('btn-enviar-aporte');
+
+        const nombre = nombreInput ? nombreInput.value.trim() : 'Explorador RAÍCES';
+        const mensaje = mensajeInput ? mensajeInput.value.trim() : '';
+        const tipo = tipoRadio ? tipoRadio.value : 'SUGERENCIA';
+
+        if (!mensaje) {
+            alert("Por favor escribe tu propuesta o sugerencia.");
+            return;
+        }
+
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>PUBLICANDO...';
+        }
+
+        try {
+            const res = await fetch('/api/blog/comentarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nombre: nombre,
+                    tipo: tipo,
+                    mensaje: mensaje
+                })
+            });
+
+            if (res.ok) {
+                alert("¡Gracias por construir RAÍCES! Tu propuesta ha sido publicada con éxito en el buzón comunitario.");
+                renderizarBlogComunidad('buzon');
+            } else {
+                alert("No se pudo publicar la propuesta. Intenta nuevamente.");
+                if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-send-fill me-2"></i> PUBLICAR EN LA COMUNIDAD'; }
+            }
+        } catch(e) {
+            alert("Error de conexión al enviar propuesta.");
+            if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-send-fill me-2"></i> PUBLICAR EN LA COMUNIDAD'; }
+        }
+    }
+
+    function formatearFechaRelativa(fechaIso) {
+        if (!fechaIso) return 'Reciente';
+        try {
+            const fecha = new Date(fechaIso);
+            const ahora = new Date();
+            const diffMs = ahora - fecha;
+            const diffMin = Math.floor(diffMs / 60000);
+            if (diffMin < 2) return 'Hace un momento';
+            if (diffMin < 60) return `Hace ${diffMin} min`;
+            const diffHoras = Math.floor(diffMin / 60);
+            if (diffHoras < 24) return `Hace ${diffHoras} h`;
+            const diffDias = Math.floor(diffHoras / 24);
+            if (diffDias < 30) return `Hace ${diffDias} d`;
+            return fecha.toLocaleDateString('es-CL', { day: 'numeric', month: 'short' });
+        } catch(e) {
+            return 'Reciente';
+        }
+    }
+
+    function flip(id) { document.getElementById(`card-${id}`).classList.toggle('flipped'); }
+    function filtrar(cat, btn) { filtroActual = cat; document.querySelectorAll('.categoria-badge').forEach(b => b.classList.remove('active')); btn.classList.add('active'); renderizar(); }
+
+    function agregar(id, nombre, precio, btn, dto = 0, precioOriginal = null) {
+        if(btn) {
+            const originalHTML = btn.innerHTML; btn.innerHTML = '<i class="bi bi-check2"></i>'; btn.style.background = 'var(--bio-oro)'; btn.style.color = '#000';
+            setTimeout(()=>{ btn.innerHTML = originalHTML; btn.style=''; }, 600);
+        }
+        const precioCobrar = Number(precio);
+        const descuentoPct = Number(dto) || 0;
+        let base = Number(precioOriginal);
+        if (!base || isNaN(base) || base <= 0) {
+            base = descuentoPct > 0 ? Math.round(precioCobrar / (1 - descuentoPct / 100)) : precioCobrar;
+        }
+
+        carrito.push({
+            id: id,
+            nombre: nombre,
+            precio: precioCobrar,
+            precioOriginal: base,
+            descuento: descuentoPct
+        });
+        actualizarCarrito();
+    }
+
+    function actualizarCarrito() {
+        const bar = document.getElementById('carrito-bar');
+        if(carrito.length > 0) {
+            bar.style.display = 'flex';
+            document.getElementById('items-count').innerText = carrito.length;
+            const total = carrito.reduce((s, i) => s + i.precio, 0);
+            const totalAhorro = carrito.reduce((s, i) => s + ((i.precioOriginal || i.precio) - i.precio), 0);
+
+            if (totalAhorro > 0) {
+                document.getElementById('total-precio').innerHTML = `
+                    <span>${simboloActual}${total.toLocaleString('es-CL')}</span>
+                    <span class="badge bg-danger ms-2 font-orbitron" style="font-size:0.75rem;">AHORRAS ${simboloActual}${totalAhorro.toLocaleString('es-CL')}</span>
+                `;
+            } else {
+                document.getElementById('total-precio').innerText = simboloActual + total.toLocaleString('es-CL');
+            }
+        } else {
+            bar.style.display = 'none';
+        }
+    }
+
+    function abrirModalCarrito() {
+        playCashSound();
+        if(carrito.length === 0) return;
+
+        const cont = document.getElementById('lista-carrito-modal');
+        cont.innerHTML = '';
+
+        let subtotalOriginal = 0;
+        let ahorroTotal = 0;
+        let totalFinal = 0;
+
+        carrito.forEach((i, idx) => {
+            const precioCobro = Number(i.precio) || 0;
+            const precioBase = Number(i.precioOriginal) || precioCobro;
+            const tieneDto = i.descuento && i.descuento > 0 && precioBase > precioCobro;
+            const ahorroItem = tieneDto ? (precioBase - precioCobro) : 0;
+
+            subtotalOriginal += precioBase;
+            ahorroTotal += ahorroItem;
+            totalFinal += precioCobro;
+
+            cont.innerHTML += `
+                <div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded" style="border: 1px solid rgba(255,215,0,0.3); background: rgba(10,5,2,0.85); font-size:0.95rem;">
+                    <div class="me-2">
+                        <div class="fw-bold text-white">${i.nombre}</div>
+                        ${tieneDto ? `
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <s class="text-white-50 small">${simboloActual}${precioBase.toLocaleString('es-CL')}</s>
+                                <span class="badge bg-danger font-orbitron" style="font-size:0.7rem; padding: 2px 6px;">-${Math.round(i.descuento)}% OFF</span>
+                                <span class="text-success small fw-bold">Rebaja: -${simboloActual}${ahorroItem.toLocaleString('es-CL')}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="d-flex align-items-center gap-3 flex-shrink-0">
+                        <span class="fw-bold font-orbitron" style="color: var(--bio-oro); font-size: 1.15rem;">
+                            ${simboloActual}${precioCobro.toLocaleString('es-CL')}
+                        </span>
+                        <i class="bi bi-trash3 text-danger fs-5" style="cursor:pointer;" onclick="eliminar(${idx}, event)" title="Eliminar del pedido"></i>
+                    </div>
+                </div>`;
+        });
+
+        const desgloseEl = document.getElementById('desglose-totales-carrito');
+        if (desgloseEl) {
+            desgloseEl.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center text-white-50 mb-1" style="font-family: 'Rajdhani'; font-size: 1rem;">
+                    <span>SUBTOTAL NORMAL:</span>
+                    <span class="font-orbitron fw-bold text-white">${simboloActual}${subtotalOriginal.toLocaleString('es-CL')}</span>
+                </div>
+                ${ahorroTotal > 0 ? `
+                    <div class="d-flex justify-content-between align-items-center text-danger mb-2 fw-bold" style="font-family: 'Rajdhani'; font-size: 1rem;">
+                        <span><i class="bi bi-tag-fill me-1"></i> DESCUENTO WEB APLICADO:</span>
+                        <span class="font-orbitron fw-bold text-danger">-${simboloActual}${ahorroTotal.toLocaleString('es-CL')}</span>
+                    </div>
+                ` : ''}
+                <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary">
+                    <span class="font-orbitron fw-bold fs-5" style="color: var(--bio-aqua);">TOTAL A PAGAR:</span>
+                    <span id="total-modal-caja" style="color: var(--bio-oro); font-weight: 900; font-size: 1.6rem; font-family: 'Orbitron'; text-shadow: 0 0 10px rgba(255,215,0,0.5);">
+                        ${simboloActual}${totalFinal.toLocaleString('es-CL')}
+                    </span>
+                </div>
+            `;
+        } else {
+            const totalEl = document.getElementById('total-modal-caja');
+            if (totalEl) totalEl.innerText = simboloActual + totalFinal.toLocaleString('es-CL');
+        }
+
+        // RENDERIZAR BOTONES DE PAGO SEGÚN SUCURSAL
+        renderizarBotonesPagoModal();
+
+        modalCarritoCliente.show();
+    }
+
+    function renderizarBotonesPagoModal() {
+        const container = document.getElementById('contenedor-botones-pago');
+        container.innerHTML = `<button type="button" class="btn-extraer w-100 py-3 mb-2" onclick="confirmarPedido('MercadoPago')">
+                    PAGAR CON WEBPAY / TARJETAS <i class="bi bi-credit-card ms-1"></i>
+                </button>`;
+    }
+
+    function eliminar(idx, e) { e.stopPropagation(); carrito.splice(idx, 1); actualizarCarrito(); if(carrito.length > 0) { abrirModalCarrito(); } else { modalCarritoCliente.hide(); } }
+
+    async function confirmarPedido(metodoPago) {
+        const nombre = document.getElementById('nombreCliente').value.trim(); const direccion = document.getElementById('direccionCliente').value.trim(); const telefono = document.getElementById('telefonoCliente').value.trim();
+        if(!nombre || !direccion || !telefono) { alert("Por favor, ingresa tu Identificación, Coordenadas y Enlace (Nombre, Dirección y Teléfono) para procesar la extracción."); return; }
+
+        // Buscamos el botón dentro del contenedor para ponerle el loading
+        const btn = document.querySelector('#contenedor-botones-pago button');
+        const contenidoOriginal = btn.innerHTML;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> CONECTANDO NÚCLEO...`; btn.disabled = true;
+
+        // El nombre de la sucursal ya no viene del select text, porque el select ya no existe.
+        // Lo sacamos directamente del input oculto.
+        const paisNombre = document.getElementById('sucursal-activa').value;
+        const payload = { cliente: { nombre, direccion, telefono }, items: carrito, origen: 'Reserva Bio-Tech', pais: paisNombre };
+
+        try {
+            // ---> AUTO-REGISTRO CRM DE CLIENTES BÁSICOS <---
+            try { await fetch('/api/clientes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, direccion: direccion, telefono: telefono, nodo: paisNombre }) }); } catch(errCrm) {}
+
+            if (metodoPago === 'MercadoPago') {
+                const resMp = await fetch('/api/pagos/mercadopago', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (resMp.ok) {
+                    const linkMercadoPago = await resMp.text();
+                    await fetch(`/api/ventas?metodo=MercadoPago`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    // NOTA: El descuento de inventario ya se hace de forma segura en el Backend cuando el pago es confirmado
+                    // carrito.forEach(item => fetch(`/api/inventario/vender?idProducto=${item.id}&cantidad=1`, { method: 'POST' }));
+                    
+                    carrito = []; actualizarCarrito(); modalCarritoCliente.hide(); window.location.href = linkMercadoPago;
+                } else { throw new Error("Fallo en servidor MP"); }
+            }
+        } catch (error) {
+            setTimeout(async () => {
+                alert(`Simulando redirección a pago para: ${nombre}...\n(Servidor WebPay / Local No config)`);
+                // En modo prueba local simulamos venta standard
+                await fetch(`/api/ventas?metodo=MercadoPago`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                carrito = []; actualizarCarrito(); modalCarritoCliente.hide(); btn.innerHTML = contenidoOriginal; btn.disabled = false;
+            }, 1000);
+        }
+    }
+
+    // ==========================================
+    // SISTEMA DE VOZ INTELIGENTE (CARRITO / GLOBAL)
+    // ==========================================
+    let recVozCliente = null;
+
+    function hablarCliente(texto) {
+        window.speechSynthesis.cancel();
+        const voz = new SpeechSynthesisUtterance(texto);
+        voz.lang = 'es-ES'; voz.rate = 1.0; voz.pitch = 1.1;
+        window.speechSynthesis.speak(voz);
+    }
+
+    function iniciarVozCliente() {
+        if (!('webkitSpeechRecognition' in window)) {
+            alert("Tu navegador no soporta el reconocimiento de voz."); return;
+        }
+
+        const btnMic = document.getElementById('btn-mic-cliente');
+
+        if(recVozCliente) recVozCliente.stop();
+
+        recVozCliente = new webkitSpeechRecognition();
+        recVozCliente.lang = 'es-ES';
+        recVozCliente.continuous = false;
+        recVozCliente.interimResults = false;
+
+        recVozCliente.onstart = function() {
+            btnMic.classList.add('escuchando');
+        };
+
+        recVozCliente.onresult = function(event) {
+            const comandoRaw = event.results[0][0].transcript;
+            procesarComandoCliente(comandoRaw);
+        };
+
+        recVozCliente.onend = function() {
+            btnMic.classList.remove('escuchando');
+        };
+
+        recVozCliente.start();
+    }
+
+    function procesarComandoCliente(comandoRaw) {
+        const normalizar = (str) => {
+            if(!str) return "";
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+        };
+
+        const comando = normalizar(comandoRaw);
+
+        if (comando.includes("pagar") || comando.includes("cobrar") || comando.includes("ver carrito") || comando.includes("terminar")) {
+            if(carrito.length > 0) {
+                abrirModalCarrito();
+                hablarCliente("Revisemos tu selección para proceder a la extracción.");
+            } else {
+                hablarCliente("Tu reserva vital está vacía. Añade elíxires primero.");
+            }
+            return;
+        }
+
+        if (comando.includes("limpiar") || comando.includes("borrar") || comando.includes("vaciar")) {
+            if (carrito.length > 0) {
+                carrito = []; actualizarCarrito(); hablarCliente("Tu reserva ha sido purgada.");
+            }
+            return;
+        }
+
+        let candidatos = productosRaw.filter(p => {
+            if(!p.nombre) return false;
+            return comando.includes(normalizar(p.nombre));
+        });
+
+        candidatos.sort((a, b) => b.nombre.length - a.nombre.length);
+        let productoEncontrado = candidatos[0];
+
+        if (productoEncontrado) {
+            let btnElement = document.querySelector(`#card-${productoEncontrado.id} .btn-extraer`);
+            const dto = (productoEncontrado.descuento && productoEncontrado.descuento > 0) ? Math.min(Math.round(productoEncontrado.descuento), 100) : 0;
+            const precioFinal = dto > 0 ? Math.round(productoEncontrado.precio * (1 - dto / 100)) : productoEncontrado.precio;
+            agregar(productoEncontrado.id, productoEncontrado.nombre, precioFinal, btnElement, dto, productoEncontrado.precio);
+            hablarCliente("Excelente elección. He añadido " + productoEncontrado.nombre + " a tu reserva.");
+        } else {
+            hablarCliente("Lo siento, no pude identificar ese elíxir. Intenta pronunciar su nombre nuevamente.");
+        }
+    }
+
+    // ==========================================
+    // SISTEMA DE VOZ WIZARD (DENTRO DEL MODAL DATOS)
+    // ==========================================
+    let estadoModalVoz = 'LIBRE';
+    let recVozModal = null;
+
+    function hablarModal(texto, siguienteEstado) {
+        window.speechSynthesis.cancel();
+        estadoModalVoz = siguienteEstado || 'LIBRE';
+        const voz = new SpeechSynthesisUtterance(texto);
+        voz.lang = 'es-ES'; voz.rate = 1.0; voz.pitch = 1.1;
+
+        if (siguienteEstado) {
+            voz.onend = function() {
+                setTimeout(iniciarReconocimientoModal, 300);
+            };
+        }
+        window.speechSynthesis.speak(voz);
+    }
+
+    function iniciarVozModal() {
+        hablarModal("Iniciando captura de datos. Por favor, dime tu nombre.", 'ESPERANDO_NOMBRE');
+    }
+
+    function iniciarReconocimientoModal() {
+        if (!('webkitSpeechRecognition' in window)) return;
+        if (recVozModal) recVozModal.stop();
+
+        recVozModal = new webkitSpeechRecognition();
+        recVozModal.lang = 'es-ES';
+        recVozModal.continuous = false;
+        recVozModal.interimResults = false;
+
+        const btnMicModal = document.getElementById('btn-mic-modal');
+
+        recVozModal.onstart = function() {
+            btnMicModal.style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
+            btnMicModal.style.borderColor = '#ff4444';
+            btnMicModal.style.color = '#ff4444';
+            btnMicModal.innerHTML = '<i class="bi bi-mic-fill me-2" style="animation: latidoMic 1s infinite;"></i> ESCUCHANDO...';
+        };
+
+        recVozModal.onresult = function(event) {
+            const comandoRaw = event.results[0][0].transcript;
+            procesarComandoModal(comandoRaw);
+        };
+
+        recVozModal.onend = function() {
+            btnMicModal.style.backgroundColor = 'transparent';
+            btnMicModal.style.borderColor = 'var(--bio-aqua)';
+            btnMicModal.style.color = 'var(--bio-aqua)';
+            btnMicModal.innerHTML = '<i class="bi bi-mic-fill me-2"></i> DICTAR DATOS POR VOZ';
+        };
+
+        recVozModal.start();
+    }
+
+    function procesarComandoModal(comandoRaw) {
+        if (estadoModalVoz === 'ESPERANDO_NOMBRE') {
+            document.getElementById('nombreCliente').value = comandoRaw.toUpperCase();
+            hablarModal("Nombre registrado. ¿Cuál es tu dirección de entrega?", 'ESPERANDO_DIRECCION');
+        }
+        else if (estadoModalVoz === 'ESPERANDO_DIRECCION') {
+            document.getElementById('direccionCliente').value = comandoRaw.toUpperCase();
+            hablarModal("Coordenadas guardadas. Finalmente, díctame tu número de teléfono.", 'ESPERANDO_TELEFONO');
+        }
+        else if (estadoModalVoz === 'ESPERANDO_TELEFONO') {
+            document.getElementById('telefonoCliente').value = comandoRaw.replace(/\s/g, '');
+            // Terminamos el flujo y le advertimos que el pago es manual por seguridad
+            hablarModal("Datos completados. Por protocolos de seguridad, el método de pago debe seleccionarse de forma manual. Por favor, autoriza la transacción en pantalla.");
+            estadoModalVoz = 'LIBRE';
+        }
+    }
+
+</script>
+</body>
+</html>
