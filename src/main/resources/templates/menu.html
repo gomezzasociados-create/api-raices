@@ -310,6 +310,7 @@ section>.max-w-7xl{position:relative;z-index:2}
 <div id="toast" role="status"></div>
 <audio id="mainAudio" preload="auto" loop><source src="audio_fondo.mp3" type="audio/mpeg"></audio>
 <audio id="sfxCash" preload="auto"><source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=cash-register-purchase-87313.mp3" type="audio/mpeg"></audio>
+<audio id="sfxBlender" preload="auto"><source src="sonido_licuadora.mp3" type="audio/mpeg"><source src="sonido_licuadora.wav" type="audio/wav"></audio>
 
 <!-- BARRA DE ANUNCIO SUPERIOR (DESACTIVADA) -->
 <div id="banner-anuncio-top" style="display:none!important"></div>
@@ -961,7 +962,160 @@ function trackEvent(eventName, customData) {
 }
 
 /* 5. Audio */
-var mainAudio = $('mainAudio'), cashSound = $('sfxCash');
+var mainAudio = $('mainAudio'), cashSound = $('sfxCash'), blenderSound = $('sfxBlender');
+var blenderFadeInterval = null;
+var blenderCtx = null;
+var blenderNodes = null;
+
+function startWebAudioBlenderSynth() {
+    try {
+        var AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        if (!blenderCtx) blenderCtx = new AudioCtx();
+        if (blenderCtx.state === 'suspended') blenderCtx.resume();
+
+        var t = blenderCtx.currentTime;
+        var masterGain = blenderCtx.createGain();
+        masterGain.gain.setValueAtTime(0.01, t);
+        masterGain.gain.exponentialRampToValueAtTime(0.32, t + 0.35);
+        masterGain.connect(blenderCtx.destination);
+
+        // 1. Motor principal (Sawtooth con rampa de aceleración de RPM)
+        var motorOsc = blenderCtx.createOscillator();
+        motorOsc.type = 'sawtooth';
+        motorOsc.frequency.setValueAtTime(65, t);
+        motorOsc.frequency.exponentialRampToValueAtTime(175, t + 0.45);
+        
+        var motorFilter = blenderCtx.createBiquadFilter();
+        motorFilter.type = 'lowpass';
+        motorFilter.frequency.setValueAtTime(450, t);
+        motorFilter.frequency.exponentialRampToValueAtTime(850, t + 0.45);
+
+        motorOsc.connect(motorFilter);
+        motorFilter.connect(masterGain);
+        motorOsc.start(t);
+
+        // 2. Sub-bajo / resonancia de la base de la licuadora
+        var subOsc = blenderCtx.createOscillator();
+        subOsc.type = 'sine';
+        subOsc.frequency.setValueAtTime(55, t);
+        var subGain = blenderCtx.createGain();
+        subGain.gain.value = 0.35;
+        subOsc.connect(subGain);
+        subGain.connect(masterGain);
+        subOsc.start(t);
+
+        // 3. Cuchillas y turbulencia de fruta/hielo
+        var bufferSize = blenderCtx.sampleRate * 2;
+        var noiseBuffer = blenderCtx.createBuffer(1, bufferSize, blenderCtx.sampleRate);
+        var output = noiseBuffer.getChannelData(0);
+        for (var i = 0; i < bufferSize; i++) {
+            output[i] = Math.random() * 2 - 1;
+        }
+        var whiteNoise = blenderCtx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+
+        var noiseFilter = blenderCtx.createBiquadFilter();
+        noiseFilter.type = 'bandpass';
+        noiseFilter.frequency.setValueAtTime(700, t);
+        noiseFilter.Q.value = 1.8;
+
+        var lfo = blenderCtx.createOscillator();
+        lfo.frequency.setValueAtTime(9.5, t);
+        var lfoGain = blenderCtx.createGain();
+        lfoGain.gain.value = 350;
+        lfo.connect(lfoGain);
+        lfoGain.connect(noiseFilter.frequency);
+
+        var noiseGain = blenderCtx.createGain();
+        noiseGain.gain.setValueAtTime(0.01, t);
+        noiseGain.gain.exponentialRampToValueAtTime(0.25, t + 0.4);
+
+        whiteNoise.connect(noiseFilter);
+        noiseFilter.connect(noiseGain);
+        noiseGain.connect(masterGain);
+
+        whiteNoise.start(t);
+        lfo.start(t);
+
+        blenderNodes = {
+            masterGain: masterGain,
+            motorOsc: motorOsc,
+            subOsc: subOsc,
+            whiteNoise: whiteNoise,
+            lfo: lfo
+        };
+    } catch (e) {
+        console.warn('WebAudio blender synth no disponible:', e);
+    }
+}
+
+function stopWebAudioBlenderSynth() {
+    if (!blenderNodes || !blenderCtx) return;
+    try {
+        var t = blenderCtx.currentTime;
+        blenderNodes.masterGain.gain.cancelScheduledValues(t);
+        blenderNodes.masterGain.gain.setValueAtTime(blenderNodes.masterGain.gain.value, t);
+        if (blenderNodes.motorOsc) {
+            blenderNodes.motorOsc.frequency.cancelScheduledValues(t);
+            blenderNodes.motorOsc.frequency.setValueAtTime(blenderNodes.motorOsc.frequency.value, t);
+            blenderNodes.motorOsc.frequency.exponentialRampToValueAtTime(35, t + 0.35);
+        }
+        blenderNodes.masterGain.gain.exponentialRampToValueAtTime(0.001, t + 0.35);
+        
+        var nodes = blenderNodes;
+        blenderNodes = null;
+        setTimeout(function() {
+            try {
+                if (nodes.motorOsc) nodes.motorOsc.stop();
+                if (nodes.subOsc) nodes.subOsc.stop();
+                if (nodes.whiteNoise) nodes.whiteNoise.stop();
+                if (nodes.lfo) nodes.lfo.stop();
+            } catch (err) {}
+        }, 400);
+    } catch (e) {
+        blenderNodes = null;
+    }
+}
+
+function playBlenderSound() {
+    if (blenderFadeInterval) { clearInterval(blenderFadeInterval); blenderFadeInterval = null; }
+    
+    // 1. Audio HTML5 nativo (sonido_licuadora.mp3 / sonido_licuadora.wav)
+    if (blenderSound) {
+        blenderSound.volume = 1;
+        blenderSound.currentTime = 0;
+        var p = blenderSound.play();
+        if (p && typeof p.catch === 'function') {
+            p.catch(function(err) {
+                console.log('Audio element play handled:', err);
+            });
+        }
+    }
+    
+    // 2. Motor acústico en tiempo real por WebAudio API (garantiza inmediatez y cero latencia)
+    startWebAudioBlenderSynth();
+}
+
+function stopBlenderSound() {
+    if (blenderSound && !blenderSound.paused) {
+        var v = blenderSound.volume;
+        if (blenderFadeInterval) clearInterval(blenderFadeInterval);
+        blenderFadeInterval = setInterval(function() {
+            v = Math.max(0, v - 0.2);
+            blenderSound.volume = v;
+            if (v <= 0) {
+                clearInterval(blenderFadeInterval);
+                blenderFadeInterval = null;
+                blenderSound.pause();
+                blenderSound.currentTime = 0;
+                blenderSound.volume = 1;
+            }
+        }, 35);
+    }
+    stopWebAudioBlenderSynth();
+}
 function toggleAudio() {
     var icono = $('icono-audio');
     if (!AJUSTES.efectoAudioFondo) return;
@@ -1452,6 +1606,7 @@ function bBlend() {
     if (bState !== 'idle') return;
     if (!bSel.length) { toast('Elige al menos un ingrediente para licuar'); apeDo(bApe, 'bounce', 500); return; }
     bState = 'blending'; bT0 = performance.now(); renderBuilder();
+    playBlenderSound();
     if (bApe) { bApe.el.classList.add('shake', 'ooh'); bApe.lock = 'bl-svg'; apeSay(bApe, '¡Uuuh! ¡Cómo gira!'); }
     cancelAnimationFrame(bRaf);
     (function step(now) {
@@ -1462,10 +1617,11 @@ function bBlend() {
     })(performance.now());
 }
 function bFinish() {
+    stopBlenderSound();
     bState = 'done'; renderBuilder(); bAdd();
     if (bApe) { bApe.el.classList.remove('shake', 'ooh'); bApe.lock = null; apeDo(bApe, 'cheer', 2600); apeDo(bApe, 'ooh', 2600); apeSay(bApe, '¡Listo! Eso huele a selva 🍹'); }
 }
-function bReset() { bState = 'idle'; bSel = []; renderBuilder(); }
+function bReset() { stopBlenderSound(); bState = 'idle'; bSel = []; renderBuilder(); }
 function bAdd() {
     if (!bSel.length) { toast('Elige al menos un ingrediente'); return; }
     var it = { id: 9000 + (++bN), nombre: 'Batido a tu medida (' + BASES[bBase][0] + ': ' + bSel.map(function(i) { return ING_B[i][0]; }).join(', ') + ')', categoria: 'Custom', precio: bTotal(), cantidad: 1 };
