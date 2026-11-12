@@ -61,10 +61,15 @@ a{text-decoration:none;color:inherit}
 .btn:active{transform:scale(.96)!important}
 
 /* Hero cinematográfico */
-.video-vignette{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(circle at center,rgba(2,4,3,.15) 30%,rgba(2,4,3,.8) 85%,#020403 100%)}
+.video-vignette{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(circle at center,rgba(2,4,3,0) 45%,rgba(2,4,3,.35) 85%,rgba(2,4,3,.8) 100%),linear-gradient(to top,rgba(2,4,3,.85) 0%,rgba(2,4,3,0) 25%)}
 .ts{text-shadow:0 2px 22px rgba(0,0,0,.85)}
 .hero-in{animation:rise 1s var(--ease) both;animation-delay:var(--d,0s)}
 @keyframes rise{from{opacity:0;transform:translateY(50px);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
+
+/* TÍTULO HERO ULTRA ELEGANTE BOTÁNICO */
+.shine-luxury{background:linear-gradient(120deg,#ffffff 0%,#d1fae5 25%,#34d399 50%,#fef08a 75%,#ffffff 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:luxuryGlow 7s ease-in-out infinite alternate;display:inline-block;filter:drop-shadow(0 0 28px rgba(52,211,153,.45)) drop-shadow(0 0 50px rgba(254,240,138,.25))}
+@keyframes luxuryGlow{0%{background-position:0% 50%;filter:drop-shadow(0 0 20px rgba(52,211,153,.35)) drop-shadow(0 0 40px rgba(16,185,129,.2))}50%{background-position:100% 50%;filter:drop-shadow(0 0 35px rgba(52,211,153,.6)) drop-shadow(0 0 65px rgba(254,240,138,.35))}100%{background-position:0% 50%;filter:drop-shadow(0 0 20px rgba(52,211,153,.35)) drop-shadow(0 0 40px rgba(16,185,129,.2))}}
+#banner-anuncio-top{display:none!important}
 
 /* TÍTULO CON VIDA Y COLOR NEÓN BOTÁNICO */
 .shine{background:linear-gradient(115deg,#ffffff 0%,#4ade80 22%,#facc15 46%,#ff2a6d 70%,#38bdf8 88%,#ffffff 100%);background-size:260% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 6s ease-in-out infinite alternate;display:inline-block;filter:drop-shadow(0 0 24px rgba(74,222,128,.55)) drop-shadow(0 0 45px rgba(250,204,21,.35))}
@@ -296,13 +301,13 @@ section>.max-w-7xl{position:relative;z-index:2}
 <audio id="mainAudio" preload="auto" loop><source src="audio_fondo.mp3" type="audio/mpeg"></audio>
 <audio id="sfxCash" preload="auto"><source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=cash-register-purchase-87313.mp3" type="audio/mpeg"></audio>
 
-<!-- BARRA DE ANUNCIO SUPERIOR (CONFIGURABLE DESDE EL ADMIN) -->
-<div id="banner-anuncio-top" class="fixed top-0 left-0 right-0 z-[60] py-1.5 px-4 text-center text-xs font-semibold bg-emerald-950/90 border-b border-emerald-500/40 text-emerald-300 backdrop-blur-md transition-all" style="display:none;"></div>
+<!-- BARRA DE ANUNCIO SUPERIOR (DESACTIVADA) -->
+<div id="banner-anuncio-top" style="display:none!important"></div>
 
-<header id="main-nav" class="fixed top-0 left-0 right-0 z-50 pb-2.5 sm:pb-3 bg-abyss-950/75 backdrop-blur-2xl border-b border-white/10" style="padding-top:calc(.6rem + env(safe-area-inset-top,0px))">
+<header id="main-nav" class="fixed top-0 left-0 right-0 z-50 py-3 sm:py-3.5 bg-abyss-950/75 backdrop-blur-2xl border-b border-white/10" style="padding-top:calc(.6rem + env(safe-area-inset-top,0px))">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 flex items-center justify-between">
 <a href="#cinematic-experience" class="flex items-center gap-2.5 sm:gap-3 group">
-<span class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-emerald-400/40 via-yellow-400/30 to-ruby-500/40 border border-emerald-400/60 shadow-[0_0_15px_rgba(74,222,128,0.4)] grid place-items-center font-cinzel font-black text-emerald-300 text-lg sm:text-xl group-hover:scale-105 transition-transform">R</span>
+<span class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-emerald-400/40 via-yellow-400/30 to-emerald-500/40 border border-emerald-400/60 shadow-[0_0_15px_rgba(74,222,128,0.4)] grid place-items-center font-cinzel font-black text-emerald-300 text-lg sm:text-xl group-hover:scale-105 transition-transform">R</span>
 <span class="flex flex-col leading-none">
     <span class="font-cinzel text-lg sm:text-xl font-black tracking-[.22em] bg-gradient-to-r from-emerald-300 via-yellow-300 to-emerald-400 bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(74,222,128,0.4)]">RAÍCES</span>
     <span class="text-[9px] sm:text-[10px] text-emerald-400/90 mt-0.5 font-semibold tracking-wider uppercase">Elixir botánico</span>
@@ -324,53 +329,82 @@ section>.max-w-7xl{position:relative;z-index:2}
 <main class="relative z-10">
 <section id="cinematic-experience" class="relative" style="height:520vh">
 <div class="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden bg-abyss-950">
-<video id="scroll-cinematic-video" preload="auto" muted playsinline webkit-playsinline class="absolute inset-0 w-full h-full object-cover z-[1]" style="filter:brightness(.82) contrast(1.15) saturate(1.1)" src="fondo-catalogo.mp4?v=2"></video>
+<video id="scroll-cinematic-video" preload="auto" muted playsinline webkit-playsinline class="absolute inset-0 w-full h-full object-cover z-[1]" style="filter:brightness(.92) contrast(1.08) saturate(1.08)" src="fondo-catalogo.mp4?v=2"></video>
 <div class="video-vignette"></div>
-<div class="flora" id="flora-hero" data-h="1"></div>
 
+<!-- HUD lateral minimalista (sin Rubí) -->
 <div class="hidden lg:flex flex-col gap-6 fixed right-8 top-1/2 -translate-y-1/2 z-40">
-<div class="hud-item flex items-center gap-3 cursor-pointer group active" onclick="scrollToProgress(0.05)" id="hud-chap-1"><span class="hud-label text-xs text-slate-400 group-hover:text-emerald-400">Raíces</span><div class="hud-dot"></div></div>
-<div class="hud-item flex items-center gap-3 cursor-pointer group" onclick="scrollToProgress(0.33)" id="hud-chap-2"><span class="hud-label text-xs text-slate-400 group-hover:text-emerald-400">Extracción</span><div class="hud-dot"></div></div>
-<div class="hud-item flex items-center gap-3 cursor-pointer group" onclick="scrollToProgress(0.62)" id="hud-chap-3"><span class="hud-label text-xs text-slate-400 group-hover:text-ruby-400">Rubí Vital</span><div class="hud-dot"></div></div>
+<div class="hud-item flex items-center gap-3 cursor-pointer group active" onclick="scrollToProgress(0.02)" id="hud-chap-1"><span class="hud-label text-xs text-slate-400 group-hover:text-emerald-400">Raíces</span><div class="hud-dot"></div></div>
+<div class="hud-item flex items-center gap-3 cursor-pointer group" onclick="scrollToProgress(0.28)" id="hud-chap-2"><span class="hud-label text-xs text-slate-400 group-hover:text-emerald-400">Prensado</span><div class="hud-dot"></div></div>
+<div class="hud-item flex items-center gap-3 cursor-pointer group" onclick="scrollToProgress(0.60)" id="hud-chap-3"><span class="hud-label text-xs text-slate-400 group-hover:text-emerald-400">Pureza</span><div class="hud-dot"></div></div>
 <div class="hud-item flex items-center gap-3 cursor-pointer group" onclick="scrollToProgress(0.92)" id="hud-chap-4"><span class="hud-label text-xs text-slate-400 group-hover:text-emerald-400">Catálogo</span><div class="hud-dot"></div></div>
-<div class="w-[2px] h-24 bg-white/10 mx-auto mt-2 relative rounded-full overflow-hidden"><div id="hud-progress-bar" class="w-full bg-gradient-to-b from-emerald-400 to-ruby-500 rounded-full" style="height:0%"></div></div>
+<div class="w-[2px] h-24 bg-white/10 mx-auto mt-2 relative rounded-full overflow-hidden"><div id="hud-progress-bar" class="w-full bg-gradient-to-b from-emerald-400 via-teal-300 to-emerald-500 rounded-full" style="height:0%"></div></div>
 </div>
 
-<div id="scene-hero" data-r="0,0,0.12,0.2" class="scroll-text ts absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 pointer-events-none z-30">
-<div class="hero-in inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-400/50 shadow-[0_0_20px_rgba(34,197,94,0.3)] backdrop-blur-md mb-4 sm:mb-6 text-emerald-300" style="--d:0s"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span><span class="text-[11px] sm:text-xs font-bold tracking-wider uppercase">Prensado en frío · 100% vivo</span></div>
-<h1 class="hero-in font-cinzel font-black text-5xl sm:text-7xl md:text-9xl lg:text-[11rem] tracking-tight mb-4 sm:mb-6 uppercase select-none leading-none" style="--d:.15s"><span id="hero-display-titulo" class="shine">RAÍCES</span></h1>
-<p id="hero-display-subtitulo" class="hero-in text-sm sm:text-lg md:text-2xl text-slate-200 font-light max-w-2xl mx-auto leading-relaxed mb-6 sm:mb-8 px-2" style="--d:.3s">Espinaca silvestre, aloe vera, cúrcuma y jengibre, exprimidos a mano y en tu puerta el mismo día. Sin azúcar añadida.</p>
-<div id="hero-badges" class="hero-in grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 max-w-3xl w-full mb-6 sm:mb-10 pointer-events-auto" style="--d:.45s"></div>
-<div class="hero-in flex flex-col items-center gap-2 cursor-pointer pointer-events-auto" onclick="scrollToProgress(0.35)" style="--d:.6s"><span class="text-xs text-slate-300">Desliza para recorrer el proceso</span><div class="w-6 h-10 rounded-full border border-white/30 flex items-start justify-center p-1"><div class="w-1.5 h-3 rounded-full bg-emerald-400 animate-bounce"></div></div></div>
+<!-- TÍTULO HERO ULTRA ELEGANTE (Desaparece de inmediato al empezar el scroll) -->
+<div id="scene-hero" data-r="0,0,0.015,0.05" class="scroll-text ts absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 pointer-events-none z-30 transition-all duration-300">
+    <div class="hero-in inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-black/60 border border-emerald-400/40 shadow-[0_0_25px_rgba(52,211,153,0.25)] backdrop-blur-xl mb-4 sm:mb-6 text-emerald-300" style="--d:0s">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+        <span class="text-[10px] sm:text-xs font-semibold tracking-[0.28em] uppercase text-emerald-200">Elixir Botánico · Prensado en Frío</span>
+    </div>
+    
+    <h1 class="hero-in font-cinzel font-black text-6xl sm:text-8xl md:text-9xl lg:text-[10.5rem] tracking-[0.14em] mb-3 sm:mb-5 uppercase select-none leading-none" style="--d:.12s">
+        <span id="hero-display-titulo" class="shine-luxury">RAÍCES</span>
+    </h1>
+    
+    <p id="hero-display-subtitulo" class="hero-in text-sm sm:text-lg md:text-xl text-slate-200/95 font-light tracking-wide max-w-xl mx-auto leading-relaxed mb-8 px-4" style="--d:.25s">
+        Nutrición celular viva, sin pasteurizar y sin azúcar añadida.
+    </p>
+
+    <div class="hero-in flex flex-col items-center gap-2 cursor-pointer pointer-events-auto opacity-75 hover:opacity-100 transition-opacity" onclick="scrollToProgress(0.20)" style="--d:.4s">
+        <span class="text-[10px] tracking-[0.25em] uppercase text-emerald-300/80 font-medium">Desliza para ver la experiencia</span>
+        <div class="w-4 h-7 rounded-full border border-emerald-400/40 flex items-start justify-center p-1">
+            <div class="w-1 h-2 rounded-full bg-emerald-400 animate-bounce"></div>
+        </div>
+    </div>
 </div>
 
-<div data-r="0.20,0.28,0.40,0.47" class="scroll-text absolute inset-0 flex items-center justify-start max-w-7xl mx-auto px-6 md:px-16 pointer-events-none z-30" style="opacity:0;visibility:hidden">
-<div class="max-w-lg spot rounded-[28px] p-8 md:p-10" style="--c:#22c55e;background:rgba(2,10,6,.55)">
-<h2 class="font-cinzel font-bold text-3xl md:text-4xl mb-4 leading-tight">Clorofila viva, sin pasteurizar</h2>
-<p class="text-slate-200 text-sm md:text-base leading-relaxed mb-6 font-light">Cada botella se prensa en frío y conserva sus enzimas intactas. Nada de calor, conservantes ni azúcar añadida.</p>
-<div class="grid grid-cols-2 gap-3 pt-4 border-t border-white/10">
-<div class="bg-black/40 p-3 rounded-2xl"><span class="text-slate-400 text-xs block">Biodisponibilidad</span><span class="font-bold text-emerald-400 text-lg">98.6% activa</span></div>
-<div class="bg-black/40 p-3 rounded-2xl"><span class="text-slate-400 text-xs block">Cosecha local</span><span class="font-bold text-yellow-400 text-lg">&lt; 24 horas</span></div>
-</div></div></div>
-
-<div data-r="0.45,0.52,0.58,0.65" class="scroll-text ts absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none z-30" style="opacity:0;visibility:hidden">
-<h2 class="font-cinzel font-black text-5xl sm:text-6xl md:text-8xl uppercase leading-[.95] tracking-tight">Sin azúcar añadida.<br><span class="text-emerald-400">Sin conservantes.</span><br><span class="text-turmeric-400">Solo raíces.</span></h2>
+<!-- ESCENAS DE TEXTO SUTILES AL PIE (NO OBSTRUYEN EL VIDEO) -->
+<!-- Escena 1: Prensado Hidráulico -->
+<div data-r="0.10,0.18,0.32,0.40" class="scroll-text absolute inset-x-0 bottom-8 sm:bottom-12 md:bottom-14 flex items-center justify-center px-4 pointer-events-none z-30" style="opacity:0;visibility:hidden">
+    <div class="inline-flex items-center gap-3 sm:gap-4 px-5 sm:px-7 py-3 rounded-full bg-black/65 backdrop-blur-2xl border border-emerald-400/30 shadow-[0_10px_35px_rgba(0,0,0,0.85)] max-w-2xl text-center">
+        <i class="bi bi-droplet-half text-emerald-400 text-lg sm:text-xl"></i>
+        <div class="text-left">
+            <span class="block font-cinzel font-bold text-xs sm:text-sm text-white tracking-wide">Prensado Hidráulico en Frío</span>
+            <span class="block text-[11px] sm:text-xs text-slate-300 font-light">Extracción lenta que preserva el 98.6% de enzimas y fitoquímicos vivos.</span>
+        </div>
+    </div>
 </div>
 
-<div data-r="0.62,0.69,0.76,0.83" class="scroll-text ts absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none z-30" style="opacity:0;visibility:hidden">
-<p class="px-4 py-1.5 rounded-full bg-black/40 border border-ruby-500/50 backdrop-blur-md text-ruby-400 text-sm font-semibold mb-5">Shot de 60 ml · vial 2 × 16 cm</p>
-<h2 class="font-cinzel font-black text-6xl sm:text-8xl md:text-9xl uppercase leading-none tracking-tight">Rubí <span class="text-ruby-400">Vital</span></h2>
-<p class="mt-6 max-w-xl text-lg md:text-xl text-slate-100 font-light">Remolacha con betanina, citrulina natural y piña alcalina en un solo trago.</p>
-<p class="mt-4 text-sm font-semibold text-ruby-400">20 veces más concentrado que un jugo tradicional</p>
+<!-- Escena 2: Pureza Total -->
+<div data-r="0.40,0.48,0.62,0.70" class="scroll-text absolute inset-x-0 bottom-8 sm:bottom-12 md:bottom-14 flex items-center justify-center px-4 pointer-events-none z-30" style="opacity:0;visibility:hidden">
+    <div class="inline-flex items-center gap-3 sm:gap-4 px-5 sm:px-7 py-3 rounded-full bg-black/65 backdrop-blur-2xl border border-emerald-400/30 shadow-[0_10px_35px_rgba(0,0,0,0.85)] max-w-2xl text-center">
+        <i class="bi bi-flower1 text-emerald-400 text-lg sm:text-xl"></i>
+        <div class="text-left">
+            <span class="block font-cinzel font-bold text-xs sm:text-sm text-white tracking-wide">100% Puro &amp; Fresco</span>
+            <span class="block text-[11px] sm:text-xs text-slate-300 font-light">Sin agua añadida, sin conservantes ni químicos. Cosecha fresca de menos de 24 horas.</span>
+        </div>
+    </div>
 </div>
 
-<div data-r="0.80,0.88,1.01,1.02" class="scroll-text ts absolute inset-0 flex flex-col items-center justify-center text-center px-6 pointer-events-none z-30" style="opacity:0;visibility:hidden">
-<h2 class="font-cinzel font-black text-4xl sm:text-6xl md:text-7xl mb-6 uppercase tracking-tight max-w-4xl leading-tight">Despierta tu <span class="shine">vitalidad</span></h2>
-<p class="text-slate-100 text-base md:text-xl font-light max-w-2xl mx-auto mb-10 leading-relaxed">Elige entre elixires de 500 ml y packs detox congelados al vacío.</p>
-<div class="flex flex-col sm:flex-row items-center gap-4 pointer-events-auto">
-<a href="#catalogo" class="btn btn-leaf px-9 py-4">Ver el menú<i class="bi bi-arrow-down-circle"></i></a>
-<a href="#ingredientes" class="btn btn-ghost px-8 py-4">Qué lleva cada botella</a>
-</div></div>
+<!-- Escena 3: Bio-Nutrición Activa (Reemplaza Rubí) -->
+<div data-r="0.70,0.76,0.86,0.92" class="scroll-text absolute inset-x-0 bottom-8 sm:bottom-12 md:bottom-14 flex items-center justify-center px-4 pointer-events-none z-30" style="opacity:0;visibility:hidden">
+    <div class="inline-flex items-center gap-3 sm:gap-4 px-5 sm:px-7 py-3 rounded-full bg-black/65 backdrop-blur-2xl border border-emerald-400/30 shadow-[0_10px_35px_rgba(0,0,0,0.85)] max-w-2xl text-center">
+        <i class="bi bi-shield-check text-emerald-400 text-lg sm:text-xl"></i>
+        <div class="text-left">
+            <span class="block font-cinzel font-bold text-xs sm:text-sm text-white tracking-wide">Nutrición Bio-Celular Activa</span>
+            <span class="block text-[11px] sm:text-xs text-slate-300 font-light">Asimilación profunda en minutos para recargar tus células de energía viva.</span>
+        </div>
+    </div>
+</div>
+
+<!-- Escena 4: Cierre & Llamado a Explorar Menú -->
+<div data-r="0.88,0.94,1.01,1.02" class="scroll-text absolute inset-x-0 bottom-8 sm:bottom-12 md:bottom-14 flex items-center justify-center px-4 pointer-events-none z-30" style="opacity:0;visibility:hidden">
+    <div class="inline-flex flex-col sm:flex-row items-center gap-3 sm:gap-5 px-6 sm:px-8 py-3.5 rounded-full bg-black/80 backdrop-blur-2xl border border-emerald-400/40 shadow-[0_12px_40px_rgba(0,0,0,0.95)] pointer-events-auto">
+        <span class="font-cinzel text-xs sm:text-sm font-bold text-white tracking-wide">Descubre la colección de elíxires botánicos</span>
+        <a href="#catalogo" class="btn btn-leaf px-5 py-2 text-xs font-bold uppercase tracking-wider">Ver Menú <i class="bi bi-arrow-down-circle ms-1"></i></a>
+    </div>
+</div>
 </div>
 </section>
 
@@ -598,10 +632,10 @@ var money = function(n) { return '$' + Number(n).toLocaleString('es-CO'); };
 /* Configuración dinámica conectada a /api/ajustes-web */
 var AJUSTES = {
     heroTitulo: 'RAÍCES',
-    heroSubtitulo: 'Espinaca silvestre, aloe vera, cúrcuma y jengibre, exprimidos a mano y en tu puerta el mismo día. Sin azúcar añadida.',
+    heroSubtitulo: 'Nutrición celular viva, sin pasteurizar y sin azúcar añadida.',
     marquesinaTexto: 'Prensado en frío | Sin azúcar añadida | Sin conservantes | Cosecha de menos de 24 horas | Despacho el mismo día | Pide por voz',
-    bannerPromoActivo: true,
-    bannerPromoTexto: '🌿 Cosecha directa de productores sostenibles · Entregas hoy en Tuluá y Valle',
+    bannerPromoActivo: false,
+    bannerPromoTexto: '',
     whatsappNumero: '573177651016',
     efectoSimiosActivo: true,
     efectoFloraActivo: true,
@@ -615,6 +649,7 @@ function cargarAjustesDesdeBackend() {
         .then(function(res) { if (!res.ok) throw new Error('Status ' + res.status); return res.json(); })
         .then(function(data) {
             AJUSTES = Object.assign({}, AJUSTES, data);
+            AJUSTES.bannerPromoActivo = false;
             aplicarAjustesEnUI();
         })
         .catch(function(err) {
@@ -624,20 +659,11 @@ function cargarAjustesDesdeBackend() {
 }
 
 function aplicarAjustesEnUI() {
-    // 1. Banner superior
+    // 1. Banner superior (permanentemente desactivado para vista cinematográfica limpia)
     var banner = $('banner-anuncio-top');
-    if (banner) {
-        if (AJUSTES.bannerPromoActivo && AJUSTES.bannerPromoTexto) {
-            banner.innerText = AJUSTES.bannerPromoTexto;
-            banner.style.display = 'block';
-            var nav = $('main-nav');
-            if (nav) nav.style.paddingTop = 'calc(2.2rem + env(safe-area-inset-top, 0px))';
-        } else {
-            banner.style.display = 'none';
-            var nav = $('main-nav');
-            if (nav) nav.style.paddingTop = 'calc(.6rem + env(safe-area-inset-top, 0px))';
-        }
-    }
+    if (banner) banner.style.display = 'none';
+    var nav = $('main-nav');
+    if (nav) nav.style.paddingTop = 'calc(.6rem + env(safe-area-inset-top, 0px))';
 
     // 2. Título y subtítulo del hero
     var tit = $('hero-display-titulo');
@@ -673,9 +699,11 @@ function aplicarAjustesEnUI() {
 
 /* Contenido estático inicial */
 var BADGES = [ ['Espinaca silvestre', 'Clorofila pura', 'text-emerald-400'], ['Aloe vera nativo', 'Mucílago celular', 'text-aloe-400'], ['Jengibre prensado', 'Gingerol activo', 'text-amber-400'], ['Cúrcuma de raíz', 'Curcumina 95%', 'text-turmeric-400'] ];
-$('hero-badges').innerHTML = BADGES.map(function(b) {
-    return '<div class="px-4 py-3 rounded-2xl bg-black/30 border border-white/10 backdrop-blur-md text-left"><div class="text-xs text-slate-300">' + b[0] + '</div><div class="text-sm font-semibold ' + b[2] + '">' + b[1] + '</div></div>';
-}).join('');
+if ($('hero-badges')) {
+    $('hero-badges').innerHTML = BADGES.map(function(b) {
+        return '<div class="px-4 py-3 rounded-2xl bg-black/30 border border-white/10 backdrop-blur-md text-left"><div class="text-xs text-slate-300">' + b[0] + '</div><div class="text-sm font-semibold ' + b[2] + '">' + b[1] + '</div></div>';
+    }).join('');
+}
 
 var mq = ['Prensado en frío', 'Sin azúcar añadida', 'Sin conservantes', 'Cosecha de menos de 24 horas', 'Despacho el mismo día', 'Pide por voz'];
 var mqHtml = mq.map(function(t) { return '<span class="flex items-center gap-3 font-cinzel text-lg text-slate-300 whitespace-nowrap"><i class="bi bi-stars text-emerald-400"></i>' + t + '</span>'; }).join('');
@@ -688,7 +716,7 @@ var ING = [
     ['bi-fire', 'Jengibre de raíz', 'Zingiber officinale', 'Su gingerol mejora la microcirculación y reparte mejor los compuestos activos.', 'Gingerol activo', '94.8%', '#f59e0b', 'text-amber-400', 'md:col-span-2'],
     ['bi-stars', 'Cúrcuma de raíz', 'Curcuma longa', 'Modula la inflamación celular y apoya la función depurativa del hígado.', 'Curcumina 95%', '92.3%', '#fbbf24', 'text-yellow-400', 'md:col-span-2'],
     ['bi-droplet-half', 'Semillas de chía', 'Salvia hispanica', 'Hidrocoloides naturales que hidratan y retardan la liberación de glucosa.', 'Omega-3 nativo', '95.0%', '#94a3b8', 'text-slate-300', 'md:col-span-2'],
-    ['bi-heart-pulse', 'Remolacha y rábano', 'Beta vulgaris', 'Fuente primaria de betanina: da el color rubí y dispara el flujo de oxígeno celular.', 'Óxido nítrico', '97.5%', '#e60049', 'text-ruby-400', 'md:col-span-6']
+    ['bi-heart-pulse', 'Remolacha y rábano', 'Beta vulgaris', 'Fuente primaria de betanina: estimula la circulación y dispara el flujo de oxígeno celular.', 'Óxido nítrico', '97.5%', '#10b981', 'text-emerald-400', 'md:col-span-6']
 ];
 $('grid-ing').innerHTML = ING.map(function(g, i) {
     return '<div class="spot reveal rounded-[28px] p-8 ' + g[8] + '" style="--c:' + g[6] + ';--i:' + i + '"><div class="flex items-start justify-between mb-6"><span class="w-12 h-12 rounded-2xl bg-white/[.06] border border-white/15 grid place-items-center text-xl ' + g[7] + '"><i class="bi ' + g[0] + '"></i></span><span class="px-3 py-1 rounded-full text-xs font-semibold ' + g[7] + ' bg-black/30 border border-white/15">' + g[4] + '</span></div>' +
@@ -696,7 +724,7 @@ $('grid-ing').innerHTML = ING.map(function(g, i) {
         '<div class="pt-5 border-t border-white/10 flex items-center justify-between text-sm"><span class="text-slate-400">Biodisponibilidad</span><span class="font-bold ' + g[7] + '">' + g[5] + '</span></div></div>';
 }).join('');
 
-var DET = [ ['1', 'Depuración hepática', 'La clorofila y la curcumina ayudan a eliminar toxinas acumuladas y metales pesados.', 'text-emerald-400', '#22c55e'], ['2', 'Activación vascular', 'El shot Rubí Vital dispara el óxido nítrico y mejora el flujo de sangre y nutrientes.', 'text-ruby-400', '#e60049'], ['3', 'Regeneración de mucosa', 'El acemanano del aloe repara el endotelio digestivo para absorber mejor.', 'text-turmeric-400', '#fbbf24'] ];
+var DET = [ ['1', 'Depuración hepática', 'La clorofila y la curcumina ayudan a eliminar toxinas acumuladas y metales pesados.', 'text-emerald-400', '#22c55e'], ['2', 'Activación vascular', 'Los fitoquímicos vivos optimizan el flujo de oxígeno y nutrientes a nivel celular.', 'text-emerald-400', '#22c55e'], ['3', 'Regeneración de mucosa', 'El acemanano del aloe repara el endotelio digestivo para absorber mejor.', 'text-turmeric-400', '#fbbf24'] ];
 $('grid-det').innerHTML = DET.map(function(d, i) {
     return '<div class="spot reveal rounded-[28px] p-8" style="--c:' + d[4] + ';--i:' + i + '"><div class="font-cinzel text-6xl font-black ' + d[3] + ' mb-4">' + d[0] + '</div><h3 class="font-cinzel text-xl font-bold mb-3">' + d[1] + '</h3><p class="text-slate-300 text-sm font-light leading-relaxed">' + d[2] + '</p></div>';
 }).join('');
@@ -810,7 +838,8 @@ function cinematicScrubLoop() {
     for (var i = 0; i < texts.length; i++) {
         var t = texts[i], inV = ss(t.r[0], t.r[1], scrollProgress), outV = ss(t.r[2], t.r[3], scrollProgress), a = inV * (1 - outV);
         t.el.style.opacity = a;
-        t.el.style.transform = 'translate3d(0,' + ((1 - inV) * 50 - outV * 50) + 'px,0)';
+        var shift = (t.el.id === 'scene-hero') ? ((1 - inV) * 35 - outV * 35) : ((1 - inV) * 16 - outV * 16);
+        t.el.style.transform = 'translate3d(0,' + shift + 'px,0)';
         t.el.style.visibility = a < 0.02 ? 'hidden' : 'visible';
     }
     requestAnimationFrame(cinematicScrubLoop);
@@ -1159,13 +1188,13 @@ function helic() {
 }
 var ORIG = { m: '50% 2%', f: '3% 97%', h: '50% 92%' };
 var FLORA = {
-    hero: [ ['m', 'left:-8%;top:-10%;--s:30;--rot:20;--px:-30;--py:-60;--pr:8;--d:10s'], ['m', 'right:-10%;top:-14%;--s:34;--rot:-24;--fx:-1;--px:40;--py:-80;--pr:-8;--d:11s;--bl:3px'], ['f', 'left:-6%;bottom:-18%;--s:42;--py:-120;--pr:-4;--d:8s'], ['f', 'right:-8%;bottom:-20%;--s:44;--fx:-1;--py:-110;--d:9s'], ['h', 'left:10%;bottom:-8%;--s:11;--rot:-6;--py:-60;--d:7s'], ['h', 'right:14%;bottom:-10%;--s:9;--rot:8;--py:-80;--bl:2px;--d:6s'], ['m', 'right:-4%;bottom:-24%;--s:30;--rot:200;--bl:9px;--py:-150;--d:12s;--o:.85'] ],
+    hero: [],
     catalogo: [ ['m', 'right:-7%;top:2%;--s:26;--rot:-18;--fx:-1;--py:-90;--pr:6;--d:11s'], ['f', 'left:-9%;top:30%;--s:30;--rot:-20;--py:-120;--d:9s'], ['h', 'right:3%;bottom:6%;--s:9;--rot:6;--py:-60;--d:7s'] ],
     ingredientes: [ ['m', 'left:-8%;top:8%;--s:26;--rot:14;--py:-100;--pr:-6;--d:10s'], ['f', 'right:-8%;bottom:-6%;--s:34;--fx:-1;--rot:10;--py:-110;--d:9s'] ],
     beneficios: [ ['f', 'left:-8%;bottom:-8%;--s:32;--rot:-8;--py:-100;--d:8s'], ['m', 'right:-7%;top:4%;--s:24;--rot:-28;--fx:-1;--py:-80;--d:12s'], ['h', 'left:8%;top:6%;--s:8;--rot:-10;--py:-50;--d:6s'] ]
 };
 function buildFlora(box, list, soft) {
-    if (!box) return;
+    if (!box || !list || !list.length) return;
     box.innerHTML = list.map(function(it) {
         var svg = (it[0] === 'm' ? monstera() : it[0] === 'f' ? frond() : helic()).replace('<svg ', '<svg style="transform-origin:' + ORIG[it[0] ] + '" ');
         return '<div class="fl" style="' + it[1] + (soft ? ';--o:.5' : '') + '">' + svg + '</div>';
@@ -1173,7 +1202,7 @@ function buildFlora(box, list, soft) {
 }
 var floraBoxes = [];
 function initFlora() {
-    buildFlora($('flora-hero'), FLORA.hero, false);
+    if ($('flora-hero')) buildFlora($('flora-hero'), FLORA.hero, false);
     ['catalogo', 'ingredientes', 'beneficios'].forEach(function(id) {
         var sec = $(id);
         if (!sec) return;
