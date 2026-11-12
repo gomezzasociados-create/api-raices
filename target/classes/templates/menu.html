@@ -311,6 +311,7 @@ section>.max-w-7xl{position:relative;z-index:2}
 <audio id="mainAudio" preload="auto" loop><source src="audio_fondo.mp3?v=2" type="audio/mpeg"></audio>
 <audio id="sfxCash" preload="auto"><source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=cash-register-purchase-87313.mp3" type="audio/mpeg"></audio>
 <audio id="sfxBlender" preload="auto"><source src="sonido_licuadora.mp3?v=4" type="audio/mpeg"></audio>
+<audio id="sfxApe" preload="auto"><source src="sonido_simio.mp3?v=1" type="audio/mpeg"></audio>
 
 <!-- BARRA DE ANUNCIO SUPERIOR (DESACTIVADA) -->
 <div id="banner-anuncio-top" style="display:none!important"></div>
@@ -962,7 +963,23 @@ function trackEvent(eventName, customData) {
 }
 
 /* 5. Audio */
-var mainAudio = $('mainAudio'), cashSound = $('sfxCash'), blenderSound = $('sfxBlender');
+var mainAudio = $('mainAudio'), cashSound = $('sfxCash'), blenderSound = $('sfxBlender'), apeSound = $('sfxApe');
+var lastApeSoundTime = 0;
+function playApeSound(force) {
+    if (AJUSTES && AJUSTES.efectoSimiosActivo === false) return;
+    var now = performance.now();
+    if (!force && now - lastApeSoundTime < 3800) return;
+    lastApeSoundTime = now;
+    if (!apeSound) apeSound = $('sfxApe');
+    if (apeSound) {
+        apeSound.currentTime = 0;
+        apeSound.volume = 1;
+        var p = apeSound.play();
+        if (p && typeof p.catch === 'function') {
+            p.catch(function(err) { console.log('Ape sound play handled:', err); });
+        }
+    }
+}
 var blenderFadeInterval = null;
 var blenderCtx = null;
 var blenderNodes = null;
@@ -1596,7 +1613,7 @@ function renderBuilder() {
         '<div class="font-cinzel text-3xl font-bold text-yellow-400">' + money(bTotal()) + '</div>' + btn + (done ? bMsgHtml() : '') + '</div></div></div></div>';
     var slot = $('ape-slot');
     if (!bApe && AJUSTES.efectoSimiosActivo !== false) {
-        var bx = document.createElement('div'); bx.className = 'ape-peek card'; bApe = mountApe(bx, 7, 'v2'); setTimeout(function() { bApe.el.classList.add('in'); }, 400);
+        var bx = document.createElement('div'); bx.className = 'ape-peek card'; bApe = mountApe(bx, 7, 'v2'); setTimeout(function() { bApe.el.classList.add('in'); playApeSound(); }, 400);
     }
     if (bApe && APES.indexOf(bApe) < 0) APES.push(bApe);
     if (bApe && slot) slot.parentNode.replaceChild(bApe.box, slot);
@@ -1994,10 +2011,19 @@ function initChimp() {
     var spans = Array.prototype.slice.call(words.querySelectorAll('span'));
     var tx = 0, ty = 0, x = 0, y = 0, last = performance.now(), vis = false, phase = -1;
     var CAPS = ['Mira lo que traje', 'Un sorbito…', 'Despacio…', 'Ya casi…', '¡Ahhh!'];
-    new IntersectionObserver(function(es) { vis = es[0].isIntersecting; }, { rootMargin: '100px' }).observe(sec);
+    var chimpTriggered = false;
+    new IntersectionObserver(function(es) {
+        vis = es[0].isIntersecting;
+        if (vis && !chimpTriggered) {
+            chimpTriggered = true;
+            playApeSound();
+        } else if (!vis) {
+            chimpTriggered = false;
+        }
+    }, { threshold: 0.15, rootMargin: '0px' }).observe(sec);
     addEventListener('pointermove', function(e) { tx = (e.clientX / innerWidth - .5) * 2; ty = (e.clientY / innerHeight - .5) * 2; last = performance.now(); });
     ['pointerup', 'pointercancel', 'pointerleave'].forEach(function(n) { st.addEventListener(n, function() { st.classList.remove('ooh'); }); });
-    st.addEventListener('pointerdown', function(e) { st.classList.add('ooh'); if (cv) { var rc = cv.getBoundingClientRect(); emit(14, e.clientX - rc.left, e.clientY - rc.top, { a0: 0, a1: 6.28, s0: 1, s1: 5, g: .06, r0: 2, r1: 4, c: SPK, t: 'spark' }); } });
+    st.addEventListener('pointerdown', function(e) { st.classList.add('ooh'); playApeSound(true); if (cv) { var rc = cv.getBoundingClientRect(); emit(14, e.clientX - rc.left, e.clientY - rc.top, { a0: 0, a1: 6.28, s0: 1, s1: 5, g: .06, r0: 2, r1: 4, c: SPK, t: 'spark' }); } });
     addEventListener('touchmove', function(e) { var t = e.touches[0]; if (t) { tx = (t.clientX / innerWidth - .5) * 2; ty = (t.clientY / innerHeight - .5) * 2; last = performance.now(); } }, { passive: true });
     function s2(a, b, v) { var t = clamp((v - a) / (b - a)); return t * t * (3 - 2 * t); }
     function lp(a, b, k) { return a + (b - a) * k; }
@@ -2105,8 +2131,8 @@ function apeSay(a, txt) {
     b.textContent = txt; b.style.left = x + 'px'; b.style.top = Math.max(72, r.top + 4) + 'px'; b.classList.add('show');
     clearTimeout(apeSay._t); apeSay._t = setTimeout(function() { b.classList.remove('show'); }, 2300);
 }
-function apeClick(a) { apeDo(a, 'bounce', 550); apeDo(a, 'ooh', 1000); apeSay(a, APE_SAY[Math.floor(Math.random() * APE_SAY.length)]); }
-function apesCheer() { APES.forEach(function(a) { if (a.el.classList.contains('in') && a.el.isConnected) { apeDo(a, 'cheer', 1500); apeDo(a, 'ooh', 1500); } }); }
+function apeClick(a) { apeDo(a, 'bounce', 550); apeDo(a, 'ooh', 1000); playApeSound(true); apeSay(a, APE_SAY[Math.floor(Math.random() * APE_SAY.length)]); }
+function apesCheer() { playApeSound(); APES.forEach(function(a) { if (a.el.classList.contains('in') && a.el.isConnected) { apeDo(a, 'cheer', 1500); apeDo(a, 'ooh', 1500); } }); }
 function apeQueue() { if (!apeRaf) apeRaf = requestAnimationFrame(apeLook); }
 function apeLook() {
     apeRaf = 0;
@@ -2134,7 +2160,7 @@ function initApes() {
         '<linearGradient id="ap-lens" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4ade80" stop-opacity=".3"/><stop offset=".5" stop-color="#0a0f2a" stop-opacity=".55"/><stop offset="1" stop-color="#ff4d6d" stop-opacity=".32"/></linearGradient>' +
         '<filter id="ap-soft"><feGaussianBlur stdDeviation="1.3"/></filter><filter id="ap-glow" x="-30%" y="-40%" width="160%" height="180%"><feGaussianBlur stdDeviation="2.4"/></filter></defs></svg>';
     document.body.appendChild(defs.firstChild);
-    apeIO = new IntersectionObserver(function(es) { es.forEach(function(e) { if (e.isIntersecting && e.target._ape) { e.target._ape.el.classList.add('in'); apeIO.unobserve(e.target); } }); }, { threshold: .4, rootMargin: '0px 0px -10% 0px' });
+    apeIO = new IntersectionObserver(function(es) { es.forEach(function(e) { if (e.isIntersecting && e.target._ape) { e.target._ape.el.classList.add('in'); apeIO.unobserve(e.target); playApeSound(); } }); }, { threshold: .4, rootMargin: '0px 0px -10% 0px' });
     document.querySelectorAll('.ape-peek[data-ape]').forEach(function(box) { mountApe(box, +box.getAttribute('data-ape') * 11, box.getAttribute('data-v') || ''); });
     window.addEventListener('pointermove', function(e) { APE_M.x = e.clientX; APE_M.y = e.clientY; apeQueue(); }, { passive: true });
     window.addEventListener('scroll', function() { apeQueue(); $('ape-bubble') && $('ape-bubble').classList.remove('show'); }, { passive: true });
