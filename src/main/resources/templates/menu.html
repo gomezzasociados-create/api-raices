@@ -310,7 +310,7 @@ section>.max-w-7xl{position:relative;z-index:2}
 <div id="toast" role="status"></div>
 <audio id="mainAudio" preload="auto" loop><source src="audio_fondo.mp3" type="audio/mpeg"></audio>
 <audio id="sfxCash" preload="auto"><source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=cash-register-purchase-87313.mp3" type="audio/mpeg"></audio>
-<audio id="sfxBlender" preload="auto"><source src="sonido_licuadora.mp3" type="audio/mpeg"><source src="sonido_licuadora.wav" type="audio/wav"></audio>
+<audio id="sfxBlender" preload="auto"><source src="sonido_licuadora.mp3?v=3" type="audio/mpeg"></audio>
 
 <!-- BARRA DE ANUNCIO SUPERIOR (DESACTIVADA) -->
 <div id="banner-anuncio-top" style="display:none!important"></div>
@@ -1082,20 +1082,20 @@ function stopWebAudioBlenderSynth() {
 function playBlenderSound() {
     if (blenderFadeInterval) { clearInterval(blenderFadeInterval); blenderFadeInterval = null; }
     
-    // 1. Audio HTML5 nativo (sonido_licuadora.mp3 / sonido_licuadora.wav)
+    // 1. Audio HTML5 nativo con el efecto de sonido cargado por el usuario
     if (blenderSound) {
         blenderSound.volume = 1;
         blenderSound.currentTime = 0;
         var p = blenderSound.play();
         if (p && typeof p.catch === 'function') {
             p.catch(function(err) {
-                console.log('Audio element play handled:', err);
+                console.log('Audio element play handled, activando fallback synth:', err);
+                startWebAudioBlenderSynth();
             });
         }
+    } else {
+        startWebAudioBlenderSynth();
     }
-    
-    // 2. Motor acústico en tiempo real por WebAudio API (garantiza inmediatez y cero latencia)
-    startWebAudioBlenderSynth();
 }
 
 function stopBlenderSound() {
