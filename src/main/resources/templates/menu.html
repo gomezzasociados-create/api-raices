@@ -609,8 +609,8 @@ section>.max-w-7xl{position:relative;z-index:2}
     <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-400/50 shadow-[0_0_20px_rgba(34,197,94,0.3)] backdrop-blur-md mb-4 text-emerald-300 text-xs font-bold tracking-wider uppercase">
         <i class="bi bi-broadcast"></i> <span id="blog-display-badge">COMUNIDAD BIO-ACTIVA & BLOG</span>
     </div>
-    <h2 id="blog-display-titulo" class="font-cinzel font-black text-3xl md:text-5xl text-white mb-4">Espacio de Conocimiento & <span class="shine">Conexión Vital</span></h2>
-    <p id="blog-display-subtitulo" class="text-slate-400 text-sm max-w-2xl mx-auto mb-12 font-light">Fundamentos de nutrición celular, notas del laboratorio RAÍCES y propuestas de nuevos sabores de la comunidad.</p>
+    <h2 id="blog-display-titulo" class="font-cinzel font-black text-3xl md:text-5xl text-white mb-4 uppercase">ESPACIO DE CONOCIMIENTO &amp; <span class="shine">CONEXIÓN VITAL</span></h2>
+    <p id="blog-display-subtitulo" class="text-slate-400 text-sm max-w-2xl mx-auto mb-12 font-light leading-relaxed">Descubre los fundamentos de la nutrición celular viva, novedades del laboratorio RAÍCES y comparte tus sugerencias y peticiones de nuevos sabores para construir la comunidad.</p>
 
     <!-- ARTÍCULOS DESTACADOS EN VIVO DESDE EL ADMIN -->
     <div id="grid-articulos-home" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left mb-12">
@@ -725,8 +725,8 @@ var AJUSTES = {
     efectoLicuadoraActivo: true,
     efectoAudioFondo: true,
     blogBadge: 'COMUNIDAD BIO-ACTIVA & BLOG',
-    blogTitulo: 'Espacio de Conocimiento & <span class="shine">Conexión Vital</span>',
-    blogSubtitulo: 'Fundamentos de nutrición celular, notas del laboratorio RAÍCES y propuestas de nuevos sabores de la comunidad.',
+    blogTitulo: 'ESPACIO DE CONOCIMIENTO & CONEXIÓN VITAL',
+    blogSubtitulo: 'Descubre los fundamentos de la nutrición celular viva, novedades del laboratorio RAÍCES y comparte tus sugerencias y peticiones de nuevos sabores para construir la comunidad.',
     blogActivo: true
 };
 
@@ -1357,22 +1357,19 @@ function cargarInsumosReales(sucursal) {
 function adaptarInsumosParaBlender(insumos) {
     if (!insumos || !insumos.length) return;
 
-    // Detectamos si hay insumos catalogados para el batido
+    // Cargar EXCLUSIVAMENTE ingredientes de la Bodega Arma Tu Batido (categoria Arma tu Batido / porcion)
     var candidatos = insumos.filter(function(i) {
-        var c = (i.categoria || '').toLowerCase();
-        return c.includes('arma') || c.includes('batido');
+        if (!i || !i.nombre) return false;
+        var c = (i.categoria || '').toLowerCase().trim();
+        return c.includes('arma') || c.includes('porcion');
     });
-    if (!candidatos.length) {
-        candidatos = insumos.filter(function(i) {
-            return i.subcategoria && i.subcategoria.trim().length > 0;
-        });
-    }
+    if (!candidatos.length) return;
 
-    // 1. BASES LÍQUIDAS
+    // 1. BASES LÍQUIDAS (Subcategoría Base o nombres reconocidos de bases en bodega)
     var basesDb = candidatos.filter(function(i) {
         var sub = (i.subcategoria || '').toLowerCase().trim();
-        var nom = (i.nombre || '').toLowerCase();
-        return sub === 'base' || nom.includes('leche') || nom.includes('aloe vera') || nom.includes('agua de coco');
+        var nom = (i.nombre || '').toLowerCase().trim();
+        return sub === 'base' || nom.includes('leche de almendras') || nom.includes('aloe vera puro');
     });
 
     if (basesDb.length > 0) {
@@ -1383,15 +1380,16 @@ function adaptarInsumosParaBlender(insumos) {
             else if (nom.includes('aloe')) color = '#d6e98c';
             else if (nom.includes('coco')) color = '#e3f3ea';
             else if (nom.includes('naranja') || nom.includes('manzana')) color = '#fde047';
-            return [b.nombre, Number(b.precio) || 0, color, b.idInsumo];
+            return [b.nombre, Number(b.precio) || 0, color, b.idInsumo || b.id];
         });
         BASE_COL = BASES.map(function(b) { return b[2]; });
     }
 
-    // 2. FITONUTRIENTES / INGREDIENTES
+    // 2. FITONUTRIENTES / INGREDIENTES (Subcategoría distinta a Base)
     var ingsDb = candidatos.filter(function(i) {
         var sub = (i.subcategoria || '').toLowerCase().trim();
-        return sub !== 'base';
+        var nom = (i.nombre || '').toLowerCase().trim();
+        return sub !== 'base' && !nom.includes('leche de almendras') && !nom.includes('aloe vera puro');
     });
 
     if (ingsDb.length > 0) {
@@ -1411,7 +1409,7 @@ function adaptarInsumosParaBlender(insumos) {
                 Number(item.precio) || 0,
                 color,
                 subcat,
-                item.idInsumo,
+                item.idInsumo || item.id,
                 item.cantidadPorcion || 0,
                 item.medida || 'gr'
             ];
@@ -1705,13 +1703,37 @@ function panelFlora() {
     return '<div class="cfl" style="opacity:.85">' + leafHtml([ ['f', 'left:-4%;bottom:-24%;--w:26;--rot:-4;--d:8s'], ['f', 'right:-4%;bottom:-24%;--w:26;--fx:-1;--d:9s'], ['m', 'left:-6%;top:-20%;--w:15;--rot:22;--d:10s'], ['h', 'right:9%;bottom:-8%;--w:6;--d:6s'] ]) + '</div>';
 }
 
-/* 9. Arma tu batido con Licuadora SVG procedural */
-var ING_B = [ ['Espinaca', 2000, '#22c55e', 'Vegetales'], ['Aloe vera', 2000, '#a3e635', 'Vegetales'], ['Jengibre', 1500, '#f59e0b', 'Vegetales'], ['Cúrcuma', 1500, '#fbbf24', 'Vegetales'], ['Remolacha', 2000, '#e60049', 'Vegetales'], ['Chía', 1500, '#94a3b8', 'Semillas'], ['Piña', 2000, '#facc15', 'Frutas'], ['Pitahaya', 3000, '#d946ef', 'Frutas'], ['Maracuyá', 2500, '#fb923c', 'Frutas'], ['Limón', 1000, '#bef264', 'Frutas'] ];
-var BASES = [ ['Agua de coco', 0, '#e3f3ea'], ['Leche de almendras', 2000, '#f0e4d0'], ['Jugo de manzana verde', 1000, '#d6e98c'] ];
-var subcategoriasBatidoDisponibles = ['Todas', 'Vegetales', 'Frutas', 'Semillas'];
+/* 9. Arma tu batido con Licuadora SVG procedural - Sincronizado exactamente con Bodega Arma tu Batido */
+var ING_B = [
+    ['Espinaca Baby', 1000, '#22c55e', 'Vegetales', 29, 30, 'gr'],
+    ['Zanahoria Crunch', 900, '#f97316', 'Vegetales', 30, 40, 'gr'],
+    ['Betarraga Roja', 1100, '#be123c', 'Vegetales', 31, 35, 'gr'],
+    ['Piña Golden', 1200, '#facc15', 'Frutas', 32, 50, 'gr'],
+    ['Plátano de Seda', 900, '#fde047', 'Frutas', 33, 50, 'gr'],
+    ['Frutilla Silvestre', 1300, '#ef4444', 'Frutas', 34, 40, 'gr'],
+    ['Arándano Azul', 1500, '#3b82f6', 'Frutas', 35, 30, 'gr'],
+    ['Semillas de Chía', 800, '#94a3b8', 'Semillas', 36, 15, 'gr'],
+    ['Semillas de Linaza', 800, '#a1a1aa', 'Semillas', 37, 15, 'gr'],
+    ['Semillas de Calabaza', 900, '#84cc16', 'Semillas', 38, 20, 'gr'],
+    ['Palta Hass Cremosa', 1400, '#4ade80', 'Grasas', 39, 40, 'gr'],
+    ['Aceite de Coco Extra Virgen', 1000, '#e2e8f0', 'Grasas', 40, 15, 'mls'],
+    ['Espirulina Viva', 1500, '#059669', 'Suplementos', 41, 5, 'gr'],
+    ['Maca Andina Vital', 1200, '#d97706', 'Suplementos', 42, 10, 'gr'],
+    ['Proteína Whey Vegana', 1800, '#ca8a04', 'Proteínas', 43, 25, 'gr'],
+    ['Avena Integral Suave', 800, '#eab308', 'Cereales', 46, 30, 'gr'],
+    ['Mantequilla de Maní', 1000, '#b45309', 'Frutos Secos', 47, 25, 'gr'],
+    ['Nueces del Nogal', 1200, '#78350f', 'Frutos Secos', 48, 25, 'gr'],
+    ['Miel de Ulmo Nativa', 900, '#f59e0b', 'Endulzantes', 49, 20, 'gr'],
+    ['Canela de Ceylán', 600, '#a16207', 'Especias', 50, 5, 'gr']
+];
+var BASES = [
+    ['Leche de Almendras', 1000, '#f0e4d0', 44],
+    ['Aloe Vera Puro', 1100, '#d6e98c', 45]
+];
+var subcategoriasBatidoDisponibles = ['Todas', 'Vegetales', 'Frutas', 'Semillas', 'Grasas', 'Suplementos', 'Proteínas', 'Cereales', 'Frutos Secos', 'Endulzantes', 'Especias'];
 var subcategoriaBatidoActual = 'Todas';
 var bSel = [], bBase = 0, bN = 0, bState = 'idle', bRaf = 0, bT0 = 0, bApe = null;
-var BASE_COL = ['#e3f3ea', '#f0e4d0', '#d6e98c'];
+var BASE_COL = ['#f0e4d0', '#d6e98c'];
 var BLEND_MS = 4300;
 function bClamp(v) { return Math.max(0, Math.min(1, v)); }
 function bSm(v) { v = bClamp(v); return v * v * (3 - 2 * v); }
@@ -1968,18 +1990,18 @@ function renderComunidad(pestana) {
     if ($('barra-busqueda')) $('barra-busqueda').style.display = 'none';
 
     var badgeTexto = esc(AJUSTES.blogBadge || 'COMUNIDAD BIO-ACTIVA & BLOG');
-    var tituloTexto = AJUSTES.blogTitulo || 'Espacio de Conocimiento & <span class="shine">Conexión Vital</span>';
-    var subtituloTexto = esc(AJUSTES.blogSubtitulo || 'Fundamentos de nutrición celular, notas del laboratorio RAÍCES y propuestas de nuevos sabores de la comunidad.');
+    var tituloTexto = AJUSTES.blogTitulo || 'ESPACIO DE CONOCIMIENTO & CONEXIÓN VITAL';
+    var subtituloTexto = esc(AJUSTES.blogSubtitulo || 'Descubre los fundamentos de la nutrición celular viva, novedades del laboratorio RAÍCES y comparte tus sugerencias y peticiones de nuevos sabores para construir la comunidad.');
 
     var navHtml = '<div class="col-span-full mb-8"><div class="spot rim rounded-[28px] p-6 md:p-8 text-center overflow-hidden">' +
         '<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-400/50 shadow-[0_0_20px_rgba(34,197,94,0.3)] backdrop-blur-md mb-3 text-emerald-300 text-xs font-bold tracking-wider uppercase">' +
         '<i class="bi bi-broadcast"></i> <span id="comunidad-nav-badge">' + badgeTexto + '</span></div>' +
-        '<h2 id="comunidad-nav-titulo" class="font-cinzel font-black text-2xl md:text-4xl text-white mb-2">' + tituloTexto + '</h2>' +
-        '<p id="comunidad-nav-subtitulo" class="text-slate-400 text-sm max-w-2xl mx-auto mb-6 font-light">' + subtituloTexto + '</p>' +
+        '<h2 id="comunidad-nav-titulo" class="font-cinzel font-black text-2xl md:text-4xl text-white mb-2 uppercase">' + tituloTexto + '</h2>' +
+        '<p id="comunidad-nav-subtitulo" class="text-slate-400 text-sm max-w-2xl mx-auto mb-6 font-light leading-relaxed">' + subtituloTexto + '</p>' +
         '<div class="flex justify-center gap-3 flex-wrap">' +
-        '<button class="btn ' + (pestana === 'articulos' ? 'btn-leaf' : 'btn-ghost') + ' px-5 py-2.5 text-xs" onclick="renderComunidad(\'articulos\')"><i class="bi bi-newspaper me-1"></i> Artículos & Guías</button>' +
-        '<button class="btn ' + (pestana === 'buzon' ? 'btn-leaf' : 'btn-ghost') + ' px-5 py-2.5 text-xs" onclick="renderComunidad(\'buzon\')"><i class="bi bi-lightbulb-fill me-1"></i> Buzón & Propuestas</button>' +
-        '<button class="btn ' + (pestana === 'escribir' ? 'btn-leaf' : 'btn-ghost') + ' px-5 py-2.5 text-xs" onclick="renderComunidad(\'escribir\')"><i class="bi bi-pencil-square me-1"></i> Nueva Propuesta</button>' +
+        '<button class="btn ' + (pestana === 'articulos' ? 'btn-leaf font-bold' : 'btn-ghost text-slate-300') + ' px-5 py-2.5 text-xs tracking-wider uppercase" onclick="renderComunidad(\'articulos\')"><i class="bi bi-newspaper me-1"></i> ARTÍCULOS &amp; GUÍAS</button>' +
+        '<button class="btn ' + (pestana === 'buzon' ? 'btn-leaf font-bold' : 'btn-ghost text-slate-300') + ' px-5 py-2.5 text-xs tracking-wider uppercase" onclick="renderComunidad(\'buzon\')"><i class="bi bi-lightbulb-fill me-1"></i> BUZÓN &amp; PETICIONES</button>' +
+        '<button class="btn ' + (pestana === 'escribir' ? 'btn-leaf font-bold' : 'btn-ghost text-slate-300') + ' px-5 py-2.5 text-xs tracking-wider uppercase" onclick="renderComunidad(\'escribir\')"><i class="bi bi-pencil-square me-1"></i> DEJAR PROPUESTA / IDEA</button>' +
         '</div></div></div>' +
         '<div id="contenedor-dinamico-comunidad" class="col-span-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>';
 
@@ -2010,8 +2032,8 @@ function cargarArticulosHome() {
                 
                 return '<div class="spot rim rounded-[28px] overflow-hidden flex flex-col justify-between cursor-pointer group transition-all duration-300 hover:-translate-y-1.5" onclick="abrirModalArticulo(' + Number(art.id) + ')">' +
                     '<div><div class="relative overflow-hidden">' + media +
-                    '<span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-emerald-400/50 text-emerald-300">' + esc(art.categoria || 'Nutrición') + '</span></div>' +
-                    '<div class="p-6"><h3 class="font-cinzel text-xl font-bold mb-2 text-white group-hover:text-emerald-300 transition-colors line-clamp-2">' + esc(art.titulo) + '</h3>' +
+                    '<span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-emerald-400/50 text-emerald-300"><i class="bi bi-tag-fill me-1"></i>' + esc((art.categoria || 'Nutrición').toUpperCase()) + '</span></div>' +
+                    '<div class="p-6"><h3 class="font-cinzel text-xl font-bold mb-2 text-white group-hover:text-emerald-300 transition-colors line-clamp-2 uppercase">' + esc(art.titulo) + '</h3>' +
                     '<p class="text-slate-300 text-xs font-light leading-relaxed line-clamp-3 mb-4">' + esc(art.resumen || art.contenido || '') + '</p></div></div>' +
                     '<div class="px-6 pb-6 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-slate-400">' +
                     '<span><i class="bi bi-person me-1"></i>' + esc(art.autor || 'Equipo RAÍCES') + '</span>' +
@@ -2057,13 +2079,15 @@ function cargarArticulosBlogVista() {
                 
                 return '<div class="spot rim rounded-[28px] overflow-hidden flex flex-col justify-between cursor-pointer group transition-transform hover:-translate-y-1.5" onclick="abrirModalArticulo(' + Number(art.id) + ')">' +
                     '<div><div class="relative overflow-hidden">' + media +
-                    '<span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-emerald-400/50 text-emerald-300">' + esc(art.categoria || 'Nutrición') + '</span></div>' +
-                    '<div class="p-6"><h3 class="font-cinzel text-xl font-bold mb-2 text-white group-hover:text-emerald-300 transition-colors">' + esc(art.titulo) + '</h3>' +
+                    '<span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-emerald-400/50 text-emerald-300"><i class="bi bi-tag-fill me-1"></i>' + esc((art.categoria || 'Nutrición').toUpperCase()) + '</span></div>' +
+                    '<div class="p-6"><h3 class="font-cinzel text-xl font-bold mb-2 text-white group-hover:text-emerald-300 transition-colors uppercase">' + esc(art.titulo) + '</h3>' +
                     '<p class="text-slate-300 text-xs font-light leading-relaxed line-clamp-3 mb-4">' + esc(art.resumen || art.contenido || '') + '</p></div></div>' +
                     '<div class="px-6 pb-6 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-slate-400">' +
                     '<span><i class="bi bi-person me-1"></i>' + esc(art.autor || 'Equipo RAÍCES') + '</span>' +
-                    '<span class="text-ruby-400 font-semibold flex items-center gap-1"><i class="bi bi-heart-fill"></i> ' + (art.likes || 0) + '</span>' +
-                    '</div></div>';
+                    '<div class="flex items-center gap-2">' +
+                    '<button class="px-3 py-1.5 rounded-full bg-ruby-500/10 border border-ruby-500/30 text-ruby-400 font-semibold flex items-center gap-1 hover:bg-ruby-500/20" onclick="event.stopPropagation(); darLikeArticulo(' + Number(art.id) + ')"><i class="bi bi-heart-fill"></i> ' + (art.likes || 0) + '</button>' +
+                    '<span class="btn btn-ghost px-3 py-1.5 text-xs text-yellow-400 font-bold">LEER <i class="bi bi-arrow-right ms-1"></i></span>' +
+                    '</div></div></div>';
             }).join('');
         })
         .catch(function(e) {

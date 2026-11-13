@@ -131,9 +131,9 @@ public class AjustesWeb {
     @Column(length = 300)
     private String blogBadge = "COMUNIDAD BIO-ACTIVA & BLOG";
     @Column(length = 300)
-    private String blogTitulo = "Espacio de Conocimiento & Conexión Vital";
+    private String blogTitulo = "ESPACIO DE CONOCIMIENTO & CONEXIÓN VITAL";
     @Column(length = 1000)
-    private String blogSubtitulo = "Fundamentos de nutrición celular, notas del laboratorio RAÍCES y propuestas de nuevos sabores de la comunidad.";
+    private String blogSubtitulo = "Descubre los fundamentos de la nutrición celular viva, novedades del laboratorio RAÍCES y comparte tus sugerencias y peticiones de nuevos sabores para construir la comunidad.";
     private Boolean blogActivo = true;
 
     // --- 9. DATOS DE CONTACTO Y MENSAJERÍA ---
