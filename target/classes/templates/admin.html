@@ -2480,123 +2480,379 @@
                     </p>
 
                     <form id="form-ajustes-web" onsubmit="guardarAjustesWeb(event)">
-                        <div class="row g-4">
-                            <!-- COLUMNA 1: PUBLICIDAD E INFORMACIÓN -->
-                            <div class="col-lg-6">
-                                <div class="p-3 rounded" style="background: rgba(0, 229, 255, 0.04); border: 1px solid rgba(0, 229, 255, 0.2);">
-                                    <h5 class="font-orbitron text-info fw-bold mb-3">
-                                        <i class="bi bi-megaphone-fill me-2"></i> PUBLICIDAD & MENSAJES DEL PORTAL
-                                    </h5>
+                        <!-- PANEL 0: BARRA DE ANUNCIO & ENCABEZADO SUPERIOR -->
+                        <div class="p-3 rounded mb-4" style="background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.3);">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="font-orbitron text-success fw-bold m-0 d-flex align-items-center">
+                                    <i class="bi bi-window-stack me-2"></i> 0. BARRA SUPERIOR DE ANUNCIO & ENCABEZADO (NAVBAR)
+                                </h5>
+                                <div class="form-check form-switch m-0 d-flex align-items-center gap-2">
+                                    <input class="form-check-input fs-5 m-0" type="checkbox" id="web-banner-promo-activo">
+                                    <label class="form-check-label font-orbitron text-white small" for="web-banner-promo-activo">MOSTRAR BARRA SUPERIOR</label>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label-neon">TEXTO DE LA BARRA SUPERIOR DE ANUNCIO</label>
+                                <input type="text" id="web-banner-promo-texto" class="form-control" placeholder="🌿 Cosecha directa de productores sostenibles · Entregas hoy en Tuluá y Valle">
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label-neon">NOMBRE DE LA MARCA (NAV)</label>
+                                    <input type="text" id="web-nav-brand-nombre" class="form-control" placeholder="RAÍCES">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label-neon">SUBTÍTULO MARCA (TAGLINE)</label>
+                                    <input type="text" id="web-nav-brand-tagline" class="form-control" placeholder="Elixir botánico">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label-neon">BOTÓN MODO VIDEO</label>
+                                    <input type="text" id="web-nav-boton-modo" class="form-control" placeholder="Ver continuo">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label-neon">BOTÓN PEDIR AHORA</label>
+                                    <input type="text" id="web-nav-boton-pedir" class="form-control" placeholder="Pedir ahora">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label-neon">ENLACE 1</label>
+                                    <input type="text" id="web-nav-link-1" class="form-control form-control-sm" placeholder="Experiencia">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label-neon">ENLACE 2</label>
+                                    <input type="text" id="web-nav-link-2" class="form-control form-control-sm" placeholder="Catálogo">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label-neon">ENLACE 3</label>
+                                    <input type="text" id="web-nav-link-3" class="form-control form-control-sm" placeholder="Ingredientes">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label-neon">ENLACE 4</label>
+                                    <input type="text" id="web-nav-link-4" class="form-control form-control-sm" placeholder="Protocolo">
+                                </div>
+                            </div>
+                        </div>
 
-                                    <div class="mb-3">
-                                        <label class="form-label-neon">TÍTULO PRINCIPAL (HERO)</label>
-                                        <input type="text" id="web-hero-titulo" class="form-control" placeholder="Ej: RAÍCES" required>
-                                    </div>
+                        <!-- PANEL 1: HERO & EXPERIENCIA CINEMATOGRÁFICA -->
+                        <div class="p-3 rounded mb-4" style="background: rgba(0, 229, 255, 0.04); border: 1px solid rgba(0, 229, 255, 0.25);">
+                            <h5 class="font-orbitron text-info fw-bold mb-3 d-flex align-items-center">
+                                <i class="bi bi-camera-reels-fill me-2"></i> 1. PORTADA & HERO CINEMATOGRÁFICO (INICIO)
+                            </h5>
+                            <div class="row g-3">
+                                <div class="col-md-3">
+                                    <label class="form-label-neon">BADGE SUPERIOR</label>
+                                    <input type="text" id="web-hero-badge" class="form-control" placeholder="Ej: Elixir Botánico · Prensado en Frío">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label-neon">TÍTULO PRINCIPAL (HERO)</label>
+                                    <input type="text" id="web-hero-titulo" class="form-control" placeholder="Ej: RAÍCES" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label-neon">SUBTÍTULO / PROPUESTA DE VALOR</label>
+                                    <input type="text" id="web-hero-subtitulo" class="form-control" placeholder="Nutrición celular viva, sin pasteurizar y sin azúcar añadida.">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label-neon">INDICADOR SCROLL</label>
+                                    <input type="text" id="web-hero-scroll-cta" class="form-control" placeholder="Desliza para ver la experiencia">
+                                </div>
+                            </div>
+                        </div>
 
-                                    <div class="mb-3">
-                                        <label class="form-label-neon">SUBTÍTULO / PROPUESTA DE VALOR</label>
-                                        <textarea id="web-hero-subtitulo" class="form-control" rows="2" placeholder="Descripción principal del elixir"></textarea>
-                                    </div>
+                        <!-- PANEL 2: TEXTOS DE LAS 4 ESQUINAS DEL VIDEO (SCROLL) -->
+                        <div class="p-3 rounded mb-4" style="background: rgba(74, 222, 128, 0.04); border: 1px solid rgba(74, 222, 128, 0.25);">
+                            <h5 class="font-orbitron text-success fw-bold mb-3 d-flex align-items-center">
+                                <i class="bi bi-card-text me-2"></i> 2. TEXTOS EN ESQUINAS SOBRE EL VIDEO (EXPERIENCIA CINEMATOGRÁFICA)
+                            </h5>
+                            <p class="text-white-50 font-rajdhani small mb-3">
+                                Modifica los textos dinámicos que flotan en las esquinas al scrollear el video sin oscurecerlo.
+                            </p>
 
-                                    <div class="mb-3">
-                                        <label class="form-label-neon">MARQUESINA SUPERIOR / TICKER (Frases separadas por barra |)</label>
-                                        <textarea id="web-marquesina-texto" class="form-control" rows="2" placeholder="Prensado en frío | Sin azúcar añadida | Sin conservantes | Cosecha < 24 horas"></textarea>
-                                        <small class="text-white-50 font-rajdhani d-block mt-1">Cada frase separada por el símbolo <strong>|</strong> se mostrará con un destello botánico en la marquesina animada.</small>
-                                    </div>
-
-                                    <div class="p-3 rounded mb-3" style="background: rgba(255, 215, 0, 0.05); border: 1px dashed rgba(255, 215, 0, 0.3);">
-                                        <div class="form-check form-switch mb-2">
-                                            <input class="form-check-input" type="checkbox" id="web-banner-promo-activo">
-                                            <label class="form-check-label font-orbitron text-warning fw-bold" for="web-banner-promo-activo">
-                                                BARRA DE ANUNCIO SUPERIOR DESTACADA
-                                            </label>
+                            <div class="row g-3">
+                                <!-- ESCENA 1: INFERIOR IZQUIERDA -->
+                                <div class="col-lg-6">
+                                    <div class="p-3 rounded h-100" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(74,222,128,0.2);">
+                                        <div class="badge bg-success text-dark font-orbitron mb-2">ESCENA 1 · ESQUINA INFERIOR IZQUIERDA</div>
+                                        <div class="mb-2">
+                                            <label class="form-label-neon">ETIQUETA SUPERIOR</label>
+                                            <input type="text" id="web-video-escena1-tag" class="form-control form-control-sm" placeholder="Prensado en Frío · 14°C">
                                         </div>
-                                        <input type="text" id="web-banner-promo-texto" class="form-control" placeholder="Ej: 🌿 Envíos gratis hoy por compras sobre $60.000 en Tuluá">
-                                    </div>
-
-                                    <div class="row g-2">
-                                        <div class="col-md-6 mb-2">
-                                            <label class="form-label-neon">WHATSAPP PEDIDOS (con código país)</label>
-                                            <input type="text" id="web-whatsapp-numero" class="form-control" placeholder="573177651016">
+                                        <div class="mb-2">
+                                            <label class="form-label-neon">TÍTULO PRINCIPAL</label>
+                                            <input type="text" id="web-video-escena1-titulo" class="form-control form-control-sm" placeholder="Extracción Hidráulica">
                                         </div>
-                                        <div class="col-md-6 mb-2">
-                                            <label class="form-label-neon">TELÉFONO DE CONTACTO</label>
-                                            <input type="text" id="web-telefono-contacto" class="form-control" placeholder="3177651016">
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-4">
+                                                <label class="form-label-neon">CIFRA</label>
+                                                <input type="text" id="web-video-escena1-cifra" class="form-control form-control-sm" placeholder="98.6%">
+                                            </div>
+                                            <div class="col-8">
+                                                <label class="form-label-neon">ETIQUETA DE CIFRA</label>
+                                                <input type="text" id="web-video-escena1-cifra-label" class="form-control form-control-sm" placeholder="Enzimas Vivas Activas">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="form-label-neon">DESCRIPCIÓN</label>
+                                            <textarea id="web-video-escena1-desc" class="form-control form-control-sm" rows="2" placeholder="Presión suave y continua sin calor ni cuchillas térmicas..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- ESCENA 2: INFERIOR DERECHA -->
+                                <div class="col-lg-6">
+                                    <div class="p-3 rounded h-100" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(250,204,21,0.25);">
+                                        <div class="badge bg-warning text-dark font-orbitron mb-2">ESCENA 2 · ESQUINA INFERIOR DERECHA</div>
+                                        <div class="mb-2">
+                                            <label class="form-label-neon">ETIQUETA SUPERIOR</label>
+                                            <input type="text" id="web-video-escena2-tag" class="form-control form-control-sm" placeholder="Pureza Botánica 100%">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label-neon">TÍTULO PRINCIPAL</label>
+                                            <input type="text" id="web-video-escena2-titulo" class="form-control form-control-sm" placeholder="Cero Agua Añadida">
+                                        </div>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-4">
+                                                <label class="form-label-neon">CIFRA</label>
+                                                <input type="text" id="web-video-escena2-cifra" class="form-control form-control-sm" placeholder="0.0%">
+                                            </div>
+                                            <div class="col-8">
+                                                <label class="form-label-neon">ETIQUETA DE CIFRA</label>
+                                                <input type="text" id="web-video-escena2-cifra-label" class="form-control form-control-sm" placeholder="Azúcar · Sin Químicos">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="form-label-neon">DESCRIPCIÓN</label>
+                                            <textarea id="web-video-escena2-desc" class="form-control form-control-sm" rows="2" placeholder="Solo la savia y extracto denso de raíces vivas..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- ESCENA 3: INFERIOR IZQUIERDA -->
+                                <div class="col-lg-6">
+                                    <div class="p-3 rounded h-100" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(56,189,248,0.25);">
+                                        <div class="badge bg-info text-dark font-orbitron mb-2">ESCENA 3 · ESQUINA INFERIOR IZQUIERDA</div>
+                                        <div class="mb-2">
+                                            <label class="form-label-neon">ETIQUETA SUPERIOR</label>
+                                            <input type="text" id="web-video-escena3-tag" class="form-control form-control-sm" placeholder="Bioasimilación Inmediata">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label-neon">TÍTULO PRINCIPAL</label>
+                                            <input type="text" id="web-video-escena3-titulo" class="form-control form-control-sm" placeholder="Nutrición Celular">
+                                        </div>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-4">
+                                                <label class="form-label-neon">CIFRA</label>
+                                                <input type="text" id="web-video-escena3-cifra" class="form-control form-control-sm" placeholder="< 20 min">
+                                            </div>
+                                            <div class="col-8">
+                                                <label class="form-label-neon">ETIQUETA DE CIFRA</label>
+                                                <input type="text" id="web-video-escena3-cifra-label" class="form-control form-control-sm" placeholder="Absorción Digestiva">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="form-label-neon">DESCRIPCIÓN</label>
+                                            <textarea id="web-video-escena3-desc" class="form-control form-control-sm" rows="2" placeholder="Oxigenación inmediata y recarga limpia de tus mitocondrias..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- ESCENA 4: INFERIOR DERECHA (CTA) -->
+                                <div class="col-lg-6">
+                                    <div class="p-3 rounded h-100" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(232,121,249,0.25);">
+                                        <div class="badge text-dark font-orbitron mb-2" style="background:#e879f9">ESCENA 4 · ESQUINA INFERIOR DERECHA (CTA)</div>
+                                        <div class="mb-2">
+                                            <label class="form-label-neon">ETIQUETA SUPERIOR</label>
+                                            <input type="text" id="web-video-escena4-tag" class="form-control form-control-sm" placeholder="Colección Viva 2026">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label-neon">TÍTULO PRINCIPAL</label>
+                                            <input type="text" id="web-video-escena4-titulo" class="form-control form-control-sm" placeholder="Despierta tu Vitalidad">
+                                        </div>
+                                        <div class="mb-2">
+                                            <label class="form-label-neon">TEXTO BOTÓN CATÁLOGO</label>
+                                            <input type="text" id="web-video-escena4-boton" class="form-control form-control-sm" placeholder="Ver Catálogo Completo">
+                                        </div>
+                                        <div>
+                                            <label class="form-label-neon">DESCRIPCIÓN</label>
+                                            <textarea id="web-video-escena4-desc" class="form-control form-control-sm" rows="2" placeholder="Explora nuestros elíxires individuales, packs fitoquímicos semanales..."></textarea>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- COLUMNA 2: EFECTOS DINÁMICOS Y VISUALES -->
+                        <!-- PANEL 3: MARQUESINA & SECCIONES DEL PORTAL -->
+                        <div class="p-3 rounded mb-4" style="background: rgba(254, 240, 138, 0.04); border: 1px solid rgba(254, 240, 138, 0.25);">
+                            <h5 class="font-orbitron text-warning fw-bold mb-3 d-flex align-items-center">
+                                <i class="bi bi-grid-1x2-fill me-2"></i> 3. MARQUESINA & SECCIONES DEL MENÚ
+                            </h5>
+
+                            <div class="mb-3">
+                                <label class="form-label-neon">MARQUESINA SUPERIOR / TICKER (Frases separadas por barra |)</label>
+                                <textarea id="web-marquesina-texto" class="form-control" rows="2" placeholder="Prensado en frío | Sin azúcar añadida | Sin conservantes | Cosecha < 24 horas"></textarea>
+                                <small class="text-white-50 font-rajdhani d-block mt-1">Cada frase separada por <strong>|</strong> rotará con destellos botánicos.</small>
+                            </div>
+
+                            <div class="row g-3">
+                                <!-- CATÁLOGO -->
+                                <div class="col-md-6">
+                                    <div class="p-2.5 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);">
+                                        <label class="form-label-neon text-info"><i class="bi bi-droplet-half me-1"></i> SECCIÓN CATÁLOGO: TÍTULO</label>
+                                        <input type="text" id="web-catalogo-titulo" class="form-control form-control-sm mb-2" placeholder="Elixires recién prensados">
+                                        <label class="form-label-neon">SUBTÍTULO</label>
+                                        <input type="text" id="web-catalogo-subtitulo" class="form-control form-control-sm" placeholder="Toca una botella para ver su ficha...">
+                                    </div>
+                                </div>
+
+                                <!-- SEIS RAÍCES -->
+                                <div class="col-md-6">
+                                    <div class="p-2.5 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);">
+                                        <label class="form-label-neon text-success"><i class="bi bi-flower2 me-1"></i> SECCIÓN SEIS RAÍCES: TÍTULO</label>
+                                        <input type="text" id="web-ingredientes-titulo" class="form-control form-control-sm mb-2" placeholder="Seis raíces, cero relleno">
+                                        <label class="form-label-neon">SUBTÍTULO</label>
+                                        <input type="text" id="web-ingredientes-subtitulo" class="form-control form-control-sm" placeholder="Las elegimos por su densidad enzimática...">
+                                    </div>
+                                </div>
+
+                                <!-- PROTOCOLO -->
+                                <div class="col-md-6">
+                                    <div class="p-2.5 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);">
+                                        <label class="form-label-neon text-warning"><i class="bi bi-check2-circle me-1"></i> SECCIÓN PROTOCOLO: TÍTULO</label>
+                                        <input type="text" id="web-protocolo-titulo" class="form-control form-control-sm mb-2" placeholder="Protocolo en tres fases">
+                                        <label class="form-label-neon">SUBTÍTULO</label>
+                                        <input type="text" id="web-protocolo-subtitulo" class="form-control form-control-sm" placeholder="Depura, activa y repara, en este orden.">
+                                    </div>
+                                </div>
+
+                                <!-- ARMA TU BATIDO (LICUADORA) -->
+                                <div class="col-md-6">
+                                    <div class="p-2.5 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);">
+                                        <label class="form-label-neon" style="color:#e879f9"><i class="bi bi-cup-straw me-1"></i> ARMA TU BATIDO: TÍTULO</label>
+                                        <input type="text" id="web-licuadora-titulo" class="form-control form-control-sm mb-2" placeholder="Arma tu batido">
+                                        <label class="form-label-neon">SUBTÍTULO</label>
+                                        <input type="text" id="web-licuadora-subtitulo" class="form-control form-control-sm" placeholder="Elige una base y hasta 4 ingredientes. Lo prensamos al momento.">
+                                    </div>
+                                </div>
+
+                                <!-- SECCIÓN CHIMPANCÉ -->
+                                <div class="col-12">
+                                    <div class="p-3 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);">
+                                        <div class="row g-2">
+                                            <div class="col-md-4">
+                                                <label class="form-label-neon text-success"><i class="bi bi-stars me-1"></i> CHIMPANCÉ: ETIQUETA / TAG</label>
+                                                <input type="text" id="web-chimpance-tag" class="form-control form-control-sm" placeholder="El chimpancé aprobó">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label-neon text-info"><i class="bi bi-chat-quote-fill me-1"></i> TEXTO / FILOSOFÍA</label>
+                                                <input type="text" id="web-chimpance-texto" class="form-control form-control-sm" placeholder="Hasta el chimpancé lo sabe: un buen sorbo empieza en la raíz...">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label-neon text-warning"><i class="bi bi-arrow-right-circle me-1"></i> TEXTO BOTÓN CTA</label>
+                                                <input type="text" id="web-chimpance-boton" class="form-control form-control-sm" placeholder="Pedir mi batido">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- PIE DE PÁGINA (FOOTER) -->
+                                <div class="col-12">
+                                    <div class="p-3 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);">
+                                        <label class="form-label-neon text-white mb-2"><i class="bi bi-layout-text-window-reverse me-1"></i> PIE DE PÁGINA (FOOTER)</label>
+                                        <div class="row g-2">
+                                            <div class="col-md-4">
+                                                <label class="form-label-neon">FRASE DE LA MARCA</label>
+                                                <input type="text" id="web-footer-frase" class="form-control form-control-sm" placeholder="Elixir botánico de alta densidad, prensado en frío.">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label-neon">COPYRIGHT & EMPRESA</label>
+                                                <input type="text" id="web-footer-copyright" class="form-control form-control-sm" placeholder="© 2026 RAÍCES BIO-SYSTEMS. Todos los derechos reservados.">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label-neon">NORMA SANITARIA / LOTE</label>
+                                                <input type="text" id="web-footer-norma" class="form-control form-control-sm" placeholder="Norma Sanitaria Internacional · Lote activo #418">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PANEL 4: EFECTOS DINÁMICOS & CONTACTO -->
+                        <div class="row g-4">
+                            <!-- EFECTOS VISUALES -->
                             <div class="col-lg-6">
-                                <div class="p-3 rounded h-100" style="background: rgba(255, 0, 234, 0.04); border: 1px solid rgba(255, 0, 234, 0.2);">
+                                <div class="p-3 rounded h-100" style="background: rgba(255, 0, 234, 0.04); border: 1px solid rgba(255, 0, 234, 0.25);">
                                     <h5 class="font-orbitron text-warning fw-bold mb-3">
-                                        <i class="bi bi-magic me-2"></i> EFECTOS QUE SALEN EN LA PÁGINA
+                                        <i class="bi bi-magic me-2"></i> 4. EFECTOS DINÁMICOS QUE SALEN EN LA PÁGINA
                                     </h5>
-                                    <p class="text-white-50 font-rajdhani small mb-3">
-                                        Activa o suspende cualquiera de los efectos dinámicos en vivo según la campaña o preferencia:
-                                    </p>
-
-                                    <div class="d-flex flex-column gap-3">
-                                        <div class="p-2.5 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                    <div class="d-flex flex-column gap-2.5">
+                                        <div class="p-2 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
                                             <div>
-                                                <div class="font-orbitron fw-bold text-success" style="font-size: 0.95rem;">
-                                                    <i class="bi bi-emoji-sunglasses me-2"></i> SIMIOS CURIOSOS ASOMADOS
-                                                </div>
-                                                <small class="text-white-50 font-rajdhani">Personajes que se asoman en los bordes, siguen el cursor con la mirada y celebran las compras.</small>
+                                                <div class="font-orbitron fw-bold text-success" style="font-size: 0.9rem;"><i class="bi bi-emoji-sunglasses me-2"></i> SIMIOS CURIOSOS ASOMADOS</div>
+                                                <small class="text-white-50 font-rajdhani">Personajes que se asoman en los bordes y celebran compras.</small>
                                             </div>
                                             <div class="form-check form-switch m-0 fs-5">
                                                 <input class="form-check-input" type="checkbox" id="web-efecto-simios">
                                             </div>
                                         </div>
 
-                                        <div class="p-2.5 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                        <div class="p-2 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
                                             <div>
-                                                <div class="font-orbitron fw-bold text-info" style="font-size: 0.95rem;">
-                                                    <i class="bi bi-flower1 me-2"></i> VEGETACIÓN & FLORA PROCEDURAL
-                                                </div>
-                                                <small class="text-white-50 font-rajdhani">Hojas vivas de monstera, helechos y rocío dinámico con rotación reactiva al scroll.</small>
+                                                <div class="font-orbitron fw-bold text-info" style="font-size: 0.9rem;"><i class="bi bi-flower1 me-2"></i> VEGETACIÓN & FLORA PROCEDURAL</div>
+                                                <small class="text-white-50 font-rajdhani">Hojas vivas de monstera, helechos y rocío dinámico al scroll.</small>
                                             </div>
                                             <div class="form-check form-switch m-0 fs-5">
                                                 <input class="form-check-input" type="checkbox" id="web-efecto-flora">
                                             </div>
                                         </div>
 
-                                        <div class="p-2.5 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                        <div class="p-2 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
                                             <div>
-                                                <div class="font-orbitron fw-bold text-warning" style="font-size: 0.95rem;">
-                                                    <i class="bi bi-stars me-2"></i> PARTÍCULAS & AURAS DEL CHIMPANCÉ
-                                                </div>
-                                                <small class="text-white-50 font-rajdhani">Canvas de destellos bioluminiscentes, anillos de choque y auras reactivas al sorbo.</small>
+                                                <div class="font-orbitron fw-bold text-warning" style="font-size: 0.9rem;"><i class="bi bi-stars me-2"></i> PARTÍCULAS & AURAS DEL CHIMPANCÉ</div>
+                                                <small class="text-white-50 font-rajdhani">Canvas de destellos bioluminiscentes y anillos reactivos.</small>
                                             </div>
                                             <div class="form-check form-switch m-0 fs-5">
                                                 <input class="form-check-input" type="checkbox" id="web-efecto-particulas">
                                             </div>
                                         </div>
 
-                                        <div class="p-2.5 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                        <div class="p-2 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
                                             <div>
-                                                <div class="font-orbitron fw-bold" style="color: #e879f9; font-size: 0.95rem;">
-                                                    <i class="bi bi-cup-straw me-2"></i> LICUADORA PROCEDURAL EN ARMA TU BATIDO
-                                                </div>
-                                                <small class="text-white-50 font-rajdhani">Simulación visual de mezcla de pigmentos botánicos, líquido y espuma en tiempo real.</small>
+                                                <div class="font-orbitron fw-bold" style="color: #e879f9; font-size: 0.9rem;"><i class="bi bi-cup-straw me-2"></i> LICUADORA PROCEDURAL EN ARMA TU BATIDO</div>
+                                                <small class="text-white-50 font-rajdhani">Simulación visual de mezcla botánica y líquido en tiempo real.</small>
                                             </div>
                                             <div class="form-check form-switch m-0 fs-5">
                                                 <input class="form-check-input" type="checkbox" id="web-efecto-licuadora">
                                             </div>
                                         </div>
 
-                                        <div class="p-2.5 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                                        <div class="p-2 rounded d-flex justify-content-between align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
                                             <div>
-                                                <div class="font-orbitron fw-bold text-white" style="font-size: 0.95rem;">
-                                                    <i class="bi bi-volume-up-fill me-2"></i> MÚSICA & EFECTOS DE AUDIO
-                                                </div>
-                                                <small class="text-white-50 font-rajdhani">Banda sonora bio-ambient y efectos auditivos al agregar elixires a la orden.</small>
+                                                <div class="font-orbitron fw-bold text-white" style="font-size: 0.9rem;"><i class="bi bi-volume-up-fill me-2"></i> MÚSICA & EFECTOS DE AUDIO</div>
+                                                <small class="text-white-50 font-rajdhani">Banda sonora bio-ambient y efectos auditivos interactivos.</small>
                                             </div>
                                             <div class="form-check form-switch m-0 fs-5">
                                                 <input class="form-check-input" type="checkbox" id="web-efecto-audio">
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CONTACTO & MENSAJERÍA -->
+                            <div class="col-lg-6">
+                                <div class="p-3 rounded h-100" style="background: rgba(0, 229, 255, 0.04); border: 1px solid rgba(0, 229, 255, 0.25);">
+                                    <h5 class="font-orbitron text-info fw-bold mb-3">
+                                        <i class="bi bi-whatsapp me-2"></i> 5. CONTACTO & MENSAJERÍA DIRECTA
+                                    </h5>
+                                    <div class="mb-3">
+                                        <label class="form-label-neon">WHATSAPP PEDIDOS (con código país)</label>
+                                        <input type="text" id="web-whatsapp-numero" class="form-control" placeholder="573177651016">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label-neon">TELÉFONO DE CONTACTO</label>
+                                        <input type="text" id="web-telefono-contacto" class="form-control" placeholder="3177651016">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label-neon">EMAIL DE CONTACTO</label>
+                                        <input type="email" id="web-email-contacto" class="form-control" placeholder="contacto@raices.bio">
                                     </div>
                                 </div>
                             </div>
@@ -7415,7 +7671,7 @@
     }
 
     // ==========================================
-    // CENTRO DE COMANDO WEB (PUBLICIDAD & EFECTOS)
+    // CENTRO DE COMANDO WEB (PUBLICIDAD, TEXTOS & EFECTOS)
     // ==========================================
     async function cargarAjustesWeb() {
         try {
@@ -7423,25 +7679,81 @@
             if (!res.ok) throw new Error('Error al consultar configuración web');
             const data = await res.json();
 
-            // Llenar campos de publicidad e información
-            const heroTit = document.getElementById('web-hero-titulo');
-            if (heroTit) heroTit.value = data.heroTitulo || 'RAÍCES';
-            const heroSub = document.getElementById('web-hero-subtitulo');
-            if (heroSub) heroSub.value = data.heroSubtitulo || '';
-            const marq = document.getElementById('web-marquesina-texto');
-            if (marq) marq.value = data.marquesinaTexto || '';
+            // 1. Portada & Hero
+            const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = (val !== null && val !== undefined) ? val : ''; };
+            
+            // 0. Barra superior y Nav
+            const bPromo = document.getElementById('web-banner-promo-activo');
+            if (bPromo) bPromo.checked = data.bannerPromoActivo !== false;
+            setVal('web-banner-promo-texto', data.bannerPromoTexto || '🌿 Cosecha directa de productores sostenibles · Entregas hoy en Tuluá y Valle');
+            setVal('web-nav-brand-nombre', data.navBrandNombre || 'RAÍCES');
+            setVal('web-nav-brand-tagline', data.navBrandTagline || 'Elixir botánico');
+            setVal('web-nav-boton-modo', data.navBotonModo || 'Ver continuo');
+            setVal('web-nav-boton-pedir', data.navBotonPedir || 'Pedir ahora');
+            setVal('web-nav-link-1', data.navLink1 || 'Experiencia');
+            setVal('web-nav-link-2', data.navLink2 || 'Catálogo');
+            setVal('web-nav-link-3', data.navLink3 || 'Ingredientes');
+            setVal('web-nav-link-4', data.navLink4 || 'Protocolo');
 
-            const bpAct = document.getElementById('web-banner-promo-activo');
-            if (bpAct) bpAct.checked = data.bannerPromoActivo !== false;
-            const bpTxt = document.getElementById('web-banner-promo-texto');
-            if (bpTxt) bpTxt.value = data.bannerPromoTexto || '';
+            // 1. Hero
+            setVal('web-hero-badge', data.heroBadge || 'Elixir Botánico · Prensado en Frío');
+            setVal('web-hero-titulo', data.heroTitulo || 'RAÍCES');
+            setVal('web-hero-subtitulo', data.heroSubtitulo || 'Nutrición celular viva, sin pasteurizar y sin azúcar añadida.');
+            setVal('web-hero-scroll-cta', data.heroScrollCta || 'Desliza para ver la experiencia');
 
-            const wa = document.getElementById('web-whatsapp-numero');
-            if (wa) wa.value = data.whatsappNumero || '573177651016';
-            const tel = document.getElementById('web-telefono-contacto');
-            if (tel) tel.value = data.telefonoContacto || '3177651016';
+            // 2. Escenas Esquinas Video
+            setVal('web-video-escena1-tag', data.videoEscena1Tag || 'Prensado en Frío · 14°C');
+            setVal('web-video-escena1-titulo', data.videoEscena1Titulo || 'Extracción Hidráulica');
+            setVal('web-video-escena1-cifra', data.videoEscena1Cifra || '98.6%');
+            setVal('web-video-escena1-cifra-label', data.videoEscena1CifraLabel || 'Enzimas Vivas Activas');
+            setVal('web-video-escena1-desc', data.videoEscena1Desc || 'Presión suave y continua sin calor ni cuchillas térmicas. Preserva la estructura molecular de cada fitonutriente.');
 
-            // Llenar switches de efectos
+            setVal('web-video-escena2-tag', data.videoEscena2Tag || 'Pureza Botánica 100%');
+            setVal('web-video-escena2-titulo', data.videoEscena2Titulo || 'Cero Agua Añadida');
+            setVal('web-video-escena2-cifra', data.videoEscena2Cifra || '0.0%');
+            setVal('web-video-escena2-cifra-label', data.videoEscena2CifraLabel || 'Azúcar · Sin Químicos');
+            setVal('web-video-escena2-desc', data.videoEscena2Desc || 'Solo la savia y extracto denso de raíces vivas cosechadas de agricultores sostenibles en menos de 24 horas.');
+
+            setVal('web-video-escena3-tag', data.videoEscena3Tag || 'Bioasimilación Inmediata');
+            setVal('web-video-escena3-titulo', data.videoEscena3Titulo || 'Nutrición Celular');
+            setVal('web-video-escena3-cifra', data.videoEscena3Cifra || '< 20 min');
+            setVal('web-video-escena3-cifra-label', data.videoEscena3CifraLabel || 'Absorción Digestiva');
+            setVal('web-video-escena3-desc', data.videoEscena3Desc || 'Oxigenación inmediata y recarga limpia de tus mitocondrias sin fermentación ni pesadez estomacal.');
+
+            setVal('web-video-escena4-tag', data.videoEscena4Tag || 'Colección Viva 2026');
+            setVal('web-video-escena4-titulo', data.videoEscena4Titulo || 'Despierta tu Vitalidad');
+            setVal('web-video-escena4-desc', data.videoEscena4Desc || 'Explora nuestros elíxires individuales, packs fitoquímicos semanales o crea tu fórmula en \'Arma tu Batido\'.');
+            setVal('web-video-escena4-boton', data.videoEscena4Boton || 'Ver Catálogo Completo');
+
+            // 3. Marquesina & Secciones
+            setVal('web-marquesina-texto', data.marquesinaTexto || 'Prensado en frío | Sin azúcar añadida | Sin conservantes | Cosecha de menos de 24 horas | Despacho el mismo día | Pide por voz');
+            setVal('web-catalogo-titulo', data.catalogoTitulo || 'Elixires recién prensados');
+            setVal('web-catalogo-subtitulo', data.catalogoSubtitulo || 'Toca una botella para ver su ficha. Todo se prensa en las últimas 24 horas.');
+
+            setVal('web-ingredientes-titulo', data.ingredientesTitulo || 'Seis raíces, cero relleno');
+            setVal('web-ingredientes-subtitulo', data.ingredientesSubtitulo || 'Las elegimos por su densidad enzimática y la compramos directo a agricultores sostenibles.');
+
+            setVal('web-protocolo-titulo', data.protocoloTitulo || 'Protocolo en tres fases');
+            setVal('web-protocolo-subtitulo', data.protocoloSubtitulo || 'Depura, activa y repara, en este orden.');
+
+            setVal('web-chimpance-tag', data.chimpanceTag || 'El chimpancé aprobó');
+            setVal('web-chimpance-texto', data.chimpanceTexto || 'Hasta el chimpancé lo sabe: un buen sorbo empieza en la raíz. Espinaca viva, aloe, jengibre y cúrcuma, prensados en frío y sin azúcar añadida. Cierra los ojos, bebe despacio y deja que la selva haga el resto.');
+            setVal('web-chimpance-boton', data.chimpanceBoton || 'Pedir mi batido');
+
+            setVal('web-licuadora-titulo', data.licuadoraTitulo || 'Arma tu batido');
+            setVal('web-licuadora-subtitulo', data.licuadoraSubtitulo || 'Elige una base y hasta 4 ingredientes. Lo prensamos al momento.');
+
+            // 3.1 Footer
+            setVal('web-footer-frase', data.footerFrase || 'Elixir botánico de alta densidad, prensado en frío.');
+            setVal('web-footer-copyright', data.footerCopyright || '© 2026 RAÍCES BIO-SYSTEMS. Todos los derechos reservados.');
+            setVal('web-footer-norma', data.footerNorma || 'Norma Sanitaria Internacional · Lote activo #418');
+
+            // 4. Contacto
+            setVal('web-whatsapp-numero', data.whatsappNumero || '573177651016');
+            setVal('web-telefono-contacto', data.telefonoContacto || '3177651016');
+            setVal('web-email-contacto', data.emailContacto || 'contacto@raices.bio');
+
+            // 5. Switches de efectos
             const efSimios = document.getElementById('web-efecto-simios');
             if (efSimios) efSimios.checked = data.efectoSimiosActivo !== false;
             const efFlora = document.getElementById('web-efecto-flora');
@@ -7467,20 +7779,86 @@
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> GUARDANDO EN MATRIZ...';
         }
 
+        const getVal = (id, def = '') => { const el = document.getElementById(id); return el ? el.value.trim() : def; };
+
         const payload = {
             id: 1,
-            heroTitulo: document.getElementById('web-hero-titulo').value.trim() || 'RAÍCES',
-            heroSubtitulo: document.getElementById('web-hero-subtitulo').value.trim(),
-            marquesinaTexto: document.getElementById('web-marquesina-texto').value.trim(),
-            bannerPromoActivo: document.getElementById('web-banner-promo-activo').checked,
-            bannerPromoTexto: document.getElementById('web-banner-promo-texto').value.trim(),
-            whatsappNumero: document.getElementById('web-whatsapp-numero').value.trim() || '573177651016',
-            telefonoContacto: document.getElementById('web-telefono-contacto').value.trim(),
-            efectoSimiosActivo: document.getElementById('web-efecto-simios').checked,
-            efectoFloraActivo: document.getElementById('web-efecto-flora').checked,
-            efectoParticulasChimp: document.getElementById('web-efecto-particulas').checked,
-            efectoLicuadoraActivo: document.getElementById('web-efecto-licuadora').checked,
-            efectoAudioFondo: document.getElementById('web-efecto-audio').checked
+            // 0. Barra superior y Nav
+            bannerPromoActivo: document.getElementById('web-banner-promo-activo') ? document.getElementById('web-banner-promo-activo').checked : true,
+            bannerPromoTexto: getVal('web-banner-promo-texto', '🌿 Cosecha directa de productores sostenibles · Entregas hoy en Tuluá y Valle'),
+            navBrandNombre: getVal('web-nav-brand-nombre', 'RAÍCES'),
+            navBrandTagline: getVal('web-nav-brand-tagline', 'Elixir botánico'),
+            navBotonModo: getVal('web-nav-boton-modo', 'Ver continuo'),
+            navBotonPedir: getVal('web-nav-boton-pedir', 'Pedir ahora'),
+            navLink1: getVal('web-nav-link-1', 'Experiencia'),
+            navLink2: getVal('web-nav-link-2', 'Catálogo'),
+            navLink3: getVal('web-nav-link-3', 'Ingredientes'),
+            navLink4: getVal('web-nav-link-4', 'Protocolo'),
+
+            // 1. Portada & Hero
+            heroBadge: getVal('web-hero-badge', 'Elixir Botánico · Prensado en Frío'),
+            heroTitulo: getVal('web-hero-titulo', 'RAÍCES'),
+            heroSubtitulo: getVal('web-hero-subtitulo'),
+            heroScrollCta: getVal('web-hero-scroll-cta', 'Desliza para ver la experiencia'),
+
+            // 2. Escenas Esquinas Video
+            videoEscena1Tag: getVal('web-video-escena1-tag'),
+            videoEscena1Titulo: getVal('web-video-escena1-titulo'),
+            videoEscena1Cifra: getVal('web-video-escena1-cifra'),
+            videoEscena1CifraLabel: getVal('web-video-escena1-cifra-label'),
+            videoEscena1Desc: getVal('web-video-escena1-desc'),
+
+            videoEscena2Tag: getVal('web-video-escena2-tag'),
+            videoEscena2Titulo: getVal('web-video-escena2-titulo'),
+            videoEscena2Cifra: getVal('web-video-escena2-cifra'),
+            videoEscena2CifraLabel: getVal('web-video-escena2-cifra-label'),
+            videoEscena2Desc: getVal('web-video-escena2-desc'),
+
+            videoEscena3Tag: getVal('web-video-escena3-tag'),
+            videoEscena3Titulo: getVal('web-video-escena3-titulo'),
+            videoEscena3Cifra: getVal('web-video-escena3-cifra'),
+            videoEscena3CifraLabel: getVal('web-video-escena3-cifra-label'),
+            videoEscena3Desc: getVal('web-video-escena3-desc'),
+
+            videoEscena4Tag: getVal('web-video-escena4-tag'),
+            videoEscena4Titulo: getVal('web-video-escena4-titulo'),
+            videoEscena4Desc: getVal('web-video-escena4-desc'),
+            videoEscena4Boton: getVal('web-video-escena4-boton'),
+
+            // 3. Marquesina & Secciones
+            marquesinaTexto: getVal('web-marquesina-texto'),
+            catalogoTitulo: getVal('web-catalogo-titulo'),
+            catalogoSubtitulo: getVal('web-catalogo-subtitulo'),
+
+            ingredientesTitulo: getVal('web-ingredientes-titulo'),
+            ingredientesSubtitulo: getVal('web-ingredientes-subtitulo'),
+
+            protocoloTitulo: getVal('web-protocolo-titulo'),
+            protocoloSubtitulo: getVal('web-protocolo-subtitulo'),
+
+            chimpanceTag: getVal('web-chimpance-tag'),
+            chimpanceTexto: getVal('web-chimpance-texto'),
+            chimpanceBoton: getVal('web-chimpance-boton'),
+
+            licuadoraTitulo: getVal('web-licuadora-titulo'),
+            licuadoraSubtitulo: getVal('web-licuadora-subtitulo'),
+
+            // 3.1 Footer
+            footerFrase: getVal('web-footer-frase', 'Elixir botánico de alta densidad, prensado en frío.'),
+            footerCopyright: getVal('web-footer-copyright', '© 2026 RAÍCES BIO-SYSTEMS. Todos los derechos reservados.'),
+            footerNorma: getVal('web-footer-norma', 'Norma Sanitaria Internacional · Lote activo #418'),
+
+            // 4. Contacto
+            whatsappNumero: getVal('web-whatsapp-numero', '573177651016'),
+            telefonoContacto: getVal('web-telefono-contacto', '3177651016'),
+            emailContacto: getVal('web-email-contacto', 'contacto@raices.bio'),
+
+            // 5. Switches de efectos
+            efectoSimiosActivo: document.getElementById('web-efecto-simios') ? document.getElementById('web-efecto-simios').checked : true,
+            efectoFloraActivo: document.getElementById('web-efecto-flora') ? document.getElementById('web-efecto-flora').checked : true,
+            efectoParticulasChimp: document.getElementById('web-efecto-particulas') ? document.getElementById('web-efecto-particulas').checked : true,
+            efectoLicuadoraActivo: document.getElementById('web-efecto-licuadora') ? document.getElementById('web-efecto-licuadora').checked : true,
+            efectoAudioFondo: document.getElementById('web-efecto-audio') ? document.getElementById('web-efecto-audio').checked : true
         };
 
         try {
@@ -7492,7 +7870,7 @@
 
             if (!res.ok) throw new Error('Error al guardar ajustes');
             playSound('success');
-            alert('¡COMANDO WEB ACTUALIZADO CON ÉXITO!\nLa publicidad y efectos del portal han sido guardados.');
+            alert('¡COMANDO WEB ACTUALIZADO CON ÉXITO!\nTodos los textos y efectos del frontend menú han sido guardados.');
         } catch (err) {
             playSound('error');
             alert('Error al guardar configuración web: ' + err.message);

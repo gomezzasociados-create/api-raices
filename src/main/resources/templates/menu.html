@@ -69,7 +69,7 @@ a{text-decoration:none;color:inherit}
 /* TÍTULO HERO ULTRA ELEGANTE BOTÁNICO */
 .shine-luxury{background:linear-gradient(120deg,#ffffff 0%,#d1fae5 25%,#34d399 50%,#fef08a 75%,#ffffff 100%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:luxuryGlow 7s ease-in-out infinite alternate;display:inline-block;filter:drop-shadow(0 0 28px rgba(52,211,153,.45)) drop-shadow(0 0 50px rgba(254,240,138,.25))}
 @keyframes luxuryGlow{0%{background-position:0% 50%;filter:drop-shadow(0 0 20px rgba(52,211,153,.35)) drop-shadow(0 0 40px rgba(16,185,129,.2))}50%{background-position:100% 50%;filter:drop-shadow(0 0 35px rgba(52,211,153,.6)) drop-shadow(0 0 65px rgba(254,240,138,.35))}100%{background-position:0% 50%;filter:drop-shadow(0 0 20px rgba(52,211,153,.35)) drop-shadow(0 0 40px rgba(16,185,129,.2))}}
-#banner-anuncio-top{display:none!important}
+#banner-anuncio-top{transition:all .3s ease}
 
 /* Textos en Esquinas Dinámicos sin Fondo (Flotan Limpios y Puros sobre el Video) */
 .corner-card{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:none!important;border-radius:0!important;padding:0!important;box-shadow:none!important;transition:transform .25s cubic-bezier(.16,1,.3,1),filter .3s ease;pointer-events:auto;cursor:default;position:relative;filter:drop-shadow(0 4px 18px rgba(0,0,0,.95)) drop-shadow(0 2px 6px rgba(0,0,0,.9))}
@@ -313,28 +313,28 @@ section>.max-w-7xl{position:relative;z-index:2}
 <audio id="sfxBlender" preload="auto"><source src="sonido_licuadora.mp3?v=4" type="audio/mpeg"></audio>
 <audio id="sfxApe" preload="auto"><source src="sonido_simio.mp3?v=1" type="audio/mpeg"></audio>
 
-<!-- BARRA DE ANUNCIO SUPERIOR (DESACTIVADA) -->
-<div id="banner-anuncio-top" style="display:none!important"></div>
+<!-- BARRA DE ANUNCIO SUPERIOR -->
+<div id="banner-anuncio-top" class="fixed top-0 left-0 right-0 z-[60] py-1.5 px-4 text-center text-xs font-semibold bg-emerald-950/95 border-b border-emerald-500/40 text-emerald-300 backdrop-blur-md shadow-md items-center justify-center transition-all" style="display:none;"></div>
 
 <header id="main-nav" class="fixed top-0 left-0 right-0 z-50 py-3 sm:py-3.5 bg-abyss-950/75 backdrop-blur-2xl border-b border-white/10" style="padding-top:calc(.6rem + env(safe-area-inset-top,0px))">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 flex items-center justify-between">
 <a href="#cinematic-experience" class="flex items-center gap-2.5 sm:gap-3 group">
 <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-emerald-400/40 via-yellow-400/30 to-emerald-500/40 border border-emerald-400/60 shadow-[0_0_15px_rgba(74,222,128,0.4)] grid place-items-center font-cinzel font-black text-emerald-300 text-lg sm:text-xl group-hover:scale-105 transition-transform">R</span>
 <span class="flex flex-col leading-none">
-    <span class="font-cinzel text-lg sm:text-xl font-black tracking-[.22em] bg-gradient-to-r from-emerald-300 via-yellow-300 to-emerald-400 bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(74,222,128,0.4)]">RAÍCES</span>
-    <span class="text-[9px] sm:text-[10px] text-emerald-400/90 mt-0.5 font-semibold tracking-wider uppercase">Elixir botánico</span>
+    <span id="nav-brand-nombre" class="font-cinzel text-lg sm:text-xl font-black tracking-[.22em] bg-gradient-to-r from-emerald-300 via-yellow-300 to-emerald-400 bg-clip-text text-transparent drop-shadow-[0_0_12px_rgba(74,222,128,0.4)]">RAÍCES</span>
+    <span id="nav-brand-tagline" class="text-[9px] sm:text-[10px] text-emerald-400/90 mt-0.5 font-semibold tracking-wider uppercase">Elixir botánico</span>
 </span>
 </a>
 <nav class="hidden md:flex items-center gap-8 text-sm text-slate-300 font-medium">
-<a href="#cinematic-experience" class="hover:text-emerald-300 transition-colors">Experiencia</a>
-<a href="#catalogo" class="hover:text-emerald-300 transition-colors">Catálogo</a>
-<a href="#ingredientes" class="hover:text-emerald-300 transition-colors">Ingredientes</a>
-<a href="#beneficios" class="hover:text-emerald-300 transition-colors">Protocolo</a>
+<a href="#cinematic-experience" id="nav-link-1" class="hover:text-emerald-300 transition-colors">Experiencia</a>
+<a href="#catalogo" id="nav-link-2" class="hover:text-emerald-300 transition-colors">Catálogo</a>
+<a href="#ingredientes" id="nav-link-3" class="hover:text-emerald-300 transition-colors">Ingredientes</a>
+<a href="#beneficios" id="nav-link-4" class="hover:text-emerald-300 transition-colors">Protocolo</a>
 </nav>
 <div class="flex items-center gap-2 sm:gap-2.5">
 <button onclick="toggleAudio()" aria-label="Sonido" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 border border-white/10 text-emerald-400 grid place-items-center hover:bg-emerald-500/20"><i class="bi bi-volume-mute-fill" id="icono-audio"></i></button>
 <button onclick="togglePlayPauseVideo()" class="btn btn-ghost hidden sm:inline-flex px-4 py-2.5 text-xs"><i class="bi bi-play-circle text-emerald-400" id="icon-scrub-mode"></i><span id="text-scrub-mode">Ver continuo</span></button>
-<a href="#catalogo" class="btn btn-leaf px-4 sm:px-5 py-2 sm:py-2.5 text-xs">Pedir ahora<i class="bi bi-arrow-right"></i></a>
+<a href="#catalogo" id="nav-btn-pedir" class="btn btn-leaf px-4 sm:px-5 py-2 sm:py-2.5 text-xs">Pedir ahora<i class="bi bi-arrow-right"></i></a>
 </div></div>
 </header>
 
@@ -357,7 +357,7 @@ section>.max-w-7xl{position:relative;z-index:2}
 <div id="scene-hero" data-r="0,0,0.015,0.05" class="scroll-text ts absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 pointer-events-none z-30 transition-all duration-300">
     <div class="hero-in inline-flex items-center gap-2.5 px-3 py-1 mb-4 sm:mb-6 text-emerald-300 drop-shadow-[0_2px_14px_rgba(0,0,0,0.95)]" style="--d:0s">
         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-        <span class="text-[10px] sm:text-xs font-semibold tracking-[0.28em] uppercase text-emerald-200">Elixir Botánico · Prensado en Frío</span>
+        <span id="hero-display-badge" class="text-[10px] sm:text-xs font-semibold tracking-[0.28em] uppercase text-emerald-200">Elixir Botánico · Prensado en Frío</span>
     </div>
     
     <h1 class="hero-in font-cinzel font-black text-6xl sm:text-8xl md:text-9xl lg:text-[10.5rem] tracking-[0.14em] mb-3 sm:mb-5 uppercase select-none leading-none" style="--d:.12s">
@@ -369,7 +369,7 @@ section>.max-w-7xl{position:relative;z-index:2}
     </p>
 
     <div class="hero-in flex flex-col items-center gap-2 cursor-pointer pointer-events-auto opacity-75 hover:opacity-100 transition-opacity" onclick="scrollToProgress(0.20)" style="--d:.4s">
-        <span class="text-[10px] tracking-[0.25em] uppercase text-emerald-300/80 font-medium">Desliza para ver la experiencia</span>
+        <span id="hero-display-cta" class="text-[10px] tracking-[0.25em] uppercase text-emerald-300/80 font-medium">Desliza para ver la experiencia</span>
         <div class="w-4 h-7 rounded-full border border-emerald-400/40 flex items-start justify-center p-1">
             <div class="w-1 h-2 rounded-full bg-emerald-400 animate-bounce"></div>
         </div>
@@ -382,16 +382,16 @@ section>.max-w-7xl{position:relative;z-index:2}
     <div class="corner-card">
         <div class="flex items-center gap-2 mb-2">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-            <span class="text-[10px] sm:text-xs font-black tracking-[0.22em] uppercase text-emerald-300">Prensado en Frío · 14°C</span>
+            <span id="video-escena1-tag" class="text-[10px] sm:text-xs font-black tracking-[0.22em] uppercase text-emerald-300">Prensado en Frío · 14°C</span>
         </div>
-        <h3 class="font-cinzel font-black text-2xl sm:text-3xl uppercase tracking-tight text-white leading-tight mb-2">
+        <h3 id="video-escena1-titulo" class="font-cinzel font-black text-2xl sm:text-3xl uppercase tracking-tight text-white leading-tight mb-2">
             Extracción <span class="text-emerald-400">Hidráulica</span>
         </h3>
         <div class="flex items-baseline gap-2.5 mb-2">
-            <span class="font-cinzel font-black text-3xl sm:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-yellow-300">98.6%</span>
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Enzimas Vivas Activas</span>
+            <span id="video-escena1-cifra" class="font-cinzel font-black text-3xl sm:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-yellow-300">98.6%</span>
+            <span id="video-escena1-cifra-label" class="text-xs font-bold uppercase tracking-wider text-slate-300">Enzimas Vivas Activas</span>
         </div>
-        <p class="text-xs text-slate-300/95 font-medium leading-relaxed">
+        <p id="video-escena1-desc" class="text-xs text-slate-300/95 font-medium leading-relaxed">
             Presión suave y continua sin calor ni cuchillas térmicas. Preserva la estructura molecular de cada fitonutriente.
         </p>
     </div>
@@ -401,17 +401,17 @@ section>.max-w-7xl{position:relative;z-index:2}
 <div data-r="0.38,0.46,0.60,0.68" class="scroll-text corner-right absolute right-4 sm:right-10 md:right-14 bottom-8 sm:bottom-12 md:bottom-14 z-30 pointer-events-none max-w-[340px] sm:max-w-[410px]" style="opacity:0;visibility:hidden">
     <div class="corner-card corner-gold text-right">
         <div class="flex items-center justify-end gap-2 mb-2">
-            <span class="text-[10px] sm:text-xs font-black tracking-[0.22em] uppercase text-yellow-300">Pureza Botánica 100%</span>
+            <span id="video-escena2-tag" class="text-[10px] sm:text-xs font-black tracking-[0.22em] uppercase text-yellow-300">Pureza Botánica 100%</span>
             <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-ping"></span>
         </div>
-        <h3 class="font-cinzel font-black text-2xl sm:text-3xl uppercase tracking-tight text-white leading-tight mb-2">
+        <h3 id="video-escena2-titulo" class="font-cinzel font-black text-2xl sm:text-3xl uppercase tracking-tight text-white leading-tight mb-2">
             Cero Agua <span class="text-yellow-400">Añadida</span>
         </h3>
         <div class="flex items-baseline justify-end gap-2.5 mb-2">
-            <span class="font-cinzel font-black text-3xl sm:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-emerald-300">0.0%</span>
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Azúcar · Sin Químicos</span>
+            <span id="video-escena2-cifra" class="font-cinzel font-black text-3xl sm:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-emerald-300">0.0%</span>
+            <span id="video-escena2-cifra-label" class="text-xs font-bold uppercase tracking-wider text-slate-300">Azúcar · Sin Químicos</span>
         </div>
-        <p class="text-xs text-slate-300/95 font-medium leading-relaxed">
+        <p id="video-escena2-desc" class="text-xs text-slate-300/95 font-medium leading-relaxed">
             Solo la savia y extracto denso de raíces vivas cosechadas de agricultores sostenibles en menos de 24 horas.
         </p>
     </div>
@@ -422,16 +422,16 @@ section>.max-w-7xl{position:relative;z-index:2}
     <div class="corner-card">
         <div class="flex items-center gap-2 mb-2">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-            <span class="text-[10px] sm:text-xs font-black tracking-[0.22em] uppercase text-emerald-300">Bioasimilación Inmediata</span>
+            <span id="video-escena3-tag" class="text-[10px] sm:text-xs font-black tracking-[0.22em] uppercase text-emerald-300">Bioasimilación Inmediata</span>
         </div>
-        <h3 class="font-cinzel font-black text-2xl sm:text-3xl uppercase tracking-tight text-white leading-tight mb-2">
+        <h3 id="video-escena3-titulo" class="font-cinzel font-black text-2xl sm:text-3xl uppercase tracking-tight text-white leading-tight mb-2">
             Nutrición <span class="text-emerald-400">Celular</span>
         </h3>
         <div class="flex items-baseline gap-2.5 mb-2">
-            <span class="font-cinzel font-black text-3xl sm:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-300">&lt; 20 min</span>
-            <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Absorción Digestiva</span>
+            <span id="video-escena3-cifra" class="font-cinzel font-black text-3xl sm:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-300">&lt; 20 min</span>
+            <span id="video-escena3-cifra-label" class="text-xs font-bold uppercase tracking-wider text-slate-300">Absorción Digestiva</span>
         </div>
-        <p class="text-xs text-slate-300/95 font-medium leading-relaxed">
+        <p id="video-escena3-desc" class="text-xs text-slate-300/95 font-medium leading-relaxed">
             Oxigenación inmediata y recarga limpia de tus mitocondrias sin fermentación ni pesadez estomacal.
         </p>
     </div>
@@ -441,21 +441,22 @@ section>.max-w-7xl{position:relative;z-index:2}
 <div data-r="0.88,0.94,1.01,1.02" class="scroll-text corner-right absolute right-4 sm:right-10 md:right-14 bottom-8 sm:bottom-12 md:bottom-14 z-30 pointer-events-none max-w-[360px] sm:max-w-[430px]" style="opacity:0;visibility:hidden">
     <div class="corner-card text-right">
         <div class="flex items-center justify-end gap-2 mb-2">
-            <span class="text-[10px] sm:text-xs font-black tracking-[0.22em] uppercase text-emerald-300">Colección Viva 2026</span>
+            <span id="video-escena4-tag" class="text-[10px] sm:text-xs font-black tracking-[0.22em] uppercase text-emerald-300">Colección Viva 2026</span>
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
         </div>
-        <h3 class="font-cinzel font-black text-2xl sm:text-3xl uppercase tracking-tight text-white leading-tight mb-2">
+        <h3 id="video-escena4-titulo" class="font-cinzel font-black text-2xl sm:text-3xl uppercase tracking-tight text-white leading-tight mb-2">
             Despierta tu <span class="shine-luxury">Vitalidad</span>
         </h3>
-        <p class="text-xs text-slate-300/95 font-medium leading-relaxed mb-4">
+        <p id="video-escena4-desc" class="text-xs text-slate-300/95 font-medium leading-relaxed mb-4">
             Explora nuestros elíxires individuales, packs fitoquímicos semanales o crea tu fórmula en 'Arma tu Batido'.
         </p>
         <div class="flex justify-end pointer-events-auto">
-            <a href="#catalogo" class="btn btn-leaf px-6 py-3 text-xs font-black uppercase tracking-wider shadow-[0_0_25px_rgba(34,197,94,0.55)]">
+            <a href="#catalogo" id="video-escena4-boton" class="btn btn-leaf px-6 py-3 text-xs font-black uppercase tracking-wider shadow-[0_0_25px_rgba(34,197,94,0.55)]">
                 Ver Catálogo Completo <i class="bi bi-arrow-down-circle ms-1.5"></i>
             </a>
         </div>
     </div>
+</div>
 </div>
 </div>
 </section>
@@ -467,8 +468,8 @@ section>.max-w-7xl{position:relative;z-index:2}
 <div class="text-center max-w-3xl mx-auto mb-12 reveal">
 <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950/50 border border-emerald-500/30 text-emerald-300 text-sm font-semibold mb-5"><i class="bi bi-geo-alt-fill"></i><span id="display-nodo-actual">🇨🇴 Cosecha Tuluá</span></span>
 <input type="hidden" id="sucursal-activa" value="Colombia">
-<h2 class="font-cinzel font-black text-4xl md:text-6xl tracking-tight mb-4">Elixires <span class="shine">recién prensados</span></h2>
-<p class="text-slate-400 font-light">Toca una botella para ver su ficha. Todo se prensa en las últimas 24 horas.</p>
+<h2 id="catalogo-display-titulo" class="font-cinzel font-black text-4xl md:text-6xl tracking-tight mb-4">Elixires <span class="shine">recién prensados</span></h2>
+<p id="catalogo-display-subtitulo" class="text-slate-400 font-light">Toca una botella para ver su ficha. Todo se prensa en las últimas 24 horas.</p>
 </div>
 <div id="cats" class="flex flex-wrap items-end justify-center gap-x-4 gap-y-9 mb-8 reveal">
 <button class="cat active" onclick="filtrar('500 mls',this)"><i class="bi bi-droplet-half"></i>Elíxires</button>
@@ -487,8 +488,8 @@ section>.max-w-7xl{position:relative;z-index:2}
 <div class="ape-peek" data-ape="1" data-side="right" data-v="v3" aria-hidden="true"></div>
 <div class="max-w-7xl mx-auto px-6 md:px-12">
 <div class="max-w-3xl mb-14 reveal">
-<h2 class="font-cinzel font-black text-4xl md:text-6xl tracking-tight mb-5">Seis raíces, <span class="shine">cero relleno</span></h2>
-<p class="text-slate-400 font-light leading-relaxed">Las elegimos por su densidad enzimática y la compramos directo a agricultores sostenibles.</p>
+<h2 id="ingredientes-display-titulo" class="font-cinzel font-black text-4xl md:text-6xl tracking-tight mb-5">Seis raíces, <span class="shine">cero relleno</span></h2>
+<p id="ingredientes-display-subtitulo" class="text-slate-400 font-light leading-relaxed">Las elegimos por su densidad enzimática y la compramos directo a agricultores sostenibles.</p>
 </div>
 <div id="grid-ing" class="grid grid-cols-1 md:grid-cols-6 gap-5"></div>
 </div>
@@ -498,8 +499,8 @@ section>.max-w-7xl{position:relative;z-index:2}
 <div class="ape-peek" data-ape="2" data-side="left" aria-hidden="true"></div>
 <div class="max-w-7xl mx-auto px-6 md:px-12">
 <div class="max-w-3xl mb-14 reveal">
-<h2 class="font-cinzel font-black text-4xl md:text-6xl tracking-tight mb-5">Protocolo en <span class="shine">tres fases</span></h2>
-<p class="text-slate-400 font-light">Depura, activa y repara, en este orden.</p>
+<h2 id="protocolo-display-titulo" class="font-cinzel font-black text-4xl md:text-6xl tracking-tight mb-5">Protocolo en <span class="shine">tres fases</span></h2>
+<p id="protocolo-display-subtitulo" class="text-slate-400 font-light">Depura, activa y repara, en este orden.</p>
 </div>
 <div id="grid-det" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
 <div id="stats" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16"></div>
@@ -514,9 +515,9 @@ section>.max-w-7xl{position:relative;z-index:2}
 <canvas class="cfx" id="cfx" aria-hidden="true"></canvas>
 <div class="cgrid">
 <div class="ctxt">
-<p class="ctag" id="ctag"><i class="bi bi-stars me-1 text-emerald-400"></i>El chimpancé aprobó</p>
+<p class="ctag" id="ctag"><i class="bi bi-stars me-1 text-emerald-400"></i><span id="chimpance-display-tag">El chimpancé aprobó</span></p>
 <p id="cwords">Hasta el chimpancé lo sabe: un buen sorbo empieza en la raíz. Espinaca viva, aloe, jengibre y cúrcuma, prensados en frío y sin azúcar añadida. Cierra los ojos, bebe despacio y deja que la selva haga el resto.</p>
-<a href="#catalogo" class="btn btn-leaf px-8 py-3.5 ccta" id="ccta">Pedir mi batido<i class="bi bi-arrow-right"></i></a>
+<a href="#catalogo" class="btn btn-leaf px-8 py-3.5 ccta" id="ccta"><span id="chimpance-display-boton">Pedir mi batido</span><i class="bi bi-arrow-right"></i></a>
 </div>
 <div class="cstage" id="cstage"><div class="caura" id="caura"></div><div class="cring" id="cring"></div><div class="ccap" id="ccap" style="display:none"></div><svg viewBox="0 0 400 500" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Chimpancé con lentes neón tomando un batido RAÍCES con pitillo">
 <defs>
@@ -665,9 +666,9 @@ section>.max-w-7xl{position:relative;z-index:2}
 
 <footer class="relative z-10 text-slate-400 py-16 border-t border-white/5">
 <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-8">
-<div class="text-center md:text-left"><div class="flex items-center gap-3 mb-2 justify-center md:justify-start"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#22c55e]"></span><span class="font-cinzel font-black text-2xl tracking-[.22em] text-white">RAÍCES</span></div><p class="text-sm font-light">Elixir botánico de alta densidad, prensado en frío.</p></div>
+<div class="text-center md:text-left"><div class="flex items-center gap-3 mb-2 justify-center md:justify-start"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#22c55e]"></span><span id="footer-brand-nombre" class="font-cinzel font-black text-2xl tracking-[.22em] text-white">RAÍCES</span></div><p id="footer-display-frase" class="text-sm font-light">Elixir botánico de alta densidad, prensado en frío.</p></div>
 <div class="flex flex-wrap items-center justify-center gap-6 text-sm"><a href="#cinematic-experience" class="hover:text-emerald-400">Experiencia</a><a href="#catalogo" class="hover:text-emerald-400">Catálogo</a><a href="#ingredientes" class="hover:text-emerald-400">Ingredientes</a><a href="#beneficios" class="hover:text-emerald-400">Protocolo</a></div>
-<div class="text-center md:text-right text-xs font-light"><p>© 2026 RAÍCES BIO-SYSTEMS. Todos los derechos reservados.</p><p class="mt-1 text-slate-500">Norma Sanitaria Internacional · Lote activo #418</p></div>
+<div class="text-center md:text-right text-xs font-light"><p id="footer-display-copyright">© 2026 RAÍCES BIO-SYSTEMS. Todos los derechos reservados.</p><p id="footer-display-norma" class="mt-1 text-slate-500">Norma Sanitaria Internacional · Lote activo #418</p></div>
 </div>
 </footer>
 
@@ -701,7 +702,6 @@ function cargarAjustesDesdeBackend() {
         .then(function(res) { if (!res.ok) throw new Error('Status ' + res.status); return res.json(); })
         .then(function(data) {
             AJUSTES = Object.assign({}, AJUSTES, data);
-            AJUSTES.bannerPromoActivo = false;
             aplicarAjustesEnUI();
         })
         .catch(function(err) {
@@ -711,19 +711,73 @@ function cargarAjustesDesdeBackend() {
 }
 
 function aplicarAjustesEnUI() {
-    // 1. Banner superior (permanentemente desactivado para vista cinematográfica limpia)
+    // 0. Banner superior de Anuncio
     var banner = $('banner-anuncio-top');
-    if (banner) banner.style.display = 'none';
     var nav = $('main-nav');
-    if (nav) nav.style.paddingTop = 'calc(.6rem + env(safe-area-inset-top, 0px))';
+    if (banner) {
+        if (AJUSTES.bannerPromoActivo && AJUSTES.bannerPromoTexto) {
+            banner.innerHTML = AJUSTES.bannerPromoTexto;
+            banner.style.display = 'flex';
+            if (nav) nav.style.top = banner.offsetHeight + 'px';
+        } else {
+            banner.style.display = 'none';
+            if (nav) nav.style.top = '0px';
+        }
+    }
 
-    // 2. Título y subtítulo del hero
-    var tit = $('hero-display-titulo');
-    if (tit && AJUSTES.heroTitulo) tit.innerText = AJUSTES.heroTitulo;
-    var sub = $('hero-display-subtitulo');
-    if (sub && AJUSTES.heroSubtitulo) sub.innerText = AJUSTES.heroSubtitulo;
+    // 0.1 Header y Navegación
+    if (AJUSTES.navBrandNombre) {
+        if ($('nav-brand-nombre')) $('nav-brand-nombre').innerText = AJUSTES.navBrandNombre;
+        if ($('footer-brand-nombre')) $('footer-brand-nombre').innerText = AJUSTES.navBrandNombre;
+    }
+    if (AJUSTES.navBrandTagline && $('nav-brand-tagline')) $('nav-brand-tagline').innerText = AJUSTES.navBrandTagline;
+    if (AJUSTES.navLink1 && $('nav-link-1')) $('nav-link-1').innerText = AJUSTES.navLink1;
+    if (AJUSTES.navLink2 && $('nav-link-2')) $('nav-link-2').innerText = AJUSTES.navLink2;
+    if (AJUSTES.navLink3 && $('nav-link-3')) $('nav-link-3').innerText = AJUSTES.navLink3;
+    if (AJUSTES.navLink4 && $('nav-link-4')) $('nav-link-4').innerText = AJUSTES.navLink4;
+    if (AJUSTES.navBotonModo && $('text-scrub-mode')) $('text-scrub-mode').innerText = AJUSTES.navBotonModo;
+    if (AJUSTES.navBotonPedir && $('nav-btn-pedir')) $('nav-btn-pedir').innerHTML = esc(AJUSTES.navBotonPedir) + ' <i class="bi bi-arrow-right"></i>';
 
-    // 3. Marquesina dinámica
+    // 0.2 Footer
+    if (AJUSTES.footerFrase && $('footer-display-frase')) $('footer-display-frase').innerText = AJUSTES.footerFrase;
+    if (AJUSTES.footerCopyright && $('footer-display-copyright')) $('footer-display-copyright').innerText = AJUSTES.footerCopyright;
+    if (AJUSTES.footerNorma && $('footer-display-norma')) $('footer-display-norma').innerText = AJUSTES.footerNorma;
+
+    // 1. Hero Cinematográfico
+    if (AJUSTES.heroBadge && $('hero-display-badge')) $('hero-display-badge').innerText = AJUSTES.heroBadge;
+    if (AJUSTES.heroTitulo && $('hero-display-titulo')) $('hero-display-titulo').innerText = AJUSTES.heroTitulo;
+    if (AJUSTES.heroSubtitulo && $('hero-display-subtitulo')) $('hero-display-subtitulo').innerText = AJUSTES.heroSubtitulo;
+    if (AJUSTES.heroScrollCta && $('hero-display-cta')) $('hero-display-cta').innerText = AJUSTES.heroScrollCta;
+
+    // 3. Escenas sobre el video (4 Esquinas Dinámicas)
+    // Escena 1 (Inferior Izquierda)
+    if (AJUSTES.videoEscena1Tag && $('video-escena1-tag')) $('video-escena1-tag').innerText = AJUSTES.videoEscena1Tag;
+    if (AJUSTES.videoEscena1Titulo && $('video-escena1-titulo')) $('video-escena1-titulo').innerHTML = AJUSTES.videoEscena1Titulo;
+    if (AJUSTES.videoEscena1Cifra && $('video-escena1-cifra')) $('video-escena1-cifra').innerText = AJUSTES.videoEscena1Cifra;
+    if (AJUSTES.videoEscena1CifraLabel && $('video-escena1-cifra-label')) $('video-escena1-cifra-label').innerText = AJUSTES.videoEscena1CifraLabel;
+    if (AJUSTES.videoEscena1Desc && $('video-escena1-desc')) $('video-escena1-desc').innerText = AJUSTES.videoEscena1Desc;
+
+    // Escena 2 (Inferior Derecha)
+    if (AJUSTES.videoEscena2Tag && $('video-escena2-tag')) $('video-escena2-tag').innerText = AJUSTES.videoEscena2Tag;
+    if (AJUSTES.videoEscena2Titulo && $('video-escena2-titulo')) $('video-escena2-titulo').innerHTML = AJUSTES.videoEscena2Titulo;
+    if (AJUSTES.videoEscena2Cifra && $('video-escena2-cifra')) $('video-escena2-cifra').innerText = AJUSTES.videoEscena2Cifra;
+    if (AJUSTES.videoEscena2CifraLabel && $('video-escena2-cifra-label')) $('video-escena2-cifra-label').innerText = AJUSTES.videoEscena2CifraLabel;
+    if (AJUSTES.videoEscena2Desc && $('video-escena2-desc')) $('video-escena2-desc').innerText = AJUSTES.videoEscena2Desc;
+
+    // Escena 3 (Inferior Izquierda)
+    if (AJUSTES.videoEscena3Tag && $('video-escena3-tag')) $('video-escena3-tag').innerText = AJUSTES.videoEscena3Tag;
+    if (AJUSTES.videoEscena3Titulo && $('video-escena3-titulo')) $('video-escena3-titulo').innerHTML = AJUSTES.videoEscena3Titulo;
+    if (AJUSTES.videoEscena3Cifra && $('video-escena3-cifra')) $('video-escena3-cifra').innerText = AJUSTES.videoEscena3Cifra;
+    if (AJUSTES.videoEscena3CifraLabel && $('video-escena3-cifra-label')) $('video-escena3-cifra-label').innerText = AJUSTES.videoEscena3CifraLabel;
+    if (AJUSTES.videoEscena3Desc && $('video-escena3-desc')) $('video-escena3-desc').innerText = AJUSTES.videoEscena3Desc;
+
+    // Escena 4 (Inferior Derecha)
+    if (AJUSTES.videoEscena4Tag && $('video-escena4-tag')) $('video-escena4-tag').innerText = AJUSTES.videoEscena4Tag;
+    if (AJUSTES.videoEscena4Titulo && $('video-escena4-titulo')) $('video-escena4-titulo').innerHTML = AJUSTES.videoEscena4Titulo;
+    if (AJUSTES.videoEscena4Desc && $('video-escena4-desc')) $('video-escena4-desc').innerText = AJUSTES.videoEscena4Desc;
+    if (AJUSTES.videoEscena4Boton && $('video-escena4-boton')) $('video-escena4-boton').innerHTML = AJUSTES.videoEscena4Boton + ' <i class="bi bi-arrow-down-circle ms-1.5"></i>';
+
+    // 4. Marquesina dinámica
     if (AJUSTES.marquesinaTexto) {
         var items = AJUSTES.marquesinaTexto.split('|').map(function(s) { return s.trim(); }).filter(Boolean);
         if (items.length) {
@@ -734,14 +788,29 @@ function aplicarAjustesEnUI() {
         }
     }
 
-    // 4. Efecto simios asomados
+    // 5. Secciones del Menú (Catálogo, Seis Raíces, Protocolo)
+    if (AJUSTES.catalogoTitulo && $('catalogo-display-titulo')) $('catalogo-display-titulo').innerHTML = AJUSTES.catalogoTitulo;
+    if (AJUSTES.catalogoSubtitulo && $('catalogo-display-subtitulo')) $('catalogo-display-subtitulo').innerText = AJUSTES.catalogoSubtitulo;
+
+    if (AJUSTES.ingredientesTitulo && $('ingredientes-display-titulo')) $('ingredientes-display-titulo').innerHTML = AJUSTES.ingredientesTitulo;
+    if (AJUSTES.ingredientesSubtitulo && $('ingredientes-display-subtitulo')) $('ingredientes-display-subtitulo').innerText = AJUSTES.ingredientesSubtitulo;
+
+    if (AJUSTES.protocoloTitulo && $('protocolo-display-titulo')) $('protocolo-display-titulo').innerHTML = AJUSTES.protocoloTitulo;
+    if (AJUSTES.protocoloSubtitulo && $('protocolo-display-subtitulo')) $('protocolo-display-subtitulo').innerText = AJUSTES.protocoloSubtitulo;
+
+    // 6. Sección Chimpancé
+    if (AJUSTES.chimpanceTag && $('chimpance-display-tag')) $('chimpance-display-tag').innerText = AJUSTES.chimpanceTag;
+    if (AJUSTES.chimpanceTexto && $('cwords')) $('cwords').innerText = AJUSTES.chimpanceTexto;
+    if (AJUSTES.chimpanceBoton && $('chimpance-display-boton')) $('chimpance-display-boton').innerText = AJUSTES.chimpanceBoton;
+
+    // 7. Efecto simios asomados
     if (AJUSTES.efectoSimiosActivo === false) {
         document.querySelectorAll('.ape-peek').forEach(function(el) { el.style.display = 'none'; });
     } else {
         document.querySelectorAll('.ape-peek').forEach(function(el) { el.style.display = ''; });
     }
 
-    // 5. Efecto vegetación/flora
+    // 8. Efecto vegetación/flora
     if (AJUSTES.efectoFloraActivo === false) {
         document.querySelectorAll('.flora, .cfl').forEach(function(el) { el.style.display = 'none'; });
     } else {
@@ -1604,7 +1673,7 @@ function renderBuilder() {
         done ? '<button class="btn btn-ghost w-full py-3" onclick="bReset()"><i class="bi bi-arrow-repeat"></i>Armar otro batido</button>' :
         '<button class="btn btn-ruby w-full py-4" onclick="bBlend()"><i class="bi bi-lightning-charge-fill"></i>LICUAR</button>';
     $('grid-menu').innerHTML = '<div class="col-span-full spot rim rounded-[28px] p-6 md:p-10 overflow-hidden">' + panelFlora() + '<div class="grid md:grid-cols-2 gap-10"><div>' +
-        '<h3 class="font-cinzel text-2xl md:text-3xl font-bold mb-2">Arma tu batido</h3><p class="text-slate-400 text-sm mb-6">Elige una base y hasta 4 ingredientes. Lo prensamos al momento.</p>' +
+        '<h3 class="font-cinzel text-2xl md:text-3xl font-bold mb-2">' + esc(AJUSTES.licuadoraTitulo || 'Arma tu batido') + '</h3><p class="text-slate-400 text-sm mb-6">' + esc(AJUSTES.licuadoraSubtitulo || 'Elige una base y hasta 4 ingredientes. Lo prensamos al momento.') + '</p>' +
         '<p class="label-bio">Base</p><div class="flex flex-wrap gap-2 mb-6">' + BASES.map(function(b, i) { return '<button class="chip' + (i === bBase ? ' active' : '') + '"' + dis + ' onclick="bSet(' + i + ')">' + b[0] + '</button>'; }).join('') + '</div>' +
         '<p class="label-bio">Ingredientes (hasta 4)</p><div class="flex flex-wrap gap-2">' + ING_B.map(function(g, i) { return '<button class="chip' + (bSel.indexOf(i) > -1 ? ' active' : '') + '"' + dis + ' onclick="bToggle(' + i + ')"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:' + g[2] + ';margin-right:.5rem"></span>' + g[0] + '</button>'; }).join('') + '</div></div>' +
         '<div class="relative pt-[115px]"><div id="ape-slot"></div><div class="rounded-3xl bg-black/30 border border-white/10 p-6 sm:p-8 text-center flex flex-col items-center gap-5">' +
