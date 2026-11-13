@@ -2771,6 +2771,33 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- SECCIÓN COMUNIDAD & BLOG -->
+                                <div class="col-12">
+                                    <div class="p-3 rounded" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <label class="form-label-neon text-info m-0"><i class="bi bi-chat-heart-fill me-1"></i> SECCIÓN COMUNIDAD & BLOG (PORTAL)</label>
+                                            <div class="form-check form-switch m-0 d-flex align-items-center gap-2">
+                                                <input class="form-check-input fs-5 m-0" type="checkbox" id="web-blog-activo">
+                                                <label class="form-check-label font-orbitron text-white small" for="web-blog-activo">ACTIVAR BLOG EN MENÚ</label>
+                                            </div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-md-3">
+                                                <label class="form-label-neon">BADGE / ETIQUETA</label>
+                                                <input type="text" id="web-blog-badge" class="form-control form-control-sm" placeholder="COMUNIDAD BIO-ACTIVA & BLOG">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label-neon">TÍTULO PRINCIPAL</label>
+                                                <input type="text" id="web-blog-titulo" class="form-control form-control-sm" placeholder="Espacio de Conocimiento & Conexión Vital">
+                                            </div>
+                                            <div class="col-md-5">
+                                                <label class="form-label-neon">SUBTÍTULO / DESCRIPCIÓN</label>
+                                                <input type="text" id="web-blog-subtitulo" class="form-control form-control-sm" placeholder="Fundamentos de nutrición celular, notas del laboratorio RAÍCES...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -7748,6 +7775,13 @@
             setVal('web-footer-copyright', data.footerCopyright || '© 2026 RAÍCES BIO-SYSTEMS. Todos los derechos reservados.');
             setVal('web-footer-norma', data.footerNorma || 'Norma Sanitaria Internacional · Lote activo #418');
 
+            // 3.2 Blog
+            setVal('web-blog-badge', data.blogBadge || 'COMUNIDAD BIO-ACTIVA & BLOG');
+            setVal('web-blog-titulo', data.blogTitulo || 'Espacio de Conocimiento & Conexión Vital');
+            setVal('web-blog-subtitulo', data.blogSubtitulo || 'Fundamentos de nutrición celular, notas del laboratorio RAÍCES y propuestas de nuevos sabores de la comunidad.');
+            const efBlog = document.getElementById('web-blog-activo');
+            if (efBlog) efBlog.checked = data.blogActivo !== false;
+
             // 4. Contacto
             setVal('web-whatsapp-numero', data.whatsappNumero || '573177651016');
             setVal('web-telefono-contacto', data.telefonoContacto || '3177651016');
@@ -7847,6 +7881,12 @@
             footerFrase: getVal('web-footer-frase', 'Elixir botánico de alta densidad, prensado en frío.'),
             footerCopyright: getVal('web-footer-copyright', '© 2026 RAÍCES BIO-SYSTEMS. Todos los derechos reservados.'),
             footerNorma: getVal('web-footer-norma', 'Norma Sanitaria Internacional · Lote activo #418'),
+
+            // 3.2 Blog
+            blogBadge: getVal('web-blog-badge', 'COMUNIDAD BIO-ACTIVA & BLOG'),
+            blogTitulo: getVal('web-blog-titulo', 'Espacio de Conocimiento & Conexión Vital'),
+            blogSubtitulo: getVal('web-blog-subtitulo'),
+            blogActivo: document.getElementById('web-blog-activo') ? document.getElementById('web-blog-activo').checked : true,
 
             // 4. Contacto
             whatsappNumero: getVal('web-whatsapp-numero', '573177651016'),

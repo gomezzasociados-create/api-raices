@@ -127,6 +127,15 @@ public class AjustesWeb {
     @Column(length = 1000)
     private String licuadoraSubtitulo = "Elige una base y hasta 4 ingredientes. Lo prensamos al momento.";
 
+    // --- 8.1 SECCIÓN COMUNIDAD & BLOG ---
+    @Column(length = 300)
+    private String blogBadge = "COMUNIDAD BIO-ACTIVA & BLOG";
+    @Column(length = 300)
+    private String blogTitulo = "Espacio de Conocimiento & Conexión Vital";
+    @Column(length = 1000)
+    private String blogSubtitulo = "Fundamentos de nutrición celular, notas del laboratorio RAÍCES y propuestas de nuevos sabores de la comunidad.";
+    private Boolean blogActivo = true;
+
     // --- 9. DATOS DE CONTACTO Y MENSAJERÍA ---
     private String whatsappNumero = "573177651016";
     private String telefonoContacto = "3177651016";
@@ -316,6 +325,18 @@ public class AjustesWeb {
 
     public String getFooterNorma() { return footerNorma; }
     public void setFooterNorma(String footerNorma) { this.footerNorma = footerNorma; }
+
+    public String getBlogBadge() { return blogBadge; }
+    public void setBlogBadge(String blogBadge) { this.blogBadge = blogBadge; }
+
+    public String getBlogTitulo() { return blogTitulo; }
+    public void setBlogTitulo(String blogTitulo) { this.blogTitulo = blogTitulo; }
+
+    public String getBlogSubtitulo() { return blogSubtitulo; }
+    public void setBlogSubtitulo(String blogSubtitulo) { this.blogSubtitulo = blogSubtitulo; }
+
+    public Boolean getBlogActivo() { return blogActivo; }
+    public void setBlogActivo(Boolean blogActivo) { this.blogActivo = blogActivo; }
 
     public Boolean getEfectoAudioFondo() { return efectoAudioFondo; }
     public void setEfectoAudioFondo(Boolean efectoAudioFondo) { this.efectoAudioFondo = efectoAudioFondo; }

@@ -330,6 +330,7 @@ section>.max-w-7xl{position:relative;z-index:2}
 <a href="#catalogo" id="nav-link-2" class="hover:text-emerald-300 transition-colors">Catálogo</a>
 <a href="#ingredientes" id="nav-link-3" class="hover:text-emerald-300 transition-colors">Ingredientes</a>
 <a href="#beneficios" id="nav-link-4" class="hover:text-emerald-300 transition-colors">Protocolo</a>
+<a href="#comunidad" id="nav-link-comunidad" class="hover:text-emerald-300 transition-colors">Comunidad</a>
 </nav>
 <div class="flex items-center gap-2 sm:gap-2.5">
 <button onclick="toggleAudio()" aria-label="Sonido" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/5 border border-white/10 text-emerald-400 grid place-items-center hover:bg-emerald-500/20"><i class="bi bi-volume-mute-fill" id="icono-audio"></i></button>
@@ -477,7 +478,7 @@ section>.max-w-7xl{position:relative;z-index:2}
 <button class="cat" onclick="filtrar('Armar',this)"><i class="bi bi-magic"></i>Arma tu batido</button>
 <button class="cat" data-tag="Próximamente" style="--t:#facc15" onclick="filtrar('Shots',this)"><i class="bi bi-lightning-charge-fill"></i>Shots</button>
 <button class="cat" data-tag="Nuevo" style="--t:#e879f9" onclick="filtrar('Exoticos',this)"><i class="bi bi-stars"></i>Exóticos</button>
-<button class="cat" onclick="filtrar('Comunidad',this)"><i class="bi bi-chat-heart-fill"></i>Comunidad &amp; blog</button>
+<button id="cat-btn-comunidad" class="cat" onclick="filtrar('Comunidad',this)"><i class="bi bi-chat-heart-fill"></i>Comunidad &amp; blog</button>
 </div>
 <div id="barra-busqueda" class="flex justify-center mb-12 reveal"><span class="relative"><i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i><input id="buscador" class="search" type="search" placeholder="Buscar elixir" aria-label="Buscar elixir" oninput="renderCatalogo()"></span></div>
 <div id="grid-menu" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
@@ -601,6 +602,34 @@ section>.max-w-7xl{position:relative;z-index:2}
 </div>
 </div>
 </section>
+
+<!-- SECCIÓN COMUNIDAD & BLOG EN EL MENÚ -->
+<section id="comunidad" class="relative py-28 border-t border-white/5 overflow-hidden">
+<div class="max-w-7xl mx-auto px-6 md:px-12 text-center">
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-400/50 shadow-[0_0_20px_rgba(34,197,94,0.3)] backdrop-blur-md mb-4 text-emerald-300 text-xs font-bold tracking-wider uppercase">
+        <i class="bi bi-broadcast"></i> <span id="blog-display-badge">COMUNIDAD BIO-ACTIVA & BLOG</span>
+    </div>
+    <h2 id="blog-display-titulo" class="font-cinzel font-black text-3xl md:text-5xl text-white mb-4">Espacio de Conocimiento & <span class="shine">Conexión Vital</span></h2>
+    <p id="blog-display-subtitulo" class="text-slate-400 text-sm max-w-2xl mx-auto mb-12 font-light">Fundamentos de nutrición celular, notas del laboratorio RAÍCES y propuestas de nuevos sabores de la comunidad.</p>
+
+    <!-- ARTÍCULOS DESTACADOS EN VIVO DESDE EL ADMIN -->
+    <div id="grid-articulos-home" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left mb-12">
+        <div class="col-span-full text-center py-12"><div class="inline-block w-8 h-8 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin mb-3"></div><p class="text-xs text-slate-400">Cargando notas y artículos de la comunidad...</p></div>
+    </div>
+
+    <!-- CALL TO ACTION A BUZÓN COMUNITARIO -->
+    <div class="spot rim rounded-[28px] p-8 md:p-10 max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+        <div>
+            <h3 class="font-cinzel text-xl md:text-2xl font-bold text-white mb-2">¿Quieres proponer un nuevo ingrediente o sabor?</h3>
+            <p class="text-xs sm:text-sm text-slate-300 font-light">Nuestra comunidad vota y define las próximas fórmulas que entran a bodega e inventario.</p>
+        </div>
+        <div class="flex items-center gap-3 flex-wrap justify-center">
+            <button class="btn btn-ghost px-5 py-3 text-xs" onclick="irAComunidadTab('buzon')"><i class="bi bi-inbox-fill me-1.5 text-warning"></i>Ver Propuestas</button>
+            <button class="btn btn-leaf px-6 py-3.5 text-xs" onclick="irAComunidadTab('escribir')"><i class="bi bi-send-fill me-1.5"></i>Dejar mi Idea</button>
+        </div>
+    </div>
+</div>
+</section>
 </main>
 
 <button class="btn-mic-flotante" id="btn-mic-global" onclick="iniciarVozGlobal()" title="Habla para ordenar" aria-label="Pedir por voz"><i class="bi bi-mic-fill"></i></button>
@@ -667,7 +696,7 @@ section>.max-w-7xl{position:relative;z-index:2}
 <footer class="relative z-10 text-slate-400 py-16 border-t border-white/5">
 <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-8">
 <div class="text-center md:text-left"><div class="flex items-center gap-3 mb-2 justify-center md:justify-start"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#22c55e]"></span><span id="footer-brand-nombre" class="font-cinzel font-black text-2xl tracking-[.22em] text-white">RAÍCES</span></div><p id="footer-display-frase" class="text-sm font-light">Elixir botánico de alta densidad, prensado en frío.</p></div>
-<div class="flex flex-wrap items-center justify-center gap-6 text-sm"><a href="#cinematic-experience" class="hover:text-emerald-400">Experiencia</a><a href="#catalogo" class="hover:text-emerald-400">Catálogo</a><a href="#ingredientes" class="hover:text-emerald-400">Ingredientes</a><a href="#beneficios" class="hover:text-emerald-400">Protocolo</a></div>
+<div class="flex flex-wrap items-center justify-center gap-6 text-sm"><a href="#cinematic-experience" class="hover:text-emerald-400">Experiencia</a><a href="#catalogo" class="hover:text-emerald-400">Catálogo</a><a href="#ingredientes" class="hover:text-emerald-400">Ingredientes</a><a href="#beneficios" class="hover:text-emerald-400">Protocolo</a><a href="#comunidad" class="hover:text-emerald-400">Comunidad</a></div>
 <div class="text-center md:text-right text-xs font-light"><p id="footer-display-copyright">© 2026 RAÍCES BIO-SYSTEMS. Todos los derechos reservados.</p><p id="footer-display-norma" class="mt-1 text-slate-500">Norma Sanitaria Internacional · Lote activo #418</p></div>
 </div>
 </footer>
@@ -694,7 +723,11 @@ var AJUSTES = {
     efectoFloraActivo: true,
     efectoParticulasChimp: true,
     efectoLicuadoraActivo: true,
-    efectoAudioFondo: true
+    efectoAudioFondo: true,
+    blogBadge: 'COMUNIDAD BIO-ACTIVA & BLOG',
+    blogTitulo: 'Espacio de Conocimiento & <span class="shine">Conexión Vital</span>',
+    blogSubtitulo: 'Fundamentos de nutrición celular, notas del laboratorio RAÍCES y propuestas de nuevos sabores de la comunidad.',
+    blogActivo: true
 };
 
 function cargarAjustesDesdeBackend() {
@@ -815,6 +848,28 @@ function aplicarAjustesEnUI() {
         document.querySelectorAll('.flora, .cfl').forEach(function(el) { el.style.display = 'none'; });
     } else {
         document.querySelectorAll('.flora, .cfl').forEach(function(el) { el.style.display = ''; });
+    }
+
+    // 9. Configuración y textos de Comunidad & Blog
+    var secComunidad = $('comunidad');
+    var catComunidad = $('cat-btn-comunidad');
+    var navComunidad = $('nav-link-comunidad');
+    var blogVisible = (AJUSTES.blogActivo !== false);
+    if (secComunidad) secComunidad.style.display = blogVisible ? '' : 'none';
+    if (catComunidad) catComunidad.style.display = blogVisible ? '' : 'none';
+    if (navComunidad) navComunidad.style.display = blogVisible ? '' : 'none';
+
+    if (AJUSTES.blogBadge) {
+        if ($('blog-display-badge')) $('blog-display-badge').innerText = AJUSTES.blogBadge;
+        if ($('comunidad-nav-badge')) $('comunidad-nav-badge').innerText = AJUSTES.blogBadge;
+    }
+    if (AJUSTES.blogTitulo) {
+        if ($('blog-display-titulo')) $('blog-display-titulo').innerHTML = AJUSTES.blogTitulo;
+        if ($('comunidad-nav-titulo')) $('comunidad-nav-titulo').innerHTML = AJUSTES.blogTitulo;
+    }
+    if (AJUSTES.blogSubtitulo) {
+        if ($('blog-display-subtitulo')) $('blog-display-subtitulo').innerText = AJUSTES.blogSubtitulo;
+        if ($('comunidad-nav-subtitulo')) $('comunidad-nav-subtitulo').innerText = AJUSTES.blogSubtitulo;
     }
 }
 
@@ -1265,20 +1320,34 @@ function cargarCatalogo(sucursal) {
 }
 
 function cargarInsumosReales(sucursal) {
-    var url = '/api/insumos/sucursal/' + encodeURIComponent(sucursal) + '?_t=' + Date.now();
-    fetch(url, { cache: 'no-store' })
+    // 1. Priorizamos el endpoint maestro de inventario/insumos (con subcategorías del admin)
+    fetch('/api/inventario/insumos?_t=' + Date.now(), { cache: 'no-store' })
         .then(function(r) { return r.ok ? r.json() : []; })
-        .then(function(data) {
-            if (!data || !data.length) {
-                return fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' }).then(function(r) { return r.ok ? r.json() : []; });
-            }
-            return data;
-        })
         .then(function(data) {
             if (data && data.length) {
                 insumosReales = data;
                 adaptarInsumosParaBlender(data);
+                return;
             }
+            // Fallback a endpoints por sucursal
+            var url = '/api/insumos/sucursal/' + encodeURIComponent(sucursal) + '?_t=' + Date.now();
+            return fetch(url, { cache: 'no-store' })
+                .then(function(r) { return r.ok ? r.json() : []; })
+                .then(function(subData) {
+                    if (subData && subData.length) {
+                        insumosReales = subData;
+                        adaptarInsumosParaBlender(subData);
+                    } else {
+                        fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' })
+                            .then(function(r) { return r.ok ? r.json() : []; })
+                            .then(function(td) {
+                                if (td && td.length) {
+                                    insumosReales = td;
+                                    adaptarInsumosParaBlender(td);
+                                }
+                            });
+                    }
+                });
         })
         .catch(function(err) {
             console.warn('Error cargando insumos:', err);
@@ -1286,31 +1355,120 @@ function cargarInsumosReales(sucursal) {
 }
 
 function adaptarInsumosParaBlender(insumos) {
-    var basesDb = insumos.filter(function(i) {
-        var sub = (i.subcategoria || '').toLowerCase();
-        var cat = (i.categoria || '').toLowerCase();
-        var nom = (i.nombre || '').toLowerCase();
-        return sub.includes('base') || nom.includes('leche') || nom.includes('agua de coco') || nom.includes('aloe');
+    if (!insumos || !insumos.length) return;
+
+    // Detectamos si hay insumos catalogados para el batido
+    var candidatos = insumos.filter(function(i) {
+        var c = (i.categoria || '').toLowerCase();
+        return c.includes('arma') || c.includes('batido');
     });
-    if (basesDb.length > 0) {
-        BASES = basesDb.map(function(b) {
-            return [b.nombre, Number(b.precio) || 0, b.idInsumo];
+    if (!candidatos.length) {
+        candidatos = insumos.filter(function(i) {
+            return i.subcategoria && i.subcategoria.trim().length > 0;
         });
     }
 
-    var ingsDb = insumos.filter(function(i) {
-        var cat = (i.categoria || '').toLowerCase();
-        var sub = (i.subcategoria || '').toLowerCase();
-        return (cat.includes('arma') || cat.includes('batido') || sub.includes('fruta') || sub.includes('vegetal') || sub.includes('semilla')) && !sub.includes('base');
+    // 1. BASES LÍQUIDAS
+    var basesDb = candidatos.filter(function(i) {
+        var sub = (i.subcategoria || '').toLowerCase().trim();
+        var nom = (i.nombre || '').toLowerCase();
+        return sub === 'base' || nom.includes('leche') || nom.includes('aloe vera') || nom.includes('agua de coco');
     });
+
+    if (basesDb.length > 0) {
+        BASES = basesDb.map(function(b) {
+            var color = '#e3f3ea';
+            var nom = (b.nombre || '').toLowerCase();
+            if (nom.includes('almendra') || nom.includes('vaca') || nom.includes('avena')) color = '#f0e4d0';
+            else if (nom.includes('aloe')) color = '#d6e98c';
+            else if (nom.includes('coco')) color = '#e3f3ea';
+            else if (nom.includes('naranja') || nom.includes('manzana')) color = '#fde047';
+            return [b.nombre, Number(b.precio) || 0, color, b.idInsumo];
+        });
+        BASE_COL = BASES.map(function(b) { return b[2]; });
+    }
+
+    // 2. FITONUTRIENTES / INGREDIENTES
+    var ingsDb = candidatos.filter(function(i) {
+        var sub = (i.subcategoria || '').toLowerCase().trim();
+        return sub !== 'base';
+    });
+
     if (ingsDb.length > 0) {
-        var colores = ['#22c55e', '#a3e635', '#f59e0b', '#fbbf24', '#e60049', '#94a3b8', '#facc15', '#d946ef', '#fb923c', '#bef264', '#38bdf8', '#c084fc'];
-        ING_B = ingsDb.slice(0, 16).map(function(item, idx) {
-            var color = colores[idx % colores.length];
-            return [item.nombre, Number(item.precio) || 1000, color, item.idInsumo, item.imagen];
+        // Extraemos las subcategorías dinámicamente según lo configurado en Bodega / Admin
+        var subcatsSet = {};
+        ingsDb.forEach(function(item) {
+            var sc = (item.subcategoria || 'General').trim();
+            if (sc) subcatsSet[sc] = true;
+        });
+        subcategoriasBatidoDisponibles = ['Todas'].concat(Object.keys(subcatsSet));
+
+        ING_B = ingsDb.map(function(item) {
+            var subcat = (item.subcategoria || 'General').trim();
+            var color = obtenerColorParaInsumo(item.nombre, subcat);
+            return [
+                item.nombre,
+                Number(item.precio) || 0,
+                color,
+                subcat,
+                item.idInsumo,
+                item.cantidadPorcion || 0,
+                item.medida || 'gr'
+            ];
         });
     }
+
+    // Si el usuario ya está viendo el builder de batido, refrescar
+    if (categoriaActual === 'Armar') {
+        renderBuilder();
+    }
 }
+
+function obtenerColorParaInsumo(nombre, subcat) {
+    var n = (nombre || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    var s = (subcat || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    
+    if (n.includes('espinaca') || n.includes('clorofila') || n.includes('menta') || n.includes('matcha')) return '#22c55e';
+    if (n.includes('zanahoria') || n.includes('naranja')) return '#f97316';
+    if (n.includes('betarraga') || n.includes('remolacha') || n.includes('frutilla') || n.includes('fresa') || n.includes('mora') || n.includes('pitahaya') || n.includes('arandano') || n.includes('acai')) return '#e11d48';
+    if (n.includes('pina') || n.includes('platano') || n.includes('maracuya') || n.includes('mango') || n.includes('limon')) return '#eab308';
+    if (n.includes('chia') || n.includes('linaza') || n.includes('calabaza') || n.includes('sesamo') || n.includes('semilla')) return '#94a3b8';
+    if (n.includes('palta') || n.includes('aguacate') || n.includes('aloe')) return '#84cc16';
+    if (n.includes('espirulina')) return '#059669';
+    if (n.includes('maca') || n.includes('canela') || n.includes('cacao') || n.includes('mani') || n.includes('nuez') || n.includes('avena')) return '#b45309';
+    if (n.includes('proteina') || n.includes('coco') || n.includes('whey')) return '#fef08a';
+    if (n.includes('miel')) return '#f59e0b';
+
+    if (s.includes('fruta')) return '#f59e0b';
+    if (s.includes('vegetal')) return '#10b981';
+    if (s.includes('semilla')) return '#64748b';
+    if (s.includes('suplemento')) return '#06b6d4';
+    if (s.includes('prote')) return '#a855f7';
+    if (s.includes('grasa')) return '#84cc16';
+    if (s.includes('cereal')) return '#facc15';
+    if (s.includes('fruto')) return '#d97706';
+    if (s.includes('endulzan')) return '#fbbf24';
+    if (s.includes('especia')) return '#fb7185';
+    
+    return '#10b981';
+}
+
+function obtenerIconoSubcategoria(subcat) {
+    var s = (subcat || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (s === 'todas') return 'bi-grid-fill';
+    if (s.includes('vegetal')) return 'bi-flower1';
+    if (s.includes('fruta')) return 'bi-apple';
+    if (s.includes('semilla')) return 'bi-droplet-half';
+    if (s.includes('grasa')) return 'bi-pie-chart-fill';
+    if (s.includes('suplemento')) return 'bi-capsule-pill';
+    if (s.includes('prote')) return 'bi-lightning-fill';
+    if (s.includes('cereal')) return 'bi-slash-circle';
+    if (s.includes('fruto')) return 'bi-nut-fill';
+    if (s.includes('endulzan')) return 'bi-heart-fill';
+    if (s.includes('especia')) return 'bi-stars';
+    return 'bi-tag-fill';
+}
+
 function renderFallbackCatalogo() {
     productos = [
         { id: 1, nombre: 'Elixir Verde Clorofila', categoria: '500 mls', precio: 18000, imagen: 'batido-verde.png', descripcion: 'Espinaca, aloe vera, jengibre y manzana verde. Oxigenación inmediata.' },
@@ -1548,19 +1706,22 @@ function panelFlora() {
 }
 
 /* 9. Arma tu batido con Licuadora SVG procedural */
-var ING_B = [ ['Espinaca', 2000, '#22c55e'], ['Aloe vera', 2000, '#a3e635'], ['Jengibre', 1500, '#f59e0b'], ['Cúrcuma', 1500, '#fbbf24'], ['Remolacha', 2000, '#e60049'], ['Chía', 1500, '#94a3b8'], ['Piña', 2000, '#facc15'], ['Pitahaya', 3000, '#d946ef'], ['Maracuyá', 2500, '#fb923c'], ['Limón', 1000, '#bef264'] ];
-var BASES = [ ['Agua de coco', 0], ['Leche de almendras', 2000], ['Jugo de manzana verde', 1000] ];
+var ING_B = [ ['Espinaca', 2000, '#22c55e', 'Vegetales'], ['Aloe vera', 2000, '#a3e635', 'Vegetales'], ['Jengibre', 1500, '#f59e0b', 'Vegetales'], ['Cúrcuma', 1500, '#fbbf24', 'Vegetales'], ['Remolacha', 2000, '#e60049', 'Vegetales'], ['Chía', 1500, '#94a3b8', 'Semillas'], ['Piña', 2000, '#facc15', 'Frutas'], ['Pitahaya', 3000, '#d946ef', 'Frutas'], ['Maracuyá', 2500, '#fb923c', 'Frutas'], ['Limón', 1000, '#bef264', 'Frutas'] ];
+var BASES = [ ['Agua de coco', 0, '#e3f3ea'], ['Leche de almendras', 2000, '#f0e4d0'], ['Jugo de manzana verde', 1000, '#d6e98c'] ];
+var subcategoriasBatidoDisponibles = ['Todas', 'Vegetales', 'Frutas', 'Semillas'];
+var subcategoriaBatidoActual = 'Todas';
 var bSel = [], bBase = 0, bN = 0, bState = 'idle', bRaf = 0, bT0 = 0, bApe = null;
 var BASE_COL = ['#e3f3ea', '#f0e4d0', '#d6e98c'];
 var BLEND_MS = 4300;
 function bClamp(v) { return Math.max(0, Math.min(1, v)); }
 function bSm(v) { v = bClamp(v); return v * v * (3 - 2 * v); }
-function bHex(h) { h = h.replace('#', ''); return [parseInt(h.substr(0, 2), 16), parseInt(h.substr(2, 2), 16), parseInt(h.substr(4, 2), 16)]; }
+function bHex(h) { h = (h || '#22c55e').replace('#', ''); return [parseInt(h.substr(0, 2), 16) || 0, parseInt(h.substr(2, 2), 16) || 0, parseInt(h.substr(4, 2), 16) || 0]; }
 function bRgb(c) { return 'rgb(' + Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]) + ')'; }
 function bLerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
 function bRnd(seed) { var s = seed * 9301 + 49297; return function() { s = (s * 9301 + 49297) % 233280; return s / 233280; }; }
 function bMix() {
-    var items = [{ c: BASE_COL[bBase], w: 1.6 }].concat(bSel.map(function(i) { return { c: ING_B[i][2], w: 1 }; }));
+    var baseC = (BASE_COL && BASE_COL[bBase]) ? BASE_COL[bBase] : '#e3f3ea';
+    var items = [{ c: baseC, w: 1.6 }].concat(bSel.map(function(i) { return { c: (ING_B[i] ? ING_B[i][2] : '#22c55e'), w: 1 }; }));
     var W = 0, ar = [0, 0, 0], lg = [0, 0, 0];
     items.forEach(function(o) { var c = bHex(o.c); W += o.w; for (var k = 0; k < 3; k++) { ar[k] += c[k] * o.w; lg[k] += Math.log(c[k] + 1) * o.w; } });
     return [0, 1, 2].map(function(k) { return .45 * (ar[k] / W) + .55 * (Math.exp(lg[k] / W) - 1); });
@@ -1572,7 +1733,13 @@ function bToggle(i) {
     renderBuilder(); apeDo(bApe, 'bounce', 600);
 }
 function bSet(i) { if (bState !== 'idle') return; bBase = i; renderBuilder(); }
-function bTotal() { return 14000 + BASES[bBase][1] + bSel.reduce(function(a, i) { return a + ING_B[i][1]; }, 0); }
+function cambiarSubcategoriaBatido(sc) { subcategoriaBatidoActual = sc; renderBuilder(); }
+function bClearSel() { if (bState !== 'idle') return; bSel = []; renderBuilder(); }
+function bTotal() {
+    var pb = (BASES[bBase] && BASES[bBase][1]) ? BASES[bBase][1] : 0;
+    var pi = bSel.reduce(function(a, i) { return a + ((ING_B[i] && ING_B[i][1]) ? ING_B[i][1] : 0); }, 0);
+    return 14000 + pb + pi;
+}
 
 function blenderSVG() {
     var ticks = '', bub = '', drops = '', marks = '', k, R = bRnd(5);
@@ -1666,16 +1833,72 @@ function bMsgHtml() {
 
 function renderBuilder() {
     var run = bState === 'blending', done = bState === 'done', dis = bState !== 'idle' ? ' disabled' : '';
-    var names = bSel.map(function(i) { return ING_B[i][0]; }).join(', ');
+    var names = bSel.map(function(i) { return (ING_B[i] && ING_B[i][0]) ? ING_B[i][0] : ''; }).filter(Boolean).join(', ');
     var dot = done ? '<span style="display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:.5rem;vertical-align:-1px;box-shadow:0 0 10px rgba(255,255,255,.25);background:' + bRgb(bMix()) + '"></span>' : '';
-    var summary = bSel.length ? dot + BASES[bBase][0] + ' + ' + names : 'Solo tienes la base. Elige un ingrediente y míralo caer en la licuadora.';
-    var btn = run ? '<button class="btn btn-ruby w-full py-4 opacity-70" disabled><i class="bi bi-arrow-repeat bl-spin"></i>Licuando…</button>' :
-        done ? '<button class="btn btn-ghost w-full py-3" onclick="bReset()"><i class="bi bi-arrow-repeat"></i>Armar otro batido</button>' :
-        '<button class="btn btn-ruby w-full py-4" onclick="bBlend()"><i class="bi bi-lightning-charge-fill"></i>LICUAR</button>';
+    var baseNombre = (BASES[bBase] && BASES[bBase][0]) ? BASES[bBase][0] : 'Base líquida';
+    var summary = bSel.length ? dot + baseNombre + ' + ' + names : 'Solo tienes la base líquida. Elige hasta 4 fitonutrientes y míralos caer en la licuadora.';
+    var btn = run ? '<button class="btn btn-ruby w-full py-4 opacity-70" disabled><i class="bi bi-arrow-repeat bl-spin me-2"></i>Licuando extractos…</button>' :
+        done ? '<button class="btn btn-ghost w-full py-3" onclick="bReset()"><i class="bi bi-arrow-repeat me-1.5"></i>Armar otro batido</button>' :
+        '<button class="btn btn-ruby w-full py-4" onclick="bBlend()"><i class="bi bi-lightning-charge-fill me-1.5"></i>LICUAR VITALIDAD</button>';
+
+    // Pastillas de subcategorías dinámicas sincronizadas con Bodega / Admin
+    var pillsHtml = '';
+    if (subcategoriasBatidoDisponibles && subcategoriasBatidoDisponibles.length > 1) {
+        pillsHtml = '<div class="flex items-center gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-thin">' +
+            subcategoriasBatidoDisponibles.map(function(sc) {
+                var act = (sc === subcategoriaBatidoActual);
+                var icon = obtenerIconoSubcategoria(sc);
+                return '<button type="button" class="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border flex items-center gap-1.5 ' +
+                    (act ? 'bg-emerald-500 text-black border-emerald-400 shadow-[0_0_12px_rgba(34,197,94,0.4)]' : 'bg-white/5 text-slate-300 border-white/10 hover:border-emerald-500/40 hover:bg-white/10') +
+                    '" onclick="cambiarSubcategoriaBatido(\'' + esc(sc) + '\')">' +
+                    '<i class="bi ' + icon + '"></i> ' + esc(sc) + '</button>';
+            }).join('') + '</div>';
+    }
+
+    // Bandeja de fitonutrientes seleccionados
+    var bandejaElegidos = '';
+    if (bSel.length > 0) {
+        bandejaElegidos = '<div class="p-3.5 rounded-2xl bg-black/40 border border-white/10 mb-4">' +
+            '<div class="flex items-center justify-between text-xs text-slate-300 mb-2">' +
+            '<span><strong class="text-emerald-400 font-semibold">' + bSel.length + ' de 4</strong> fitonutrientes seleccionados:</span>' +
+            (bState === 'idle' ? '<button type="button" class="text-xs text-ruby-400 hover:text-ruby-300 transition-colors" onclick="bClearSel()"><i class="bi bi-trash3 me-1"></i>Limpiar</button>' : '') +
+            '</div><div class="flex flex-wrap gap-1.5">' +
+            bSel.map(function(idx) {
+                var it = ING_B[idx];
+                if (!it) return '';
+                return '<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs shadow-sm">' +
+                    '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:' + it[2] + '"></span>' +
+                    esc(it[0]) + (it[1] > 0 ? ' <small class="text-slate-400 font-light">+' + money(it[1]) + '</small>' : '') +
+                    (bState === 'idle' ? '<button type="button" class="ms-1 text-slate-400 hover:text-white" onclick="event.stopPropagation();bToggle(' + idx + ')" aria-label="Remover"><i class="bi bi-x"></i></button>' : '') +
+                    '</span>';
+            }).join('') +
+            '</div></div>';
+    }
+
+    // Chips de ingredientes visibles según subcategoría seleccionada
+    var chipsIngredientes = ING_B.map(function(g, i) {
+        if (subcategoriaBatidoActual !== 'Todas' && g[3] !== subcategoriaBatidoActual) return '';
+        var sel = bSel.indexOf(i) > -1;
+        var precioAdd = g[1] > 0 ? ' <span class="text-[10px] opacity-75">(+' + money(g[1]) + ')</span>' : '';
+        return '<button class="chip' + (sel ? ' active' : '') + '"' + dis + ' onclick="bToggle(' + i + ')">' +
+            '<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:' + g[2] + ';margin-right:.5rem"></span>' +
+            esc(g[0]) + precioAdd + (sel ? ' <i class="bi bi-check2 ms-1 text-emerald-400"></i>' : '') + '</button>';
+    }).join('');
+
+    // Chips de bases líquidas con precios reales de base de datos
+    var chipsBases = BASES.map(function(b, i) {
+        var precioBase = b[1] > 0 ? ' <span class="text-[10px] opacity-75">(+' + money(b[1]) + ')</span>' : '';
+        return '<button class="chip' + (i === bBase ? ' active' : '') + '"' + dis + ' onclick="bSet(' + i + ')">' +
+            '<i class="bi bi-droplet-half me-1 text-emerald-400"></i>' + esc(b[0]) + precioBase + '</button>';
+    }).join('');
+
     $('grid-menu').innerHTML = '<div class="col-span-full spot rim rounded-[28px] p-6 md:p-10 overflow-hidden">' + panelFlora() + '<div class="grid md:grid-cols-2 gap-10"><div>' +
         '<h3 class="font-cinzel text-2xl md:text-3xl font-bold mb-2">' + esc(AJUSTES.licuadoraTitulo || 'Arma tu batido') + '</h3><p class="text-slate-400 text-sm mb-6">' + esc(AJUSTES.licuadoraSubtitulo || 'Elige una base y hasta 4 ingredientes. Lo prensamos al momento.') + '</p>' +
-        '<p class="label-bio">Base</p><div class="flex flex-wrap gap-2 mb-6">' + BASES.map(function(b, i) { return '<button class="chip' + (i === bBase ? ' active' : '') + '"' + dis + ' onclick="bSet(' + i + ')">' + b[0] + '</button>'; }).join('') + '</div>' +
-        '<p class="label-bio">Ingredientes (hasta 4)</p><div class="flex flex-wrap gap-2">' + ING_B.map(function(g, i) { return '<button class="chip' + (bSel.indexOf(i) > -1 ? ' active' : '') + '"' + dis + ' onclick="bToggle(' + i + ')"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:' + g[2] + ';margin-right:.5rem"></span>' + g[0] + '</button>'; }).join('') + '</div></div>' +
+        '<p class="label-bio">1. Base líquida</p><div class="flex flex-wrap gap-2 mb-6">' + chipsBases + '</div>' +
+        '<div class="flex items-center justify-between mb-2"><p class="label-bio mb-0">2. Fitonutrientes (hasta 4)</p><span class="text-xs text-slate-400">Sincronizado con Bodega</span></div>' +
+        pillsHtml +
+        bandejaElegidos +
+        '<div class="flex flex-wrap gap-2">' + chipsIngredientes + '</div></div>' +
         '<div class="relative pt-[115px]"><div id="ape-slot"></div><div class="rounded-3xl bg-black/30 border border-white/10 p-6 sm:p-8 text-center flex flex-col items-center gap-5">' +
         '<div id="bl-wrap" class="w-full max-w-[420px] ' + (run ? 'bl-run' : done ? 'bl-done' : '') + '">' + blenderSVG() + '</div>' +
         '<p class="text-sm text-slate-300 min-h-[2.5rem]">' + summary + '</p>' +
@@ -1710,7 +1933,9 @@ function bFinish() {
 function bReset() { stopBlenderSound(); bState = 'idle'; bSel = []; renderBuilder(); }
 function bAdd() {
     if (!bSel.length) { toast('Elige al menos un ingrediente'); return; }
-    var it = { id: 9000 + (++bN), nombre: 'Batido a tu medida (' + BASES[bBase][0] + ': ' + bSel.map(function(i) { return ING_B[i][0]; }).join(', ') + ')', categoria: 'Custom', precio: bTotal(), cantidad: 1 };
+    var baseNom = (BASES[bBase] && BASES[bBase][0]) ? BASES[bBase][0] : 'Base líquida';
+    var ingsNombres = bSel.map(function(i) { return (ING_B[i] && ING_B[i][0]) ? ING_B[i][0] : ''; }).filter(Boolean).join(', ');
+    var it = { id: 9000 + (++bN), nombre: 'Batido a tu medida (' + baseNom + ': ' + ingsNombres + ')', categoria: 'Custom', precio: bTotal(), cantidad: 1 };
     carrito.push(it);
     if (cashSound && AJUSTES.efectoAudioFondo) { cashSound.currentTime = 0; cashSound.play().catch(function() {}); }
     trackEvent('AddToCart', { content_name: 'Batido a tu medida', content_ids: [it.id], content_type: 'product', value: it.precio, currency: 'COP' });
@@ -1742,11 +1967,15 @@ function renderComunidad(pestana) {
     
     if ($('barra-busqueda')) $('barra-busqueda').style.display = 'none';
 
+    var badgeTexto = esc(AJUSTES.blogBadge || 'COMUNIDAD BIO-ACTIVA & BLOG');
+    var tituloTexto = AJUSTES.blogTitulo || 'Espacio de Conocimiento & <span class="shine">Conexión Vital</span>';
+    var subtituloTexto = esc(AJUSTES.blogSubtitulo || 'Fundamentos de nutrición celular, notas del laboratorio RAÍCES y propuestas de nuevos sabores de la comunidad.');
+
     var navHtml = '<div class="col-span-full mb-8"><div class="spot rim rounded-[28px] p-6 md:p-8 text-center overflow-hidden">' +
         '<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-400/50 shadow-[0_0_20px_rgba(34,197,94,0.3)] backdrop-blur-md mb-3 text-emerald-300 text-xs font-bold tracking-wider uppercase">' +
-        '<i class="bi bi-broadcast"></i> COMUNIDAD BIO-ACTIVA & BLOG</div>' +
-        '<h2 class="font-cinzel font-black text-2xl md:text-4xl text-white mb-2">Espacio de Conocimiento & Conexión Vital</h2>' +
-        '<p class="text-slate-400 text-sm max-w-2xl mx-auto mb-6 font-light">Fundamentos de nutrición celular, notas del laboratorio RAÍCES y propuestas de nuevos sabores de la comunidad.</p>' +
+        '<i class="bi bi-broadcast"></i> <span id="comunidad-nav-badge">' + badgeTexto + '</span></div>' +
+        '<h2 id="comunidad-nav-titulo" class="font-cinzel font-black text-2xl md:text-4xl text-white mb-2">' + tituloTexto + '</h2>' +
+        '<p id="comunidad-nav-subtitulo" class="text-slate-400 text-sm max-w-2xl mx-auto mb-6 font-light">' + subtituloTexto + '</p>' +
         '<div class="flex justify-center gap-3 flex-wrap">' +
         '<button class="btn ' + (pestana === 'articulos' ? 'btn-leaf' : 'btn-ghost') + ' px-5 py-2.5 text-xs" onclick="renderComunidad(\'articulos\')"><i class="bi bi-newspaper me-1"></i> Artículos & Guías</button>' +
         '<button class="btn ' + (pestana === 'buzon' ? 'btn-leaf' : 'btn-ghost') + ' px-5 py-2.5 text-xs" onclick="renderComunidad(\'buzon\')"><i class="bi bi-lightbulb-fill me-1"></i> Buzón & Propuestas</button>' +
@@ -1759,6 +1988,51 @@ function renderComunidad(pestana) {
     if (pestana === 'articulos') cargarArticulosBlogVista();
     else if (pestana === 'buzon') cargarBuzonComunidadVista('TODOS');
     else if (pestana === 'escribir') cargarFormularioPropuestaVista();
+}
+
+function cargarArticulosHome() {
+    var cont = $('grid-articulos-home');
+    if (!cont) return;
+    fetch('/api/blog/articulos?_t=' + Date.now())
+        .then(function(r) { return r.ok ? r.json() : []; })
+        .then(function(arts) {
+            articulosBlogCache = arts;
+            if (!arts || !arts.length) {
+                cont.innerHTML = '<div class="col-span-full text-center py-12"><i class="bi bi-journal-x text-3xl text-emerald-400/60 block mb-2"></i><p class="text-xs text-slate-400">Pronto publicaremos nuevos artículos y notas del laboratorio.</p></div>';
+                return;
+            }
+            cont.innerHTML = arts.slice(0, 3).map(function(art) {
+                var img = (art.imagen && art.imagen.trim()) ? art.imagen.trim() : 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80';
+                var esVideo = /\.(mp4|webm|mov)/i.test(img);
+                var media = esVideo
+                    ? '<video src="' + esc(img) + '" autoplay loop muted playsinline class="w-full h-44 object-cover"></video>'
+                    : '<img src="' + esc(img) + '" alt="' + esc(art.titulo) + '" class="w-full h-44 object-cover" onerror="this.src=\'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80\'">';
+                
+                return '<div class="spot rim rounded-[28px] overflow-hidden flex flex-col justify-between cursor-pointer group transition-all duration-300 hover:-translate-y-1.5" onclick="abrirModalArticulo(' + Number(art.id) + ')">' +
+                    '<div><div class="relative overflow-hidden">' + media +
+                    '<span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-emerald-400/50 text-emerald-300">' + esc(art.categoria || 'Nutrición') + '</span></div>' +
+                    '<div class="p-6"><h3 class="font-cinzel text-xl font-bold mb-2 text-white group-hover:text-emerald-300 transition-colors line-clamp-2">' + esc(art.titulo) + '</h3>' +
+                    '<p class="text-slate-300 text-xs font-light leading-relaxed line-clamp-3 mb-4">' + esc(art.resumen || art.contenido || '') + '</p></div></div>' +
+                    '<div class="px-6 pb-6 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-slate-400">' +
+                    '<span><i class="bi bi-person me-1"></i>' + esc(art.autor || 'Equipo RAÍCES') + '</span>' +
+                    '<span class="text-ruby-400 font-semibold flex items-center gap-1"><i class="bi bi-heart-fill"></i> ' + (art.likes || 0) + '</span>' +
+                    '</div></div>';
+            }).join('');
+        })
+        .catch(function(err) {
+            console.warn('Error cargando artículos home:', err);
+            cont.innerHTML = '<div class="col-span-full text-center py-8 text-xs text-slate-400">No se pudieron cargar los artículos del laboratorio.</div>';
+        });
+}
+
+function irAComunidadTab(pestana) {
+    var catBtn = $('cat-btn-comunidad');
+    if (catBtn) filtrar('Comunidad', catBtn);
+    var catSec = $('catalogo');
+    if (catSec) catSec.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(function() {
+        renderComunidad(pestana || 'articulos');
+    }, 200);
 }
 
 function cargarArticulosBlogVista() {
@@ -2246,6 +2520,7 @@ window.addEventListener('DOMContentLoaded', function() {
     initNodo();
     initApes();
     updateScrollProgress();
+    cargarArticulosHome();
 });
 /*] ]>*/
 </script>
