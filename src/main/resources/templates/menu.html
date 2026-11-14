@@ -692,6 +692,12 @@ section>.max-w-7xl{position:relative;z-index:2}
   </div>
 </div>
 
+<!-- MODAL DETALLE DE INGREDIENTE (BODEGA ARMA TU BATIDO) -->
+<div id="modal-detalle-insumo" class="fixed inset-0 z-[125] hidden items-center justify-center p-4 bg-black/85 backdrop-blur-2xl transition-all" onclick="if(event.target===this)cerrarModalAmpliado()">
+  <div id="contenido-detalle-ampliado" class="relative w-full max-w-lg max-h-[90vh] bg-[#040c07] border border-yellow-500/40 rounded-[28px] shadow-[0_20px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(250,204,21,0.18)] flex flex-col overflow-hidden text-left">
+  </div>
+</div>
+
 
 <footer class="relative z-10 text-slate-400 py-16 border-t border-white/5">
 <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-8">
@@ -1301,6 +1307,7 @@ function cargarCatalogo(sucursal) {
         .then(function(data) {
             if (data && data.length) {
                 productos = data;
+                if (insumosReales && insumosReales.length) procesarInsumosBodegaArmado(insumosReales);
             } else {
                 renderFallbackCatalogo();
                 return;
@@ -1312,120 +1319,150 @@ function cargarCatalogo(sucursal) {
             fetch('/api/productos?_t=' + Date.now())
                 .then(function(r) { return r.ok ? r.json() : []; })
                 .then(function(d) {
-                    if (d && d.length) { productos = d; renderCatalogo(); }
+                    if (d && d.length) {
+                        productos = d;
+                        if (insumosReales && insumosReales.length) procesarInsumosBodegaArmado(insumosReales);
+                        renderCatalogo();
+                    }
                     else { renderFallbackCatalogo(); }
                 })
                 .catch(function() { renderFallbackCatalogo(); });
         });
 }
 
-function cargarInsumosReales(sucursal) {
-    // 1. Priorizamos el endpoint maestro de inventario/insumos (con subcategorías del admin)
-    fetch('/api/inventario/insumos?_t=' + Date.now(), { cache: 'no-store' })
-        .then(function(r) { return r.ok ? r.json() : []; })
-        .then(function(data) {
-            if (data && data.length) {
-                insumosReales = data;
-                adaptarInsumosParaBlender(data);
-                return;
-            }
-            // Fallback a endpoints por sucursal
-            var url = '/api/insumos/sucursal/' + encodeURIComponent(sucursal) + '?_t=' + Date.now();
-            return fetch(url, { cache: 'no-store' })
-                .then(function(r) { return r.ok ? r.json() : []; })
-                .then(function(subData) {
-                    if (subData && subData.length) {
-                        insumosReales = subData;
-                        adaptarInsumosParaBlender(subData);
-                    } else {
-                        fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' })
-                            .then(function(r) { return r.ok ? r.json() : []; })
-                            .then(function(td) {
-                                if (td && td.length) {
-                                    insumosReales = td;
-                                    adaptarInsumosParaBlender(td);
-                                }
-                            });
-                    }
-                });
-        })
-        .catch(function(err) {
-            console.warn('Error cargando insumos:', err);
-        });
+var CACHE_EXPRESS_INSUMOS = 'raices_cache_insumos_v2_';
+var FALLBACK_SMOOTHIE_IMG = 'https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=400&auto=format&fit=crop&q=80';
+var globalInsumosArmado = [];
+var porcionesArmado = {};
+var insumosInfoMap = {};
+var subcategoriaFiltroActual = 'Todas';
+
+function normalizarStr(str) {
+    return (str || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 }
 
-function adaptarInsumosParaBlender(insumos) {
-    if (!insumos || !insumos.length) return;
+function obtenerSubcategoriaInsumo(i) {
+    if (i.subcategoria && i.subcategoria.trim() !== '') return i.subcategoria.trim();
+    var nom = (i.nombre || '').toLowerCase();
+    var cat = (i.categoria || '').toLowerCase();
+    if (cat.includes('base') || nom.includes('leche') || nom.includes('agua') || nom.includes('aloe') || nom.includes('base') || nom.includes('yogur')) return 'Base';
+    if (cat.includes('semilla') || nom.includes('chía') || nom.includes('chia') || nom.includes('linaza') || nom.includes('sésamo') || nom.includes('sesamo')) return 'Semillas';
+    if (cat.includes('fruta') || nom.includes('piña') || nom.includes('pina') || nom.includes('manzana') || nom.includes('limón') || nom.includes('limon') || nom.includes('betarraga') || nom.includes('frut') || nom.includes('mango') || nom.includes('platano') || nom.includes('plátano')) return 'Frutas';
+    if (cat.includes('vegetal') || cat.includes('verdura') || nom.includes('espinaca') || nom.includes('apio') || nom.includes('zanahoria') || nom.includes('acelga') || nom.includes('pepino')) return 'Vegetales';
+    if (cat.includes('especia') || nom.includes('canela') || nom.includes('jengibre') || nom.includes('cúrcuma') || nom.includes('curcuma') || nom.includes('pimienta') || nom.includes('clavo')) return 'Especias';
+    if (cat.includes('endulzante') || cat.includes('miel') || nom.includes('stevia') || nom.includes('estevia') || nom.includes('miel') || nom.includes('agave') || nom.includes('azúcar') || nom.includes('azucar')) return 'Endulzantes';
+    if (cat.includes('estabilizante') || nom.includes('goma') || nom.includes('xantana') || nom.includes('pectina') || nom.includes('agar')) return 'Estabilizantes';
+    if (cat.includes('grasa') || nom.includes('palta') || nom.includes('mantequilla') || nom.includes('cacao')) return 'Grasas';
+    if (cat.includes('proteína') || cat.includes('proteina') || nom.includes('whey') || nom.includes('proteina') || nom.includes('proteína')) return 'Proteínas';
+    if (cat.includes('cereal') || nom.includes('avena') || nom.includes('quinoa') || nom.includes('quinua') || nom.includes('arroz') || nom.includes('mandioca')) return 'Cereales';
+    if (cat.includes('suplemento') || nom.includes('espirulina') || nom.includes('maca') || nom.includes('aceite') || nom.includes('colágeno')) return 'Suplementos';
+    if (cat.includes('seco') || nom.includes('maní') || nom.includes('mani') || nom.includes('nuez') || nom.includes('nueces') || nom.includes('almendra')) return 'Frutos Secos';
+    return 'Vegetales';
+}
 
-    // Cargar EXCLUSIVAMENTE ingredientes de la Bodega Arma Tu Batido (categoria Arma tu Batido / porcion)
-    var candidatos = insumos.filter(function(i) {
-        if (!i || !i.nombre) return false;
-        var c = (i.categoria || '').toLowerCase().trim();
-        return c.includes('arma') || c.includes('porcion');
+var CATALOGO_IMAGENES_INGREDIENTES = {
+    'pina': 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80',
+    'piña': 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?auto=format&fit=crop&w=350&q=80',
+    'aloe': 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=350&q=80',
+    'chia': 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=350&q=80',
+    'chía': 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=350&q=80',
+    'mucilago': 'https://images.unsplash.com/photo-1589135233689-d56128fa7cbf?auto=format&fit=crop&w=350&q=80',
+    'stevia': 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=350&q=80',
+    'betarraga': 'https://images.unsplash.com/photo-1593105544559-ecb03bf76f82?auto=format&fit=crop&w=350&q=80',
+    'remolacha': 'https://images.unsplash.com/photo-1593105544559-ecb03bf76f82?auto=format&fit=crop&w=350&q=80',
+    'manzana roja': 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=350&q=80',
+    'manzana verde': 'https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?auto=format&fit=crop&w=350&q=80',
+    'manzana': 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=350&q=80',
+    'palta': 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=350&q=80',
+    'aguacate': 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?auto=format&fit=crop&w=350&q=80',
+    'nuez': 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=350&q=80',
+    'nueces': 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=350&q=80',
+    'canela': 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=350&q=80',
+    'zanahoria': 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=350&q=80',
+    'calabaza': 'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?auto=format&fit=crop&w=350&q=80',
+    'zapallo': 'https://images.unsplash.com/photo-1508061253366-f7da158b6d46?auto=format&fit=crop&w=350&q=80',
+    'coco': 'https://images.unsplash.com/photo-1526947425960-945c6e72858f?auto=format&fit=crop&w=350&q=80',
+    'linaza': 'https://images.unsplash.com/photo-1589135233689-d56128fa7cbf?auto=format&fit=crop&w=350&q=80',
+    'clavo': 'https://images.unsplash.com/photo-1599940824399-b87987ceb72a?auto=format&fit=crop&w=350&q=80',
+    'limon': 'https://images.unsplash.com/photo-1533082602674-463fb1674274?auto=format&fit=crop&w=350&q=80',
+    'limón': 'https://images.unsplash.com/photo-1533082602674-463fb1674274?auto=format&fit=crop&w=350&q=80',
+    'cilantro': 'https://images.unsplash.com/photo-1509358271058-acd22cc93898?auto=format&fit=crop&w=350&q=80',
+    'espirulina': 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=350&q=80',
+    'cereal': 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=350&q=80',
+    'avena': 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=350&q=80',
+    'mani': 'https://images.unsplash.com/photo-1568283096533-078a24930eb8?auto=format&fit=crop&w=350&q=80',
+    'maní': 'https://images.unsplash.com/photo-1568283096533-078a24930eb8?auto=format&fit=crop&w=350&q=80',
+    'maca': 'https://images.unsplash.com/photo-1597481499750-3e6b22637e12?auto=format&fit=crop&w=350&q=80',
+    'leche': 'https://images.unsplash.com/photo-1563636619-e9143da7973b?auto=format&fit=crop&w=350&q=80',
+    'espinaca': 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=350&q=80',
+    'platano': 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=350&q=80',
+    'plátano': 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=350&q=80',
+    'banana': 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?auto=format&fit=crop&w=350&q=80',
+    'frutilla': 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=350&q=80',
+    'fresa': 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?auto=format&fit=crop&w=350&q=80',
+    'arandano': 'https://images.unsplash.com/photo-1498557850523-fd3d118b962e?auto=format&fit=crop&w=350&q=80',
+    'arándano': 'https://images.unsplash.com/photo-1498557850523-fd3d118b962e?auto=format&fit=crop&w=350&q=80',
+    'jengibre': 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=350&q=80',
+    'curcuma': 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=350&q=80',
+    'cúrcuma': 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=350&q=80',
+    'miel': 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=350&q=80',
+    'proteina': 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=350&q=80',
+    'proteína': 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=350&q=80',
+    'whey': 'https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=350&q=80'
+};
+
+function obtenerImagenIngrediente(ins) {
+    if (ins.imagen && ins.imagen.trim() !== '') return ins.imagen.trim();
+    var nomLimpio = normalizarStr(ins.nombre || '');
+    var prodMatch = (productos || []).find(function(p) {
+        return p.imagen && p.imagen.trim() !== '' && (normalizarStr(p.nombre).includes(nomLimpio) || nomLimpio.includes(normalizarStr(p.nombre)));
     });
-    if (!candidatos.length) return;
+    if (prodMatch && prodMatch.imagen) return prodMatch.imagen;
 
-    // 1. BASES LÍQUIDAS (Subcategoría Base o nombres reconocidos de bases en bodega)
-    var basesDb = candidatos.filter(function(i) {
-        var sub = (i.subcategoria || '').toLowerCase().trim();
-        var nom = (i.nombre || '').toLowerCase().trim();
-        return sub === 'base' || nom.includes('leche de almendras') || nom.includes('aloe vera puro');
-    });
-
-    if (basesDb.length > 0) {
-        BASES = basesDb.map(function(b) {
-            var color = '#e3f3ea';
-            var nom = (b.nombre || '').toLowerCase();
-            if (nom.includes('almendra') || nom.includes('vaca') || nom.includes('avena')) color = '#f0e4d0';
-            else if (nom.includes('aloe')) color = '#d6e98c';
-            else if (nom.includes('coco')) color = '#e3f3ea';
-            else if (nom.includes('naranja') || nom.includes('manzana')) color = '#fde047';
-            return [b.nombre, Number(b.precio) || 0, color, b.idInsumo || b.id];
-        });
-        BASE_COL = BASES.map(function(b) { return b[2]; });
+    var keys = Object.keys(CATALOGO_IMAGENES_INGREDIENTES);
+    for (var k = 0; k < keys.length; k++) {
+        var clave = keys[k];
+        if (nomLimpio.includes(clave)) return CATALOGO_IMAGENES_INGREDIENTES[clave];
     }
+    return FALLBACK_SMOOTHIE_IMG;
+}
 
-    // 2. FITONUTRIENTES / INGREDIENTES (Subcategoría distinta a Base)
-    var ingsDb = candidatos.filter(function(i) {
-        var sub = (i.subcategoria || '').toLowerCase().trim();
-        var nom = (i.nombre || '').toLowerCase().trim();
-        return sub !== 'base' && !nom.includes('leche de almendras') && !nom.includes('aloe vera puro');
-    });
-
-    if (ingsDb.length > 0) {
-        // Extraemos las subcategorías dinámicamente según lo configurado en Bodega / Admin
-        var subcatsSet = {};
-        ingsDb.forEach(function(item) {
-            var sc = (item.subcategoria || 'General').trim();
-            if (sc) subcatsSet[sc] = true;
-        });
-        subcategoriasBatidoDisponibles = ['Todas'].concat(Object.keys(subcatsSet));
-
-        ING_B = ingsDb.map(function(item) {
-            var subcat = (item.subcategoria || 'General').trim();
-            var color = obtenerColorParaInsumo(item.nombre, subcat);
-            return [
-                item.nombre,
-                Number(item.precio) || 0,
-                color,
-                subcat,
-                item.idInsumo || item.id,
-                item.cantidadPorcion || 0,
-                item.medida || 'gr'
-            ];
-        });
+function obtenerDescripcionInsumo(ins) {
+    if (ins.descripcion && ins.descripcion.trim() !== '') {
+        return ins.descripcion.replace(/\n/g, '<br>');
     }
-
-    // Si el usuario ya está viendo el builder de batido, refrescar
-    if (categoriaActual === 'Armar') {
-        renderBuilder();
+    var nom = (ins.nombre || '').toLowerCase();
+    var sub = (ins.subcategoria || obtenerSubcategoriaInsumo(ins)).toLowerCase();
+    if (sub.includes('fruta') || nom.includes('piña') || nom.includes('fresa') || nom.includes('frutilla') || nom.includes('arándano') || nom.includes('platano') || nom.includes('mango') || nom.includes('manzana')) {
+        return "Fruta seleccionada en su punto óptimo de maduración natural. Aporta azúcares bio-compatibles de absorción gradual, alta concentración de vitamina C, polifenoles antioxidantes y fibra soluble para equilibrar la microbiota y potenciar el sabor de tu elíxir.";
     }
+    if (sub.includes('vegetal') || nom.includes('espinaca') || nom.includes('apio') || nom.includes('pepino') || nom.includes('zanahoria') || nom.includes('remolacha') || nom.includes('betarraga')) {
+        return "Vegetal fresco prensado en frío de cultivo libre de pesticidas. Rico en clorofila viva, nitratos vasodilatadores naturales, potasio y micronutrientes alcalinizantes que favorecen la oxigenación celular, la detoxificación hepática y la vitalidad.";
+    }
+    if (sub.includes('semilla') || nom.includes('chía') || nom.includes('chia') || nom.includes('linaza') || nom.includes('sésamo')) {
+        return "Semilla bio-activa rica en ácidos grasos esenciales Omega 3 (ALA), fibra soluble formadora de mucílago prebiótico y calcio de origen vegetal. Apoya el tránsito digestivo regular y la salud cardiovascular.";
+    }
+    if (sub.includes('suplemento') || nom.includes('espirulina') || nom.includes('maca') || nom.includes('colágeno')) {
+        return "Superalimento funcional de alta densidad nutricional y biodisponibilidad. Brinda soporte adaptógeno contra la fatiga mental y física, antioxidantes enzimáticos y aminoácidos esenciales para la vitalidad diaria.";
+    }
+    if (sub.includes('proteína') || nom.includes('whey') || nom.includes('proteina')) {
+        return "Aislado proteico de rápida asimilación con perfil completo de aminoácidos ramificados (BCAA). Ideal para la regeneración miofibrilar, saciedad prolongada y síntesis tisular post-esfuerzo.";
+    }
+    if (sub.includes('seco') || nom.includes('nuez') || nom.includes('almendra') || nom.includes('maní')) {
+        return "Fruto seco de primera selección tostado suavemente sin aditivos. Fuente insustituible de grasas monoinsaturadas cardiosaludables, vitamina E liposoluble, magnesio y energía limpia de larga duración.";
+    }
+    if (sub.includes('especia') || nom.includes('jengibre') || nom.includes('cúrcuma') || nom.includes('canela')) {
+        return "Especia medicinal de acción termogénica y antiinflamatoria sistémica. Contiene fitoquímicos bio-activos que estimulan el fuego digestivo, modulan la respuesta inmune y revitalizan el metabolismo basal.";
+    }
+    if (sub.includes('base') || nom.includes('leche') || nom.includes('agua') || nom.includes('aloe')) {
+        return "Base bio-líquida pura y equilibrada. Garantiza la textura suave, la emulsión perfecta de los ingredientes y una hidratación profunda a nivel celular con electrolitos naturales.";
+    }
+    return "Ingrediente 100% puro y bio-seleccionado para tu formulación personalizada. Aporta pureza, frescura y sinergia nutricional a tu batido en RAÍCES.";
 }
 
 function obtenerColorParaInsumo(nombre, subcat) {
-    var n = (nombre || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    var s = (subcat || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    
+    var n = normalizarStr(nombre);
+    var s = normalizarStr(subcat);
     if (n.includes('espinaca') || n.includes('clorofila') || n.includes('menta') || n.includes('matcha')) return '#22c55e';
     if (n.includes('zanahoria') || n.includes('naranja')) return '#f97316';
     if (n.includes('betarraga') || n.includes('remolacha') || n.includes('frutilla') || n.includes('fresa') || n.includes('mora') || n.includes('pitahaya') || n.includes('arandano') || n.includes('acai')) return '#e11d48';
@@ -1436,7 +1473,8 @@ function obtenerColorParaInsumo(nombre, subcat) {
     if (n.includes('maca') || n.includes('canela') || n.includes('cacao') || n.includes('mani') || n.includes('nuez') || n.includes('avena')) return '#b45309';
     if (n.includes('proteina') || n.includes('coco') || n.includes('whey')) return '#fef08a';
     if (n.includes('miel')) return '#f59e0b';
-
+    if (n.includes('leche') || n.includes('almendra')) return '#f0e4d0';
+    if (s.includes('base')) return '#e3f3ea';
     if (s.includes('fruta')) return '#f59e0b';
     if (s.includes('vegetal')) return '#10b981';
     if (s.includes('semilla')) return '#64748b';
@@ -1447,24 +1485,95 @@ function obtenerColorParaInsumo(nombre, subcat) {
     if (s.includes('fruto')) return '#d97706';
     if (s.includes('endulzan')) return '#fbbf24';
     if (s.includes('especia')) return '#fb7185';
-    
     return '#10b981';
 }
 
-function obtenerIconoSubcategoria(subcat) {
-    var s = (subcat || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    if (s === 'todas') return 'bi-grid-fill';
-    if (s.includes('vegetal')) return 'bi-flower1';
-    if (s.includes('fruta')) return 'bi-apple';
-    if (s.includes('semilla')) return 'bi-droplet-half';
-    if (s.includes('grasa')) return 'bi-pie-chart-fill';
-    if (s.includes('suplemento')) return 'bi-capsule-pill';
-    if (s.includes('prote')) return 'bi-lightning-fill';
-    if (s.includes('cereal')) return 'bi-slash-circle';
-    if (s.includes('fruto')) return 'bi-nut-fill';
-    if (s.includes('endulzan')) return 'bi-heart-fill';
-    if (s.includes('especia')) return 'bi-stars';
-    return 'bi-tag-fill';
+function procesarInsumosBodegaArmado(insumosBase) {
+    var insumosArmado = [];
+    (insumosBase || []).forEach(function(ins) {
+        if (!ins || !ins.nombre) return;
+        var cat = normalizarStr(ins.categoria || '');
+        if (cat.includes('arma') || cat.includes('porcion')) {
+            var porcionDosis = (ins.cantidadPorcion && ins.cantidadPorcion > 0) ? ins.cantidadPorcion : 1;
+            var precioPorc = Number(ins.precio) || 0;
+            if (precioPorc > 0 && precioPorc <= 100) precioPorc = precioPorc * 1000;
+
+            var nomLimpio = normalizarStr(ins.nombre);
+            var prodMatch = (productos || []).find(function(p) { return normalizarStr(p.nombre) === nomLimpio; });
+            var stockVal = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
+            var dtoVal = Number(ins.descuento) || 0;
+            var precioVal = Math.round(precioPorc);
+            var imgVal = ins.imagen || '';
+
+            if (prodMatch) {
+                if (prodMatch.stock !== undefined && prodMatch.stock !== null) {
+                    var stockProd = Number(prodMatch.stock);
+                    if (stockVal <= 0 || stockProd > stockVal) {
+                        stockVal = stockProd;
+                    }
+                }
+                if (prodMatch.descuento !== undefined && prodMatch.descuento !== null && prodMatch.descuento > 0) {
+                    dtoVal = Number(prodMatch.descuento);
+                }
+                if (prodMatch.precio !== undefined && prodMatch.precio !== null && Number(prodMatch.precio) > 0) {
+                    precioVal = Math.round(Number(prodMatch.precio));
+                }
+                if (prodMatch.imagen && prodMatch.imagen.trim() !== '') {
+                    imgVal = prodMatch.imagen.trim();
+                }
+            }
+            if (stockVal < 0) stockVal = 0;
+
+            var subcatFinal = ins.subcategoria || obtenerSubcategoriaInsumo(ins);
+            insumosArmado.push({
+                idInsumo: ins.idInsumo || ins.id,
+                nombre: ins.nombre,
+                subcategoria: subcatFinal,
+                categoria: ins.categoria,
+                precio: precioVal,
+                descuento: dtoVal,
+                unidadActual: stockVal,
+                sizePorcion: porcionDosis,
+                medida: ins.medida || 'gr',
+                imagen: imgVal,
+                descripcion: ins.descripcion || '',
+                color: obtenerColorParaInsumo(ins.nombre, subcatFinal)
+            });
+        }
+    });
+    globalInsumosArmado = insumosArmado;
+    return insumosArmado;
+}
+
+function cargarInsumosReales(sucursal) {
+    var nodo = sucursal || ($('sucursal-activa') ? $('sucursal-activa').value : 'Colombia');
+    try {
+        var cachedIns = localStorage.getItem(CACHE_EXPRESS_INSUMOS + nodo);
+        if (cachedIns) {
+            insumosReales = JSON.parse(cachedIns);
+            procesarInsumosBodegaArmado(insumosReales);
+        }
+    } catch (e) {}
+
+    fetch('/api/insumos/sucursal/' + encodeURIComponent(nodo) + '?_t=' + Date.now(), { cache: 'no-store' })
+        .then(function(r) { return r.ok ? r.json() : []; })
+        .then(function(data) {
+            if (data && data.length > 0) return data;
+            return fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' }).then(function(r2) { return r2.ok ? r2.json() : []; });
+        })
+        .then(function(insumosBase) {
+            if (Array.isArray(insumosBase) && insumosBase.length > 0) {
+                insumosReales = insumosBase;
+                try { localStorage.setItem(CACHE_EXPRESS_INSUMOS + nodo, JSON.stringify(insumosBase)); } catch (e) {}
+                procesarInsumosBodegaArmado(insumosBase);
+                if (categoriaActual === 'Armar') {
+                    pintarVistaArmaTuBatido();
+                }
+            }
+        })
+        .catch(function(err) {
+            console.warn('Error cargando Bodega Arma tu Batido:', err);
+        });
 }
 
 function renderFallbackCatalogo() {
@@ -1483,17 +1592,66 @@ function filtrar(cat, btn) {
     btn.classList.add('active');
     renderCatalogo();
 }
+var NOMBRES_INSUMOS_CRUDOS_MENU = [
+    'agua de coco', 'espinaca', 'apio', 'pepino', 'manzana verde', 'limon', 'limón', 'jengibre', 'menta', 'piña',
+    'semillas de calabaza', 'papaya', 'ajo', 'betarraga', 'zanahoria', 'naranja', 'platano', 'plátano', 'avena',
+    'mantequilla de mani', 'mantequilla de maní', 'cilantro', 'perejil', 'espirulina', 'chlorella',
+    'vaso biodegradable 500ml', 'tapa domo compostable', 'bombilla de bambu / polipapel', 'bombilla de bambú / polipapel', 'bolsa kraft ecologica', 'bolsa kraft ecológica',
+    'caldo de huesos', 'jengibre concentrado', 'curcuma concentrada', 'cúrcuma concentrada', 'pimienta negra', 'limon concentrado', 'limón concentrado', 'berries prensados', 'botellita shot 60ml', 'tapa botellita 60ml',
+    'pulpa de pitahaya dragon', 'pulpa de pitahaya dragón', 'acai puro del amazonas', 'açai puro del amazonas', 'camu camu silvestre', 'guarana en polvo', 'guaraná en polvo', 'leche de coco cremosa', 'botella cristal exoticos 350ml', 'botella cristal exóticos 350ml', 'tapa dorada hermetica', 'tapa dorada hermética',
+    'porcion proteina vegana', 'porción proteína vegana', 'porcion creatina creapure', 'porción creatina creapure', 'porcion semillas de chia', 'porción semillas de chía', 'porcion colageno hidrolizado', 'porción colágeno hidrolizado', 'porcion frutos rojos silvestres', 'porción frutos rojos silvestres', 'porcion cacao organico', 'porción cacao orgánico'
+];
+
+function esInsumoCrudoMenu(nombre) {
+    if (!nombre) return false;
+    var norm = normalizarStr(nombre);
+    if (norm.indexOf('porcion') === 0 || norm.includes('insumo') || norm.includes('packaging') || norm.includes('vaso') || norm.includes('tapa ') || norm.includes('botellita') || norm.includes('bombilla') || norm.includes('bolsa ')) return true;
+    for (var k = 0; k < NOMBRES_INSUMOS_CRUDOS_MENU.length; k++) {
+        var insNorm = normalizarStr(NOMBRES_INSUMOS_CRUDOS_MENU[k]);
+        if (norm === insNorm || (norm.indexOf(insNorm) === 0 && !norm.includes('pulpas') && !norm.includes('pack') && !norm.includes('imperial'))) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function renderCatalogo() {
     var grid = $('grid-menu'), q = ($('buscador').value || '').trim().toLowerCase(), v = categoriaActual;
-    $('barra-busqueda').style.display = (v === '500 mls' || v === 'Packs' || v === 'Exoticos') ? 'flex' : 'none';
+    $('barra-busqueda').style.display = (v === '500 mls' || v === 'Packs' || v === 'Exoticos' || v === 'Shots') ? 'flex' : 'none';
     if (v === 'Armar') return renderBuilder();
-    if (v === 'Shots') return renderShots();
     if (v === 'Comunidad') return renderComunidad();
-    var filtrados = productos.filter(function(p) {
-        var pc = String(p.categoria).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''), ex = pc.indexOf('xotic') > -1, pk = pc.indexOf('pack') > -1;
-        var okCat = v === 'Exoticos' ? ex : v === 'Packs' ? pk : (!ex && !pk);
+
+    var f = normalizarStr(v);
+    var lista = (productos || []).filter(function(p) {
+        if (!p || !p.nombre) return false;
+        var cat = normalizarStr(p.categoria || '');
+        var nom = normalizarStr(p.nombre || '');
+        if (esInsumoCrudoMenu(p.nombre)) return false;
+        if (cat.includes('arma') || cat.includes('batido') || cat.includes('porcion') || nom.includes('porcion') || nom.includes('porción')) return false;
+
+        var esExotico = cat.includes('exot') || nom.includes('exot') || nom.includes('pitahaya') || nom.includes('dragon');
+        var esPulpa = nom.indexOf('pulpas ') === 0 || nom.includes('pack') || nom.includes('pulpas');
+        var esPack = cat.includes('pack') || esPulpa;
+        var esShot = cat.includes('shot') || nom.includes('shot');
+
+        var okCat = false;
+        if (f.includes('exot')) okCat = esExotico;
+        else if (f.includes('pack') || f.includes('pulpa')) okCat = esPack && !esExotico && !esShot;
+        else if (f.includes('shot')) okCat = esShot && !esPack && !esExotico;
+        else okCat = !esPack && !esShot && !esExotico;
+
         return okCat && (!q || p.nombre.toLowerCase().includes(q));
     });
+
+    var vistosMenu = {};
+    var filtrados = lista.filter(function(p) {
+        var key = normalizarStr(p.nombre);
+        if (vistosMenu[key]) return false;
+        vistosMenu[key] = true;
+        return true;
+    });
+
+    if (v === 'Shots' && !filtrados.length && !q) return renderShots();
     if (!filtrados.length) { grid.innerHTML = '<p class="col-span-full text-center text-slate-400 py-16">No encontramos elixires con ese nombre. Prueba con otra palabra o cambia de categoría.</p>'; return; }
     grid.innerHTML = filtrados.map(function(p, i) {
         var fb = "this.src='https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=400&auto=format&fit=crop&q=80'";
@@ -1703,37 +1861,8 @@ function panelFlora() {
     return '<div class="cfl" style="opacity:.85">' + leafHtml([ ['f', 'left:-4%;bottom:-24%;--w:26;--rot:-4;--d:8s'], ['f', 'right:-4%;bottom:-24%;--w:26;--fx:-1;--d:9s'], ['m', 'left:-6%;top:-20%;--w:15;--rot:22;--d:10s'], ['h', 'right:9%;bottom:-8%;--w:6;--d:6s'] ]) + '</div>';
 }
 
-/* 9. Arma tu batido con Licuadora SVG procedural - Sincronizado exactamente con Bodega Arma tu Batido */
-var ING_B = [
-    ['Espinaca Baby', 1000, '#22c55e', 'Vegetales', 29, 30, 'gr'],
-    ['Zanahoria Crunch', 900, '#f97316', 'Vegetales', 30, 40, 'gr'],
-    ['Betarraga Roja', 1100, '#be123c', 'Vegetales', 31, 35, 'gr'],
-    ['Piña Golden', 1200, '#facc15', 'Frutas', 32, 50, 'gr'],
-    ['Plátano de Seda', 900, '#fde047', 'Frutas', 33, 50, 'gr'],
-    ['Frutilla Silvestre', 1300, '#ef4444', 'Frutas', 34, 40, 'gr'],
-    ['Arándano Azul', 1500, '#3b82f6', 'Frutas', 35, 30, 'gr'],
-    ['Semillas de Chía', 800, '#94a3b8', 'Semillas', 36, 15, 'gr'],
-    ['Semillas de Linaza', 800, '#a1a1aa', 'Semillas', 37, 15, 'gr'],
-    ['Semillas de Calabaza', 900, '#84cc16', 'Semillas', 38, 20, 'gr'],
-    ['Palta Hass Cremosa', 1400, '#4ade80', 'Grasas', 39, 40, 'gr'],
-    ['Aceite de Coco Extra Virgen', 1000, '#e2e8f0', 'Grasas', 40, 15, 'mls'],
-    ['Espirulina Viva', 1500, '#059669', 'Suplementos', 41, 5, 'gr'],
-    ['Maca Andina Vital', 1200, '#d97706', 'Suplementos', 42, 10, 'gr'],
-    ['Proteína Whey Vegana', 1800, '#ca8a04', 'Proteínas', 43, 25, 'gr'],
-    ['Avena Integral Suave', 800, '#eab308', 'Cereales', 46, 30, 'gr'],
-    ['Mantequilla de Maní', 1000, '#b45309', 'Frutos Secos', 47, 25, 'gr'],
-    ['Nueces del Nogal', 1200, '#78350f', 'Frutos Secos', 48, 25, 'gr'],
-    ['Miel de Ulmo Nativa', 900, '#f59e0b', 'Endulzantes', 49, 20, 'gr'],
-    ['Canela de Ceylán', 600, '#a16207', 'Especias', 50, 5, 'gr']
-];
-var BASES = [
-    ['Leche de Almendras', 1000, '#f0e4d0', 44],
-    ['Aloe Vera Puro', 1100, '#d6e98c', 45]
-];
-var subcategoriasBatidoDisponibles = ['Todas', 'Vegetales', 'Frutas', 'Semillas', 'Grasas', 'Suplementos', 'Proteínas', 'Cereales', 'Frutos Secos', 'Endulzantes', 'Especias'];
-var subcategoriaBatidoActual = 'Todas';
-var bSel = [], bBase = 0, bN = 0, bState = 'idle', bRaf = 0, bT0 = 0, bApe = null;
-var BASE_COL = ['#f0e4d0', '#d6e98c'];
+/* 9. Arma tu batido (Bodega de Porciones + Licuadora SVG procedural) - Sincronizado 100% con menu-clasico y Admin */
+var bN = 0, bState = 'idle', bRaf = 0, bT0 = 0, bApe = null;
 var BLEND_MS = 4300;
 function bClamp(v) { return Math.max(0, Math.min(1, v)); }
 function bSm(v) { v = bClamp(v); return v * v * (3 - 2 * v); }
@@ -1741,26 +1870,43 @@ function bHex(h) { h = (h || '#22c55e').replace('#', ''); return [parseInt(h.sub
 function bRgb(c) { return 'rgb(' + Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]) + ')'; }
 function bLerp(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
 function bRnd(seed) { var s = seed * 9301 + 49297; return function() { s = (s * 9301 + 49297) % 233280; return s / 233280; }; }
+
+function obtenerItemsSeleccionadosBlender() {
+    var items = [];
+    for (var id in porcionesArmado) {
+        var cant = porcionesArmado[id];
+        if (cant > 0 && insumosInfoMap[id]) {
+            var info = insumosInfoMap[id];
+            var col = info.color || obtenerColorParaInsumo(info.nombre, info.subcategoria || '');
+            for (var c = 0; c < Math.min(cant, 4); c++) {
+                items.push({ id: id, nombre: info.nombre, color: col, cant: cant });
+            }
+        }
+    }
+    return items;
+}
+
 function bMix() {
-    var baseC = (BASE_COL && BASE_COL[bBase]) ? BASE_COL[bBase] : '#e3f3ea';
-    var items = [{ c: baseC, w: 1.6 }].concat(bSel.map(function(i) { return { c: (ING_B[i] ? ING_B[i][2] : '#22c55e'), w: 1 }; }));
+    var selItems = obtenerItemsSeleccionadosBlender();
+    if (!selItems.length) return [34, 197, 94];
     var W = 0, ar = [0, 0, 0], lg = [0, 0, 0];
-    items.forEach(function(o) { var c = bHex(o.c); W += o.w; for (var k = 0; k < 3; k++) { ar[k] += c[k] * o.w; lg[k] += Math.log(c[k] + 1) * o.w; } });
+    selItems.forEach(function(o) {
+        var c = bHex(o.color);
+        W += 1;
+        for (var k = 0; k < 3; k++) { ar[k] += c[k]; lg[k] += Math.log(c[k] + 1); }
+    });
     return [0, 1, 2].map(function(k) { return .45 * (ar[k] / W) + .55 * (Math.exp(lg[k] / W) - 1); });
 }
-function bToggle(i) {
-    if (bState !== 'idle') return;
-    var k = bSel.indexOf(i);
-    if (k > -1) bSel.splice(k, 1); else if (bSel.length < 4) bSel.push(i); else toast('Máximo 4 ingredientes');
-    renderBuilder(); apeDo(bApe, 'bounce', 600);
-}
-function bSet(i) { if (bState !== 'idle') return; bBase = i; renderBuilder(); }
-function cambiarSubcategoriaBatido(sc) { subcategoriaBatidoActual = sc; renderBuilder(); }
-function bClearSel() { if (bState !== 'idle') return; bSel = []; renderBuilder(); }
+
 function bTotal() {
-    var pb = (BASES[bBase] && BASES[bBase][1]) ? BASES[bBase][1] : 0;
-    var pi = bSel.reduce(function(a, i) { return a + ((ING_B[i] && ING_B[i][1]) ? ING_B[i][1] : 0); }, 0);
-    return 14000 + pb + pi;
+    var total = 0;
+    for (var id in porcionesArmado) {
+        var cant = porcionesArmado[id];
+        if (cant > 0 && insumosInfoMap[id]) {
+            total += (cant * insumosInfoMap[id].precio);
+        }
+    }
+    return total;
 }
 
 function blenderSVG() {
@@ -1806,8 +1952,21 @@ function blenderSVG() {
 function paintBlender(now, p) {
     var gb = $('bl-bands'); if (!gb) return false;
     var running = bState === 'blending', done = bState === 'done';
+    var selItems = obtenerItemsSeleccionadosBlender();
+    if (!selItems.length) {
+        gb.innerHTML = '';
+        if ($('bl-chunks')) $('bl-chunks').innerHTML = '';
+        if ($('bl-foam')) $('bl-foam').setAttribute('opacity', '0');
+        if ($('bl-disc')) $('bl-disc').setAttribute('opacity', '0');
+        if ($('bl-dial')) $('bl-dial').style.transform = 'rotate(-55deg)';
+        var led0 = $('bl-led');
+        if (led0) { led0.setAttribute('fill', '#4ade80'); led0.style.filter = 'drop-shadow(0 0 5px #4ade80)'; }
+        return true;
+    }
     var mix = bMix(), m = done ? 1 : (running ? bSm((p - .08) / .72) : 0);
-    var bands = [{ c: bHex(BASE_COL[bBase]), h: .28 }].concat(bSel.map(function(i) { return { c: bHex(ING_B[i][2]), h: .10 }; }));
+    var maxBands = selItems.slice(0, 8);
+    var bandH = Math.min(0.16, 0.72 / maxBands.length);
+    var bands = maxBands.map(function(it) { return { c: bHex(it.color), h: bandH, rawColor: it.color }; });
     var cum = 0; bands.forEach(function(b) { cum += b.h; b.top = 284 - cum * 234; });
     var amp = running ? 2.5 + 7 * Math.sin(Math.PI * bClamp(p)) : (done ? .9 : 0);
     var vd = running ? 34 * bSm(p / .18) * (1 - bSm((p - .82) / .18)) : 0;
@@ -1828,8 +1987,9 @@ function paintBlender(now, p) {
         foam.setAttribute('stroke', bRgb(bLerp(bLerp(bands[last].c, mix, m), [255, 255, 255], .42)));
     }
     var ch = '';
-    if (!done) bSel.forEach(function(i, n) {
-        var b = bands[n + 1], yc = (b.top + bands[n].top) / 2, R2 = bRnd(i * 7 + 3), col = bRgb(bLerp(bHex(ING_B[i][2]), [0, 0, 0], .22));
+    if (!done) maxBands.forEach(function(it, n) {
+        var b = bands[n], prevTop = n === 0 ? 284 : bands[n - 1].top;
+        var yc = (b.top + prevTop) / 2, R2 = bRnd((n + 1) * 13 + 3), col = bRgb(bLerp(bHex(it.color), [0, 0, 0], .22));
         for (var c = 0; c < 6; c++) {
             var r0 = 8 + R2() * 44, a0 = R2() * 6.283, sz = 2.6 + R2() * 3, jy = (R2() - .5) * 5;
             var a = a0 + (running ? p * p * 40 : 0), r = r0 * (running ? 1 - .8 * bSm(p / .9) : 1), al = running ? 1 - bSm((p - .22) / .55) : 1;
@@ -1839,104 +1999,523 @@ function paintBlender(now, p) {
             ch += '<circle cx="' + qx.toFixed(1) + '" cy="' + qy.toFixed(1) + '" r="' + (sz * (running ? 1 - .5 * bSm(p) : 1)).toFixed(1) + '" fill="' + col + '" opacity="' + al.toFixed(2) + '"/>';
         }
     });
-    $('bl-chunks').innerHTML = ch;
-    $('bl-disc').setAttribute('opacity', (running ? .42 * bSm(p / .12) * (1 - bSm((p - .93) / .07)) : 0).toFixed(2));
-    $('bl-dial').style.transform = 'rotate(' + (running ? 95 : -55) + 'deg)';
-    var led = $('bl-led'), lc = running ? '#ff4d6d' : '#4ade80'; led.setAttribute('fill', lc); led.style.filter = 'drop-shadow(0 0 5px ' + lc + ')';
-    $('bl-svg').style.setProperty('--mix', bRgb(mix));
+    if ($('bl-chunks')) $('bl-chunks').innerHTML = ch;
+    if ($('bl-disc')) $('bl-disc').setAttribute('opacity', (running ? .42 * bSm(p / .12) * (1 - bSm((p - .93) / .07)) : 0).toFixed(2));
+    if ($('bl-dial')) $('bl-dial').style.transform = 'rotate(' + (running ? 95 : -55) + 'deg)';
+    var led = $('bl-led'), lc = running ? '#ff4d6d' : '#4ade80';
+    if (led) { led.setAttribute('fill', lc); led.style.filter = 'drop-shadow(0 0 5px ' + lc + ')'; }
+    if ($('bl-svg')) $('bl-svg').style.setProperty('--mix', bRgb(mix));
     return true;
 }
 
 function bMsgHtml() {
     var n = 0, t = 'Tu batido está en preparación y en breve te lo enviamos';
     var w = t.split(' ').map(function(word) { return '<span class="bl-w">' + word.split('').map(function(c) { return '<span class="bl-ch" style="animation-delay:' + (n++ * 32 + 150) + 'ms">' + c + '</span>'; }).join('') + '</span>'; }).join(' ');
-    return '<div class="bl-msg" role="status"><i class="bi bi-check-circle-fill"></i><p>' + w + '</p><small>Ya quedó en tu orden. Toca la barra inferior para confirmar la entrega.</small></div>';
+    return '<div class="bl-msg mt-4" role="status"><i class="bi bi-check-circle-fill"></i><p>' + w + '</p><small>Ya quedó en tu orden. Toca la barra inferior para confirmar la entrega.</small></div>';
+}
+
+function filtrarSubcategoriaArmaTuBatido(subcat) {
+    subcategoriaFiltroActual = subcat;
+    pintarVistaArmaTuBatido();
 }
 
 function renderBuilder() {
-    var run = bState === 'blending', done = bState === 'done', dis = bState !== 'idle' ? ' disabled' : '';
-    var names = bSel.map(function(i) { return (ING_B[i] && ING_B[i][0]) ? ING_B[i][0] : ''; }).filter(Boolean).join(', ');
-    var dot = done ? '<span style="display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:.5rem;vertical-align:-1px;box-shadow:0 0 10px rgba(255,255,255,.25);background:' + bRgb(bMix()) + '"></span>' : '';
-    var baseNombre = (BASES[bBase] && BASES[bBase][0]) ? BASES[bBase][0] : 'Base líquida';
-    var summary = bSel.length ? dot + baseNombre + ' + ' + names : 'Solo tienes la base líquida. Elige hasta 4 fitonutrientes y míralos caer en la licuadora.';
-    var btn = run ? '<button class="btn btn-ruby w-full py-4 opacity-70" disabled><i class="bi bi-arrow-repeat bl-spin me-2"></i>Licuando extractos…</button>' :
-        done ? '<button class="btn btn-ghost w-full py-3" onclick="bReset()"><i class="bi bi-arrow-repeat me-1.5"></i>Armar otro batido</button>' :
-        '<button class="btn btn-ruby w-full py-4" onclick="bBlend()"><i class="bi bi-lightning-charge-fill me-1.5"></i>LICUAR VITALIDAD</button>';
+    var nodo = $('sucursal-activa') ? $('sucursal-activa').value : 'Colombia';
+    renderizarArmaTuBatido(nodo);
+}
 
-    // Pastillas de subcategorías dinámicas sincronizadas con Bodega / Admin
-    var pillsHtml = '';
-    if (subcategoriasBatidoDisponibles && subcategoriasBatidoDisponibles.length > 1) {
-        pillsHtml = '<div class="flex items-center gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-thin">' +
-            subcategoriasBatidoDisponibles.map(function(sc) {
-                var act = (sc === subcategoriaBatidoActual);
-                var icon = obtenerIconoSubcategoria(sc);
-                return '<button type="button" class="px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border flex items-center gap-1.5 ' +
-                    (act ? 'bg-emerald-500 text-black border-emerald-400 shadow-[0_0_12px_rgba(34,197,94,0.4)]' : 'bg-white/5 text-slate-300 border-white/10 hover:border-emerald-500/40 hover:bg-white/10') +
-                    '" onclick="cambiarSubcategoriaBatido(\'' + esc(sc) + '\')">' +
-                    '<i class="bi ' + icon + '"></i> ' + esc(sc) + '</button>';
-            }).join('') + '</div>';
+function renderizarArmaTuBatido(nodo) {
+    if (!nodo) nodo = $('sucursal-activa') ? $('sucursal-activa').value : 'Colombia';
+    if (globalInsumosArmado && globalInsumosArmado.length > 0) {
+        pintarVistaArmaTuBatido();
+    } else if (insumosReales && insumosReales.length > 0) {
+        procesarInsumosBodegaArmado(insumosReales);
+        pintarVistaArmaTuBatido();
+    } else {
+        $('grid-menu').innerHTML = '<div class="col-span-full text-center py-16"><div class="inline-block w-9 h-9 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin mb-3"></div><p class="font-cinzel text-sm text-yellow-400">Cargando Bodega Arma tu Batido...</p></div>';
+    }
+    // Sincronizar siempre en tiempo real con el servidor (igual que menu-clasico.html)
+    fetch('/api/insumos/sucursal/' + encodeURIComponent(nodo) + '?_t=' + Date.now(), { cache: 'no-store' })
+        .then(function(resI) { return resI.ok ? resI.json() : []; })
+        .then(function(insumosBase) {
+            if (!insumosBase || insumosBase.length === 0) {
+                return fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' }).then(function(r2) { return r2.ok ? r2.json() : []; });
+            }
+            return insumosBase;
+        })
+        .then(function(insumosBase) {
+            if (Array.isArray(insumosBase) && insumosBase.length > 0) {
+                insumosReales = insumosBase;
+                try { localStorage.setItem(CACHE_EXPRESS_INSUMOS + nodo, JSON.stringify(insumosBase)); } catch (e) {}
+                procesarInsumosBodegaArmado(insumosBase);
+                if (categoriaActual === 'Armar') {
+                    pintarVistaArmaTuBatido();
+                }
+            } else if (!globalInsumosArmado || globalInsumosArmado.length === 0) {
+                pintarVistaArmaTuBatido();
+            }
+        })
+        .catch(function(e) {
+            console.error('Error al obtener datos de Bodega Arma tu Batido:', e);
+        });
+}
+
+var SUBCATEGORIAS_BODEGA_OFICIALES = [
+    ['Todas', '✨ TODAS'],
+    ['Base', '🥛 BASE'],
+    ['Semillas', '🌱 SEMILLAS'],
+    ['Frutas', '🍓 FRUTAS'],
+    ['Vegetales', '🥬 VEGETALES'],
+    ['Suplementos', '⚡ SUPLEMENTOS'],
+    ['Frutos Secos', '🥜 FRUTOS SECOS'],
+    ['Especias', '🌶️ ESPECIAS'],
+    ['Endulzantes', '🍯 ENDULZANTES'],
+    ['Estabilizantes', '🧪 ESTABILIZANTES'],
+    ['Grasas', '🥑 GRASAS'],
+    ['Proteínas', '💪 PROTEÍNAS'],
+    ['Cereales', '🌾 CEREALES']
+];
+
+function pintarVistaArmaTuBatido() {
+    var grid = $('grid-menu');
+    if (!grid) return;
+    var nodo = $('sucursal-activa') ? $('sucursal-activa').value : 'Colombia';
+    var insumosArmado = globalInsumosArmado || [];
+
+    if (insumosArmado.length === 0) {
+        grid.innerHTML = '<div class="col-span-full spot rim rounded-[28px] p-10 text-center">' +
+            '<i class="bi bi-info-circle text-4xl text-yellow-400 block mb-3"></i>' +
+            '<h4 class="font-cinzel text-xl font-bold text-yellow-400 mb-2">SIN PORCIONES EN BODEGA ARMA TU BATIDO</h4>' +
+            '<p class="text-sm text-slate-300 max-w-xl mx-auto">Aún no hay porciones registradas en la <b>Bodega Arma Tu Batido</b> para el NODO ' + esc(nodo.toUpperCase()) + '. Puedes agregarlas desde el Administrador en la pestaña Bodega -> Bodega de Porciones.</p>' +
+            '</div>';
+        return;
     }
 
-    // Bandeja de fitonutrientes seleccionados
-    var bandejaElegidos = '';
-    if (bSel.length > 0) {
-        bandejaElegidos = '<div class="p-3.5 rounded-2xl bg-black/40 border border-white/10 mb-4">' +
-            '<div class="flex items-center justify-between text-xs text-slate-300 mb-2">' +
-            '<span><strong class="text-emerald-400 font-semibold">' + bSel.length + ' de 4</strong> fitonutrientes seleccionados:</span>' +
-            (bState === 'idle' ? '<button type="button" class="text-xs text-ruby-400 hover:text-ruby-300 transition-colors" onclick="bClearSel()"><i class="bi bi-trash3 me-1"></i>Limpiar</button>' : '') +
-            '</div><div class="flex flex-wrap gap-1.5">' +
-            bSel.map(function(idx) {
-                var it = ING_B[idx];
-                if (!it) return '';
-                return '<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs shadow-sm">' +
-                    '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:' + it[2] + '"></span>' +
-                    esc(it[0]) + (it[1] > 0 ? ' <small class="text-slate-400 font-light">+' + money(it[1]) + '</small>' : '') +
-                    (bState === 'idle' ? '<button type="button" class="ms-1 text-slate-400 hover:text-white" onclick="event.stopPropagation();bToggle(' + idx + ')" aria-label="Remover"><i class="bi bi-x"></i></button>' : '') +
-                    '</span>';
-            }).join('') +
-            '</div></div>';
+    // Asegurar que insumosInfoMap tenga la info actualizada de cada insumo
+    insumosArmado.forEach(function(ins) {
+        var idKey = String(ins.idInsumo || ins.id || 'ins');
+        var dtoPorc = (ins.descuento && ins.descuento > 0) ? Math.min(Math.round(ins.descuento), 100) : 0;
+        var precioFinalPorc = dtoPorc > 0 ? Math.round((ins.precio || 0) * (1 - dtoPorc / 100)) : (ins.precio || 0);
+        insumosInfoMap[idKey] = {
+            nombre: ins.nombre,
+            precio: precioFinalPorc,
+            cantidad: porcionesArmado[idKey] || 0,
+            sizePorcion: ins.sizePorcion || 1,
+            subcategoria: ins.subcategoria,
+            color: ins.color || obtenerColorParaInsumo(ins.nombre, ins.subcategoria)
+        };
+    });
+
+    var run = bState === 'blending', done = bState === 'done';
+    var btnAccion = run
+        ? '<button id="btn-agregar-custom" class="btn btn-ruby w-full py-4 text-sm opacity-75" disabled><i class="bi bi-arrow-repeat bl-spin me-2"></i>LICUANDO TU FÓRMULA…</button>'
+        : (done
+            ? '<div class="flex flex-col sm:flex-row gap-3 justify-center"><button class="btn btn-leaf flex-1 py-3.5 text-xs font-bold" onclick="bReset()"><i class="bi bi-plus-circle me-1.5"></i>ARMAR OTRO BATIDO</button></div>'
+            : '<button id="btn-agregar-custom" class="btn btn-leaf w-full py-4 text-sm font-extrabold shadow-[0_0_28px_rgba(34,197,94,0.45)]" onclick="bBlend()"><i class="bi bi-cart-plus-fill me-2"></i>LICUAR E INCLUIR BATIDO ARMADO AL CARRITO</button>');
+
+    var botonesSubcatHtml = SUBCATEGORIAS_BODEGA_OFICIALES.map(function(par) {
+        var sc = par[0], label = par[1];
+        var activo = (subcategoriaFiltroActual.toLowerCase() === sc.toLowerCase());
+        return '<button type="button" class="px-3.5 py-2 rounded-full text-xs font-bold tracking-wide transition-all border ' +
+            (activo
+                ? 'bg-yellow-400 text-black border-yellow-300 shadow-[0_0_16px_rgba(250,204,21,0.55)] scale-105'
+                : 'bg-white/[0.04] text-slate-200 border-white/15 hover:border-yellow-400/60 hover:text-yellow-300 hover:bg-white/10') +
+            '" onclick="filtrarSubcategoriaArmaTuBatido(\'' + esc(sc) + '\')">' + label + '</button>';
+    }).join('');
+
+    var insumosFiltrados = insumosArmado;
+    if (subcategoriaFiltroActual !== 'Todas') {
+        insumosFiltrados = insumosArmado.filter(function(i) {
+            return normalizarStr(i.subcategoria || obtenerSubcategoriaInsumo(i)) === normalizarStr(subcategoriaFiltroActual);
+        });
     }
 
-    // Chips de ingredientes visibles según subcategoría seleccionada
-    var chipsIngredientes = ING_B.map(function(g, i) {
-        if (subcategoriaBatidoActual !== 'Todas' && g[3] !== subcategoriaBatidoActual) return '';
-        var sel = bSel.indexOf(i) > -1;
-        var precioAdd = g[1] > 0 ? ' <span class="text-[10px] opacity-75">(+' + money(g[1]) + ')</span>' : '';
-        return '<button class="chip' + (sel ? ' active' : '') + '"' + dis + ' onclick="bToggle(' + i + ')">' +
-            '<span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:' + g[2] + ';margin-right:.5rem"></span>' +
-            esc(g[0]) + precioAdd + (sel ? ' <i class="bi bi-check2 ms-1 text-emerald-400"></i>' : '') + '</button>';
-    }).join('');
+    var cardsHtml = '';
+    if (insumosFiltrados.length === 0) {
+        cardsHtml = '<div class="col-span-full text-center text-slate-400 py-12 font-cinzel text-sm border border-dashed border-white/10 rounded-3xl">' +
+            'No hay ingredientes disponibles en la subcategoría <b class="text-yellow-400">' + esc(subcategoriaFiltroActual.toUpperCase()) + '</b>.' +
+            '</div>';
+    } else {
+        cardsHtml = insumosFiltrados.map(function(ins) {
+            var idInsClean = String(ins.idInsumo || ins.id || 'ins').replace(/'/g, "\\'");
+            var cantPorc = porcionesArmado[idInsClean] || porcionesArmado[ins.idInsumo] || 0;
+            var precioBasePorc = ins.precio || 0;
+            var dtoPorc = (ins.descuento && ins.descuento > 0) ? Math.min(Math.round(ins.descuento), 100) : 0;
+            var precioFinalPorc = dtoPorc > 0 ? Math.round(precioBasePorc * (1 - dtoPorc / 100)) : precioBasePorc;
+            var sizePorcion = (ins.sizePorcion && Number(ins.sizePorcion) > 0) ? Number(ins.sizePorcion) : 1;
+            var stockRaw = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
+            var porcionesDisponibles = (sizePorcion > 5 && stockRaw >= sizePorcion)
+                ? Math.floor(stockRaw / sizePorcion)
+                : Math.max(0, Math.floor(stockRaw));
 
-    // Chips de bases líquidas con precios reales de base de datos
-    var chipsBases = BASES.map(function(b, i) {
-        var precioBase = b[1] > 0 ? ' <span class="text-[10px] opacity-75">(+' + money(b[1]) + ')</span>' : '';
-        return '<button class="chip' + (i === bBase ? ' active' : '') + '"' + dis + ' onclick="bSet(' + i + ')">' +
-            '<i class="bi bi-droplet-half me-1 text-emerald-400"></i>' + esc(b[0]) + precioBase + '</button>';
-    }).join('');
+            var esAgotado = porcionesDisponibles <= 0;
+            var esUltimas = porcionesDisponibles > 0 && porcionesDisponibles <= 10;
 
-    $('grid-menu').innerHTML = '<div class="col-span-full spot rim rounded-[28px] p-6 md:p-10 overflow-hidden">' + panelFlora() + '<div class="grid md:grid-cols-2 gap-10"><div>' +
-        '<h3 class="font-cinzel text-2xl md:text-3xl font-bold mb-2">' + esc(AJUSTES.licuadoraTitulo || 'Arma tu batido') + '</h3><p class="text-slate-400 text-sm mb-6">' + esc(AJUSTES.licuadoraSubtitulo || 'Elige una base y hasta 4 ingredientes. Lo prensamos al momento.') + '</p>' +
-        '<p class="label-bio">1. Base líquida</p><div class="flex flex-wrap gap-2 mb-6">' + chipsBases + '</div>' +
-        '<div class="flex items-center justify-between mb-2"><p class="label-bio mb-0">2. Fitonutrientes (hasta 4)</p><span class="text-xs text-slate-400">Sincronizado con Bodega</span></div>' +
-        pillsHtml +
-        bandejaElegidos +
-        '<div class="flex flex-wrap gap-2">' + chipsIngredientes + '</div></div>' +
-        '<div class="relative pt-[115px]"><div id="ape-slot"></div><div class="rounded-3xl bg-black/30 border border-white/10 p-6 sm:p-8 text-center flex flex-col items-center gap-5">' +
-        '<div id="bl-wrap" class="w-full max-w-[420px] ' + (run ? 'bl-run' : done ? 'bl-done' : '') + '">' + blenderSVG() + '</div>' +
-        '<p class="text-sm text-slate-300 min-h-[2.5rem]">' + summary + '</p>' +
-        '<div class="font-cinzel text-3xl font-bold text-yellow-400">' + money(bTotal()) + '</div>' + btn + (done ? bMsgHtml() : '') + '</div></div></div></div>';
+            var porcTexto = sizePorcion + ' ' + (ins.medida || 'gr');
+            var subcatLabel = (ins.subcategoria || obtenerSubcategoriaInsumo(ins)).toUpperCase();
+            var nombreEscape = (ins.nombre || '').replace(/'/g, "\\'");
+            var imgUrl = obtenerImagenIngrediente(ins);
+
+            var ribbonDto = '';
+            if (dtoPorc > 0) {
+                ribbonDto = '<span class="absolute top-2 right-2 z-10 px-2 py-0.5 rounded-full bg-rose-600 border border-rose-400 text-white text-[10px] font-extrabold shadow-[0_0_12px_rgba(225,29,72,0.9)]">' +
+                    '<i class="bi bi-tag-fill me-1"></i>-' + dtoPorc + '% OFF</span>';
+            }
+
+            var badgeStock = '';
+            var borderCardCls = 'border-emerald-500/25 hover:border-emerald-400/60';
+            var borderImgCls = 'border-emerald-500/30';
+            var overlayImg = '';
+
+            if (esAgotado) {
+                badgeStock = '<div class="inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-full bg-rose-950/90 border border-rose-500/60 text-rose-300 text-[10px] font-extrabold tracking-wide mb-2 w-full">' +
+                    '<i class="bi bi-x-circle-fill"></i> AGOTADO (0 DISP)</div>';
+                borderCardCls = 'border-rose-500/50 opacity-85';
+                borderImgCls = 'border-rose-500/60';
+                overlayImg = '<div class="absolute inset-0 bg-black/70 z-10 flex items-center justify-center">' +
+                    '<span class="px-3 py-1 rounded-full bg-rose-600 text-white font-cinzel text-xs font-bold shadow-[0_0_12px_rgba(225,29,72,0.9)]">' +
+                    '<i class="bi bi-slash-circle me-1"></i> AGOTADO</span></div>';
+            } else if (esUltimas) {
+                badgeStock = '<div class="inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-400 text-amber-300 text-[10px] font-extrabold tracking-wide mb-2 w-full animate-pulse">' +
+                    '<i class="bi bi-exclamation-triangle-fill"></i> ¡ÚLTIMAS ' + porcionesDisponibles + ' UNIDADES!</div>';
+                borderCardCls = 'border-amber-400/80 shadow-[0_0_18px_rgba(251,191,36,0.22)]';
+                borderImgCls = 'border-amber-400/70';
+                overlayImg = '<span class="absolute bottom-2 right-2 z-10 px-2 py-0.5 rounded-full bg-amber-400 text-black text-[10px] font-extrabold shadow-md">' +
+                    '¡QUEDAN ' + porcionesDisponibles + '!</span>';
+            } else {
+                badgeStock = '<div class="inline-flex items-center justify-center gap-1 px-2.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-[10px] font-bold tracking-wide mb-2 w-full">' +
+                    '<i class="bi bi-check-circle-fill"></i> EN STOCK</div>';
+            }
+
+            if (cantPorc > 0 && !esAgotado) {
+                borderCardCls = 'border-yellow-400 shadow-[0_0_22px_rgba(250,204,21,0.35)] bg-emerald-950/30';
+            }
+
+            var disMinus = cantPorc <= 0 ? 'disabled' : '';
+            var clsMinus = cantPorc > 0
+                ? 'border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-black cursor-pointer'
+                : 'border-white/15 text-slate-500 opacity-50 cursor-not-allowed';
+
+            var disPlus = (esAgotado || cantPorc >= porcionesDisponibles) ? 'disabled' : '';
+            var clsPlus = (!esAgotado && cantPorc < porcionesDisponibles)
+                ? 'bg-yellow-400 text-black border-yellow-300 hover:bg-yellow-300 shadow-[0_0_12px_rgba(250,204,21,0.4)] cursor-pointer'
+                : 'bg-white/10 text-slate-500 border-white/10 opacity-50 cursor-not-allowed';
+            var titlePlus = esAgotado ? 'Agotado en Bodega' : (cantPorc >= porcionesDisponibles ? 'Máximo stock alcanzado' : 'Añadir porción');
+
+            var esVideoIng = imgUrl && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(imgUrl.trim());
+            var mediaIngTag = esVideoIng
+                ? '<video src="' + esc(imgUrl) + '" autoplay loop muted playsinline class="w-full h-full object-cover ' + (esAgotado ? 'grayscale opacity-50' : '') + '"></video>'
+                : '<img src="' + esc(imgUrl) + '" alt="' + esc(ins.nombre) + '" decoding="async" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 ' + (esAgotado ? 'grayscale opacity-50' : '') + '" onerror="this.src=\'' + FALLBACK_SMOOTHIE_IMG + '\'">';
+
+            var precioHtml = (dtoPorc > 0)
+                ? '<div class="mb-2"><span class="text-slate-400 line-through text-xs me-1.5">' + money(precioBasePorc) + '</span><span class="font-cinzel text-lg font-extrabold text-yellow-400">' + money(precioFinalPorc) + '</span></div>'
+                : '<div class="font-cinzel text-lg font-extrabold text-yellow-400 mb-2">' + money(precioBasePorc) + '</div>';
+
+            return '<div class="group rounded-2xl p-3.5 text-center flex flex-col justify-between relative bg-[#07110b]/90 border transition-all duration-300 hover:-translate-y-1 cursor-pointer ' + borderCardCls + '" onclick="abrirDetalleInsumo(\'' + idInsClean + '\')">' +
+                '<div>' +
+                    '<div class="relative mb-2.5 overflow-hidden rounded-xl border ' + borderImgCls + ' bg-black/60 h-32">' +
+                        mediaIngTag +
+                        '<span class="absolute top-2 left-2 z-10 px-2 py-0.5 rounded-md bg-black/80 border border-yellow-400/60 text-yellow-300 text-[10px] font-bold tracking-wider">' + esc(subcatLabel) + '</span>' +
+                        '<span class="absolute bottom-2 left-2 z-10 px-2 py-0.5 rounded-md bg-black/75 border border-white/15 text-slate-200 text-[10px] font-semibold">' + esc(porcTexto) + '</span>' +
+                        ribbonDto +
+                        overlayImg +
+                    '</div>' +
+                    '<h5 class="font-bold text-white text-sm uppercase tracking-wide mb-1.5 truncate" title="' + esc(ins.nombre) + '">' + esc(ins.nombre) + '</h5>' +
+                    badgeStock +
+                    precioHtml +
+                '</div>' +
+                '<div class="flex items-center justify-center gap-2.5 mt-2 pt-2.5 border-t border-white/10" onclick="event.stopPropagation()">' +
+                    '<button type="button" id="btn-minus-' + idInsClean + '" class="w-9 h-9 rounded-lg border font-extrabold text-base flex items-center justify-center transition-all ' + clsMinus + '" ' + disMinus + ' onclick="modificarPorcionInsumo(\'' + idInsClean + '\', -1, ' + precioFinalPorc + ', \'' + nombreEscape + '\', ' + porcionesDisponibles + ', ' + sizePorcion + ')">−</button>' +
+                    '<span id="cant-porc-' + idInsClean + '" class="font-cinzel font-extrabold text-xl text-white min-w-[28px] text-center">' + cantPorc + '</span>' +
+                    '<button type="button" id="btn-plus-' + idInsClean + '" class="w-9 h-9 rounded-lg border font-extrabold text-base flex items-center justify-center transition-all ' + clsPlus + '" ' + disPlus + ' title="' + esc(titlePlus) + '" onclick="modificarPorcionInsumo(\'' + idInsClean + '\', 1, ' + precioFinalPorc + ', \'' + nombreEscape + '\', ' + porcionesDisponibles + ', ' + sizePorcion + ')">+</button>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+    }
+
+    grid.innerHTML =
+        '<div class="col-span-full spot rim rounded-[28px] p-6 md:p-10 overflow-hidden mb-4">' +
+            panelFlora() +
+            '<div class="grid lg:grid-cols-12 gap-8 items-center">' +
+                '<div class="lg:col-span-7 text-left">' +
+                    '<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/15 border border-yellow-400/40 text-yellow-300 text-xs font-bold uppercase tracking-wider mb-3">' +
+                        '<i class="bi bi-sliders"></i> Bodega de Porciones en Tiempo Real' +
+                    '</div>' +
+                    '<h3 class="font-cinzel text-2xl md:text-4xl font-black text-white mb-2 uppercase tracking-wide">' + esc(AJUSTES.licuadoraTitulo || 'ARMA TU BATIDO PERSONALIZADO') + '</h3>' +
+                    '<p class="text-slate-300 text-sm mb-5 font-light">' + esc(AJUSTES.licuadoraSubtitulo || 'Selecciona la cantidad de porciones de cada ingrediente. Conexión en tiempo real con inventario y aviso de stock.') + '</p>' +
+                    '<div class="p-5 rounded-2xl bg-black/60 border border-dashed border-emerald-400/50 shadow-inner">' +
+                        '<div class="flex items-center justify-between mb-2">' +
+                            '<span class="text-xs font-extrabold uppercase tracking-wider text-emerald-300"><i class="bi bi-cup-straw me-1.5"></i>INGREDIENTES SELECCIONADOS:</span>' +
+                            '<button type="button" id="btn-limpiar-custom" class="text-xs text-rose-400 hover:text-rose-300 font-semibold hidden" onclick="limpiarSeleccionCustom()"><i class="bi bi-trash3 me-1"></i>Vaciar vaso</button>' +
+                        '</div>' +
+                        '<div id="resumen-ingredientes-custom" class="text-sm text-white font-semibold mb-3 min-h-[1.5rem]">Ningún ingrediente seleccionado aún</div>' +
+                        '<div class="flex items-baseline justify-between pt-3 border-t border-white/10 mb-4">' +
+                            '<span class="text-xs text-slate-400 uppercase tracking-wider">Valor Total del Batido:</span>' +
+                            '<div class="font-cinzel text-3xl md:text-4xl font-black text-yellow-400" id="precio-total-custom">$0</div>' +
+                        '</div>' +
+                        btnAccion +
+                        (done ? bMsgHtml() : '') +
+                    '</div>' +
+                '</div>' +
+                '<div class="lg:col-span-5 relative pt-[95px] flex flex-col items-center">' +
+                    '<div id="ape-slot"></div>' +
+                    '<div class="w-full rounded-3xl bg-black/40 border border-white/10 p-5 text-center flex flex-col items-center">' +
+                        '<div id="bl-wrap" class="w-full max-w-[260px] mx-auto ' + (run ? 'bl-run' : done ? 'bl-done' : '') + '">' + blenderSVG() + '</div>' +
+                        '<p class="text-xs text-slate-400 mt-2">Toca <b class="text-yellow-400">+</b> en cualquier insumo de la bodega para agregarlo al vaso</p>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+        '<div class="col-span-full mt-2">' +
+            '<h4 class="font-cinzel text-center text-white text-xl md:text-2xl font-bold mb-4 tracking-wider uppercase"><i class="bi bi-grid-3x3-gap-fill text-yellow-400 me-2"></i>CATÁLOGO DE INGREDIENTES DISPONIBLES</h4>' +
+            '<div class="flex flex-wrap justify-center gap-2 mb-6">' + botonesSubcatHtml + '</div>' +
+            '<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">' + cardsHtml + '</div>' +
+        '</div>';
+
     var slot = $('ape-slot');
     if (!bApe && AJUSTES.efectoSimiosActivo !== false) {
         var bx = document.createElement('div'); bx.className = 'ape-peek card'; bApe = mountApe(bx, 7, 'v2'); setTimeout(function() { bApe.el.classList.add('in'); playApeSound(); }, 400);
     }
     if (bApe && APES.indexOf(bApe) < 0) APES.push(bApe);
     if (bApe && slot) slot.parentNode.replaceChild(bApe.box, slot);
-    paintBlender(performance.now(), done ? 1 : 0); apeQueue();
+
+    actualizarResumenCustom();
+    paintBlender(performance.now(), done ? 1 : 0);
+    apeQueue();
 }
+
+function modificarPorcionInsumo(idInsumo, delta, precio, nombre, maxPorciones, sizePorcion) {
+    if (bState === 'blending') return;
+    if (bState === 'done') bState = 'idle';
+    if (!sizePorcion) sizePorcion = 1;
+    if (!porcionesArmado[idInsumo]) porcionesArmado[idInsumo] = 0;
+    var actual = porcionesArmado[idInsumo];
+
+    if (delta > 0) {
+        if (maxPorciones <= 0) {
+            toast('El ingrediente "' + nombre + '" se encuentra AGOTADO en inventario.');
+            return;
+        }
+        if (actual >= maxPorciones) {
+            toast('¡Reserva de inventario alcanzada! Solo quedan ' + maxPorciones + ' porciones disponibles de "' + nombre + '".');
+            return;
+        }
+    }
+
+    porcionesArmado[idInsumo] = Math.max(0, actual + delta);
+    var insObj = (globalInsumosArmado || []).find(function(i) { return String(i.idInsumo || i.id) === String(idInsumo); });
+    var subcat = insObj ? insObj.subcategoria : '';
+    var col = insObj && insObj.color ? insObj.color : obtenerColorParaInsumo(nombre, subcat);
+
+    insumosInfoMap[idInsumo] = {
+        nombre: nombre,
+        precio: precio,
+        cantidad: porcionesArmado[idInsumo],
+        sizePorcion: sizePorcion,
+        subcategoria: subcat,
+        color: col
+    };
+
+    var nuevaCant = porcionesArmado[idInsumo];
+    var spanCant = $('cant-porc-' + idInsumo);
+    if (spanCant) spanCant.innerText = nuevaCant;
+    var spanCantModal = $('cant-porc-modal-' + idInsumo);
+    if (spanCantModal) spanCantModal.innerText = nuevaCant;
+
+    var btnMinus = $('btn-minus-' + idInsumo);
+    if (btnMinus) {
+        btnMinus.disabled = (nuevaCant <= 0);
+        btnMinus.className = 'w-9 h-9 rounded-lg border font-extrabold text-base flex items-center justify-center transition-all ' +
+            (nuevaCant > 0 ? 'border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-black cursor-pointer' : 'border-white/15 text-slate-500 opacity-50 cursor-not-allowed');
+    }
+    var btnPlus = $('btn-plus-' + idInsumo);
+    if (btnPlus) {
+        btnPlus.disabled = (nuevaCant >= maxPorciones);
+        btnPlus.className = 'w-9 h-9 rounded-lg border font-extrabold text-base flex items-center justify-center transition-all ' +
+            (nuevaCant < maxPorciones ? 'bg-yellow-400 text-black border-yellow-300 hover:bg-yellow-300 shadow-[0_0_12px_rgba(250,204,21,0.4)] cursor-pointer' : 'bg-white/10 text-slate-500 border-white/10 opacity-50 cursor-not-allowed');
+    }
+
+    var btnMinusModal = $('btn-minus-modal-' + idInsumo);
+    if (btnMinusModal) {
+        btnMinusModal.disabled = (nuevaCant <= 0);
+        btnMinusModal.className = 'w-10 h-10 rounded-xl border font-extrabold text-lg flex items-center justify-center transition-all ' +
+            (nuevaCant > 0 ? 'border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-black cursor-pointer' : 'border-white/15 text-slate-500 opacity-50 cursor-not-allowed');
+    }
+    var btnPlusModal = $('btn-plus-modal-' + idInsumo);
+    if (btnPlusModal) {
+        btnPlusModal.disabled = (nuevaCant >= maxPorciones);
+        btnPlusModal.className = 'w-10 h-10 rounded-xl border font-extrabold text-lg flex items-center justify-center transition-all ' +
+            (nuevaCant < maxPorciones ? 'bg-yellow-400 text-black border-yellow-300 hover:bg-yellow-300 cursor-pointer' : 'bg-white/10 text-slate-500 border-white/10 opacity-50 cursor-not-allowed');
+    }
+
+    actualizarResumenCustom();
+    paintBlender(performance.now(), 0);
+    if (delta > 0) apeDo(bApe, 'bounce', 550);
+}
+
+function limpiarSeleccionCustom() {
+    if (bState === 'blending') return;
+    bState = 'idle';
+    porcionesArmado = {};
+    pintarVistaArmaTuBatido();
+}
+
+function actualizarResumenCustom() {
+    var resumenDiv = $('resumen-ingredientes-custom');
+    var precioTotalSpan = $('precio-total-custom');
+    var btnLimpiar = $('btn-limpiar-custom');
+    if (!resumenDiv || !precioTotalSpan) return;
+
+    var lista = [];
+    var badgesHtml = [];
+    var total = 0;
+
+    for (var id in porcionesArmado) {
+        var cant = porcionesArmado[id];
+        if (cant > 0 && insumosInfoMap[id]) {
+            var info = insumosInfoMap[id];
+            lista.push(cant + 'x ' + info.nombre);
+            total += (cant * info.precio);
+            badgesHtml.push(
+                '<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/90 border border-emerald-400/40 text-emerald-200 text-xs">' +
+                '<span class="w-2 h-2 rounded-full" style="background:' + (info.color || '#22c55e') + '"></span>' +
+                '<b>' + cant + 'x</b> ' + esc(info.nombre) +
+                ' <small class="text-yellow-300 font-bold">(' + money(cant * info.precio) + ')</small>' +
+                '</span>'
+            );
+        }
+    }
+
+    if (lista.length === 0) {
+        resumenDiv.innerHTML = '<span class="text-slate-400 font-normal">Ningún ingrediente seleccionado aún</span>';
+        precioTotalSpan.innerText = '$0';
+        if (btnLimpiar) btnLimpiar.classList.add('hidden');
+    } else {
+        resumenDiv.innerHTML = '<div class="flex flex-wrap gap-1.5">' + badgesHtml.join('') + '</div>';
+        precioTotalSpan.innerText = money(total);
+        if (btnLimpiar) btnLimpiar.classList.remove('hidden');
+    }
+}
+
+function cerrarModalAmpliado() {
+    var modal = $('modal-detalle-insumo');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+}
+
+function abrirDetalleInsumo(idInsumo) {
+    var ins = (globalInsumosArmado || []).find(function(i) { return String(i.idInsumo || i.id) === String(idInsumo); });
+    if (!ins) return;
+
+    var idInsClean = String(ins.idInsumo || ins.id || 'ins').replace(/'/g, "\\'");
+    var cantPorc = porcionesArmado[idInsClean] || porcionesArmado[ins.idInsumo] || 0;
+    var precioBasePorc = ins.precio || 0;
+    var dtoPorc = (ins.descuento && ins.descuento > 0) ? Math.min(Math.round(ins.descuento), 100) : 0;
+    var precioFinalPorc = dtoPorc > 0 ? Math.round(precioBasePorc * (1 - dtoPorc / 100)) : precioBasePorc;
+    var sizePorcion = (ins.sizePorcion && Number(ins.sizePorcion) > 0) ? Number(ins.sizePorcion) : 1;
+    var stockRaw = (ins.unidadActual !== undefined && ins.unidadActual !== null) ? Number(ins.unidadActual) : 0;
+    var porcionesDisponibles = (sizePorcion > 5 && stockRaw >= sizePorcion)
+        ? Math.floor(stockRaw / sizePorcion)
+        : Math.max(0, Math.floor(stockRaw));
+
+    var esAgotado = porcionesDisponibles <= 0;
+    var esUltimas = porcionesDisponibles > 0 && porcionesDisponibles <= 10;
+    var subcatLabel = (ins.subcategoria || obtenerSubcategoriaInsumo(ins)).toUpperCase();
+    var porcTexto = sizePorcion + ' ' + (ins.medida || 'gr');
+    var nombreEscape = (ins.nombre || '').replace(/'/g, "\\'");
+    var imgUrl = obtenerImagenIngrediente(ins);
+
+    var ribbonDto = (dtoPorc > 0)
+        ? '<span class="px-2.5 py-1 rounded-full bg-rose-600 text-white text-xs font-bold"><i class="bi bi-tag-fill me-1"></i>-' + dtoPorc + '% OFF</span>'
+        : '';
+
+    var badgeStock = '';
+    if (esAgotado) {
+        badgeStock = '<span class="px-2.5 py-1 rounded-full bg-rose-950 border border-rose-500 text-rose-300 text-xs font-bold"><i class="bi bi-x-circle me-1"></i>AGOTADO (0 DISP)</span>';
+    } else if (esUltimas) {
+        badgeStock = '<span class="px-2.5 py-1 rounded-full bg-amber-400 text-black text-xs font-extrabold"><i class="bi bi-exclamation-triangle-fill me-1"></i>¡ÚLTIMAS ' + porcionesDisponibles + ' PORCIONES!</span>';
+    } else {
+        badgeStock = '<span class="px-2.5 py-1 rounded-full bg-emerald-950 border border-emerald-500/50 text-emerald-300 text-xs font-bold"><i class="bi bi-check-circle me-1"></i>EN STOCK (' + porcionesDisponibles + ' DISP)</span>';
+    }
+
+    var esVideoIng = imgUrl && /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(imgUrl.trim());
+    var mediaIngTag = esVideoIng
+        ? '<video src="' + esc(imgUrl) + '" autoplay loop muted playsinline class="w-full h-56 object-cover ' + (esAgotado ? 'grayscale opacity-50' : '') + '"></video>'
+        : '<img src="' + esc(imgUrl) + '" alt="' + esc(ins.nombre) + '" decoding="async" class="w-full h-56 object-cover ' + (esAgotado ? 'grayscale opacity-50' : '') + '" onerror="this.src=\'' + FALLBACK_SMOOTHIE_IMG + '\'">';
+
+    var precioHtmlInsumo = (dtoPorc > 0)
+        ? '<div><span class="text-slate-400 line-through text-xs me-1">' + money(precioBasePorc) + '</span><span class="font-cinzel text-yellow-400 font-extrabold text-2xl">' + money(precioFinalPorc) + '</span><span class="text-slate-400 text-xs block">por porción</span></div>'
+        : '<div><span class="font-cinzel text-yellow-400 font-extrabold text-2xl">' + money(precioBasePorc) + '</span><span class="text-slate-400 text-xs block">por porción</span></div>';
+
+    var descInsumo = obtenerDescripcionInsumo(ins);
+
+    var disMinus = cantPorc <= 0 ? 'disabled' : '';
+    var clsMinus = cantPorc > 0
+        ? 'border-yellow-400 text-yellow-300 hover:bg-yellow-400 hover:text-black cursor-pointer'
+        : 'border-white/15 text-slate-500 opacity-50 cursor-not-allowed';
+
+    var disPlus = (esAgotado || cantPorc >= porcionesDisponibles) ? 'disabled' : '';
+    var clsPlus = (!esAgotado && cantPorc < porcionesDisponibles)
+        ? 'bg-yellow-400 text-black border-yellow-300 hover:bg-yellow-300 cursor-pointer'
+        : 'bg-white/10 text-slate-500 border-white/10 opacity-50 cursor-not-allowed';
+
+    var htmlContent =
+        '<div class="flex items-center justify-between px-5 py-3.5 border-b border-white/10 bg-black/50">' +
+            '<div class="flex items-center gap-2 flex-wrap">' +
+                '<span class="px-2.5 py-1 rounded-full bg-black border border-yellow-400/60 text-yellow-300 text-xs font-bold"><i class="bi bi-cup-straw me-1"></i>ARMA TU BATIDO</span>' +
+                '<span class="px-2.5 py-1 rounded-full bg-black border border-cyan-400/50 text-cyan-300 text-xs font-bold">' + esc(subcatLabel) + '</span>' +
+                ribbonDto +
+                badgeStock +
+            '</div>' +
+            '<button type="button" onclick="cerrarModalAmpliado()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center"><i class="bi bi-x-lg"></i></button>' +
+        '</div>' +
+        '<div class="overflow-y-auto p-5 space-y-4">' +
+            '<div class="rounded-2xl overflow-hidden border border-yellow-400/30 bg-black/60">' + mediaIngTag + '</div>' +
+            '<h2 class="font-cinzel text-2xl font-black text-white uppercase">' + esc(ins.nombre) + '</h2>' +
+            '<div class="flex items-center justify-between p-3.5 rounded-2xl bg-black/60 border border-yellow-400/25">' +
+                '<div><span class="text-slate-400 text-xs font-bold uppercase block">DOSIS / PORCIÓN:</span><span class="font-cinzel text-cyan-300 font-extrabold text-lg">' + esc(porcTexto) + '</span></div>' +
+                '<div class="text-right">' + precioHtmlInsumo + '</div>' +
+            '</div>' +
+            '<div class="p-4 rounded-2xl bg-white/[0.03] border border-white/10">' +
+                '<div class="flex items-center gap-2 mb-2 pb-2 border-b border-yellow-400/20">' +
+                    '<i class="bi bi-flower1 text-yellow-400 text-lg"></i>' +
+                    '<span class="font-cinzel font-bold text-yellow-400 text-sm tracking-wider">PROPIEDADES & APORTE VITAL</span>' +
+                '</div>' +
+                '<div class="text-slate-200 text-xs leading-relaxed font-light">' + descInsumo + '</div>' +
+            '</div>' +
+        '</div>' +
+        '<div class="p-4 border-t border-white/10 bg-black/60 space-y-3">' +
+            '<div class="flex items-center justify-between">' +
+                '<span class="font-cinzel text-xs text-slate-300 uppercase tracking-wider">PORCIONES AÑADIDAS:</span>' +
+                '<div class="flex items-center gap-3">' +
+                    '<button type="button" id="btn-minus-modal-' + idInsClean + '" class="w-10 h-10 rounded-xl border font-extrabold text-lg flex items-center justify-center transition-all ' + clsMinus + '" ' + disMinus + ' onclick="modificarPorcionInsumo(\'' + idInsClean + '\', -1, ' + precioFinalPorc + ', \'' + nombreEscape + '\', ' + porcionesDisponibles + ', ' + sizePorcion + ')">−</button>' +
+                    '<span id="cant-porc-modal-' + idInsClean + '" class="font-cinzel font-extrabold text-2xl text-white min-w-[32px] text-center">' + cantPorc + '</span>' +
+                    '<button type="button" id="btn-plus-modal-' + idInsClean + '" class="w-10 h-10 rounded-xl border font-extrabold text-lg flex items-center justify-center transition-all ' + clsPlus + '" ' + disPlus + ' onclick="modificarPorcionInsumo(\'' + idInsClean + '\', 1, ' + precioFinalPorc + ', \'' + nombreEscape + '\', ' + porcionesDisponibles + ', ' + sizePorcion + ')">+</button>' +
+                '</div>' +
+            '</div>' +
+            '<button type="button" class="btn btn-leaf w-full py-3 text-xs font-extrabold uppercase tracking-wider" onclick="cerrarModalAmpliado()"><i class="bi bi-check-lg me-1"></i> ACEPTAR Y CONTINUAR</button>' +
+        '</div>';
+
+    var contenedor = $('contenido-detalle-ampliado');
+    var modal = $('modal-detalle-insumo');
+    if (contenedor && modal) {
+        contenedor.innerHTML = htmlContent;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+}
+
 function bBlend() {
     if (bState !== 'idle') return;
-    if (!bSel.length) { toast('Elige al menos un ingrediente para licuar'); apeDo(bApe, 'bounce', 500); return; }
-    bState = 'blending'; bT0 = performance.now(); renderBuilder();
+    var selItems = obtenerItemsSeleccionadosBlender();
+    if (!selItems.length || bTotal() <= 0) {
+        toast('Por favor selecciona al menos una porción de ingrediente para armar tu batido.');
+        apeDo(bApe, 'bounce', 500);
+        return;
+    }
+    bState = 'blending'; bT0 = performance.now(); pintarVistaArmaTuBatido();
     playBlenderSound();
     if (bApe) { bApe.el.classList.add('shake', 'ooh'); bApe.lock = 'bl-svg'; apeSay(bApe, '¡Uuuh! ¡Cómo gira!'); }
     cancelAnimationFrame(bRaf);
@@ -1947,23 +2526,64 @@ function bBlend() {
         if (p < 1) bRaf = requestAnimationFrame(step); else bFinish();
     })(performance.now());
 }
+
 function bFinish() {
     stopBlenderSound();
-    bState = 'done'; renderBuilder(); bAdd();
+    bState = 'done';
+    agregarBatidoCustomAlCarrito(true);
+    pintarVistaArmaTuBatido();
     if (bApe) { bApe.el.classList.remove('shake', 'ooh'); bApe.lock = null; apeDo(bApe, 'cheer', 2600); apeDo(bApe, 'ooh', 2600); apeSay(bApe, '¡Listo! Eso huele a selva 🍹'); }
 }
-function bReset() { stopBlenderSound(); bState = 'idle'; bSel = []; renderBuilder(); }
-function bAdd() {
-    if (!bSel.length) { toast('Elige al menos un ingrediente'); return; }
-    var baseNom = (BASES[bBase] && BASES[bBase][0]) ? BASES[bBase][0] : 'Base líquida';
-    var ingsNombres = bSel.map(function(i) { return (ING_B[i] && ING_B[i][0]) ? ING_B[i][0] : ''; }).filter(Boolean).join(', ');
-    var it = { id: 9000 + (++bN), nombre: 'Batido a tu medida (' + baseNom + ': ' + ingsNombres + ')', categoria: 'Custom', precio: bTotal(), cantidad: 1 };
-    carrito.push(it);
-    if (cashSound && AJUSTES.efectoAudioFondo) { cashSound.currentTime = 0; cashSound.play().catch(function() {}); }
-    trackEvent('AddToCart', { content_name: 'Batido a tu medida', content_ids: [it.id], content_type: 'product', value: it.precio, currency: 'COP' });
-    toast('Tu batido a medida está en la orden');
-    actualizarBarraCarrito();
+
+function bReset() {
+    stopBlenderSound();
+    bState = 'idle';
+    porcionesArmado = {};
+    pintarVistaArmaTuBatido();
 }
+
+function agregarBatidoCustomAlCarrito(fromBlender) {
+    var lista = [];
+    var lineasReceta = [];
+    var total = 0;
+
+    for (var id in porcionesArmado) {
+        var cant = porcionesArmado[id];
+        if (cant > 0 && insumosInfoMap[id]) {
+            var info = insumosInfoMap[id];
+            lista.push(cant + 'x ' + info.nombre);
+            lineasReceta.push(info.nombre + ':' + cant);
+            total += (cant * info.precio);
+        }
+    }
+
+    if (lista.length === 0 || total === 0) {
+        toast('Por favor selecciona al menos una porción de ingrediente para armar tu batido.');
+        return;
+    }
+
+    var itemCustom = {
+        id: 9000 + (++bN),
+        nombre: 'Batido Armado 500cc: ' + lista.join(', '),
+        categoria: 'Arma tu Batido',
+        precio: total,
+        cantidad: 1,
+        recetaDetalle: lineasReceta.join('\n'),
+        esCustom: true
+    };
+
+    carrito.push(itemCustom);
+    if (cashSound && AJUSTES.efectoAudioFondo) { cashSound.currentTime = 0; cashSound.play().catch(function() {}); }
+    trackEvent('AddToCart', { content_name: itemCustom.nombre, content_ids: [itemCustom.id], content_type: 'product', value: itemCustom.precio, currency: 'COP' });
+    toast('Tu Batido Armado 500cc está en la orden');
+    actualizarBarraCarrito();
+
+    if (!fromBlender) {
+        porcionesArmado = {};
+        pintarVistaArmaTuBatido();
+    }
+}
+var bAdd = agregarBatidoCustomAlCarrito;
 
 function wa(t) {
     var num = AJUSTES.whatsappNumero || '573177651016';
