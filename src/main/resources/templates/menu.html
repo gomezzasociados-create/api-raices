@@ -308,7 +308,7 @@ section>.max-w-7xl{position:relative;z-index:2}
 <div class="grain" aria-hidden="true"></div>
 <div id="progress"></div>
 <div id="toast" role="status"></div>
-<audio id="mainAudio" preload="auto" loop><source src="audio_fondo.mp3?v=2" type="audio/mpeg"></audio>
+<audio id="mainAudio" preload="auto" loop><source src="audio_fondo_menu.mp3?v=1" type="audio/mpeg"></audio>
 <audio id="sfxCash" preload="auto"><source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=cash-register-purchase-87313.mp3" type="audio/mpeg"></audio>
 <audio id="sfxBlender" preload="auto"><source src="sonido_licuadora.mp3?v=4" type="audio/mpeg"></audio>
 <audio id="sfxApe" preload="auto"><source src="sonido_simio.mp3?v=1" type="audio/mpeg"></audio>
@@ -1263,11 +1263,45 @@ function stopBlenderSound() {
     }
     stopWebAudioBlenderSynth();
 }
+var audioUsuarioPausado = false;
+var audioAutoIniciado = false;
+
+function intentarReproducirAudioFondo() {
+    if (audioUsuarioPausado || AJUSTES.efectoAudioFondo === false || !mainAudio) return;
+    mainAudio.volume = 0.65;
+    var p = mainAudio.play();
+    if (p && typeof p.then === 'function') {
+        p.then(function() {
+            audioAutoIniciado = true;
+            var icono = $('icono-audio');
+            if (icono) icono.className = 'bi bi-volume-up-fill';
+        }).catch(function() {});
+    }
+}
+
+['pointerdown', 'touchstart', 'keydown', 'click'].forEach(function(evt) {
+    window.addEventListener(evt, function onFirstGesture(e) {
+        if (e && e.target && e.target.closest && e.target.closest('[onclick*="toggleAudio"]')) return;
+        if (!audioAutoIniciado && !audioUsuarioPausado) {
+            intentarReproducirAudioFondo();
+        }
+    }, { passive: true });
+});
+
 function toggleAudio() {
     var icono = $('icono-audio');
-    if (!AJUSTES.efectoAudioFondo) return;
-    if (mainAudio.paused) { mainAudio.play().catch(function() {}); icono.className = 'bi bi-volume-up-fill'; }
-    else { mainAudio.pause(); icono.className = 'bi bi-volume-mute-fill'; }
+    if (AJUSTES.efectoAudioFondo === false || !mainAudio) return;
+    if (mainAudio.paused) {
+        audioUsuarioPausado = false;
+        audioAutoIniciado = true;
+        mainAudio.volume = 0.65;
+        mainAudio.play().catch(function() {});
+        if (icono) icono.className = 'bi bi-volume-up-fill';
+    } else {
+        audioUsuarioPausado = true;
+        mainAudio.pause();
+        if (icono) icono.className = 'bi bi-volume-mute-fill';
+    }
 }
 
 /* 6. Catálogo, carrito y checkout */
@@ -3165,6 +3199,7 @@ window.addEventListener('DOMContentLoaded', function() {
     initApes();
     updateScrollProgress();
     cargarArticulosHome();
+    intentarReproducirAudioFondo();
 });
 /*] ]>*/
 </script>
