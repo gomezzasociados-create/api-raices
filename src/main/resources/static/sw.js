@@ -1,5 +1,5 @@
 // sw.js - Service Worker Express Ultra-Rápido para RAÍCES
-const CACHE_NAME = 'raices-express-v3';
+const CACHE_NAME = 'raices-express-v4';
 
 const PRECACHE_ASSETS = [
     '/',
