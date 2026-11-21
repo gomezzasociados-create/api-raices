@@ -47,6 +47,17 @@ function actualizarHeaderOffset() {
 }
 window.addEventListener('resize', actualizarHeaderOffset, { passive: true });
 
+function toggleNavOnScroll() {
+    var nav = $('main-nav');
+    if (!nav) return;
+    if (window.scrollY > 16) {
+        nav.classList.add('nav-hidden');
+    } else {
+        nav.classList.remove('nav-hidden');
+    }
+}
+window.addEventListener('scroll', toggleNavOnScroll, { passive: true });
+
 function aplicarAjustesEnUI() {
     // 0. Banner superior de Anuncio
     var banner = $('banner-anuncio-top');
@@ -2515,6 +2526,7 @@ function iniciarMenuRaices() {
     if (window.__raicesMenuIniciado) return;
     window.__raicesMenuIniciado = true;
     actualizarHeaderOffset();
+    toggleNavOnScroll();
     cargarAjustesDesdeBackend();
     initFlora();
     initChimp();

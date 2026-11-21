@@ -83,6 +83,8 @@ a{text-decoration:none;color:inherit}
 @keyframes lion3dFloat{0%{transform:perspective(900px) translateY(0) scale(1) rotateX(0deg)}100%{transform:perspective(900px) translateY(-6px) scale(1.025) rotateX(2deg);filter:drop-shadow(0 24px 42px rgba(0,0,0,.96)) drop-shadow(0 0 36px rgba(245,158,11,.48)) drop-shadow(0 0 52px rgba(52,211,153,.38))}}
 
 #banner-anuncio-top{transition:all .3s ease}
+#main-nav{transition:opacity .32s ease,transform .35s var(--ease);will-change:opacity,transform}
+#main-nav.nav-hidden{opacity:0;transform:translateY(-120%);pointer-events:none}
 .abeja-gif{animation:abejaVueloGif 2.4s ease-in-out infinite;transform-origin:center center;will-change:transform,filter}
 @keyframes abejaVueloGif{0%,100%{transform:translateY(0) rotate(-2deg) scale(1);filter:drop-shadow(0 0 8px rgba(74,222,128,.55)) drop-shadow(0 3px 6px rgba(0,0,0,.85))}25%{transform:translateY(-2.5px) rotate(1.5deg) scale(1.04,0.97);filter:drop-shadow(0 0 12px rgba(250,204,21,.65)) drop-shadow(0 5px 8px rgba(0,0,0,.9))}50%{transform:translateY(1px) rotate(2.5deg) scale(1);filter:drop-shadow(0 0 10px rgba(74,222,128,.6)) drop-shadow(0 3px 6px rgba(0,0,0,.85))}75%{transform:translateY(-2px) rotate(-1.5deg) scale(0.98,1.03);filter:drop-shadow(0 0 14px rgba(52,211,153,.7)) drop-shadow(0 5px 8px rgba(0,0,0,.9))}}
 
@@ -274,7 +276,7 @@ section>.max-w-7xl{position:relative;z-index:2}
 #scene-hero>div:first-child{margin-bottom:clamp(16px,2.4vh,26px)!important}
 #scene-hero h1{margin-bottom:clamp(6px,1.4vh,16px)!important}
 #hero-lion-title-wrap{width:min(76vw,760px,calc((100svh - var(--header-offset,92px) - 180px) * 1.92))!important;max-width:none!important}
-#hero-display-subtitulo{margin-bottom:clamp(12px,2vh,22px)!important;font-size:clamp(16px,1.9vw,22px)!important;max-width:44rem!important}
+#hero-display-subtitulo{margin-bottom:clamp(12px,2vh,22px)!important;font-size:clamp(20px,2.5vw,30px)!important;max-width:54rem!important}
 #scene-hero>div:last-child{gap:clamp(3px,.8vh,8px)!important}
 .cpin{padding-top:var(--header-offset,92px);box-sizing:border-box}
 .cstage{width:min(100%,640px,calc((100svh - var(--header-offset,92px) - 56px) * .84))}
@@ -352,10 +354,10 @@ section>.max-w-7xl{position:relative;z-index:2}
 <!-- BARRA DE ANUNCIO SUPERIOR -->
 <div id="banner-anuncio-top" class="fixed top-0 left-0 right-0 z-[60] py-1.5 px-4 text-center text-xs font-semibold bg-emerald-950/95 border-b border-emerald-500/40 text-emerald-300 backdrop-blur-md shadow-md items-center justify-center transition-all" style="display:none;"></div>
 
-<header id="main-nav" class="fixed top-0 left-0 right-0 z-50 py-3 sm:py-3.5 bg-abyss-950/75 backdrop-blur-2xl border-b border-white/10" style="padding-top:calc(.6rem + env(safe-area-inset-top,0px))">
+<header id="main-nav" class="fixed top-0 left-0 right-0 z-50 py-1.5 sm:py-2 bg-abyss-950/75 backdrop-blur-2xl border-b border-white/10" style="padding-top:calc(.35rem + env(safe-area-inset-top,0px))">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 flex items-center justify-between">
-<a href="#cinematic-experience" class="relative flex items-center h-14 sm:h-16 -ml-6 sm:-ml-12 md:-ml-20 mt-6 sm:mt-7 overflow-visible group" aria-label="RAÍCES">
-    <img src="logo-abeja.png?v=1" alt="RAÍCES" decoding="async" class="abeja-gif w-48 h-32 sm:w-56 sm:h-36 max-w-none object-contain pointer-events-none select-none group-hover:scale-105 transition-transform">
+<a href="#cinematic-experience" class="relative flex items-center h-9 sm:h-10 -ml-6 sm:-ml-12 md:-ml-20 overflow-visible group" aria-label="RAÍCES">
+    <img src="logo-abeja.png?v=1" alt="RAÍCES" decoding="async" style="position:relative;top:52px" class="abeja-gif w-48 h-32 sm:w-56 sm:h-36 max-w-none object-contain pointer-events-none select-none group-hover:scale-105 transition-transform">
 </a>
 <nav class="hidden md:flex items-center gap-8 text-sm text-slate-300 font-medium">
 <a href="#cinematic-experience" id="nav-link-1" class="hover:text-emerald-300 transition-colors">Experiencia</a>
@@ -401,7 +403,7 @@ section>.max-w-7xl{position:relative;z-index:2}
         <span id="hero-display-titulo" class="sr-only">RAÍCES</span>
     </h1>
     
-    <p id="hero-display-subtitulo" class="hero-in text-base sm:text-xl md:text-2xl text-white font-medium max-w-2xl mb-6 sm:mb-8 leading-relaxed drop-shadow-[0_4px_18px_rgba(0,0,0,0.95)] relative z-10" style="--d:.25s">
+    <p id="hero-display-subtitulo" class="hero-in text-lg sm:text-2xl md:text-3xl text-white font-semibold max-w-3xl mb-6 sm:mb-8 leading-relaxed relative z-10" style="--d:.25s;color:#ffffff;text-shadow:0 3px 14px rgba(0,0,0,0.88),0 6px 28px rgba(0,0,0,0.65)">
         Nutrición celular viva, sin pasteurizar y sin azúcar añadida.
     </p>
 
@@ -727,7 +729,7 @@ section>.max-w-7xl{position:relative;z-index:2}
 </footer>
 
 <!-- EXTENSIONES JS EXTERNAS (CACHEABLES + DEFER PARA CARGA INSTANTÁNEA) -->
-<script th:inline="none" src="/js/menu-core.js?v=4" defer></script>
+<script th:inline="none" src="/js/menu-core.js?v=5" defer></script>
 <script type="module" th:inline="none" src="/js/menu-3d.js?v=2"></script>
 </body>
 </html>
