@@ -1045,54 +1045,164 @@ function actualizarBarraCarrito() {
     $('total-precio-bar').innerText = money(totalCarrito());
 }
 function abrirCheckoutModal() {
-    trackEvent('InitiateCheckout', { value: totalCarrito(), currency: 'COP', num_items: carrito.reduce(function(a, c) { return a + c.cantidad; }, 0) });
+    if (!carrito.length) {
+        toast('Agrega al menos un elixir o batido a tu orden');
+        return;
+    }
+    trackEvent('InitiateCheckout', { value: totalCarrito(), currency: 'COP', num_items: carrito.reduce(function(a, c) { return a + (c.cantidad || 1); }, 0) });
+    pintarResumen();
+    renderizarBotonesPagoModal();
     document.body.classList.add('open');
 }
 function cerrarDrawer() { document.body.classList.remove('open'); }
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') cerrarDrawer(); });
 
-function cambiarCant(id, d) {
-    var it = carrito.find(function(i) { return i.id === id; });
+function cambiarCant(idx, d) {
+    var it = carrito[idx];
     if (!it) return;
-    it.cantidad += d;
-    if (it.cantidad <= 0) carrito = carrito.filter(function(i) { return i.id !== id; });
+    it.cantidad = (it.cantidad || 1) + d;
+    if (it.cantidad <= 0) carrito.splice(idx, 1);
     actualizarBarraCarrito();
-    if (!carrito.length) { cerrarDrawer(); retrocederAPaso1(); return; }
+    if (!carrito.length) { cerrarDrawer(); return; }
     pintarResumen();
+}
+function eliminarDelCarrito(idx, e) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    carrito.splice(idx, 1);
+    actualizarBarraCarrito();
+    toast('Producto eliminado del pedido');
+    if (!carrito.length) { cerrarDrawer(); return; }
+    pintarResumen();
+}
+function vaciarCarrito() {
+    if (!carrito.length) { cerrarDrawer(); return; }
+    carrito = [];
+    actualizarBarraCarrito();
+    cerrarDrawer();
+    toast('Pedido cancelado');
 }
 function pintarResumen() {
-    $('lista-carrito-modal').innerHTML = carrito.map(function(i) {
-        return '<div class="flex items-center justify-between gap-3 py-2.5 border-b border-white/5"><div class="min-w-0"><div class="text-sm font-semibold truncate">' + esc(i.nombre) + '</div><div class="text-xs text-emerald-400">' + money(i.precio * i.cantidad) + '</div></div>' +
-        '<div class="flex items-center gap-2"><button class="qty" aria-label="Quitar uno" onclick="cambiarCant(' + Number(i.id) + ',-1)">−</button><span class="w-5 text-center text-sm font-bold">' + i.cantidad + '</span><button class="qty" aria-label="Agregar uno" onclick="cambiarCant(' + Number(i.id) + ',1)">+</button></div></div>';
+    var cont = $('lista-carrito-modal');
+    if (!cont) return;
+    var subtotalOriginal = 0, ahorroTotal = 0, totalFinal = 0;
+    cont.innerHTML = carrito.map(function(i, idx) {
+        var cant = i.cantidad || 1;
+        var precioCobro = (Number(i.precio) || 0) * cant;
+        var precioBase = (Number(i.precioOriginal) || Number(i.precio) || 0) * cant;
+        var tieneDto = i.descuento && i.descuento > 0 && precioBase > precioCobro;
+        var ahorroItem = tieneDto ? (precioBase - precioCobro) : 0;
+        subtotalOriginal += precioBase;
+        ahorroTotal += ahorroItem;
+        totalFinal += precioCobro;
+
+        var dtoHtml = tieneDto
+            ? '<div class="flex items-center flex-wrap gap-2 mt-1">' +
+              '<s class="text-slate-400 text-xs">' + money(precioBase) + '</s>' +
+              '<span class="px-1.5 py-0.5 rounded bg-rose-500/20 border border-rose-400/50 text-rose-300 text-[10px] font-bold">-' + Math.round(i.descuento) + '% OFF</span>' +
+              '<span class="text-emerald-400 text-xs font-semibold">Rebaja: -' + money(ahorroItem) + '</span>' +
+              '</div>'
+            : '';
+
+        return '<div class="flex items-center justify-between gap-3 p-3 rounded-2xl border border-yellow-500/30 bg-black/50">' +
+            '<div class="min-w-0 flex-1">' +
+                '<div class="text-sm font-bold text-white leading-snug">' + esc(i.nombre) + '</div>' +
+                dtoHtml +
+                '<div class="flex items-center gap-2 mt-2">' +
+                    '<button type="button" class="qty" aria-label="Quitar uno" onclick="cambiarCant(' + idx + ',-1)">−</button>' +
+                    '<span class="w-5 text-center text-sm font-bold text-white">' + cant + '</span>' +
+                    '<button type="button" class="qty" aria-label="Agregar uno" onclick="cambiarCant(' + idx + ',1)">+</button>' +
+                '</div>' +
+            '</div>' +
+            '<div class="flex items-center gap-3 shrink-0">' +
+                '<span class="font-cinzel font-bold text-yellow-400 text-base">' + money(precioCobro) + '</span>' +
+                '<button type="button" onclick="eliminarDelCarrito(' + idx + ', event)" title="Eliminar del pedido" aria-label="Eliminar del pedido" class="w-8 h-8 rounded-full bg-rose-500/15 border border-rose-400/40 text-rose-400 hover:bg-rose-500/30 grid place-items-center transition-colors cursor-pointer"><i class="bi bi-trash3"></i></button>' +
+            '</div>' +
+        '</div>';
     }).join('');
-    $('total-modal-caja').innerText = money(totalCarrito());
+
+    var desgloseEl = $('desglose-totales-carrito');
+    if (desgloseEl) {
+        desgloseEl.innerHTML =
+            '<div class="flex justify-between items-center text-slate-300 text-sm mb-1">' +
+                '<span>SUBTOTAL NORMAL:</span>' +
+                '<span class="font-cinzel font-bold text-white">' + money(subtotalOriginal) + '</span>' +
+            '</div>' +
+            (ahorroTotal > 0
+                ? '<div class="flex justify-between items-center text-rose-400 text-sm font-bold mb-2">' +
+                    '<span><i class="bi bi-tag-fill me-1"></i>DESCUENTO WEB APLICADO:</span>' +
+                    '<span class="font-cinzel">-' + money(ahorroTotal) + '</span>' +
+                  '</div>'
+                : '') +
+            '<div class="flex justify-between items-center pt-2 border-t border-white/15">' +
+                '<span class="font-cinzel font-bold text-emerald-300 text-base">TOTAL A PAGAR:</span>' +
+                '<span id="total-modal-caja" class="font-cinzel font-black text-2xl text-yellow-400">' + money(totalFinal) + '</span>' +
+            '</div>';
+    } else if ($('total-modal-caja')) {
+        $('total-modal-caja').innerText = money(totalFinal);
+    }
 }
-function avanzarAPaso2() {
-    if (!$('nombreCliente').value.trim() || !$('direccionCliente').value.trim() || !$('telefonoCliente').value.trim()) {
-        toast('Completa nombre, dirección y teléfono para continuar');
+function renderizarBotonesPagoModal() {
+    var container = $('contenedor-botones-pago');
+    if (!container) return;
+    container.innerHTML = '<button type="button" class="btn btn-leaf w-full py-4 text-sm font-black uppercase tracking-wider" onclick="confirmarPedido(\'MercadoPago\')">' +
+        'PAGAR CON WEBPAY / TARJETAS <i class="bi bi-credit-card ms-1"></i>' +
+    '</button>';
+}
+async function confirmarPedido(metodoPago) {
+    var nombre = $('nombreCliente') ? $('nombreCliente').value.trim() : '';
+    var direccion = $('direccionCliente') ? $('direccionCliente').value.trim() : '';
+    var telefono = $('telefonoCliente') ? $('telefonoCliente').value.trim() : '';
+    if (!nombre || !direccion || !telefono) {
+        toast('Por favor, ingresa tu Identificación, Coordenadas y Enlace (Nombre, Dirección y Teléfono) para procesar el pedido.');
         return;
     }
-    $('checkout-paso-1').style.display = 'none';
-    $('checkout-paso-2').style.display = 'block';
-    pintarResumen();
-    $('contenedor-botones-pago').innerHTML = '<div class="flex flex-col gap-3">' +
-        '<button class="btn w-full py-3.5 text-xs font-bold shadow-lg" style="background:linear-gradient(135deg, #20002c, #7b1fa2); border:1px solid #e040fb; color:#fff;" onclick="procesarPago(\'Nequi\')"><i class="bi bi-phone-vibrate text-sm"></i>Pagar con Nequi</button>' +
-        '<button class="btn w-full py-3.5 text-xs font-bold shadow-lg" style="background:linear-gradient(135deg, #b71c1c, #e53935); border:1px solid #ff7961; color:#fff;" onclick="procesarPago(\'Daviplata\')"><i class="bi bi-wallet2 text-sm"></i>Pagar con Daviplata</button>' +
-        '<button class="btn btn-leaf w-full py-3.5 text-xs font-bold" onclick="procesarPago(\'Contraentrega\')"><i class="bi bi-cash-coin text-sm"></i>Pagar en efectivo al recibir</button></div>';
-}
-function retrocederAPaso1() { $('checkout-paso-2').style.display = 'none'; $('checkout-paso-1').style.display = 'block'; }
-function procesarPago(metodo) {
+    var btn = document.querySelector('#contenedor-botones-pago button');
+    var contenidoOriginal = btn ? btn.innerHTML : '';
+    if (btn) {
+        btn.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin me-2"></span> CONECTANDO NÚCLEO...';
+        btn.disabled = true;
+    }
+
+    var paisNombre = $('sucursal-activa') ? $('sucursal-activa').value : 'Colombia';
+    var itemsPayload = [];
+    carrito.forEach(function(it) {
+        var q = it.cantidad || 1;
+        for (var k = 0; k < q; k++) {
+            itemsPayload.push(Object.assign({}, it, { cantidad: 1 }));
+        }
+    });
     var total = totalCarrito();
-    trackEvent('Purchase', { value: total, currency: 'COP', content_type: 'product', payment_type: metodo });
-    var waNum = AJUSTES.whatsappNumero || '573177651016';
-    var m = '*¡HOLA RAÍCES! NUEVA ORDEN BOTÁNICA* 🌿%0A' +
-        '*Cliente:* ' + encodeURIComponent($('nombreCliente').value.trim()) + '%0A' +
-        '*Teléfono:* ' + encodeURIComponent($('telefonoCliente').value.trim()) + '%0A' +
-        '*Dirección:* ' + encodeURIComponent($('direccionCliente').value.trim()) + ', ' + encodeURIComponent($('ciudadCliente').value.trim()) + '%0A' +
-        '*Método de Pago:* ' + encodeURIComponent(metodo) + '%0A%0A*DETALLE DE ELIXIRES:*%0A';
-    carrito.forEach(function(i) { m += '• ' + encodeURIComponent(i.nombre) + ' x' + i.cantidad + ' - ' + money(i.precio * i.cantidad) + '%0A'; });
-    m += '%0A*TOTAL A PAGAR:* ' + money(total);
-    window.open('https://wa.me/' + waNum + '?text=' + m, '_blank');
+    trackEvent('Purchase', { value: total, currency: 'COP', content_type: 'product', payment_type: metodoPago });
+    var payload = { cliente: { nombre: nombre, direccion: direccion, telefono: telefono }, items: itemsPayload, origen: 'Reserva Bio-Tech', pais: paisNombre };
+
+    try {
+        try {
+            await fetch('/api/clientes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, direccion: direccion, telefono: telefono, nodo: paisNombre }) });
+        } catch (errCrm) {}
+
+        if (metodoPago === 'MercadoPago') {
+            var resMp = await fetch('/api/pagos/mercadopago', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (resMp.ok) {
+                var linkMercadoPago = await resMp.text();
+                await fetch('/api/ventas?metodo=MercadoPago', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                carrito = [];
+                actualizarBarraCarrito();
+                cerrarDrawer();
+                window.location.href = linkMercadoPago;
+                return;
+            }
+            throw new Error('Fallo en servidor MP');
+        }
+    } catch (error) {
+        setTimeout(async function() {
+            alert('Simulando redirección a pago para: ' + nombre + '...\n(Servidor WebPay / Local No config)');
+            try { await fetch('/api/ventas?metodo=MercadoPago', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); } catch (e2) {}
+            carrito = [];
+            actualizarBarraCarrito();
+            cerrarDrawer();
+            if (btn) { btn.innerHTML = contenidoOriginal; btn.disabled = false; }
+        }, 800);
+    }
 }
 
 /* 7. Voz */
@@ -2349,12 +2459,22 @@ function initChimp() {
     fur($c('cp-sh'), 320, function() { var t = Math.PI * (.9 + R() * 1.2); return [200 + 130 * .94 * Math.cos(t), 205 + 142 * .94 * Math.sin(t), t + (R() - .5) * .6]; });
     fur($c('cp-sb'), 420, function() { var px = -10 + R() * 420, top = 346 + 56 * Math.pow((px - 200) / 210, 2); return [px, top + R() * 100, -Math.PI / 2 + (px - 200) / 260 + (R() - .5) * .9]; });
 
-    var HL = { sorbo: '#ff4d6d', 'raíz': '#4ade80', espinaca: '#4ade80', aloe: '#a3e635', jengibre: '#f59e0b', 'cúrcuma': '#fbbf24', selva: '#4ade80' };
+    var HL = {
+        sorbo: '#ff3ca6', chimpance: '#fbbf24', instinto: '#38bdf8', natural: '#4ade80',
+        hojas: '#a3e635', raiz: '#4ade80', raices: '#4ade80', frutas: '#ff4d6d',
+        reales: '#fbbf24', despacio: '#38bdf8', sabiduria: '#c084fc', naturaleza: '#4ade80',
+        espinaca: '#4ade80', aloe: '#a3e635', jengibre: '#f59e0b', curcuma: '#fbbf24',
+        selva: '#4ade80', viva: '#a3e635', puro: '#38bdf8', bebe: '#ff3ca6', confia: '#fbbf24'
+    };
     var spans = [];
     window.__rebuildChimpWords = function() {
         if (!words) return;
         var raw = words.textContent.trim().split(/\s+/).filter(Boolean);
-        words.innerHTML = raw.map(function(w) { var c = HL[w.toLowerCase().replace(/[.,:]/g, '')]; return '<span' + (c ? ' class="hl" style="--hc:' + c + '"' : '') + '>' + w + '</span>'; }).join('');
+        words.innerHTML = raw.map(function(w) {
+            var key = w.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, '');
+            var c = HL[key];
+            return '<span' + (c ? ' class="hl" style="--hc:' + c + '"' : '') + '>' + w + '</span>';
+        }).join('');
         spans = Array.prototype.slice.call(words.querySelectorAll('span'));
     };
     window.__rebuildChimpWords();
@@ -2522,6 +2642,20 @@ function initApes() {
 }
 var _agrOrig = agregarAlCarrito;
 agregarAlCarrito = function() { var r = _agrOrig.apply(this, arguments); apesCheer(); return r; };
+
+function irAArmaTuBatido(e) {
+    if (e) e.preventDefault();
+    var btnArmar = document.querySelector('#cats button[onclick*="Armar"]');
+    if (typeof filtrar === 'function') {
+        filtrar('Armar', btnArmar || null);
+    }
+    var secCat = $('catalogo');
+    if (secCat && secCat.scrollIntoView) {
+        secCat.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+        location.hash = '#catalogo';
+    }
+}
 
 function iniciarMenuRaices() {
     if (window.__raicesMenuIniciado) return;
