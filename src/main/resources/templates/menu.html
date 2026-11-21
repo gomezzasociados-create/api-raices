@@ -18,7 +18,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Anton&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 <link rel="preload" href="/js/menu-core.js?v=9" as="script">
-<link rel="modulepreload" href="/js/menu-3d.js?v=2">
+<link rel="modulepreload" href="/js/menu-3d.js?v=4">
 <script type="importmap" th:inline="none">
 {
   "imports": {
@@ -308,15 +308,15 @@ section>.max-w-7xl{position:relative;z-index:2}
 .fl,.cfl .fl{filter:none!important}
 .flora .fl:nth-child(n+5){display:none}
 .spot{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:20px 18px}
-.cgrid{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100%;max-height:100svh;padding:calc(56px + env(safe-area-inset-top,0px)) 16px calc(18px + env(safe-area-inset-bottom,0px));box-sizing:border-box;gap:4px;text-align:center}
-.ctxt{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-width:440px;margin:0 auto}
-.ctag{font-size:.7rem;margin:0 0 6px 0;padding:2px 10px}
-.cstage{order:-1;width:min(82vw,340px);height:auto;max-height:36svh;margin:0 auto 6px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.cstage svg{max-height:34svh;filter:drop-shadow(0 0 35px rgba(34,197,94,.35))}
-.ccap{top:-18px;max-width:92vw;white-space:normal;font-size:clamp(11px,3.3vw,14px);line-height:1.2;padding:4px 12px;box-shadow:0 4px 18px rgba(0,0,0,.8),0 0 15px rgba(74,222,128,.3)}
-#cwords{font-size:clamp(20px,5.3vw,26px);line-height:1.24;max-width:94vw;margin:2px auto 0;text-wrap:balance}
+.cgrid{display:flex;flex-direction:column;justify-content:space-between;align-items:center;height:100%;max-height:100svh;padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(16px + env(safe-area-inset-bottom,0px));box-sizing:border-box;gap:6px;text-align:center}
+.ctxt{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-width:96vw;margin:0 auto;flex:1 1 auto;min-height:0}
+.ctag{font-size:.72rem;margin:0 0 6px 0;padding:3px 12px}
+.cstage{order:-1;width:min(94vw,400px);height:auto;max-height:43svh;margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:0 0 auto}
+.cstage svg{max-height:41svh;width:auto;max-width:100%;filter:drop-shadow(0 0 35px rgba(34,197,94,.35))}
+.ccap{top:-8px;max-width:92vw;white-space:normal;font-size:clamp(11px,3.3vw,14px);line-height:1.2;padding:4px 12px;box-shadow:0 4px 18px rgba(0,0,0,.8),0 0 15px rgba(74,222,128,.3)}
+#cwords{font-size:clamp(21px,5.6vw,28px);line-height:1.22;max-width:96vw;margin:2px auto 0;text-wrap:balance}
 #cwords span{margin-right:.18em}
-.ccta{margin-top:10px;padding:9px 22px;font-size:.78rem}
+.ccta{margin-top:10px;padding:11px 26px;font-size:.85rem;flex-shrink:0}
 .cbig{font-size:min(34vw,180px);bottom:2%;opacity:.10;white-space:nowrap}
 .cbig2{-webkit-text-stroke-width:1px}
 
@@ -610,6 +610,45 @@ section>.max-w-7xl{position:relative;z-index:2}
 <use href="#cp-gl" fill="none" stroke="url(#cp-neonG)" stroke-width="4.5" stroke-linecap="round"/>
 <use href="#cp-gl" fill="none" stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity=".85"/>
 </g>
+<g id="cp-cap">
+<defs>
+<radialGradient id="cap-crown" cx="50%" cy="30%" r="72%"><stop offset="0" stop-color="#2c3a5e"/><stop offset=".6" stop-color="#1b2540"/><stop offset="1" stop-color="#0d1324"/></radialGradient>
+<linearGradient id="cap-brim" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#222e4d"/><stop offset="1" stop-color="#0b101f"/></linearGradient>
+<linearGradient id="cap-sticker" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e2e8f0" stop-opacity=".85"/><stop offset=".45" stop-color="#86efac" stop-opacity=".5"/><stop offset=".75" stop-color="#f472b6" stop-opacity=".5"/><stop offset="1" stop-color="#38bdf8" stop-opacity=".7"/></linearGradient>
+<clipPath id="cap-patch-clip"><circle cx="200" cy="108" r="35"/></clipPath>
+</defs>
+<!-- Sombra suave de la visera sobre la frente -->
+<path d="M90 168Q200 132 310 168Q200 184 90 168Z" fill="rgba(0,0,0,.48)" filter="url(#cp-soft)"/>
+<!-- Corona de la gorra azul marino -->
+<path d="M78 164C78 72 130 42 200 42C270 42 322 72 322 164Z" fill="url(#cap-crown)" stroke="#090d18" stroke-width="2.5"/>
+<!-- Botón superior y costuras de paneles -->
+<ellipse cx="200" cy="40" rx="10" ry="5.5" fill="#1e2946" stroke="#090d18" stroke-width="1.5"/>
+<path d="M200 45V145M142 56Q134 102 128 150M258 56Q266 102 272 150" stroke="rgba(255,255,255,.11)" stroke-width="1.5" stroke-dasharray="3 3" fill="none"/>
+<!-- Ojales superiores -->
+<circle cx="152" cy="74" r="4.2" fill="#0d1324" stroke="#3b4d7a" stroke-width="1.5"/><circle cx="248" cy="74" r="4.2" fill="#0d1324" stroke="#3b4d7a" stroke-width="1.5"/>
+<!-- Parche circular bordado RAÍCES BATIDOS -->
+<circle cx="200" cy="106" r="38" fill="#141e33" stroke="#cbd5e1" stroke-width="1.3"/>
+<g clip-path="url(#cap-patch-clip)">
+<rect x="160" y="68" width="80" height="40" fill="#4eb828"/>
+<rect x="160" y="108" width="80" height="40" fill="#e64c78"/>
+<line x1="162" y1="108" x2="238" y2="108" stroke="#182238" stroke-width="1.3"/>
+<!-- Raíz central y hojas -->
+<path d="M201 110Q205 97 199 82M202 100Q211 90 218 82M201 110Q190 118 171 121M201 110Q193 122 183 130M201 110Q202 123 198 134M201 110Q211 121 223 128M201 110Q215 115 230 117" stroke="#182038" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+<path d="M198 83Q191 75 196 69Q204 75 198 83Z" fill="#22c55e" stroke="#182038" stroke-width="1"/>
+<path d="M214 85Q214 74 223 71Q224 81 214 85Z" fill="#4ade80" stroke="#182038" stroke-width="1"/>
+<text x="181" y="103" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-weight="900" font-size="16" fill="#ffffff" stroke="#182038" stroke-width=".65">Ra</text>
+<text x="221" y="103" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-weight="900" font-size="14" fill="#ffffff" stroke="#182038" stroke-width=".65">ces</text>
+<path id="cap-batidos-arc" d="M174 127Q200 144 226 127" fill="none"/>
+<text font-family="Plus Jakarta Sans,sans-serif" font-weight="900" font-size="8.8" letter-spacing="1.4" fill="#ffffff" stroke="#182038" stroke-width=".45"><textPath href="#cap-batidos-arc" startOffset="50%" text-anchor="middle">BATIDOS</textPath></text>
+</g>
+<circle cx="200" cy="106" r="36.5" fill="none" stroke="#a7f3d0" stroke-width="1.3" stroke-dasharray="2.5 1.5" opacity=".7"/>
+<!-- Visera curva con costuras y sticker 9FORTY -->
+<path d="M74 162C120 142 280 142 326 162C332 184 318 198 292 192C250 180 150 180 108 192C82 198 68 184 74 162Z" fill="url(#cap-brim)" stroke="#090d18" stroke-width="2.5"/>
+<path d="M84 168C130 150 270 150 316 168M92 175C136 158 264 158 308 175M100 182C142 166 258 166 300 182" stroke="rgba(255,255,255,.12)" stroke-width="1" fill="none"/>
+<!-- Sticker holográfico 9FORTY en la visera -->
+<ellipse cx="200" cy="167" rx="26" ry="12" fill="url(#cap-sticker)" stroke="rgba(255,255,255,.45)" stroke-width="1"/>
+<text x="200" y="170" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-weight="800" font-size="7.5" letter-spacing=".8" fill="#0f172a">9FORTY</text>
+</g>
 </g>
 <g id="cp-arm">
 <path id="cp-fa1" fill="none" stroke="url(#cp-fur)" stroke-width="58" stroke-linecap="round" filter="url(#cp-rough)"/>
@@ -749,6 +788,6 @@ section>.max-w-7xl{position:relative;z-index:2}
 
 <!-- EXTENSIONES JS EXTERNAS (CACHEABLES + DEFER PARA CARGA INSTANTÁNEA) -->
 <script th:inline="none" src="/js/menu-core.js?v=9" defer></script>
-<script type="module" th:inline="none" src="/js/menu-3d.js?v=2"></script>
+<script type="module" th:inline="none" src="/js/menu-3d.js?v=4"></script>
 </body>
 </html>
