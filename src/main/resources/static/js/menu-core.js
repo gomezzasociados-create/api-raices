@@ -136,7 +136,10 @@ function aplicarAjustesEnUI() {
 
     // 6. Sección Chimpancé
     if (AJUSTES.chimpanceTag && $('chimpance-display-tag')) $('chimpance-display-tag').innerText = AJUSTES.chimpanceTag;
-    if (AJUSTES.chimpanceTexto && $('cwords')) $('cwords').innerText = AJUSTES.chimpanceTexto;
+    if (AJUSTES.chimpanceTexto && $('cwords')) {
+        $('cwords').innerText = AJUSTES.chimpanceTexto;
+        if (typeof window.__rebuildChimpWords === 'function') window.__rebuildChimpWords();
+    }
     if (AJUSTES.chimpanceBoton && $('chimpance-display-boton')) $('chimpance-display-boton').innerText = AJUSTES.chimpanceBoton;
 
     // 7. Efecto simios asomados
@@ -197,21 +200,27 @@ var ING = [
     ['bi-droplet-half', 'Semillas de chía', 'Salvia hispanica', 'Hidrocoloides naturales que hidratan y retardan la liberación de glucosa.', 'Omega-3 nativo', '95.0%', '#94a3b8', 'text-slate-300', 'md:col-span-2'],
     ['bi-heart-pulse', 'Remolacha y rábano', 'Beta vulgaris', 'Fuente primaria de betanina: estimula la circulación y dispara el flujo de oxígeno celular.', 'Óxido nítrico', '97.5%', '#10b981', 'text-emerald-400', 'md:col-span-6']
 ];
-$('grid-ing').innerHTML = ING.map(function(g, i) {
-    return '<div class="spot reveal rounded-[28px] p-8 ' + g[8] + '" style="--c:' + g[6] + ';--i:' + i + '"><div class="flex items-start justify-between mb-6"><span class="w-12 h-12 rounded-2xl bg-white/[.06] border border-white/15 grid place-items-center text-xl ' + g[7] + '"><i class="bi ' + g[0] + '"></i></span><span class="px-3 py-1 rounded-full text-xs font-semibold ' + g[7] + ' bg-black/30 border border-white/15">' + g[4] + '</span></div>' +
-        '<h3 class="font-cinzel text-2xl font-bold mb-1">' + g[1] + '</h3><p class="text-sm italic text-slate-400 mb-4">' + g[2] + '</p><p class="text-slate-300 leading-relaxed mb-6 font-light max-w-xl">' + g[3] + '</p>' +
-        '<div class="pt-5 border-t border-white/10 flex items-center justify-between text-sm"><span class="text-slate-400">Biodisponibilidad</span><span class="font-bold ' + g[7] + '">' + g[5] + '</span></div></div>';
-}).join('');
+if ($('grid-ing')) {
+    $('grid-ing').innerHTML = ING.map(function(g, i) {
+        return '<div class="spot reveal rounded-[28px] p-8 ' + g[8] + '" style="--c:' + g[6] + ';--i:' + i + '"><div class="flex items-start justify-between mb-6"><span class="w-12 h-12 rounded-2xl bg-white/[.06] border border-white/15 grid place-items-center text-xl ' + g[7] + '"><i class="bi ' + g[0] + '"></i></span><span class="px-3 py-1 rounded-full text-xs font-semibold ' + g[7] + ' bg-black/30 border border-white/15">' + g[4] + '</span></div>' +
+            '<h3 class="font-cinzel text-2xl font-bold mb-1">' + g[1] + '</h3><p class="text-sm italic text-slate-400 mb-4">' + g[2] + '</p><p class="text-slate-300 leading-relaxed mb-6 font-light max-w-xl">' + g[3] + '</p>' +
+            '<div class="pt-5 border-t border-white/10 flex items-center justify-between text-sm"><span class="text-slate-400">Biodisponibilidad</span><span class="font-bold ' + g[7] + '">' + g[5] + '</span></div></div>';
+    }).join('');
+}
 
 var DET = [ ['1', 'Depuración hepática', 'La clorofila y la curcumina ayudan a eliminar toxinas acumuladas y metales pesados.', 'text-emerald-400', '#22c55e'], ['2', 'Activación vascular', 'Los fitoquímicos vivos optimizan el flujo de oxígeno y nutrientes a nivel celular.', 'text-emerald-400', '#22c55e'], ['3', 'Regeneración de mucosa', 'El acemanano del aloe repara el endotelio digestivo para absorber mejor.', 'text-turmeric-400', '#fbbf24'] ];
-$('grid-det').innerHTML = DET.map(function(d, i) {
-    return '<div class="spot reveal rounded-[28px] p-8" style="--c:' + d[4] + ';--i:' + i + '"><div class="font-cinzel text-6xl font-black ' + d[3] + ' mb-4">' + d[0] + '</div><h3 class="font-cinzel text-xl font-bold mb-3">' + d[1] + '</h3><p class="text-slate-300 text-sm font-light leading-relaxed">' + d[2] + '</p></div>';
-}).join('');
+if ($('grid-det')) {
+    $('grid-det').innerHTML = DET.map(function(d, i) {
+        return '<div class="spot reveal rounded-[28px] p-8" style="--c:' + d[4] + ';--i:' + i + '"><div class="font-cinzel text-6xl font-black ' + d[3] + ' mb-4">' + d[0] + '</div><h3 class="font-cinzel text-xl font-bold mb-3">' + d[1] + '</h3><p class="text-slate-300 text-sm font-light leading-relaxed">' + d[2] + '</p></div>';
+    }).join('');
+}
 
 var STATS = [ [24, ' h', 'de la cosecha a tu mesa'], [0, ' g', 'de azúcar añadida'], [6, '', 'raíces por botella'], [98, '%', 'de biodisponibilidad'] ];
-$('stats').innerHTML = STATS.map(function(s, i) {
-    return '<div class="spot reveal rounded-3xl p-6 text-center" style="--i:' + i + '"><div class="font-cinzel text-4xl md:text-5xl font-black shine"><span data-count="' + s[0] + '">0</span>' + s[1] + '</div><p class="text-xs text-slate-400 mt-2">' + s[2] + '</p></div>';
-}).join('');
+if ($('stats')) {
+    $('stats').innerHTML = STATS.map(function(s, i) {
+        return '<div class="spot reveal rounded-3xl p-6 text-center" style="--i:' + i + '"><div class="font-cinzel text-4xl md:text-5xl font-black shine"><span data-count="' + s[0] + '">0</span>' + s[1] + '</div><p class="text-xs text-slate-400 mt-2">' + s[2] + '</p></div>';
+    }).join('');
+}
 
 /* 1. Video controlado por scroll */
 var scrollPauseTimeout = null;
@@ -1158,7 +1167,7 @@ function buildFlora(box, list, soft) {
 var floraBoxes = [];
 function initFlora() {
     if ($('flora-hero')) buildFlora($('flora-hero'), FLORA.hero, false);
-    ['catalogo', 'ingredientes', 'beneficios'].forEach(function(id) {
+    ['catalogo'].forEach(function(id) {
         var sec = $(id);
         if (!sec) return;
         var box = document.createElement('div');
@@ -2329,9 +2338,14 @@ function initChimp() {
     fur($c('cp-sb'), 420, function() { var px = -10 + R() * 420, top = 346 + 56 * Math.pow((px - 200) / 210, 2); return [px, top + R() * 100, -Math.PI / 2 + (px - 200) / 260 + (R() - .5) * .9]; });
 
     var HL = { sorbo: '#ff4d6d', 'raíz': '#4ade80', espinaca: '#4ade80', aloe: '#a3e635', jengibre: '#f59e0b', 'cúrcuma': '#fbbf24', selva: '#4ade80' };
-    var raw = words.textContent.trim().split(/\s+/);
-    words.innerHTML = raw.map(function(w) { var c = HL[w.toLowerCase().replace(/[.,:]/g, '')]; return '<span' + (c ? ' class="hl" style="--hc:' + c + '"' : '') + '>' + w + '</span>'; }).join('');
-    var spans = Array.prototype.slice.call(words.querySelectorAll('span'));
+    var spans = [];
+    window.__rebuildChimpWords = function() {
+        if (!words) return;
+        var raw = words.textContent.trim().split(/\s+/).filter(Boolean);
+        words.innerHTML = raw.map(function(w) { var c = HL[w.toLowerCase().replace(/[.,:]/g, '')]; return '<span' + (c ? ' class="hl" style="--hc:' + c + '"' : '') + '>' + w + '</span>'; }).join('');
+        spans = Array.prototype.slice.call(words.querySelectorAll('span'));
+    };
+    window.__rebuildChimpWords();
     var tx = 0, ty = 0, x = 0, y = 0, last = performance.now(), vis = false, phase = -1;
     var CAPS = ['Mira lo que traje', 'Un sorbito…', 'Despacio…', 'Ya casi…', '¡Ahhh!'];
     var chimpTriggered = false;
@@ -2364,10 +2378,11 @@ function initChimp() {
         pup.style.transform = 'translate(' + (x * 6 * w) + 'px,' + (y * 4.5 * w - 3 * k) + 'px)';
         gl.style.transform = 'translate(' + (x * 3) + 'px,' + (y * 2) + 'px)';
         big.style.transform = 'translate(' + (-x * 42) + 'px,' + (-y * 18) + 'px)';
-        var hx = lp(305, 233, k), hy = lp(428, 429, k) - Math.sin(Math.PI * k) * 28 + (sip > .5 ? Math.sin(t / 260) * 1.6 : 0), rot = lp(8, -14, k), a = rot * Math.PI / 180;
-        cup.setAttribute('transform', 'translate(' + hx.toFixed(1) + ' ' + hy.toFixed(1) + ') rotate(' + rot.toFixed(1) + ')');
-        tip[0] = hx - Math.cos(a) * 2 + Math.sin(a) * 88; tip[1] = hy - Math.sin(a) * 2 - Math.cos(a) * 88;
-        var ex = hx + Math.cos(a) * 24 - Math.sin(a) * 42, ey = hy + Math.sin(a) * 24 + Math.cos(a) * 42;
+        var cupScale = 1.38;
+        var hx = lp(305, 233, k), hy = lp(442, 459, k) - Math.sin(Math.PI * k) * 28 + (sip > .5 ? Math.sin(t / 260) * 1.6 : 0), rot = lp(8, -14, k), a = rot * Math.PI / 180;
+        cup.setAttribute('transform', 'translate(' + hx.toFixed(1) + ' ' + hy.toFixed(1) + ') rotate(' + rot.toFixed(1) + ') scale(' + cupScale + ')');
+        tip[0] = hx + (-Math.cos(a) * 2 + Math.sin(a) * 88) * cupScale; tip[1] = hy + (-Math.sin(a) * 2 - Math.cos(a) * 88) * cupScale;
+        var ex = hx + (Math.cos(a) * 24 - Math.sin(a) * 42) * cupScale, ey = hy + (Math.sin(a) * 24 + Math.cos(a) * 42) * cupScale;
         var d = 'M372 545Q' + ((372 + ex) / 2 + 28).toFixed(1) + ' ' + ((545 + ey) / 2 + 6).toFixed(1) + ' ' + ex.toFixed(1) + ' ' + ey.toFixed(1);
         fa1.setAttribute('d', d); fa2.setAttribute('d', d);
         var ly = 52 - lvl * 98; liq.setAttribute('y', ly.toFixed(1)); foam.setAttribute('cy', ly.toFixed(1));
@@ -2384,8 +2399,11 @@ function initChimp() {
         if (sip > .5 && Math.random() < .3 * FX) { var g = G(tip[0], tip[1]); emit(1, g[0], g[1], { a0: -2.2, a1: -.9, s0: .6, s1: 1.8, g: .03, r0: 1.5, r1: 3, c: ['#bef264', '#4ade80', '#fde68a'], t: 'drop' }); }
         drawFx();
         words.style.setProperty('--n', p);
-        var n = Math.floor(p / .8 * spans.length);
-        spans.forEach(function(s, i) { s.classList.toggle('on', i < n); });
+        var n = Math.floor(clamp(p / .82) * spans.length);
+        spans.forEach(function(s, i) {
+            s.classList.toggle('on', i < n);
+            s.classList.toggle('now', i === n - 1 && n < spans.length);
+        });
         tag.style.transform = 'translateY(' + ((1 - Math.min(1, p * 6)) * 40) + 'px)'; tag.style.opacity = Math.min(1, p * 6);
         var ph = p < .14 ? 0 : p < .32 ? 1 : p < .62 ? 2 : p < .84 ? 3 : 4;
         if (ph !== phase) {
