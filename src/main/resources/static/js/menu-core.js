@@ -83,6 +83,7 @@ function aplicarAjustesEnUI() {
     if (AJUSTES.heroBadge && $('hero-display-badge')) $('hero-display-badge').innerText = AJUSTES.heroBadge;
     if (AJUSTES.heroTitulo && $('hero-display-titulo')) $('hero-display-titulo').innerText = AJUSTES.heroTitulo;
     if (AJUSTES.heroSubtitulo && $('hero-display-subtitulo')) $('hero-display-subtitulo').innerText = AJUSTES.heroSubtitulo;
+    if (AJUSTES.heroSubtitulo && $('hero-zebra-depth')) $('hero-zebra-depth').innerText = AJUSTES.heroSubtitulo;
     if (AJUSTES.heroScrollCta && $('hero-display-cta')) $('hero-display-cta').innerText = AJUSTES.heroScrollCta;
 
     // 3. Escenas sobre el video (4 Esquinas Dinámicas)

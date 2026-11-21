@@ -81,6 +81,13 @@ a{text-decoration:none;color:inherit}
 @keyframes luxuryGlow{0%{background-position:0% 50%;filter:drop-shadow(0 0 20px rgba(52,211,153,.35)) drop-shadow(0 0 40px rgba(16,185,129,.2))}50%{background-position:100% 50%;filter:drop-shadow(0 0 35px rgba(52,211,153,.6)) drop-shadow(0 0 65px rgba(254,240,138,.35))}100%{background-position:0% 50%;filter:drop-shadow(0 0 20px rgba(52,211,153,.35)) drop-shadow(0 0 40px rgba(16,185,129,.2))}}
 .hero-lion-3d{filter:drop-shadow(0 18px 34px rgba(0,0,0,.92)) drop-shadow(0 0 28px rgba(217,119,6,.35)) drop-shadow(0 0 40px rgba(16,185,129,.28));animation:lion3dFloat 6s ease-in-out infinite alternate;transform-origin:center center;will-change:transform,filter}
 @keyframes lion3dFloat{0%{transform:perspective(900px) translateY(0) scale(1) rotateX(0deg)}100%{transform:perspective(900px) translateY(-6px) scale(1.025) rotateX(2deg);filter:drop-shadow(0 24px 42px rgba(0,0,0,.96)) drop-shadow(0 0 36px rgba(245,158,11,.48)) drop-shadow(0 0 52px rgba(52,211,153,.38))}}
+
+/* SUBTÍTULO 3D CON PIEL DE CEBRA */
+.hero-zebra-stage{position:relative;display:inline-block;max-width:min(94vw,760px);margin:0 auto 1.35rem;padding:0 14px;perspective:900px;transform-style:preserve-3d;animation:zebra3dFloat 6.5s ease-in-out infinite alternate}
+@keyframes zebra3dFloat{0%{transform:perspective(900px) translateY(0) rotateX(7deg)}100%{transform:perspective(900px) translateY(-4px) rotateX(10deg)}}
+.hero-zebra-text,.hero-zebra-depth{font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-weight:900;font-size:clamp(1.12rem,3.6vw,1.72rem);line-height:1.32;letter-spacing:.025em;text-align:center;margin:0}
+.hero-zebra-depth{position:absolute;inset:0;padding:0 14px;color:#0e1110;user-select:none;pointer-events:none;z-index:1;text-shadow:0 1px 0 #1b1e1d,0 2px 0 #141716,0 3px 0 #0d0f0e,0 4px 0 #070808,0 5px 0 #030404,0 8px 16px rgba(0,0,0,.95),0 14px 28px rgba(0,0,0,.85)}
+.hero-zebra-text{position:relative;z-index:2;background-color:#f4f1ea;background-image:linear-gradient(180deg,rgba(255,255,255,.32) 0%,rgba(255,255,255,0) 48%,rgba(0,0,0,.22) 100%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60' viewBox='0 0 120 60'%3E%3Crect width='120' height='60' fill='%23f6f3eb'/%3E%3Cpath d='M-10 8 C12 2, 22 22, 42 14 C60 7, 72 24, 92 14 C108 6, 118 16, 130 12 L130 22 C116 26, 106 16, 90 24 C70 34, 58 17, 40 24 C20 32, 10 12, -10 18 Z' fill='%23121417'/%3E%3Cpath d='M-10 32 C10 26, 26 44, 46 35 C66 26, 78 44, 98 35 C112 29, 120 38, 130 34 L130 45 C118 49, 110 40, 96 46 C76 55, 64 37, 44 46 C24 55, 8 37, -10 43 Z' fill='%23121417'/%3E%3Cpath d='M8 -4 C18 6, 24 10, 32 0 L22 -4 Z M66 -4 C76 7, 82 11, 90 0 L80 -4 Z M10 52 C20 62, 28 64, 38 54 L26 62 Z M72 52 C82 62, 90 64, 100 54 L88 62 Z' fill='%23121417'/%3E%3C/svg%3E");background-size:auto,110px 55px;background-repeat:no-repeat,repeat;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:.55px rgba(255,255,255,.32);filter:drop-shadow(0 2px 3px rgba(0,0,0,.75)) drop-shadow(0 0 18px rgba(255,255,255,.16))}
 #banner-anuncio-top{transition:all .3s ease}
 
 /* Textos en Esquinas Dinámicos sin Fondo (Flotan Limpios y Puros sobre el Video) */
@@ -270,7 +277,8 @@ section>.max-w-7xl{position:relative;z-index:2}
 #scene-hero>div:first-child{margin-bottom:clamp(16px,2.4vh,26px)!important}
 #scene-hero h1{margin-bottom:clamp(6px,1.4vh,16px)!important}
 #hero-lion-title-wrap{width:min(76vw,760px,calc((100svh - var(--header-offset,92px) - 180px) * 1.92))!important;max-width:none!important}
-#hero-display-subtitulo{font-size:clamp(.92rem,1.95vh,1.18rem)!important;line-height:1.45!important;margin-bottom:clamp(10px,1.8vh,24px)!important;max-width:min(90vw,580px)!important}
+#hero-display-subtitulo,.hero-zebra-depth{font-size:clamp(1.18rem,2.45vh,1.62rem)!important;line-height:1.3!important}
+.hero-zebra-stage{margin-bottom:clamp(10px,1.8vh,22px)!important;max-width:min(92vw,740px)!important}
 #scene-hero>div:last-child{gap:clamp(3px,.8vh,8px)!important}
 .cpin{padding-top:var(--header-offset,92px);box-sizing:border-box}
 .cstage{width:min(100%,640px,calc((100svh - var(--header-offset,92px) - 56px) * .84))}
@@ -281,7 +289,7 @@ section>.max-w-7xl{position:relative;z-index:2}
 #scene-hero>div:first-child,#scene-hero>div:last-child{display:none!important}
 #scene-hero{padding-top:calc(var(--header-offset,92px) + 22px);padding-bottom:14px}
 #hero-lion-title-wrap{width:min(76vw,680px,calc((100svh - var(--header-offset,92px) - 105px) * 1.92))!important}
-#hero-display-subtitulo{margin-bottom:0!important}
+.hero-zebra-stage{margin-bottom:0!important}
 }
 
 /* REGLAS MÓVILES CALIBRADAS */
@@ -403,9 +411,14 @@ section>.max-w-7xl{position:relative;z-index:2}
         <span id="hero-display-titulo" class="sr-only">RAÍCES</span>
     </h1>
     
-    <p id="hero-display-subtitulo" class="hero-in text-sm sm:text-lg md:text-xl text-slate-200/95 font-light tracking-wide max-w-xl mx-auto leading-relaxed mb-8 px-4" style="--d:.25s">
-        Nutrición celular viva, sin pasteurizar y sin azúcar añadida.
-    </p>
+    <div class="hero-in hero-zebra-stage" style="--d:.25s">
+        <p id="hero-zebra-depth" class="hero-zebra-depth" aria-hidden="true">
+            Nutrición celular viva, sin pasteurizar y sin azúcar añadida.
+        </p>
+        <p id="hero-display-subtitulo" class="hero-zebra-text">
+            Nutrición celular viva, sin pasteurizar y sin azúcar añadida.
+        </p>
+    </div>
 
     <div class="hero-in flex flex-col items-center gap-2 cursor-pointer pointer-events-auto opacity-75 hover:opacity-100 transition-opacity" onclick="scrollToProgress(0.20)" style="--d:.4s">
         <span id="hero-display-cta" class="text-[10px] tracking-[0.25em] uppercase text-emerald-300/80 font-medium">Desliza para ver la experiencia</span>
