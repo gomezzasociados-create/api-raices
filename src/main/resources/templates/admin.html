@@ -755,37 +755,13 @@
         </div>
     </div>
 
-    <!-- BANNER DE ALERTA CRÍTICA: BODEGA DE VASOS 500 MLS -->
-    <div id="banner-alerta-vasos" class="container-fluid mt-3" style="display: none;">
-        <div class="alert alert-danger border-danger bg-dark text-white d-flex justify-content-between align-items-center p-3 rounded-3" style="box-shadow: 0 0 25px rgba(255,0,85,0.4); border: 2px solid #ff0055;">
-            <div class="d-flex align-items-center">
-                <div class="me-3 text-center">
-                    <i class="bi bi-exclamation-triangle-fill text-danger fs-1" style="filter: drop-shadow(0 0 8px red);"></i>
-                </div>
-                <div>
-                    <h5 class="font-orbitron fw-bold text-danger mb-1" style="letter-spacing:1px;">
-                        <i class="bi bi-cup-straw me-2"></i> AVISO PARA EL ADMINISTRADOR: UMBRAL BAJO EN BODEGA DE VASOS 500 MLS
-                    </h5>
-                    <div id="texto-alerta-vasos" class="font-rajdhani fs-6 text-white-50"></div>
-                </div>
-            </div>
-            <div class="d-flex gap-2 ms-3 flex-wrap">
-                <button class="btn btn-outline-success fw-bold font-orbitron px-3 py-2 text-nowrap" onclick="probarAlertaWhatsapp()" title="Enviar notificación inmediata a WhatsApp del Administrador">
-                    <i class="bi bi-whatsapp me-1"></i> AVISO WHATSAPP
-                </button>
-                <button class="btn btn-outline-danger fw-bold font-orbitron px-3 py-2 text-nowrap" onclick="irABodegaVasos()">
-                    <i class="bi bi-arrow-right-circle-fill me-1"></i> REVISAR BODEGA VASOS
-                </button>
-            </div>
-        </div>
-    </div>
-
     <div class="container-fluid px-4 pb-5 mt-4">
         <ul class="nav nav-pills nav-fill mb-4 table-container p-3" id="pills-tab" role="tablist">
             <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-produccion" type="button" onclick="cargarProduccion(); playSound('click')"><i class="bi bi-droplet-half me-1"></i> GÉNESIS (PRODUCCIÓN)</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-ventas" type="button" onclick="cargarTesoreria(); playSound('click')"><i class="bi bi-wallet2 me-1"></i> TESORERÍA</button></li>
             <li class="nav-item" id="nav-crm" style="display:block;"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-crm" type="button" onclick="cargarCRM(); playSound('click')"><i class="bi bi-people-fill me-1"></i> RED CLIENTES</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-inventario" type="button" onclick="cargarInsumos(); playSound('click')"><i class="bi bi-boxes me-1"></i> BODEGA BOTÁNICA</button></li>
+            <li class="nav-item"><button class="nav-link position-relative" data-bs-toggle="pill" data-bs-target="#tab-lista-compras" type="button" onclick="cargarListaCompras(); playSound('click')"><i class="bi bi-cart-check-fill me-1 text-warning"></i> LISTA DE COMPRAS <span id="badge-nav-lista-compras" class="badge rounded-pill bg-danger ms-1" style="display:none;">0</span></button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-recetas" type="button" onclick="prepararRecetas(); playSound('click')"><i class="bi bi-flask me-1"></i> FÓRMULAS</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pdf" type="button" onclick="cargarDocumentosPdf(); playSound('click')"><i class="bi bi-file-earmark-pdf-fill me-1"></i> CENTRO PDF & RECETAS</button></li>
             <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-precios" type="button" onclick="cargarCatalogo(); playSound('click')"><i class="bi bi-hdd-network me-1"></i> MATRIZ TOTAL</button></li>
@@ -1988,6 +1964,131 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB NUEVO: LISTA DE COMPRAS INTELIGENTE & ACTUALIZADOR DE PRECIOS CONECTADO A TESORERÍA -->
+            <div class="tab-pane fade" id="tab-lista-compras" role="tabpanel">
+                <div class="table-container mb-4" style="border-top: 3px solid var(--p-warning);">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3 pb-3 border-bottom border-secondary">
+                        <div>
+                            <h4 class="fw-bold font-orbitron m-0" style="color: var(--p-warning); text-shadow: 0 0 12px rgba(255,215,0,0.4);">
+                                <i class="bi bi-cart-check-fill me-2"></i> LISTA DE COMPRAS & REPOSICIÓN INTELIGENTE DE BODEGAS
+                            </h4>
+                            <p class="text-white-50 font-rajdhani m-0 mt-1 fs-6">
+                                Todo insumo de las 5 bodegas con <b>3 unidades/porciones o sin stock (0)</b> ingresa automáticamente a esta lista. Actualiza el Precio por Kilo en vivo, márcalo como <b>COMPRADO</b> para registrarlo como gasto en <b>Tesorería</b> y reponer su stock, o bórralo de la lista al finalizar.
+                            </p>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button class="btn btn-outline-info font-orbitron fw-bold px-3 py-2" onclick="cargarListaCompras(); playSound('click')">
+                                <i class="bi bi-arrow-repeat me-1"></i> ESCANEAR BODEGAS (≤ 3 UND)
+                            </button>
+                            <button class="btn btn-outline-warning font-orbitron fw-bold px-3 py-2" onclick="imprimirListaComprasActiva()">
+                                <i class="bi bi-printer-fill me-1"></i> IMPRIMIR LISTA A COMPRAR
+                            </button>
+                            <button class="btn btn-outline-danger font-orbitron fw-bold px-3 py-2" onclick="limpiarFinalizadosListaCompras()">
+                                <i class="bi bi-trash3-fill me-1"></i> BORRAR COMPRADOS / NO ENCONTRADOS
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KPIs DE LISTA DE COMPRAS -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="p-3 rounded-3 border border-warning bg-black text-center">
+                                <span class="text-white-50 font-orbitron small d-block">INSUMOS POR COMPRAR (≤ 3 UND)</span>
+                                <span class="fs-2 fw-bold font-orbitron text-warning" id="kpi-compras-pendientes">0</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 rounded-3 border border-info bg-black text-center">
+                                <span class="text-white-50 font-orbitron small d-block">PRESUPUESTO ESTIMADO PENDIENTE</span>
+                                <span class="fs-2 fw-bold font-orbitron text-info" id="kpi-compras-presupuesto">$0</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 rounded-3 border border-success bg-black text-center">
+                                <span class="text-white-50 font-orbitron small d-block">MARCADOS COMO COMPRADOS</span>
+                                <span class="fs-2 fw-bold font-orbitron text-success" id="kpi-compras-comprados">0</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 rounded-3 border border-secondary bg-black text-center">
+                                <span class="text-white-50 font-orbitron small d-block">TOTAL ACUMULADO EN HISTORIAL</span>
+                                <span class="fs-2 fw-bold font-orbitron text-white" id="kpi-compras-total-historial">$0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AGREGAR INSUMO MANUALMENTE A LA LISTA DE COMPRAS + FILTROS -->
+                    <div class="row g-3 align-items-end mb-4 p-3 rounded-3" style="background: rgba(255,215,0,0.04); border: 1px dashed rgba(255,215,0,0.35);">
+                        <div class="col-md-5">
+                            <label class="form-label-neon text-warning small"><i class="bi bi-plus-circle me-1"></i> Agregar cualquier insumo de Bodega manualmente a la Lista de Compras</label>
+                            <div class="input-group">
+                                <select id="select-insumo-manual-compra" class="form-select bg-dark text-white border-warning"></select>
+                                <button class="btn btn-warning fw-bold font-orbitron text-dark" type="button" onclick="agregarInsumoManualACompras()">
+                                    <i class="bi bi-cart-plus-fill me-1"></i> AÑADIR A LA LISTA
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label-neon text-info small"><i class="bi bi-funnel-fill me-1"></i> Filtrar por Bodega</label>
+                            <select id="filtro-bodega-compras" class="form-select bg-dark text-info border-info font-orbitron" onchange="renderizarListaComprasActiva()">
+                                <option value="TODAS">📦 TODAS LAS BODEGAS (5 BODEGAS)</option>
+                                <option value="1. Materia Prima (Pulpas)">🌿 1. Materia Prima (Pulpas)</option>
+                                <option value="2. Vasos y Packaging (500 mls)">🥤 2. Vasos y Packaging (500 mls)</option>
+                                <option value="3. Shots y Caldos de Hueso">⚡ 3. Shots y Caldos de Hueso</option>
+                                <option value="4. Bodega de Porciones: Arma tu Batido">🍓 4. Bodega de Porciones: Arma tu Batido</option>
+                                <option value="5. Línea Exóticos">🌺 5. Línea Exóticos</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label-neon text-white-50 small"><i class="bi bi-check2-circle me-1"></i> Filtrar por Estado</label>
+                            <select id="filtro-estado-compras" class="form-select bg-dark text-white border-secondary font-orbitron" onchange="renderizarListaComprasActiva()">
+                                <option value="TODOS">🔍 TODOS LOS ESTADOS</option>
+                                <option value="PENDIENTE">⏳ SOLO PENDIENTES</option>
+                                <option value="COMPRADO">✅ SOLO COMPRADOS</option>
+                                <option value="NO_ENCONTRADO">❌ NO ENCONTRADOS</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- CONTENEDOR ORDENADO Y DETALLADO POR BODEGAS -->
+                    <div id="contenedor-lista-compras-bodegas" class="d-flex flex-column gap-4"></div>
+                </div>
+
+                <!-- HISTORIAL DE PRECIOS Y COMPRAS (CONECTADO A TESORERÍA E IMPRIMIBLE) -->
+                <div class="table-container" style="border-top: 3px solid var(--p-bio-green);">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <div>
+                            <h5 class="fw-bold font-orbitron m-0" style="color: var(--p-bio-green);">
+                                <i class="bi bi-journal-check me-2"></i> HISTORIAL DE PRECIOS Y COMPRAS (SINCRONIZADO CON TESORERÍA)
+                            </h5>
+                            <small class="text-white-50 font-rajdhani">Registro auditable de variaciones de Precio por Kilo, Precio por Porción, cantidades compradas y egresos enviados a Tesorería.</small>
+                        </div>
+                        <button class="btn btn-bio font-orbitron fw-bold px-4 py-2" style="background: var(--p-bio-green); color: #000;" onclick="imprimirHistorialComprasPrecios()">
+                            <i class="bi bi-printer-fill me-2"></i> IMPRIMIR HISTORIAL DE PRECIOS Y COMPRAS
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table text-center align-middle m-0">
+                            <thead class="table-dark font-orbitron small">
+                                <tr>
+                                    <th>FECHA / HORA</th>
+                                    <th>BODEGA</th>
+                                    <th>INSUMO</th>
+                                    <th>CANT. COMPRADA</th>
+                                    <th>PRECIO KILO ANT. → NUEVO</th>
+                                    <th>PRECIO PORC. ANT. → NUEVO</th>
+                                    <th>GASTO EN TESORERÍA</th>
+                                    <th>ESTADO</th>
+                                    <th>NOTA / PROVEEDOR</th>
+                                    <th>BORRAR</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-historial-compras-precios"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -5313,92 +5414,557 @@
             const tbVExoticos = document.getElementById('total-valor-exoticos');
             if (tbVExoticos) tbVExoticos.innerText = formatMoney(totalExoticos, sucMuestraExoticos);
 
-            // GESTIÓN DE ALERTAS DE UMBRAL BAJO EXCLUSIVO PARA BODEGA DE VASOS 500 MLS
-            procesarAlertasVasosAdmin(alertasVasos500);
+            // SINCRONIZAR AUTOMÁTICAMENTE LA LISTA DE COMPRAS (INSUMOS <= 3 UNIDADES O SIN UNIDADES)
+            poblarSelectorManualCompras();
+            cargarListaCompras(true);
 
         } catch(e) { console.error('Error cargando insumos:', e); }
     }
 
-    function procesarAlertasVasosAdmin(alertas) {
-        const banner = document.getElementById('banner-alerta-vasos');
-        const txtBanner = document.getElementById('texto-alerta-vasos');
-        const badgeHeader = document.getElementById('badge-alerta-vasos');
-        const detalleBox = document.getElementById('alerta-vasos-detalle-box');
+    // =========================================================================
+    // SECCIÓN NUEVA: LISTA DE COMPRAS INTELIGENTE, ACTUALIZADOR DE PRECIOS POR KILO & TESORERÍA
+    // =========================================================================
+    let listaComprasActivaMem = [];
+    let historialComprasMem = [];
 
-        if (!alertas || alertas.length === 0) {
-            if (banner) banner.style.display = 'none';
-            if (badgeHeader) badgeHeader.innerHTML = `<span class="badge bg-success bg-opacity-25 text-info fs-7 border border-info"><i class="bi bi-shield-check me-1"></i> STOCK ÓPTIMO</span>`;
-            if (detalleBox) detalleBox.innerHTML = '';
+    function poblarSelectorManualCompras() {
+        const sel = document.getElementById('select-insumo-manual-compra');
+        if (!sel || !Array.isArray(insMem)) return;
+        sel.innerHTML = '<option value="">-- Selecciona cualquier insumo de las 5 bodegas --</option>' +
+            insMem.map(i => {
+                const cat = i.categoria || 'Pulpas';
+                const med = (i.medida || 'gr').toLowerCase();
+                let pKilo = (i.precioKilo && i.precioKilo > 0) ? i.precioKilo : (i.precio || 0);
+                return `<option value="${i.idInsumo}">[${cat.toUpperCase()}] ${i.nombre} (Stock: ${i.unidadActual || 0} ${med} • Base: $${Math.round(pKilo).toLocaleString('es-CL')})</option>`;
+            }).join('');
+    }
+
+    async function cargarListaCompras(silencioso = false) {
+        try {
+            const res = await fetch('/api/compras/lista?_t=' + Date.now(), { cache: 'no-store' });
+            if (!res.ok) return;
+            const data = await res.json();
+            listaComprasActivaMem = data.activos || [];
+            historialComprasMem = data.historial || [];
+
+            const pendientesCount = data.pendientesCount || 0;
+            const compradosCount = data.compradosEnListaCount || 0;
+            const presupuestoPend = data.presupuestoPendiente || 0;
+            const totalHistorial = data.totalGastadoHistorial || 0;
+
+            const badgeNav = document.getElementById('badge-nav-lista-compras');
+            if (badgeNav) {
+                if (pendientesCount > 0) {
+                    badgeNav.style.display = 'inline-block';
+                    badgeNav.innerText = pendientesCount;
+                } else {
+                    badgeNav.style.display = 'none';
+                }
+            }
+
+            const elKpiPend = document.getElementById('kpi-compras-pendientes');
+            if (elKpiPend) elKpiPend.innerText = pendientesCount;
+
+            const elKpiPres = document.getElementById('kpi-compras-presupuesto');
+            if (elKpiPres) elKpiPres.innerText = formatMoney(presupuestoPend, 'Antofagasta');
+
+            const elKpiComp = document.getElementById('kpi-compras-comprados');
+            if (elKpiComp) elKpiComp.innerText = compradosCount;
+
+            const elKpiHist = document.getElementById('kpi-compras-total-historial');
+            if (elKpiHist) elKpiHist.innerText = formatMoney(totalHistorial, 'Antofagasta');
+
+            renderizarListaComprasActiva();
+            renderizarHistorialComprasPrecios();
+        } catch (e) {
+            if (!silencioso) console.error('Error cargando Lista de Compras:', e);
+        }
+    }
+
+    function obtenerEstiloBodegaCompra(bodegaStr) {
+        const b = (bodegaStr || '').toLowerCase();
+        if (b.includes('vaso') || b.includes('packaging')) {
+            return { color: 'var(--p-cyan)', icon: 'bi-cup-straw', border: 'border-info' };
+        } else if (b.includes('shot') || b.includes('caldo')) {
+            return { color: 'var(--p-magenta)', icon: 'bi-lightning-charge-fill', border: 'border-danger' };
+        } else if (b.includes('arma') || b.includes('porcion')) {
+            return { color: 'var(--p-warning)', icon: 'bi-sliders', border: 'border-warning' };
+        } else if (b.includes('exot') || b.includes('exótico')) {
+            return { color: '#bd00ff', icon: 'bi-stars', border: 'border-light' };
+        }
+        return { color: 'var(--p-bio-green)', icon: 'bi-tree-fill', border: 'border-success' };
+    }
+
+    function renderizarListaComprasActiva() {
+        const cont = document.getElementById('contenedor-lista-compras-bodegas');
+        if (!cont) return;
+
+        const filtroBodega = document.getElementById('filtro-bodega-compras')?.value || 'TODAS';
+        const filtroEstado = document.getElementById('filtro-estado-compras')?.value || 'TODOS';
+
+        let itemsFiltrados = (listaComprasActivaMem || []).filter(item => {
+            if (filtroBodega !== 'TODAS' && item.bodega !== filtroBodega) return false;
+            if (filtroEstado !== 'TODOS' && (item.estado || 'PENDIENTE').toUpperCase() !== filtroEstado) return false;
+            return true;
+        });
+
+        if (itemsFiltrados.length === 0) {
+            cont.innerHTML = `
+                <div class="p-5 text-center rounded-3 border border-secondary" style="background: rgba(0,0,0,0.5);">
+                    <i class="bi bi-check2-all fs-1 text-success d-block mb-2"></i>
+                    <h5 class="font-orbitron text-white mb-1">NO HAY INSUMOS PENDIENTES EN ESTE FILTRO</h5>
+                    <p class="text-white-50 font-rajdhani m-0">Todas las bodegas tienen más de 3 unidades disponibles o ya se completaron las compras.</p>
+                </div>
+            `;
             return;
         }
 
-        // Si hay insumos en umbral bajo en la Bodega de Vasos 500 mls:
-        if (banner) banner.style.display = 'block';
+        // Agrupar ordenadamente por las 5 bodegas
+        const grupos = {};
+        itemsFiltrados.forEach(item => {
+            const bod = item.bodega || '1. Materia Prima (Pulpas)';
+            if (!grupos[bod]) grupos[bod] = [];
+            grupos[bod].push(item);
+        });
 
-        let listaPillsHtml = alertas.map(a => {
-            if (a.esAgotado) {
-                return `<span class="badge bg-danger text-white px-2 py-1 fs-7 font-orbitron border border-white" style="box-shadow: 0 0 10px red;"><i class="bi bi-x-circle-fill me-1"></i> ${a.nombre}: AGOTADO (0 ${a.medida})</span>`;
-            } else {
-                return `<span class="badge bg-warning text-dark px-2 py-1 fs-7 font-orbitron fw-bold border border-warning" style="box-shadow: 0 0 10px #ffdd00;"><i class="bi bi-exclamation-triangle-fill me-1"></i> ${a.nombre}: ¡ÚLTIMAS ${Math.floor(a.stock)} ${a.medida}!</span>`;
-            }
-        }).join(' ');
+        let html = '';
+        Object.keys(grupos).sort().forEach(nombreBodega => {
+            const lista = grupos[nombreBodega];
+            const st = obtenerEstiloBodegaCompra(nombreBodega);
 
-        if (txtBanner) {
-            txtBanner.innerHTML = `Atención Administrador: Se han detectado <b>${alertas.length} insumo(s)</b> en umbral bajo (≤ 10 unidades): ${listaPillsHtml}`;
-        }
-
-        if (badgeHeader) {
-            badgeHeader.innerHTML = `<span class="badge bg-danger text-white fs-7 font-orbitron px-2 py-1 border border-white" style="box-shadow: 0 0 12px red;"><i class="bi bi-exclamation-octagon-fill me-1"></i> ¡${alertas.length} EN UMBRAL BAJO!</span>`;
-        }
-
-        if (detalleBox) {
-            detalleBox.innerHTML = `
-                <div class="alert alert-danger border-danger bg-dark text-white p-3 mb-3 d-flex flex-column flex-md-row align-items-md-center justify-content-between rounded-3" style="box-shadow: 0 0 20px rgba(255,0,0,0.3); border-width: 2px;">
-                    <div>
-                        <h6 class="text-danger fw-bold font-orbitron mb-1 fs-6">
-                            <i class="bi bi-exclamation-octagon-fill me-2"></i> MENSAJE PARA EL ADMINISTRADOR: BODEGA DE VASOS 500 MLS
+            html += `
+                <div class="rounded-3 p-3" style="background: rgba(5,10,16,0.92); border: 1px solid ${st.color}; box-shadow: 0 0 15px rgba(0,0,0,0.6);">
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom border-secondary">
+                        <h6 class="font-orbitron fw-bold m-0 fs-5" style="color: ${st.color};">
+                            <i class="bi ${st.icon} me-2"></i> ${nombreBodega.toUpperCase()}
                         </h6>
-                        <p class="mb-2 font-rajdhani text-white-50 fs-6">Los siguientes insumos de packaging para batidos de 500 mls han alcanzado o cruzado el umbral bajo de seguridad (10 unidades o menos). Por favor reabastecer a la brevedad:</p>
-                        <div class="d-flex flex-wrap gap-2 mb-2 mb-md-0">${listaPillsHtml}</div>
+                        <span class="badge bg-dark border font-orbitron px-3 py-1" style="border-color: ${st.color}; color: ${st.color};">
+                            ${lista.length} INSUMO(S) EN LISTA
+                        </span>
                     </div>
-                    <button class="btn btn-outline-success font-orbitron fw-bold text-nowrap ms-md-3" onclick="probarAlertaWhatsapp()">
-                        <i class="bi bi-whatsapp me-1"></i> NOTIFICAR WHATSAPP
-                    </button>
+                    <div class="d-flex flex-column gap-3">
+            `;
+
+            lista.forEach(it => {
+                const id = it.id;
+                const med = (it.medida || 'gr').toLowerCase();
+                const dosis = it.cantidadPorcion || 30;
+                const lblPrecioBase = med === 'gr' ? 'Precio / Kilo ($)' : (med === 'mls' ? 'Precio / Litro ($)' : 'Precio / Und ($)');
+                const lblCantCompra = med === 'gr' ? 'Cant. a Comprar (Kilos)' : (med === 'mls' ? 'Cant. a Comprar (Litros)' : 'Cant. a Comprar (Und)');
+                const stockUnd = Math.floor(it.stockActualUnidades || 0);
+                const estado = (it.estado || 'PENDIENTE').toUpperCase();
+
+                let badgeStock = stockUnd <= 0
+                    ? `<span class="badge bg-danger text-white font-orbitron px-2 py-1"><i class="bi bi-x-circle-fill me-1"></i> SIN UNIDADES (0)</span>`
+                    : `<span class="badge bg-warning text-dark font-orbitron fw-bold px-2 py-1"><i class="bi bi-exclamation-triangle-fill me-1"></i> QUEDAN ${stockUnd} UND/PORC</span>`;
+
+                let badgeEstado = `<span class="badge bg-warning text-dark font-orbitron px-3 py-2 fs-7"><i class="bi bi-hourglass-split me-1"></i> PENDIENTE</span>`;
+                let rowStyle = `border-left: 4px solid var(--p-warning); background: rgba(15, 20, 30, 0.9);`;
+                if (estado === 'COMPRADO') {
+                    badgeEstado = `<span class="badge bg-success text-white font-orbitron px-3 py-2 fs-7" style="box-shadow: 0 0 10px #00ff88;"><i class="bi bi-check-circle-fill me-1"></i> COMPRADO (EN TESORERÍA)</span>`;
+                    rowStyle = `border-left: 4px solid var(--p-bio-green); background: rgba(5, 28, 15, 0.9);`;
+                } else if (estado === 'NO_ENCONTRADO') {
+                    badgeEstado = `<span class="badge bg-danger text-white font-orbitron px-3 py-2 fs-7"><i class="bi bi-slash-circle me-1"></i> NO ENCONTRADO</span>`;
+                    rowStyle = `border-left: 4px solid #ff0055; background: rgba(30, 8, 15, 0.85); opacity: 0.85;`;
+                }
+
+                const pKiloAnt = Math.round(it.precioKiloAnterior || 0);
+                const pKiloNue = Math.round(it.precioKiloNuevo || pKiloAnt || 0);
+                const pPorcNue = Math.round(it.precioPorcionNuevo || 0);
+                const cantComp = it.cantidadAComprar || 1;
+                const totalComp = Math.round(it.costoTotalCompra || (pKiloNue * cantComp));
+
+                html += `
+                    <div class="p-3 rounded-3 border border-secondary" id="item-compra-card-${id}" style="${rowStyle}">
+                        <div class="row g-3 align-items-center">
+                            <!-- IDENTIFICACIÓN Y STOCK CRÍTICO -->
+                            <div class="col-lg-3">
+                                <div class="d-flex flex-column gap-1">
+                                    <div class="fw-bold font-orbitron text-white fs-5">${it.nombreInsumo}</div>
+                                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                                        <span class="badge bg-dark border border-secondary text-info font-orbitron" style="font-size:0.7rem;">${it.subcategoria || 'General'}</span>
+                                        <span class="badge bg-dark border border-secondary text-white-50" style="font-size:0.7rem;">Dosis: ${dosis} ${med}</span>
+                                        ${badgeStock}
+                                    </div>
+                                    <small class="text-white-50 font-rajdhani mt-1">
+                                        Precio Kilo Anterior: <b class="text-warning">$${pKiloAnt.toLocaleString('es-CL')}</b> • Porción Ant.: <b>$${Math.round(it.precioPorcionAnterior || 0).toLocaleString('es-CL')}</b>
+                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- ACTUALIZADOR DE PRECIOS POR KILO + CANTIDAD A COMPRAR -->
+                            <div class="col-lg-5">
+                                <div class="row g-2 align-items-end">
+                                    <div class="col-sm-4">
+                                        <label class="form-label-neon small text-warning">${lblPrecioBase}</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text bg-dark text-warning border-warning">$</span>
+                                            <input type="number" id="compra-pkilo-${id}" class="form-control text-warning fw-bold" value="${pKiloNue}" step="1"
+                                                   oninput="recalcularFilaCompraEnVivo(${id}, ${dosis}, '${med}')">
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="form-label-neon small text-info">Nuevo $/Porc</label>
+                                        <input type="text" id="compra-pporc-${id}" class="form-control form-control-sm bg-dark text-info fw-bold text-center border-info"
+                                               value="$${pPorcNue.toLocaleString('es-CL')}" readonly>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="form-label-neon small text-white">${lblCantCompra}</label>
+                                        <input type="number" id="compra-cant-${id}" class="form-control form-control-sm text-white fw-bold text-center"
+                                               value="${cantComp}" step="0.5" min="0.1"
+                                               oninput="recalcularFilaCompraEnVivo(${id}, ${dosis}, '${med}')">
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="form-label-neon small text-success">Total Gasto ($)</label>
+                                        <input type="number" id="compra-total-${id}" class="form-control form-control-sm text-success fw-bold text-center border-success"
+                                               value="${totalComp}">
+                                    </div>
+                                    <div class="col-sm-8 mt-2">
+                                        <input type="text" id="compra-nota-${id}" class="form-control form-control-sm bg-dark text-white-50 border-secondary"
+                                               placeholder="Nota / Proveedor / Factura (opcional)..." value="${it.proveedorNota || ''}">
+                                    </div>
+                                    <div class="col-sm-4 mt-2">
+                                        <button class="btn btn-sm btn-outline-warning w-100 font-orbitron fw-bold" type="button"
+                                                onclick="actualizarSoloPrecioKiloBodega(${id})" title="Actualiza inmediatamente el Precio por Kilo y Porción en la Bodega">
+                                            <i class="bi bi-arrow-repeat me-1"></i> ACTUALIZAR $/KILO
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ESTADO Y BOTONES DE OPERACIÓN (COMPRADO / PENDIENTE / NO ENCONTRADO / BORRAR) -->
+                            <div class="col-lg-4">
+                                <div class="d-flex flex-column align-items-lg-end gap-2">
+                                    <div>${badgeEstado}</div>
+                                    <div class="d-flex flex-wrap gap-1 justify-content-lg-end">
+                                        <button class="btn btn-sm ${estado === 'COMPRADO' ? 'btn-success' : 'btn-outline-success'} font-orbitron fw-bold px-2 py-1"
+                                                onclick="cambiarEstadoItemCompra(${id}, 'COMPRADO')"
+                                                title="Marca como COMPRADO, actualiza Precio por Kilo en Bodega, repone stock y guarda como Gasto en Tesorería">
+                                            <i class="bi bi-bag-check-fill me-1"></i> COMPRADO
+                                        </button>
+                                        <button class="btn btn-sm ${estado === 'PENDIENTE' ? 'btn-warning text-dark' : 'btn-outline-warning'} font-orbitron fw-bold px-2 py-1"
+                                                onclick="cambiarEstadoItemCompra(${id}, 'PENDIENTE')"
+                                                title="Marcar como PENDIENTE">
+                                            <i class="bi bi-hourglass-split me-1"></i> PENDIENTE
+                                        </button>
+                                        <button class="btn btn-sm ${estado === 'NO_ENCONTRADO' ? 'btn-danger' : 'btn-outline-secondary'} font-orbitron fw-bold px-2 py-1"
+                                                onclick="cambiarEstadoItemCompra(${id}, 'NO_ENCONTRADO')"
+                                                title="Marcar como NO ENCONTRADO">
+                                            <i class="bi bi-eye-slash-fill me-1"></i> NO ENCONTRADO
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger font-orbitron fw-bold px-2 py-1"
+                                                onclick="borrarItemDeListaCompras(${id})"
+                                                title="Borrar este insumo de la Lista de Compras activa (se conserva en el Historial)">
+                                            <i class="bi bi-trash3-fill"></i> BORRAR
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
                 </div>
             `;
-        }
+        });
+
+        cont.innerHTML = html;
     }
 
-    async function probarAlertaWhatsapp() {
-        const btn = event?.currentTarget;
-        const originalHtml = btn ? btn.innerHTML : '';
-        if (btn) btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Enviando...';
+    function recalcularFilaCompraEnVivo(id, dosis, med) {
+        let pKilo = parseFloat(document.getElementById(`compra-pkilo-${id}`)?.value) || 0;
+        if (pKilo > 0 && pKilo <= 100 && med !== 'und') pKilo *= 1000;
+        const cant = parseFloat(document.getElementById(`compra-cant-${id}`)?.value) || 0;
+
+        let pPorc = (med === 'gr' || med === 'mls')
+            ? Math.round((pKilo / 1000) * dosis)
+            : Math.round(pKilo * dosis);
+
+        const elPorc = document.getElementById(`compra-pporc-${id}`);
+        if (elPorc) elPorc.value = '$' + pPorc.toLocaleString('es-CL');
+
+        const elTotal = document.getElementById(`compra-total-${id}`);
+        if (elTotal) elTotal.value = Math.round(pKilo * cant);
+    }
+
+    async function actualizarSoloPrecioKiloBodega(id) {
+        const precioKiloNuevo = parseFloat(document.getElementById(`compra-pkilo-${id}`)?.value) || 0;
+        const cantidadAComprar = parseFloat(document.getElementById(`compra-cant-${id}`)?.value) || 1;
+        const costoTotalCompra = parseFloat(document.getElementById(`compra-total-${id}`)?.value) || 0;
+        const proveedorNota = document.getElementById(`compra-nota-${id}`)?.value || '';
+
         try {
-            const res = await fetch('/api/inventario/test-alerta-vasos', { method: 'POST' });
+            const res = await fetch(`/api/compras/${id}/actualizar-precio`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ precioKiloNuevo, cantidadAComprar, costoTotalCompra, proveedorNota })
+            });
             if (res.ok) {
-                const msg = await res.text();
-                alert('📲 Alerta enviada con éxito:\n' + msg);
-            } else {
-                alert('⚠️ Error al enviar alerta por WhatsApp: ' + res.statusText);
+                playSound('click');
+                await cargarInsumos();
+                await cargarListaCompras();
+                alert('✅ Precio por Kilo y Precio de Porción actualizados directamente en la Bodega.');
             }
         } catch (e) {
-            alert('Error de conexión al enviar alerta WhatsApp: ' + e.message);
-        } finally {
-            if (btn) btn.innerHTML = originalHtml;
+            console.error('Error actualizando precio en bodega:', e);
         }
     }
 
-    function irABodegaVasos() {
-        const tabBtn = document.querySelector('button[data-bs-target="#tab-inventario"]');
-        if (tabBtn) tabBtn.click();
-        const collapseVasos = document.getElementById('collapseVasos');
-        if (collapseVasos && !collapseVasos.classList.contains('show')) {
-            const bsCollapse = new bootstrap.Collapse(collapseVasos, { toggle: true });
+    async function cambiarEstadoItemCompra(id, nuevoEstado) {
+        const precioKiloNuevo = parseFloat(document.getElementById(`compra-pkilo-${id}`)?.value) || 0;
+        const cantidadAComprar = parseFloat(document.getElementById(`compra-cant-${id}`)?.value) || 1;
+        const costoTotalCompra = parseFloat(document.getElementById(`compra-total-${id}`)?.value) || 0;
+        const proveedorNota = document.getElementById(`compra-nota-${id}`)?.value || '';
+
+        try {
+            const res = await fetch(`/api/compras/${id}/estado`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    estado: nuevoEstado,
+                    precioKiloNuevo,
+                    cantidadAComprar,
+                    costoTotalCompra,
+                    proveedorNota,
+                    reponerStock: true
+                })
+            });
+            if (res.ok) {
+                if (nuevoEstado === 'COMPRADO') {
+                    playSound('cash');
+                } else {
+                    playSound('click');
+                }
+                await cargarInsumos();
+                await cargarListaCompras();
+                if (typeof cargarTesoreria === 'function') cargarTesoreria();
+            }
+        } catch (e) {
+            console.error('Error cambiando estado de compra:', e);
         }
-        setTimeout(() => {
-            const heading = document.getElementById('headingVasos');
-            if (heading) heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 300);
+    }
+
+    async function borrarItemDeListaCompras(id) {
+        try {
+            const res = await fetch(`/api/compras/${id}/de-lista`, { method: 'DELETE' });
+            if (res.ok) {
+                playSound('click');
+                await cargarListaCompras();
+            }
+        } catch (e) {
+            console.error('Error borrando ítem de la lista:', e);
+        }
+    }
+
+    async function limpiarFinalizadosListaCompras() {
+        try {
+            const res = await fetch('/api/compras/limpiar-finalizados', { method: 'DELETE' });
+            if (res.ok) {
+                playSound('click');
+                await cargarListaCompras();
+            }
+        } catch (e) {}
+    }
+
+    async function agregarInsumoManualACompras() {
+        const sel = document.getElementById('select-insumo-manual-compra');
+        if (!sel || !sel.value) return alert('Selecciona un insumo para añadir a la Lista de Compras.');
+        try {
+            const res = await fetch(`/api/compras/agregar-manual/${sel.value}`, { method: 'POST' });
+            if (res.ok) {
+                playSound('click');
+                sel.value = '';
+                await cargarListaCompras();
+            }
+        } catch (e) {}
+    }
+
+    function renderizarHistorialComprasPrecios() {
+        const tb = document.getElementById('tabla-historial-compras-precios');
+        if (!tb) return;
+        tb.innerHTML = '';
+
+        if (!historialComprasMem || historialComprasMem.length === 0) {
+            tb.innerHTML = `<tr><td colspan="10" class="text-white-50 py-4 font-orbitron">Aún no hay compras registradas en el historial. Al marcar un insumo como COMPRADO o NO ENCONTRADO quedará registrado aquí.</td></tr>`;
+            return;
+        }
+
+        historialComprasMem.forEach(h => {
+            const fechaStr = h.fechaCompra ? new Date(h.fechaCompra).toLocaleString('es-CL') : (h.fechaDeteccion ? new Date(h.fechaDeteccion).toLocaleString('es-CL') : '---');
+            const med = (h.medida || 'gr').toLowerCase();
+            const uniCompraLbl = med === 'gr' ? 'Kg' : (med === 'mls' ? 'Lt' : 'Und');
+            const pKiloAnt = Math.round(h.precioKiloAnterior || 0);
+            const pKiloNue = Math.round(h.precioKiloNuevo || 0);
+            const pPorcAnt = Math.round(h.precioPorcionAnterior || 0);
+            const pPorcNue = Math.round(h.precioPorcionNuevo || 0);
+            const diffKilo = pKiloNue - pKiloAnt;
+            const badgeDiff = diffKilo === 0
+                ? `<span class="badge bg-dark border border-secondary text-white-50 ms-1">Sin cambio</span>`
+                : (diffKilo > 0
+                    ? `<span class="badge bg-danger bg-opacity-25 text-danger border border-danger ms-1">+${formatMoney(diffKilo, 'Antofagasta')}</span>`
+                    : `<span class="badge bg-success bg-opacity-25 text-success border border-success ms-1">${formatMoney(diffKilo, 'Antofagasta')}</span>`);
+
+            const estado = (h.estado || 'COMPRADO').toUpperCase();
+            const badgeEst = estado === 'COMPRADO'
+                ? `<span class="badge bg-success font-orbitron">COMPRADO</span>`
+                : `<span class="badge bg-danger font-orbitron">NO ENCONTRADO</span>`;
+
+            const gastoTxt = estado === 'COMPRADO'
+                ? `<span class="text-money-green fw-bold font-orbitron">${formatMoney(Math.round(h.costoTotalCompra || 0), 'Antofagasta')}</span>`
+                : `<span class="text-white-50">$0</span>`;
+
+            tb.innerHTML += `
+                <tr>
+                    <td class="text-white-50 small">${fechaStr}</td>
+                    <td><span class="badge bg-dark border border-info text-info font-orbitron">${h.bodega || 'Bodega'}</span></td>
+                    <td class="fw-bold text-white">${h.nombreInsumo}</td>
+                    <td class="text-warning fw-bold">${h.cantidadAComprar || 1} ${uniCompraLbl}</td>
+                    <td>
+                        <span class="text-white-50">$${pKiloAnt.toLocaleString('es-CL')}</span>
+                        <i class="bi bi-arrow-right mx-1 text-info"></i>
+                        <b class="text-warning">$${pKiloNue.toLocaleString('es-CL')}</b>
+                        ${badgeDiff}
+                    </td>
+                    <td>
+                        <span class="text-white-50">$${pPorcAnt.toLocaleString('es-CL')}</span>
+                        <i class="bi bi-arrow-right mx-1 text-info"></i>
+                        <b class="text-info">$${pPorcNue.toLocaleString('es-CL')}</b>
+                    </td>
+                    <td>${gastoTxt}</td>
+                    <td>${badgeEst}</td>
+                    <td class="text-white-50 small">${h.proveedorNota || '---'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger border-0" onclick="eliminarItemHistorialCompra(${h.id})" title="Eliminar registro del historial">
+                            <i class="bi bi-trash3-fill"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    async function eliminarItemHistorialCompra(id) {
+        if (!confirm('¿Eliminar este registro del historial de compras?')) return;
+        try {
+            await fetch(`/api/compras/historial/${id}`, { method: 'DELETE' });
+            cargarListaCompras();
+        } catch (e) {}
+    }
+
+    function imprimirListaComprasActiva() {
+        playSound('magic');
+        const items = listaComprasActivaMem || [];
+        if (items.length === 0) return alert('No hay insumos en la Lista de Compras activa para imprimir.');
+
+        let filasHtml = '';
+        let totalPresupuesto = 0;
+        items.forEach(it => {
+            const med = (it.medida || 'gr').toLowerCase();
+            const uniLbl = med === 'gr' ? 'Kg' : (med === 'mls' ? 'Lt' : 'Und');
+            const costo = Math.round(it.costoTotalCompra || 0);
+            if ((it.estado || 'PENDIENTE') === 'PENDIENTE') totalPresupuesto += costo;
+            filasHtml += `
+                <tr>
+                    <td style="padding:6px; border:1px solid #000;">${it.bodega || ''}</td>
+                    <td style="padding:6px; border:1px solid #000; font-weight:bold;">${it.nombreInsumo}</td>
+                    <td style="padding:6px; border:1px solid #000; text-align:center;">${Math.floor(it.stockActualUnidades || 0)} und/porc</td>
+                    <td style="padding:6px; border:1px solid #000; text-align:center;">${it.cantidadAComprar || 1} ${uniLbl}</td>
+                    <td style="padding:6px; border:1px solid #000; text-align:right;">$${Math.round(it.precioKiloNuevo || 0).toLocaleString('es-CL')}</td>
+                    <td style="padding:6px; border:1px solid #000; text-align:right;">$${costo.toLocaleString('es-CL')}</td>
+                    <td style="padding:6px; border:1px solid #000; text-align:center;">${it.estado || 'PENDIENTE'}</td>
+                </tr>
+            `;
+        });
+
+        const zona = document.getElementById('impresion-zona');
+        zona.innerHTML = `
+            <div class="libro-print w-100 p-4">
+                <div class="header-print">
+                    <h2 style="margin:0;">LISTA OFICIAL DE COMPRAS Y REPOSICIÓN DE BODEGAS (≤ 3 UNIDADES)</h2>
+                    <h4 style="margin:5px 0;">BATIDOS RAÍCES ERP • NODO ANTOFAGASTA</h4>
+                    <p>Fecha de Emisión: ${new Date().toLocaleString('es-CL')}</p>
+                </div>
+                <table style="width:100%; border-collapse:collapse; margin-top:15px; font-size:13px;">
+                    <thead>
+                        <tr style="background:#eee;">
+                            <th style="padding:6px; border:1px solid #000;">BODEGA</th>
+                            <th style="padding:6px; border:1px solid #000;">INSUMO A REPONER</th>
+                            <th style="padding:6px; border:1px solid #000;">STOCK ACTUAL</th>
+                            <th style="padding:6px; border:1px solid #000;">CANT. A COMPRAR</th>
+                            <th style="padding:6px; border:1px solid #000;">PRECIO / KILO BASE</th>
+                            <th style="padding:6px; border:1px solid #000;">SUBTOTAL ESTIMADO</th>
+                            <th style="padding:6px; border:1px solid #000;">ESTADO</th>
+                        </tr>
+                    </thead>
+                    <tbody>${filasHtml}</tbody>
+                </table>
+                <div style="margin-top:20px; text-align:right;">
+                    <h3>PRESUPUESTO TOTAL PENDIENTE: $${totalPresupuesto.toLocaleString('es-CL')} CLP</h3>
+                </div>
+            </div>
+        `;
+        window.print();
+    }
+
+    function imprimirHistorialComprasPrecios() {
+        playSound('magic');
+        const items = historialComprasMem || [];
+        if (items.length === 0) return alert('No hay registros en el Historial de Precios y Compras para imprimir.');
+
+        let filasHtml = '';
+        let sumaTotal = 0;
+        items.forEach(h => {
+            const fechaStr = h.fechaCompra ? new Date(h.fechaCompra).toLocaleString('es-CL') : '---';
+            const med = (h.medida || 'gr').toLowerCase();
+            const uniLbl = med === 'gr' ? 'Kg' : (med === 'mls' ? 'Lt' : 'Und');
+            const costo = (h.estado === 'COMPRADO') ? Math.round(h.costoTotalCompra || 0) : 0;
+            sumaTotal += costo;
+            filasHtml += `
+                <tr>
+                    <td style="padding:6px; border:1px solid #000;">${fechaStr}</td>
+                    <td style="padding:6px; border:1px solid #000;">${h.bodega || ''}</td>
+                    <td style="padding:6px; border:1px solid #000; font-weight:bold;">${h.nombreInsumo}</td>
+                    <td style="padding:6px; border:1px solid #000; text-align:center;">${h.cantidadAComprar || 1} ${uniLbl}</td>
+                    <td style="padding:6px; border:1px solid #000; text-align:right;">$${Math.round(h.precioKiloAnterior || 0).toLocaleString('es-CL')} → $${Math.round(h.precioKiloNuevo || 0).toLocaleString('es-CL')}</td>
+                    <td style="padding:6px; border:1px solid #000; text-align:right;">$${Math.round(h.precioPorcionAnterior || 0).toLocaleString('es-CL')} → $${Math.round(h.precioPorcionNuevo || 0).toLocaleString('es-CL')}</td>
+                    <td style="padding:6px; border:1px solid #000; text-align:right; font-weight:bold;">$${costo.toLocaleString('es-CL')}</td>
+                    <td style="padding:6px; border:1px solid #000; text-align:center;">${h.estado}</td>
+                </tr>
+            `;
+        });
+
+        const zona = document.getElementById('impresion-zona');
+        zona.innerHTML = `
+            <div class="libro-print w-100 p-4">
+                <div class="header-print">
+                    <h2 style="margin:0;">HISTORIAL DE PRECIOS Y COMPRAS DE BODEGA (AUDITORÍA TESORERÍA)</h2>
+                    <h4 style="margin:5px 0;">BATIDOS RAÍCES ERP • NODO ANTOFAGASTA</h4>
+                    <p>Impreso el: ${new Date().toLocaleString('es-CL')}</p>
+                </div>
+                <table style="width:100%; border-collapse:collapse; margin-top:15px; font-size:12px;">
+                    <thead>
+                        <tr style="background:#eee;">
+                            <th style="padding:6px; border:1px solid #000;">FECHA COMPRA</th>
+                            <th style="padding:6px; border:1px solid #000;">BODEGA</th>
+                            <th style="padding:6px; border:1px solid #000;">INSUMO</th>
+                            <th style="padding:6px; border:1px solid #000;">CANTIDAD</th>
+                            <th style="padding:6px; border:1px solid #000;">PRECIO KILO (ANT → NUEVO)</th>
+                            <th style="padding:6px; border:1px solid #000;">PRECIO PORC (ANT → NUEVO)</th>
+                            <th style="padding:6px; border:1px solid #000;">EGRESO TESORERÍA</th>
+                            <th style="padding:6px; border:1px solid #000;">ESTADO</th>
+                        </tr>
+                    </thead>
+                    <tbody>${filasHtml}</tbody>
+                </table>
+                <div style="margin-top:20px; text-align:right;">
+                    <h3>TOTAL INVERTIDO EN COMPRAS DE BODEGA: $${sumaTotal.toLocaleString('es-CL')} CLP</h3>
+                </div>
+            </div>
+        `;
+        window.print();
     }
 
     function editarInsumo(id) {
