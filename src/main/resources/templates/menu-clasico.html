@@ -1876,8 +1876,13 @@
             const cat = normalizarStr(ins.categoria || '');
             if (cat.includes('arma') || cat.includes('porcion')) {
                 const porcionDosis = (ins.cantidadPorcion && ins.cantidadPorcion > 0) ? ins.cantidadPorcion : 1;
+                const medidaIns = (ins.medida || 'gr').toLowerCase();
                 let precioPorc = Number(ins.precio) || 0;
-                if (precioPorc > 0 && precioPorc <= 100) precioPorc = precioPorc * 1000;
+                if (precioPorc <= 0 && ins.precioKilo && Number(ins.precioKilo) > 0) {
+                    let pKilo = Number(ins.precioKilo);
+                    if (pKilo > 0 && pKilo <= 100) pKilo *= 1000;
+                    precioPorc = (medidaIns === 'gr' || medidaIns === 'mls') ? Math.round((pKilo / 1000) * porcionDosis) : Math.round(pKilo * porcionDosis);
+                }
 
                 // Reconciliar en tiempo real con productosRaw (Catálogo Virtual de Administrador)
                 const nomLimpio = normalizarStr(ins.nombre);

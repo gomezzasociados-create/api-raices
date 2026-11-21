@@ -51,8 +51,13 @@ public class GestorPorciones {
     @PostMapping(value = "/guardar", consumes = "application/json")
     public ResponseEntity<String> guardarInsumo(@RequestBody Insumo insumo) {
         try {
-            if (insumo.getPrecio() != null && insumo.getPrecio() > 0 && insumo.getPrecio() <= 100.0) {
+            String catLower = insumo.getCategoria() != null ? insumo.getCategoria().toLowerCase() : "";
+            boolean esArma = catLower.contains("arma") || catLower.contains("porcion");
+            if (!esArma && insumo.getPrecio() != null && insumo.getPrecio() > 0 && insumo.getPrecio() <= 100.0) {
                 insumo.setPrecio(insumo.getPrecio() * 1000.0);
+            }
+            if (insumo.getPrecioKilo() != null && insumo.getPrecioKilo() > 0 && insumo.getPrecioKilo() <= 100.0) {
+                insumo.setPrecioKilo(insumo.getPrecioKilo() * 1000.0);
             }
             if (insumo.getIdInsumo() != null) {
                 Optional<Insumo> existenteOpt = insumoRepository.findById(insumo.getIdInsumo());
@@ -81,6 +86,7 @@ public class GestorPorciones {
                     existente.setCategoria(insumo.getCategoria());
                     existente.setSubcategoria(insumo.getSubcategoria());
                     existente.setPrecio(insumo.getPrecio());
+                    if (insumo.getPrecioKilo() != null) existente.setPrecioKilo(insumo.getPrecioKilo());
                     if (insumo.getDescuento() != null) existente.setDescuento(insumo.getDescuento());
                     if (insumo.getImagen() != null && !insumo.getImagen().isBlank()) existente.setImagen(insumo.getImagen().trim());
                     insumoRepository.save(existente);

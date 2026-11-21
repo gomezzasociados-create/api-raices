@@ -377,8 +377,32 @@ public class DataInitializer implements CommandLineRunner {
                     ins.setUnidadActual(1000.0);
                     mod = true;
                 }
-                if (ins.getPrecio() != null && ins.getPrecio() > 0 && ins.getPrecio() <= 100.0) {
+                String catIns = ins.getCategoria() != null ? ins.getCategoria().toLowerCase() : "";
+                boolean esArma = catIns.contains("arma") || catIns.contains("porcion");
+                if (!esArma && ins.getPrecio() != null && ins.getPrecio() > 0 && ins.getPrecio() <= 100.0) {
                     ins.setPrecio(ins.getPrecio() * 1000.0);
+                    mod = true;
+                }
+                if (ins.getPrecioKilo() != null && ins.getPrecioKilo() > 0 && ins.getPrecioKilo() <= 100.0) {
+                    ins.setPrecioKilo(ins.getPrecioKilo() * 1000.0);
+                    mod = true;
+                }
+                // Calibrar Precio por Kilo/Litro en todos los insumos para cálculo exacto de porción
+                if (ins.getPrecioKilo() == null || ins.getPrecioKilo() <= 0) {
+                    double pr = ins.getPrecio() != null ? ins.getPrecio() : 0.0;
+                    double dos = ins.getCantidadPorcion() != null && ins.getCantidadPorcion() > 0 ? ins.getCantidadPorcion() : 50.0;
+                    String med = ins.getMedida() != null ? ins.getMedida().toLowerCase() : "gr";
+                    if (esArma) {
+                        // En Arma tu Batido, 'precio' es el precio de la porción. Calculamos su equivalente por Kilo/Litro
+                        if ("gr".equals(med) || "mls".equals(med)) {
+                            ins.setPrecioKilo((double) Math.round((pr * 1000.0) / dos));
+                        } else {
+                            ins.setPrecioKilo((double) Math.round(pr / dos));
+                        }
+                    } else {
+                        // En Pulpas, Vasos, Shots y Exóticos, 'precio' es el Precio por Kilo/Litro/Unidad
+                        ins.setPrecioKilo(pr);
+                    }
                     mod = true;
                 }
                 if (ins.getSubcategoria() == null || ins.getSubcategoria().isEmpty()) {
@@ -569,6 +593,7 @@ public class DataInitializer implements CommandLineRunner {
         ins.setCategoria(cat);
         ins.setSubcategoria(subcat);
         ins.setPrecio(precio);
+        ins.setPrecioKilo(precio);
         insumoRepository.save(ins);
     }
 }

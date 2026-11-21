@@ -1574,8 +1574,13 @@ function procesarInsumosBodegaArmado(insumosBase) {
         var cat = normalizarStr(ins.categoria || '');
         if (cat.includes('arma') || cat.includes('porcion')) {
             var porcionDosis = (ins.cantidadPorcion && ins.cantidadPorcion > 0) ? ins.cantidadPorcion : 1;
+            var medidaIns = (ins.medida || 'gr').toLowerCase();
             var precioPorc = Number(ins.precio) || 0;
-            if (precioPorc > 0 && precioPorc <= 100) precioPorc = precioPorc * 1000;
+            if (precioPorc <= 0 && ins.precioKilo && Number(ins.precioKilo) > 0) {
+                var pKilo = Number(ins.precioKilo);
+                if (pKilo > 0 && pKilo <= 100) pKilo *= 1000;
+                precioPorc = (medidaIns === 'gr' || medidaIns === 'mls') ? Math.round((pKilo / 1000) * porcionDosis) : Math.round(pKilo * porcionDosis);
+            }
 
             var nomLimpio = normalizarStr(ins.nombre);
             var prodMatch = (productos || []).find(function(p) { return normalizarStr(p.nombre) === nomLimpio; });

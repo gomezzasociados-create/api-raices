@@ -24,7 +24,8 @@ public class Insumo {
     @Column(columnDefinition = "TEXT")
     private String imagen;
 
-    private Double precio; // <--- RESTAURADO: PRECIO POR KILO/UNIDAD
+    private Double precio; // <--- PRECIO POR PORCIÓN (EN ARMA TU BATIDO) O PRECIO BASE (KILO/LITRO/UNIDAD EN OTRAS BODEGAS)
+    private Double precioKilo; // <--- PRECIO POR KILO / LITRO / ENVASE BASE (PARA CALCULAR PRECIO DE LA PORCIÓN AUTOMÁTICAMENTE)
     private Double descuento = 0.0;
 
     // --- PARCHE DE COMPATIBILIDAD CON BD ANTIGUA ---
@@ -70,6 +71,9 @@ public class Insumo {
 
     public Double getPrecio() { return precio; }
     public void setPrecio(Double precio) { this.precio = precio; }
+
+    public Double getPrecioKilo() { return precioKilo; }
+    public void setPrecioKilo(Double precioKilo) { this.precioKilo = precioKilo; }
 
     public String getImagen() { return imagen; }
     public void setImagen(String imagen) { this.imagen = imagen; }
