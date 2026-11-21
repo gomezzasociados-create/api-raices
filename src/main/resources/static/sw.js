@@ -1,16 +1,19 @@
 // sw.js - Service Worker Express Ultra-Rápido para RAÍCES
-const CACHE_NAME = 'raices-express-v4';
+const CACHE_NAME = 'raices-express-v5';
 
 const PRECACHE_ASSETS = [
     '/',
+    '/menu',
     '/manifest-menu.json',
+    '/js/menu-core.js?v=2',
+    '/js/menu-3d.js?v=2',
     'puerta-magica.jpg',
     'lianas-limpias.png',
     'default-batido.png',
-    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
-    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
+    'logo-app.png',
+    'https://cdn.tailwindcss.com/3.4.17',
     'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css',
-    'https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap'
+    'https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Anton&display=swap'
 ];
 
 // Instalación: Pre-almacenar en caché del dispositivo los recursos críticos
