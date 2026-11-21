@@ -1708,22 +1708,30 @@
                                             <input type="number" id="armatubatido-precio-kilo" class="form-control text-info fw-bold" step="1" placeholder="Ej: 13333" oninput="recalcularPrecioPorcionEnVivo('armatubatido')">
                                         </div>
                                         <div class="col-md-1">
-                                            <label class="form-label-neon" style="color:var(--p-warning)">Cant. Porción</label>
-                                            <input type="number" id="armatubatido-dosis" class="form-control text-warning fw-bold text-center" step="0.1" placeholder="Ej: 30" oninput="recalcularPrecioPorcionEnVivo('armatubatido')">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label-neon" style="color:var(--p-warning)">Precio / Porción ($)</label>
-                                            <input type="number" id="armatubatido-precio" class="form-control text-warning fw-bold" step="1" placeholder="Auto según Kilo" oninput="recalcularPrecioKiloDesdePorcion('armatubatido')">
+                                            <label class="form-label-neon" style="color:var(--p-warning)">Cant. Porc</label>
+                                            <input type="number" id="armatubatido-dosis" class="form-control text-warning fw-bold text-center" step="0.1" placeholder="30" oninput="recalcularPrecioPorcionEnVivo('armatubatido')">
                                         </div>
                                         <div class="col-md-1">
+                                            <label class="form-label-neon" style="color:var(--p-warning)" title="Costo de compra de 1 porción">Compra/Porc</label>
+                                            <input type="number" id="armatubatido-precio" class="form-control text-warning fw-bold text-center" step="1" placeholder="$400" oninput="recalcularPrecioKiloDesdePorcion('armatubatido')">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label class="form-label-neon" style="color:var(--p-magenta)" title="Margen Real 1 - %">% Margen</label>
+                                            <input type="number" id="armatubatido-margen" class="form-control text-center fw-bold" style="color:var(--p-magenta);" step="1" min="0" max="99" placeholder="60" oninput="recalcularVentaArmaTuBatidoDesdeMargen()">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <label class="form-label-neon text-success" title="Precio de venta al público en el Menú Frontend">Venta Menú</label>
+                                            <input type="number" id="armatubatido-precio-venta" class="form-control text-success fw-bold text-center border-success" step="1" placeholder="$1000" oninput="recalcularMargenArmaTuBatidoDesdeVenta()">
+                                        </div>
+                                        <div class="col-md-2">
                                             <label class="form-label-neon" style="color:var(--p-warning)">Stock (Porc.)</label>
                                             <input type="number" id="armatubatido-stock" class="form-control text-center fw-bold" placeholder="10" oninput="actualizarBadgeCostoEnVivo('armatubatido')">
                                         </div>
                                         <div class="col-md-3">
-                                            <label class="form-label-neon text-info">Análisis Porción & Kilo</label>
-                                            <div id="badge-costo-porcion-armatubatido" class="form-control bg-dark text-info fw-bold text-center border-secondary fs-6 py-2">$0 / porc</div>
+                                            <label class="form-label-neon text-info">Análisis Compra vs Venta Menú</label>
+                                            <div id="badge-costo-porcion-armatubatido" class="form-control bg-dark text-info fw-bold text-center border-secondary fs-6 py-2">$0 Compra • $0 Menú</div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <label class="form-label-neon" style="color:var(--p-warning)">Foto / Video (URL o Subida)</label>
                                             <div class="input-group">
                                                 <input type="text" id="armatubatido-imagen" class="form-control" placeholder="/uploads/media/... o https://...">
@@ -1739,9 +1747,9 @@
                                                 <option value="Antofagasta">Antofagasta</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3">
-                                            <button class="btn btn-bio w-100 py-2 fs-5 font-orbitron" style="background: var(--p-warning); color: #000;" onclick="guardarInsumo('armatubatido')">
-                                                <i class="bi bi-plus-circle-fill me-2"></i> GUARDAR / ACTUALIZAR
+                                        <div class="col-md-2">
+                                            <button class="btn btn-bio w-100 py-2 fs-6 font-orbitron" style="background: var(--p-warning); color: #000;" onclick="guardarInsumo('armatubatido')">
+                                                <i class="bi bi-plus-circle-fill me-1"></i> GUARDAR
                                             </button>
                                         </div>
                                     </div>
@@ -5078,10 +5086,13 @@
         const stockHtml = cfg.stockHTML;
         const colorTheme = cfg.colorTheme || 'var(--p-cyan)';
         const lblPrecioBase = (medida === 'gr') ? 'PRECIO / KILO' : ((medida === 'mls') ? 'PRECIO / LITRO' : 'PRECIO / UND');
-        const lblPorcion = (tipoBodega === 'armatubatido') ? 'PRECIO / PORC' : 'COSTO / PORC';
+        const lblPorcion = (tipoBodega === 'armatubatido') ? 'COMPRA / PORC' : 'COSTO / PORC';
         const collapseId = `collapse-det-ins-${id}`;
         const stockFisicoTxt = cfg.stockFisicoTxt || `${(Number(i.unidadActual) || 0).toFixed(0)} ${medida}`;
         const porcionesRendimientoTxt = cfg.porcionesRendimientoTxt || `${Math.floor(Number(i.unidadActual) || 0)} porc`;
+        const esArma = (tipoBodega === 'armatubatido');
+        const precioVentaTxt = esArma ? formatMoney(cfg.precioVentaPorc || 0, i.sucursal) : '';
+        const margenRealPctTxt = esArma && cfg.margenRealPct > 0 ? `${cfg.margenRealPct.toFixed(0)}%` : '';
 
         return `
         <div class="tarjeta-insumo-normal" id="card-insumo-${id}" style="border-left: 4px solid ${colorTheme} !important;">
@@ -5119,6 +5130,11 @@
                         <span class="metric-box-lbl">${lblPorcion}</span>
                         <span class="fw-bold font-orbitron fs-6" style="color:${colorTheme};">${costoPorcTxt}</span>
                     </div>
+                    ${esArma ? `
+                    <div class="metric-box-mini" style="border-color: rgba(0,255,166,0.4) !important;">
+                        <span class="metric-box-lbl text-success">VENTA MENÚ</span>
+                        <span class="text-success fw-bold font-orbitron fs-6">${precioVentaTxt}${margenRealPctTxt ? ` <small class="text-info">(${margenRealPctTxt})</small>` : ''}</span>
+                    </div>` : ''}
                     <div class="metric-box-mini d-none d-lg-block">
                         <span class="metric-box-lbl">VALOR TOTAL</span>
                         <span class="text-success fw-bold font-orbitron fs-6">${valorTotalTxt}</span>
@@ -5241,6 +5257,10 @@
                     costoPorcArma = esMasaVol ? Math.round((precioKiloDB / 1000) * dosisArma) : Math.round(precioKiloDB * dosisArma);
                 }
                 let precioKiloArma = precioKiloDB > 0 ? precioKiloDB : (esMasaVol ? Math.round((costoPorcArma * 1000) / Math.max(1, dosisArma)) : Math.round(costoPorcArma / Math.max(1, dosisArma)));
+                let precioVentaArma = (i.precioVenta && i.precioVenta > 0) ? Math.round(i.precioVenta) : Math.round(costoPorcArma);
+                let margenRealArma = (i.margenPorcentaje && i.margenPorcentaje > 0)
+                    ? i.margenPorcentaje
+                    : (precioVentaArma > costoPorcArma && precioVentaArma > 0 ? ((precioVentaArma - costoPorcArma) / precioVentaArma) * 100 : 0);
 
                 // Detección automática para Exóticos: si el stock almacenado es menor que la dosis (ej: 13 < 30), el usuario ingresó porciones:
                 let exoticoEsModoPorc = isExotico && esMasaVol && dosisExotico > 1 && stockTotal < dosisExotico && stockTotal > 0;
@@ -5341,6 +5361,8 @@
                 let dosis = dosisPulpa;
                 let costoPorc = costoPorcPulpa;
                 let precioKiloBase = precioKiloPulpa;
+                let precioVentaPorc = 0;
+                let margenRealPct = 0;
 
                 if (isArmaTuBatido) {
                     tipoBodega = 'armatubatido';
@@ -5349,6 +5371,8 @@
                     dosis = dosisArma;
                     costoPorc = costoPorcArma;
                     precioKiloBase = precioKiloArma;
+                    precioVentaPorc = precioVentaArma;
+                    margenRealPct = margenRealArma;
                 } else if (isExotico) {
                     tipoBodega = 'exoticos';
                     colorTheme = '#bd00ff';
@@ -5381,6 +5405,8 @@
                     dosis,
                     costoPorcion: costoPorc,
                     precioKiloBase,
+                    precioVentaPorc,
+                    margenRealPct,
                     valorInsumo,
                     stockHTML,
                     stockFisicoTxt,
@@ -6154,6 +6180,11 @@
                 if (precioKiloVal <= 0 && precioPorc > 0) {
                     precioKiloVal = esMasaVol ? Math.round((precioPorc * 1000) / Math.max(1, dosisIns)) : Math.round(precioPorc / Math.max(1, dosisIns));
                 }
+                let precioVentaVal = (ins.precioVenta && ins.precioVenta > 0) ? Math.round(ins.precioVenta) : Math.round(precioPorc);
+                let margenVal = (ins.margenPorcentaje && ins.margenPorcentaje > 0)
+                    ? Math.round(ins.margenPorcentaje * 10) / 10
+                    : (precioVentaVal > precioPorc && precioVentaVal > 0 ? Math.round(((precioVentaVal - precioPorc) / precioVentaVal) * 1000) / 10 : 0);
+
                 if (document.getElementById('armatubatido-id')) document.getElementById('armatubatido-id').value = ins.idInsumo;
                 if (document.getElementById('armatubatido-nombre')) document.getElementById('armatubatido-nombre').value = ins.nombre;
                 if (ins.subcategoria && document.getElementById('armatubatido-subcategoria')) document.getElementById('armatubatido-subcategoria').value = ins.subcategoria;
@@ -6163,6 +6194,8 @@
                 if (document.getElementById('armatubatido-sucursal')) document.getElementById('armatubatido-sucursal').value = ins.sucursal;
                 if (document.getElementById('armatubatido-precio-kilo')) document.getElementById('armatubatido-precio-kilo').value = precioKiloVal;
                 if (document.getElementById('armatubatido-precio')) document.getElementById('armatubatido-precio').value = precioPorc;
+                if (document.getElementById('armatubatido-margen')) document.getElementById('armatubatido-margen').value = margenVal > 0 ? margenVal : '';
+                if (document.getElementById('armatubatido-precio-venta')) document.getElementById('armatubatido-precio-venta').value = precioVentaVal;
                 if (document.getElementById('armatubatido-imagen')) document.getElementById('armatubatido-imagen').value = ins.imagen || '';
                 actualizarBadgeCostoEnVivo('armatubatido');
                 const heading = document.getElementById('headingArmaTuBatido');
@@ -6241,7 +6274,7 @@
     }
 
     function guardarInsumo(tipo) {
-        let id, nombre, cat, subcat, uni, stock, suc, precioVal, precioKiloVal = 0, dosisVal, imgVal = '';
+        let id, nombre, cat, subcat, uni, stock, suc, precioVal, precioKiloVal = 0, precioVentaVal = null, margenVal = null, dosisVal, imgVal = '';
         if(tipo==='armatubatido') {
             id = document.getElementById('armatubatido-id').value; 
             nombre = document.getElementById('armatubatido-nombre').value; 
@@ -6262,6 +6295,15 @@
             }
             precioVal = Math.round(rawPorc);
             precioKiloVal = Math.round(rawKilo);
+            let rawVenta = parseFloat(document.getElementById('armatubatido-precio-venta') ? document.getElementById('armatubatido-precio-venta').value : 0) || 0;
+            let rawMargen = parseFloat(document.getElementById('armatubatido-margen') ? document.getElementById('armatubatido-margen').value : 0) || 0;
+            if (rawVenta <= 0 && rawMargen > 0 && rawMargen < 100 && precioVal > 0) {
+                rawVenta = Math.round(precioVal / (1 - (rawMargen / 100)));
+            } else if (rawVenta > 0 && precioVal > 0 && rawMargen <= 0 && rawVenta > precioVal) {
+                rawMargen = Math.round(((rawVenta - precioVal) / rawVenta) * 1000) / 10;
+            }
+            precioVentaVal = rawVenta > 0 ? Math.round(rawVenta) : precioVal;
+            margenVal = rawMargen > 0 ? rawMargen : 0;
             imgVal = document.getElementById('armatubatido-imagen') ? document.getElementById('armatubatido-imagen').value.trim() : '';
         } else if(tipo==='pulpas'){ 
             id = document.getElementById('ins-id').value; 
@@ -6328,6 +6370,8 @@
             cantidadPorcion: dosisVal,
             actorAdmin: rolUsuario==='SUPREMO' ? 'SUPREMO' : ('Admin ' + sucursalAdmin)
         };
+        if(precioVentaVal !== null) { payload.precioVenta = precioVentaVal; }
+        if(margenVal !== null) { payload.margenPorcentaje = margenVal; }
         if(dosisVal !== undefined && dosisVal !== null) { payload.cantidadPorcion = dosisVal; }
         if(id) { payload.idInsumo = parseInt(id); }
         if(imgVal) { payload.imagen = imgVal; }
@@ -6348,6 +6392,8 @@
             if (document.getElementById('armatubatido-stock')) document.getElementById('armatubatido-stock').value='';
             if (document.getElementById('armatubatido-precio-kilo')) document.getElementById('armatubatido-precio-kilo').value='';
             if (document.getElementById('armatubatido-precio')) document.getElementById('armatubatido-precio').value='';
+            if (document.getElementById('armatubatido-margen')) document.getElementById('armatubatido-margen').value='';
+            if (document.getElementById('armatubatido-precio-venta')) document.getElementById('armatubatido-precio-venta').value='';
             if (document.getElementById('armatubatido-imagen')) document.getElementById('armatubatido-imagen').value='';
             if (document.getElementById('ins-imagen')) document.getElementById('ins-imagen').value='';
             if (document.getElementById('vaso-imagen')) document.getElementById('vaso-imagen').value='';
@@ -6477,6 +6523,17 @@
             let pKilo = parseFloat(ins.precioKilo) || 0;
             if (pKilo > 0 && pKilo <= 100) pKilo *= 1000;
             precio = pKilo > 0 ? pKilo : ((ins.medida === 'gr' || ins.medida === 'mls') ? Math.round((pPorc * 1000) / Math.max(1, dosis)) : Math.round(pPorc / Math.max(1, dosis)));
+            let pVenta = (ins.precioVenta && ins.precioVenta > 0) ? parseFloat(ins.precioVenta) : 0;
+            let margenInp = document.getElementById('calc-armatubatido-margen');
+            if (margenInp) {
+                if (ins.margenPorcentaje && ins.margenPorcentaje > 0 && ins.margenPorcentaje < 100) {
+                    margenInp.value = Math.round(ins.margenPorcentaje * 10) / 10;
+                } else if (pVenta > pPorc && pVenta > 0) {
+                    margenInp.value = Math.round(((pVenta - pPorc) / pVenta) * 1000) / 10;
+                }
+            }
+            // Recordar qué insumo estamos calibrando para poder aplicarlo directo al formulario
+            window.idInsumoCalcArmaActual = ins.idInsumo;
         } else {
             precio = (ins.precioKilo && ins.precioKilo > 0) ? normalizarPrecioCLP(ins.precioKilo) : normalizarPrecioCLP(ins.precio || 0);
         }
@@ -6623,12 +6680,27 @@
             if (modo === 'kilo') document.getElementById('armatubatido-unidad').value = 'gr';
             else if (modo === 'litro') document.getElementById('armatubatido-unidad').value = 'mls';
             else document.getElementById('armatubatido-unidad').value = 'und';
-            let precioPorcAplicar = Math.round(precioSugerido);
-            document.getElementById('armatubatido-precio').value = precioPorcAplicar;
-            if (document.getElementById('armatubatido-precio-kilo')) {
-                let dEff = dosis > 0 ? dosis : 30;
-                let kiloEquiv = (modo === 'kilo' || modo === 'litro') ? Math.round((precioPorcAplicar * 1000) / dEff) : Math.round(precioPorcAplicar / dEff);
-                document.getElementById('armatubatido-precio-kilo').value = kiloEquiv;
+
+            // 1. Precio de Compra por Kilo / Litro (el costo base ingresado en la calculadora)
+            if (document.getElementById('armatubatido-precio-kilo') && costoBase > 0) {
+                if (modo === 'kilo' || modo === 'litro') {
+                    document.getElementById('armatubatido-precio-kilo').value = Math.round(costoBase);
+                } else if (modo === 'pack') {
+                    document.getElementById('armatubatido-precio-kilo').value = Math.round(packCant > 0 ? (costoBase / packCant) : costoBase);
+                } else {
+                    document.getElementById('armatubatido-precio-kilo').value = Math.round(costoBase);
+                }
+            }
+
+            // 2. Precio de Compra por Porción (Costo real con merma incluida)
+            document.getElementById('armatubatido-precio').value = Math.round(costoRealConMerma);
+
+            // 3. Porcentaje de Margen Real (1 - %) y Precio de Venta por Porción (para el Menú Frontend)
+            if (document.getElementById('armatubatido-margen')) {
+                document.getElementById('armatubatido-margen').value = margenPct;
+            }
+            if (document.getElementById('armatubatido-precio-venta')) {
+                document.getElementById('armatubatido-precio-venta').value = Math.round(precioSugerido);
             }
             actualizarBadgeCostoEnVivo('armatubatido');
         } else if (tipo === 'exoticos') {
@@ -6668,7 +6740,7 @@
                 let precioPorcion = (unidad === 'gr' || unidad === 'mls') ? Math.round((pKilo / 1000) * dosis) : Math.round(pKilo * dosis);
                 inpPorcion.value = precioPorcion;
             }
-            actualizarBadgeCostoEnVivo('armatubatido');
+            recalcularVentaArmaTuBatidoDesdeMargen();
         } else if (tipo === 'pulpas') {
             const unidad = document.getElementById('ins-unidad')?.value || 'gr';
             const lblKilo = document.getElementById('lbl-ins-precio-kilo');
@@ -6734,8 +6806,32 @@
                 let pKilo = (unidad === 'gr' || unidad === 'mls') ? Math.round((pPorcion * 1000) / dosis) : Math.round(pPorcion / dosis);
                 inpKilo.value = pKilo;
             }
-            actualizarBadgeCostoEnVivo('armatubatido');
+            recalcularVentaArmaTuBatidoDesdeMargen();
         }
+    }
+
+    function recalcularVentaArmaTuBatidoDesdeMargen() {
+        const pCompra = parseFloat(document.getElementById('armatubatido-precio')?.value) || 0;
+        const margenPct = parseFloat(document.getElementById('armatubatido-margen')?.value) || 0;
+        const inpVenta = document.getElementById('armatubatido-precio-venta');
+        if (inpVenta && pCompra > 0 && margenPct > 0 && margenPct < 100) {
+            const pVenta = Math.round(pCompra / (1 - (margenPct / 100)));
+            inpVenta.value = pVenta;
+        }
+        actualizarBadgeCostoEnVivo('armatubatido');
+    }
+
+    function recalcularMargenArmaTuBatidoDesdeVenta() {
+        const pCompra = parseFloat(document.getElementById('armatubatido-precio')?.value) || 0;
+        const pVenta = parseFloat(document.getElementById('armatubatido-precio-venta')?.value) || 0;
+        const inpMargen = document.getElementById('armatubatido-margen');
+        if (inpMargen && pVenta > 0 && pCompra > 0 && pVenta > pCompra) {
+            const margenReal = Math.round(((pVenta - pCompra) / pVenta) * 1000) / 10;
+            inpMargen.value = margenReal;
+        } else if (inpMargen && pVenta <= pCompra) {
+            inpMargen.value = 0;
+        }
+        actualizarBadgeCostoEnVivo('armatubatido');
     }
 
     function actualizarBadgeCostoEnVivo(tipo) {
@@ -6790,9 +6886,11 @@
             } else if (pKilo <= 0 && precioPorc > 0 && dosis > 0) {
                 pKilo = (unidad === 'gr' || unidad === 'mls') ? Math.round((precioPorc * 1000) / dosis) : Math.round(precioPorc / dosis);
             }
-            let lblBase = (unidad === 'gr') ? 'Kilo' : ((unidad === 'mls') ? 'Litro' : 'Und');
+            let precioVenta = parseFloat(document.getElementById('armatubatido-precio-venta')?.value) || precioPorc;
+            let ganancia = Math.max(0, precioVenta - precioPorc);
+            let margenReal = precioVenta > 0 ? ((ganancia / precioVenta) * 100).toFixed(1) : '0.0';
             const b = document.getElementById('badge-costo-porcion-armatubatido');
-            if (b) b.innerText = `Porción: ${formatMoney(precioPorc, suc)} (${dosis}${unidad}) • ${lblBase}: ${formatMoney(pKilo, suc)}`;
+            if (b) b.innerText = `Compra: ${formatMoney(precioPorc, suc)} • Menú: ${formatMoney(precioVenta, suc)} (+${formatMoney(ganancia, suc)} | ${margenReal}%)`;
         } else if (tipo === 'exoticos') {
             let precio = parseFloat(document.getElementById('exoticos-precio')?.value) || 0;
             if (precio > 0 && precio <= 100) precio *= 1000;

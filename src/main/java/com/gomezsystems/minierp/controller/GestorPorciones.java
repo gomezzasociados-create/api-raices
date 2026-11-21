@@ -87,6 +87,8 @@ public class GestorPorciones {
                     existente.setSubcategoria(insumo.getSubcategoria());
                     existente.setPrecio(insumo.getPrecio());
                     if (insumo.getPrecioKilo() != null) existente.setPrecioKilo(insumo.getPrecioKilo());
+                    if (insumo.getPrecioVenta() != null) existente.setPrecioVenta(insumo.getPrecioVenta());
+                    if (insumo.getMargenPorcentaje() != null) existente.setMargenPorcentaje(insumo.getMargenPorcentaje());
                     if (insumo.getDescuento() != null) existente.setDescuento(insumo.getDescuento());
                     if (insumo.getImagen() != null && !insumo.getImagen().isBlank()) existente.setImagen(insumo.getImagen().trim());
                     insumoRepository.save(existente);

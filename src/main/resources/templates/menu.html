@@ -1575,7 +1575,7 @@ function procesarInsumosBodegaArmado(insumosBase) {
         if (cat.includes('arma') || cat.includes('porcion')) {
             var porcionDosis = (ins.cantidadPorcion && ins.cantidadPorcion > 0) ? ins.cantidadPorcion : 1;
             var medidaIns = (ins.medida || 'gr').toLowerCase();
-            var precioPorc = Number(ins.precio) || 0;
+            var precioPorc = (ins.precioVenta && Number(ins.precioVenta) > 0) ? Number(ins.precioVenta) : (Number(ins.precio) || 0);
             if (precioPorc <= 0 && ins.precioKilo && Number(ins.precioKilo) > 0) {
                 var pKilo = Number(ins.precioKilo);
                 if (pKilo > 0 && pKilo <= 100) pKilo *= 1000;

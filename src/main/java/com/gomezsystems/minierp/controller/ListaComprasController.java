@@ -283,6 +283,10 @@ public class ListaComprasController {
                 ins.setPrecioKilo((double) Math.round(nuevoPrecioKilo));
                 if (isArma) {
                     ins.setPrecio(nuevoPrecioPorcion);
+                    if (ins.getMargenPorcentaje() != null && ins.getMargenPorcentaje() > 0 && ins.getMargenPorcentaje() < 100.0) {
+                        double pVenta = Math.round(nuevoPrecioPorcion / (1.0 - (ins.getMargenPorcentaje() / 100.0)));
+                        ins.setPrecioVenta(pVenta);
+                    }
                 } else {
                     ins.setPrecio((double) Math.round(nuevoPrecioKilo));
                 }
@@ -360,6 +364,10 @@ public class ListaComprasController {
                     ins.setPrecioKilo((double) Math.round(nuevoPrecioKilo));
                     if (isArma) {
                         ins.setPrecio(nuevoPrecioPorcion);
+                        if (ins.getMargenPorcentaje() != null && ins.getMargenPorcentaje() > 0 && ins.getMargenPorcentaje() < 100.0) {
+                            double pVenta = Math.round(nuevoPrecioPorcion / (1.0 - (ins.getMargenPorcentaje() / 100.0)));
+                            ins.setPrecioVenta(pVenta);
+                        }
                     } else {
                         ins.setPrecio((double) Math.round(nuevoPrecioKilo));
                     }

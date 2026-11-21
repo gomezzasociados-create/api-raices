@@ -24,8 +24,10 @@ public class Insumo {
     @Column(columnDefinition = "TEXT")
     private String imagen;
 
-    private Double precio; // <--- PRECIO POR PORCIÓN (EN ARMA TU BATIDO) O PRECIO BASE (KILO/LITRO/UNIDAD EN OTRAS BODEGAS)
+    private Double precio; // <--- PRECIO DE COMPRA POR PORCIÓN (EN ARMA TU BATIDO) O PRECIO BASE (KILO/LITRO/UNIDAD EN OTRAS BODEGAS)
     private Double precioKilo; // <--- PRECIO POR KILO / LITRO / ENVASE BASE (PARA CALCULAR PRECIO DE LA PORCIÓN AUTOMÁTICAMENTE)
+    private Double precioVenta; // <--- PRECIO DE VENTA POR PORCIÓN EN EL MENÚ DEL FRONTEND (ARMA TU BATIDO)
+    private Double margenPorcentaje; // <--- % MARGEN REAL (1 - %) APLICADO AL INSUMO
     private Double descuento = 0.0;
 
     // --- PARCHE DE COMPATIBILIDAD CON BD ANTIGUA ---
@@ -74,6 +76,12 @@ public class Insumo {
 
     public Double getPrecioKilo() { return precioKilo; }
     public void setPrecioKilo(Double precioKilo) { this.precioKilo = precioKilo; }
+
+    public Double getPrecioVenta() { return precioVenta; }
+    public void setPrecioVenta(Double precioVenta) { this.precioVenta = precioVenta; }
+
+    public Double getMargenPorcentaje() { return margenPorcentaje; }
+    public void setMargenPorcentaje(Double margenPorcentaje) { this.margenPorcentaje = margenPorcentaje; }
 
     public String getImagen() { return imagen; }
     public void setImagen(String imagen) { this.imagen = imagen; }
