@@ -2099,10 +2099,22 @@ function renderComunidad(pestana) {
     else if (pestana === 'escribir') cargarFormularioPropuestaVista();
 }
 
+function buildBlogMediaHtml(art, heightCss, extraClass) {
+    var img = (art && art.imagen && art.imagen.trim() !== '') ? art.imagen.trim() : 'default-batido.png';
+    var safeSrc = img.replace(/"/g, '&quot;');
+    var safeAlt = esc((art && art.titulo) || 'Artículo RAÍCES');
+    var cls = extraClass || 'w-full object-cover';
+    var st = heightCss ? ' style="width:100%;height:' + heightCss + ';object-fit:cover;display:block"' : ' style="width:100%;height:100%;object-fit:cover;display:block"';
+    if (/\.(mp4|webm|mov)(\?.*)?$/i.test(img)) {
+        return '<video src="' + safeSrc + '" autoplay loop muted playsinline class="' + cls + '"' + st + ' onerror="this.outerHTML=\'<img src=\\\'default-batido.png\\\' alt=\\\'' + safeAlt + '\\\' class=\\\'' + cls + '\\\'' + (heightCss ? ' style=\\\'width:100%;height:' + heightCss + ';object-fit:cover;display:block\\\'' : '') + '>\'"></video>';
+    }
+    return '<img src="' + safeSrc + '" alt="' + safeAlt + '" decoding="async" class="' + cls + '"' + st + ' onerror="this.onerror=null;this.src=\'default-batido.png\'">';
+}
+
 function cargarArticulosHome() {
     var cont = $('grid-articulos-home');
     if (!cont) return;
-    fetch('/api/blog/articulos?_t=' + Date.now())
+    fetch('/api/blog/articulos?_t=' + Date.now(), { cache: 'no-store' })
         .then(function(r) { return r.ok ? r.json() : []; })
         .then(function(arts) {
             articulosBlogCache = arts;
@@ -2111,14 +2123,10 @@ function cargarArticulosHome() {
                 return;
             }
             cont.innerHTML = arts.slice(0, 3).map(function(art) {
-                var img = (art.imagen && art.imagen.trim()) ? art.imagen.trim() : 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80';
-                var esVideo = /\.(mp4|webm|mov)/i.test(img);
-                var media = esVideo
-                    ? '<video src="' + esc(img) + '" autoplay loop muted playsinline class="w-full h-44 object-cover"></video>'
-                    : '<img src="' + esc(img) + '" alt="' + esc(art.titulo) + '" class="w-full h-44 object-cover" onerror="this.src=\'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80\'">';
+                var media = buildBlogMediaHtml(art, '200px', 'w-full h-48 object-cover');
                 
                 return '<div class="spot rim rounded-[28px] overflow-hidden flex flex-col justify-between cursor-pointer group transition-all duration-300 hover:-translate-y-1.5" onclick="abrirModalArticulo(' + Number(art.id) + ')">' +
-                    '<div><div class="relative overflow-hidden">' + media +
+                    '<div><div class="relative overflow-hidden bg-black/40" style="height:200px">' + media +
                     '<span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-emerald-400/50 text-emerald-300"><i class="bi bi-tag-fill me-1"></i>' + esc((art.categoria || 'Nutrición').toUpperCase()) + '</span></div>' +
                     '<div class="p-6"><h3 class="font-cinzel text-xl font-bold mb-2 text-white group-hover:text-emerald-300 transition-colors line-clamp-2 uppercase">' + esc(art.titulo) + '</h3>' +
                     '<p class="text-slate-300 text-xs font-light leading-relaxed line-clamp-3 mb-4">' + esc(art.resumen || art.contenido || '') + '</p></div></div>' +
@@ -2149,7 +2157,7 @@ function cargarArticulosBlogVista() {
     if (!cont) return;
     cont.innerHTML = '<div class="col-span-full text-center py-12"><div class="inline-block w-8 h-8 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin mb-3"></div><p class="text-xs text-slate-400">Cargando artículos del laboratorio...</p></div>';
 
-    fetch('/api/blog/articulos?_t=' + Date.now())
+    fetch('/api/blog/articulos?_t=' + Date.now(), { cache: 'no-store' })
         .then(function(r) { return r.ok ? r.json() : []; })
         .then(function(arts) {
             articulosBlogCache = arts;
@@ -2158,14 +2166,10 @@ function cargarArticulosBlogVista() {
                 return;
             }
             cont.innerHTML = arts.map(function(art, i) {
-                var img = (art.imagen && art.imagen.trim()) ? art.imagen.trim() : 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80';
-                var esVideo = /\.(mp4|webm|mov)/i.test(img);
-                var media = esVideo
-                    ? '<video src="' + esc(img) + '" autoplay loop muted playsinline class="w-full h-48 object-cover"></video>'
-                    : '<img src="' + esc(img) + '" alt="' + esc(art.titulo) + '" class="w-full h-48 object-cover" onerror="this.src=\'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80\'">';
+                var media = buildBlogMediaHtml(art, '210px', 'w-full h-52 object-cover');
                 
                 return '<div class="spot rim rounded-[28px] overflow-hidden flex flex-col justify-between cursor-pointer group transition-transform hover:-translate-y-1.5" onclick="abrirModalArticulo(' + Number(art.id) + ')">' +
-                    '<div><div class="relative overflow-hidden">' + media +
+                    '<div><div class="relative overflow-hidden bg-black/40" style="height:210px">' + media +
                     '<span class="absolute top-3 left-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-emerald-400/50 text-emerald-300"><i class="bi bi-tag-fill me-1"></i>' + esc((art.categoria || 'Nutrición').toUpperCase()) + '</span></div>' +
                     '<div class="p-6"><h3 class="font-cinzel text-xl font-bold mb-2 text-white group-hover:text-emerald-300 transition-colors uppercase">' + esc(art.titulo) + '</h3>' +
                     '<p class="text-slate-300 text-xs font-light leading-relaxed line-clamp-3 mb-4">' + esc(art.resumen || art.contenido || '') + '</p></div></div>' +
@@ -2191,11 +2195,7 @@ function abrirModalArticulo(id) {
     var modal = $('modal-blog-articulo');
     if (!modal) return;
     
-    var img = (art.imagen && art.imagen.trim()) ? art.imagen.trim() : 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80';
-    var esVideo = /\.(mp4|webm|mov)/i.test(img);
-    $('blog-modal-media').innerHTML = esVideo
-        ? '<video src="' + esc(img) + '" autoplay loop muted playsinline class="w-full h-full object-cover"></video>'
-        : '<img src="' + esc(img) + '" class="w-full h-full object-cover" onerror="this.src=\'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80\'">';
+    $('blog-modal-media').innerHTML = buildBlogMediaHtml(art, null, 'w-full h-full object-cover');
     
     $('blog-modal-badges').innerHTML = '<span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-950/80 border border-emerald-400/50 text-emerald-300"><i class="bi bi-journal-text me-1"></i>' + esc(art.categoria || 'Blog') + '</span>' +
         '<span class="px-3 py-1 rounded-full text-xs font-semibold bg-white/5 border border-white/10 text-slate-300"><i class="bi bi-person me-1"></i>' + esc(art.autor || 'Equipo RAÍCES') + '</span>';
