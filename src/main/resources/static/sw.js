@@ -7,7 +7,6 @@ const PRECACHE_ASSETS = [
     '/manifest-menu.json',
     '/js/menu-core.js?v=10',
     '/js/menu-3d.js?v=4',
-    'logo-abeja.png?v=1',
     'puerta-magica.jpg',
     'lianas-limpias.png',
     'default-batido.png',
