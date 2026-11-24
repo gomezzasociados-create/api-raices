@@ -1289,7 +1289,7 @@
                                                             <span class="input-group-text bg-dark text-white-50 border-secondary" id="calc-armatubatido-dosis-unidad">gr</span>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-6">
                                                         <label class="form-label-neon small text-info">% Margen Real (1 - %)</label>
                                                         <div class="input-group input-group-sm">
                                                             <input type="number" id="calc-armatubatido-margen" class="form-control text-info fw-bold" value="65" min="1" max="99" oninput="actualizarCalculadora('armatubatido')">
@@ -1302,30 +1302,14 @@
                                                             <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMargenCalc('armatubatido', 70)">70%</button>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4">
-                                                        <label class="form-label-neon small text-white-50">% Merma / Desecho</label>
-                                                        <div class="input-group input-group-sm">
-                                                            <input type="number" id="calc-armatubatido-merma" class="form-control text-white-50" value="0" min="0" max="90" oninput="actualizarCalculadora('armatubatido')">
-                                                            <span class="input-group-text bg-dark text-white-50 border-secondary">%</span>
-                                                        </div>
-                                                        <div class="d-flex gap-1 mt-1">
-                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('armatubatido', 0)">0%</button>
-                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('armatubatido', 5)">5%</button>
-                                                            <button type="button" class="btn btn-dark btn-xs px-1 py-0 text-white-50 border-secondary" onclick="setMermaCalc('armatubatido', 10)">10%</button>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-lg-5">
                                                 <div class="p-3 rounded-3 h-100 d-flex flex-column justify-content-between" style="background: rgba(0,0,0,0.7); border: 1px dashed var(--p-warning);">
                                                     <div>
                                                         <div class="d-flex justify-content-between align-items-center mb-1">
-                                                            <span class="text-white-50 small font-rajdhani">COSTO PURO PORCIÓN:</span>
+                                                            <span class="text-white-50 small font-rajdhani">COSTO PORCIÓN:</span>
                                                             <span class="fw-bold text-white fs-6" id="calc-armatubatido-res-costo-puro">$0</span>
-                                                        </div>
-                                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                                            <span class="text-white-50 small font-rajdhani">COSTO CON MERMA:</span>
-                                                            <span class="fw-bold text-warning fs-6" id="calc-armatubatido-res-costo-merma">$0</span>
                                                         </div>
                                                         <div class="d-flex justify-content-between align-items-center mb-2 pb-1 border-bottom border-secondary">
                                                             <span class="small font-rajdhani text-info">FÓRMULA MARGEN REAL:</span>
@@ -6174,7 +6158,6 @@
         const costoBase = parseFloat(document.getElementById(`calc-${tipo}-costo-base`)?.value) || 0;
         const dosis = parseFloat(document.getElementById(`calc-${tipo}-dosis`)?.value) || 0;
         const margenPct = parseFloat(document.getElementById(`calc-${tipo}-margen`)?.value) || 0;
-        const mermaPct = parseFloat(document.getElementById(`calc-${tipo}-merma`)?.value) || 0;
         const packCant = parseFloat(document.getElementById(`calc-${tipo}-pack-cant`)?.value) || 1;
 
         const packCol = document.getElementById(`calc-${tipo}-pack-cant-col`);
@@ -6189,7 +6172,7 @@
             else if (modo === 'pack' || modo === 'unidad') dosisUnidadSpan.innerText = 'und';
         }
 
-        // 1. Costo Puro por Porción
+        // 1. Costo por Porción
         let costoPorcion = 0;
         if (modo === 'kilo' || modo === 'litro') {
             costoPorcion = (costoBase / 1000) * dosis;
@@ -6200,23 +6183,16 @@
             costoPorcion = costoBase * (dosis > 0 ? dosis : 1);
         }
 
-        // 2. Costo Real con Merma usando fórmula 1 - %:
-        let factorMerma = (mermaPct > 0 && mermaPct < 100) ? (1 - (mermaPct / 100)) : 1;
-        let costoRealConMerma = factorMerma > 0 ? (costoPorcion / factorMerma) : costoPorcion;
-
-        // 3. Fórmula del Margen Real: Precio = Costo / (1 - Margen%)
+        // 2. Fórmula del Margen Real: Precio = Costo / (1 - Margen%)
         let factorMargen = (margenPct > 0 && margenPct < 100) ? (1 - (margenPct / 100)) : 1;
-        let precioSugerido = (factorMargen > 0 && factorMargen < 1) ? (costoRealConMerma / factorMargen) : costoRealConMerma;
+        let precioSugerido = (factorMargen > 0 && factorMargen < 1) ? (costoPorcion / factorMargen) : costoPorcion;
 
-        let gananciaNeta = Math.max(0, precioSugerido - costoRealConMerma);
+        let gananciaNeta = Math.max(0, precioSugerido - costoPorcion);
         let margenRealEfectivo = precioSugerido > 0 ? ((gananciaNeta / precioSugerido) * 100) : 0;
 
         const suc = 'Antofagasta';
         const elCostoPuro = document.getElementById(`calc-${tipo}-res-costo-puro`);
         if (elCostoPuro) elCostoPuro.innerText = formatMoney(costoPorcion, suc);
-
-        const elCostoMerma = document.getElementById(`calc-${tipo}-res-costo-merma`);
-        if (elCostoMerma) elCostoMerma.innerText = formatMoney(costoRealConMerma, suc) + (mermaPct > 0 ? ` (1-${mermaPct}%)` : '');
 
         const elFormula = document.getElementById(`calc-${tipo}-res-formula`);
         if (elFormula) elFormula.innerText = `Costo / (1 - ${(margenPct/100).toFixed(2)}) = Costo / ${factorMargen.toFixed(2)}`;
@@ -6290,10 +6266,8 @@
         const costoBase = parseFloat(document.getElementById(`calc-${tipo}-costo-base`)?.value) || 0;
         const dosis = parseFloat(document.getElementById(`calc-${tipo}-dosis`)?.value) || 0;
         const margenPct = parseFloat(document.getElementById(`calc-${tipo}-margen`)?.value) || 0;
-        const mermaPct = parseFloat(document.getElementById(`calc-${tipo}-merma`)?.value) || 0;
         const packCant = parseFloat(document.getElementById(`calc-${tipo}-pack-cant`)?.value) || 1;
 
-        let factorMerma = (mermaPct > 0 && mermaPct < 100) ? (1 - (mermaPct / 100)) : 1;
         let factorMargen = (margenPct > 0 && margenPct < 100) ? (1 - (margenPct / 100)) : 1;
 
         let costoPorcion = 0;
@@ -6304,13 +6278,12 @@
         } else {
             costoPorcion = costoBase * (dosis > 0 ? dosis : 1);
         }
-        let costoRealConMerma = factorMerma > 0 ? (costoPorcion / factorMerma) : costoPorcion;
-        let precioSugerido = (factorMargen > 0 && factorMargen < 1) ? (costoRealConMerma / factorMargen) : costoRealConMerma;
+        let precioSugerido = (factorMargen > 0 && factorMargen < 1) ? (costoPorcion / factorMargen) : costoPorcion;
 
         if (tipo === 'armatubatido') {
             const medidaFinal = (modo === 'kilo') ? 'gr' : ((modo === 'litro') ? 'mls' : 'und');
             const precioVentaFinal = Math.round(precioSugerido);
-            const porcFinal = Math.round(costoRealConMerma);
+            const porcFinal = Math.round(costoPorcion);
             let pKiloFinal = 0;
             if (modo === 'kilo' || modo === 'litro') pKiloFinal = Math.round(costoBase);
             else if (modo === 'pack') pKiloFinal = Math.round(packCant > 0 ? (costoBase / packCant) : costoBase);
@@ -6435,7 +6408,6 @@
     function limpiarCalculadora(tipo) {
         if (document.getElementById(`calc-${tipo}-costo-base`)) document.getElementById(`calc-${tipo}-costo-base`).value = '';
         if (document.getElementById(`calc-${tipo}-dosis`)) document.getElementById(`calc-${tipo}-dosis`).value = '';
-        if (document.getElementById(`calc-${tipo}-merma`)) document.getElementById(`calc-${tipo}-merma`).value = '0';
         actualizarCalculadora(tipo);
         playSound('hover');
     }
@@ -6974,8 +6946,6 @@
                 const precioActualProd = prodSel ? normalizarPrecioCLP(prodSel.precio || 0) : 0;
                 let margenGuardado = parseFloat(localStorage.getItem('raices_margen_formula_' + id));
                 if (!(margenGuardado > 0 && margenGuardado < 100)) margenGuardado = 65;
-                let mermaGuardada = parseFloat(localStorage.getItem('raices_merma_formula_' + id));
-                if (!(mermaGuardada >= 0 && mermaGuardada < 100)) mermaGuardada = 0;
 
                 tb.innerHTML += `<tr style="border-top: 2px solid var(--p-magenta);">
                     <td colspan="2" class="text-end fw-bold fs-3" style="color:var(--p-magenta)">COSTO TOTAL FÓRMULA:</td>
@@ -6996,25 +6966,18 @@
                                     <label class="form-label-neon small text-warning">Costo Total Fórmula ($)</label>
                                     <input type="number" id="calcf-${tipo}-costo" class="form-control text-warning fw-bold" value="${Math.round(costoTotal)}" readonly style="background: rgba(255,215,0,0.06);">
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <label class="form-label-neon small text-info">% Margen Real (manual)</label>
                                     <div class="input-group">
                                         <input type="number" id="calcf-${tipo}-margen" class="form-control text-info fw-bold" value="${margenGuardado}" min="0" max="99.9" step="0.1" placeholder="Ej: 62.5" oninput="actualizarCalcFormula('${tipo}')">
                                         <span class="input-group-text bg-dark text-info border-secondary">%</span>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
-                                    <label class="form-label-neon small text-white-50">% Merma (opcional)</label>
-                                    <div class="input-group">
-                                        <input type="number" id="calcf-${tipo}-merma" class="form-control text-white-50" value="${mermaGuardada}" min="0" max="90" step="0.1" oninput="actualizarCalcFormula('${tipo}')">
-                                        <span class="input-group-text bg-dark text-white-50 border-secondary">%</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
+                                <div class="col-md-5">
                                     <div class="p-2 rounded-3 text-end" style="background: rgba(0,0,0,0.5); border: 1px dashed ${colorTipo};">
                                         <div class="small font-monospace text-info" id="calcf-${tipo}-formula">Costo / (1 - 0.65)</div>
                                         <div class="font-orbitron fw-bold fs-3" style="color:${colorTipo}; text-shadow:0 0 10px ${colorTipo};" id="calcf-${tipo}-precio">$0</div>
-                                        <div class="small text-white-50 font-rajdhani">Ganancia neta: <b class="text-success" id="calcf-${tipo}-ganancia">$0</b> • Costo c/merma: <b class="text-warning" id="calcf-${tipo}-costomerma">$0</b></div>
+                                        <div class="small text-white-50 font-rajdhani">Ganancia neta: <b class="text-success" id="calcf-${tipo}-ganancia">$0</b></div>
                                     </div>
                                 </div>
                             </div>
@@ -7043,31 +7006,24 @@
         const costo = datos.costoTotal || 0;
         const suc = datos.sucursal || 'Antofagasta';
         let margen = parseFloat(document.getElementById(`calcf-${tipo}-margen`)?.value);
-        let merma = parseFloat(document.getElementById(`calcf-${tipo}-merma`)?.value) || 0;
         if (isNaN(margen) || margen < 0) margen = 0;
         if (margen >= 100) margen = 99.9;
-        if (merma < 0) merma = 0;
-        if (merma >= 100) merma = 99;
 
-        const costoMerma = merma > 0 ? costo / (1 - merma / 100) : costo;
         const divisor = 1 - (margen / 100);
-        const precio = divisor > 0 ? Math.round(costoMerma / divisor) : Math.round(costoMerma);
-        const ganancia = precio - costoMerma;
+        const precio = divisor > 0 ? Math.round(costo / divisor) : Math.round(costo);
+        const ganancia = precio - costo;
 
         const elF = document.getElementById(`calcf-${tipo}-formula`);
-        if (elF) elF.innerText = `${formatMoney(costoMerma, suc)} / (1 - ${(margen / 100).toFixed(3).replace(/\.?0+$/, '')}) = ${formatMoney(costoMerma, suc)} / ${divisor.toFixed(3)}`;
+        if (elF) elF.innerText = `${formatMoney(costo, suc)} / (1 - ${(margen / 100).toFixed(3).replace(/\.?0+$/, '')}) = ${formatMoney(costo, suc)} / ${divisor.toFixed(3)}`;
         const elP = document.getElementById(`calcf-${tipo}-precio`);
         if (elP) elP.innerText = formatMoney(precio, suc);
         const elG = document.getElementById(`calcf-${tipo}-ganancia`);
         if (elG) elG.innerText = formatMoney(ganancia, suc);
-        const elCM = document.getElementById(`calcf-${tipo}-costomerma`);
-        if (elCM) elCM.innerText = formatMoney(costoMerma, suc);
         const elFinal = document.getElementById(`calcf-${tipo}-precio-final`);
         if (elFinal && elFinal.dataset.manual !== '1') elFinal.value = precio;
 
         datos.precioCalculado = precio;
         datos.margen = margen;
-        datos.merma = merma;
     }
 
     function emitirSincronizacionPrecioProducto(datos) {
@@ -7125,7 +7081,6 @@
 
             try {
                 localStorage.setItem('raices_margen_formula_' + datos.idProducto, String(datos.margen));
-                localStorage.setItem('raices_merma_formula_' + datos.idProducto, String(datos.merma || 0));
             } catch (e) {}
 
             let nombreProd = prodGuardado && prodGuardado.nombre ? prodGuardado.nombre : '';
