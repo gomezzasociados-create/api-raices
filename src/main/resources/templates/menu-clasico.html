@@ -1903,7 +1903,7 @@
                     if (prodMatch.descuento !== undefined && prodMatch.descuento !== null && prodMatch.descuento > 0) {
                         dtoVal = Number(prodMatch.descuento);
                     }
-                    if (prodMatch.precio !== undefined && prodMatch.precio !== null && Number(prodMatch.precio) > 0) {
+                    if ((!ins.precioVenta || Number(ins.precioVenta) <= 0) && prodMatch.precio !== undefined && prodMatch.precio !== null && Number(prodMatch.precio) > 0) {
                         precioVal = Math.round(Number(prodMatch.precio));
                     }
                     if (prodMatch.imagen && prodMatch.imagen.trim() !== '') {
@@ -3331,6 +3331,91 @@
             estadoModalVoz = 'LIBRE';
         }
     }
+
+    // Sincronización en tiempo real de precios de porción desde Admin (Arma tu Batido)
+    (function initSyncPrecioPorcionClasico() {
+        let ultimoTsProcesado = 0;
+        async function aplicarSyncPrecioClasico(msg) {
+            if (!msg || msg.tipo !== 'PRECIO_PORCION_ACTUALIZADO') return;
+            if (msg.ts && msg.ts === ultimoTsProcesado) return;
+            ultimoTsProcesado = msg.ts || Date.now();
+
+            const nodoActual = document.getElementById('sucursal-activa')?.value || 'Antofagasta';
+            const nodosCheck = Array.from(new Set([nodoActual, msg.nodo].filter(Boolean)));
+            const nomNorm = msg.nombre ? normalizarStr(msg.nombre) : '';
+
+            nodosCheck.forEach(n => {
+                try {
+                    const key = CACHE_EXPRESS_INSUMOS + n;
+                    const raw = localStorage.getItem(key);
+                    if (raw) {
+                        const arr = JSON.parse(raw);
+                        if (Array.isArray(arr)) {
+                            const idx = arr.findIndex(x =>
+                                (msg.idInsumo && Number(x.idInsumo || x.id) === Number(msg.idInsumo)) ||
+                                (nomNorm && normalizarStr(x.nombre || '') === nomNorm)
+                            );
+                            if (idx >= 0) {
+                                arr[idx].precioVenta = msg.precioVenta;
+                                arr[idx].precio = msg.precio;
+                                if (msg.cantidadPorcion) arr[idx].cantidadPorcion = msg.cantidadPorcion;
+                                if (msg.margenPorcentaje !== undefined) arr[idx].margenPorcentaje = msg.margenPorcentaje;
+                                if (msg.medida) arr[idx].medida = msg.medida;
+                                localStorage.setItem(key, JSON.stringify(arr));
+                            }
+                        }
+                    }
+                } catch (e) {}
+            });
+
+            if (filtroActual === 'Arma tu Batido') {
+                await renderizarArmaTuBatido(nodoActual);
+            }
+        }
+
+        try {
+            const canalSync = new BroadcastChannel('raices_canal_sync');
+            canalSync.onmessage = (ev) => {
+                if (ev.data && ev.data.tipo === 'PRECIO_PRODUCTO_ACTUALIZADO') aplicarSyncPrecioProductoClasico(ev.data);
+                else aplicarSyncPrecioClasico(ev.data);
+            };
+        } catch (e) {}
+
+        window.addEventListener('storage', (ev) => {
+            if (ev.key === 'raices_sync_precio_porcion' && ev.newValue) {
+                try { aplicarSyncPrecioClasico(JSON.parse(ev.newValue)); } catch (e) {}
+            }
+            if (ev.key === 'raices_sync_precio_producto' && ev.newValue) {
+                try { aplicarSyncPrecioProductoClasico(JSON.parse(ev.newValue)); } catch (e) {}
+            }
+        });
+
+        // Precio real de producto calculado desde los Estructuradores de Fórmulas (1 - %)
+        let ultimoTsProducto = 0;
+        function aplicarSyncPrecioProductoClasico(msg) {
+            if (!msg || msg.tipo !== 'PRECIO_PRODUCTO_ACTUALIZADO') return;
+            if (msg.ts && msg.ts === ultimoTsProducto) return;
+            ultimoTsProducto = msg.ts || Date.now();
+            const nuevo = Math.round(Number(msg.precio) || 0);
+            if (nuevo <= 0) return;
+            const nomNorm = msg.nombre ? normalizarStr(msg.nombre) : '';
+            const nodoActual = document.getElementById('sucursal-activa')?.value || 'Antofagasta';
+            let encontrado = false;
+            (productosRaw || []).forEach(p => {
+                if (String(p.id) === String(msg.idProducto) || (nomNorm && normalizarStr(p.nombre || '') === nomNorm)) {
+                    p.precio = nuevo;
+                    encontrado = true;
+                }
+            });
+            if (encontrado) {
+                try { localStorage.setItem(CACHE_EXPRESS_PRODS + nodoActual, JSON.stringify(productosRaw)); } catch (e) {}
+                renderizar();
+                aplicarBadgesCategorias();
+            } else {
+                cargarMenu();
+            }
+        }
+    })();
 
 </script>
 </body>

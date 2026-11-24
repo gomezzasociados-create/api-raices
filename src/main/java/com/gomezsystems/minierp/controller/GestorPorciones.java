@@ -52,7 +52,7 @@ public class GestorPorciones {
     public ResponseEntity<String> guardarInsumo(@RequestBody Insumo insumo) {
         try {
             String catLower = insumo.getCategoria() != null ? insumo.getCategoria().toLowerCase() : "";
-            boolean esArma = catLower.contains("arma") || catLower.contains("porcion");
+            boolean esArma = catLower.contains("arma") || catLower.contains("porci");
             if (!esArma && insumo.getPrecio() != null && insumo.getPrecio() > 0 && insumo.getPrecio() <= 100.0) {
                 insumo.setPrecio(insumo.getPrecio() * 1000.0);
             }

@@ -871,7 +871,7 @@ function procesarInsumosBodegaArmado(insumosBase) {
                 if (prodMatch.descuento !== undefined && prodMatch.descuento !== null && prodMatch.descuento > 0) {
                     dtoVal = Number(prodMatch.descuento);
                 }
-                if (prodMatch.precio !== undefined && prodMatch.precio !== null && Number(prodMatch.precio) > 0) {
+                if ((!ins.precioVenta || Number(ins.precioVenta) <= 0) && prodMatch.precio !== undefined && prodMatch.precio !== null && Number(prodMatch.precio) > 0) {
                     precioVal = Math.round(Number(prodMatch.precio));
                 }
                 if (prodMatch.imagen && prodMatch.imagen.trim() !== '') {
@@ -2680,3 +2680,85 @@ if (document.readyState === 'loading') {
 } else {
     iniciarMenuRaices();
 }
+
+// Sincronización en tiempo real de precios de porción desde Admin (Arma tu Batido)
+(function initSyncPrecioPorcionMenu() {
+    var ultimoTsProcesado = 0;
+    function aplicarSyncPrecio(msg) {
+        if (!msg || msg.tipo !== 'PRECIO_PORCION_ACTUALIZADO') return;
+        if (msg.ts && msg.ts === ultimoTsProcesado) return;
+        ultimoTsProcesado = msg.ts || Date.now();
+
+        var nodoActual = $('sucursal-activa') ? $('sucursal-activa').value : 'Antofagasta';
+        var idIns = msg.idInsumo;
+        var nomNorm = msg.nombre ? normalizarStr(msg.nombre) : '';
+        var encontrado = false;
+
+        if (Array.isArray(insumosReales) && insumosReales.length > 0) {
+            insumosReales.forEach(function(ins) {
+                var coincideId = idIns && Number(ins.idInsumo || ins.id) === Number(idIns);
+                var coincideNom = nomNorm && normalizarStr(ins.nombre || '') === nomNorm;
+                if (coincideId || coincideNom) {
+                    ins.precioVenta = msg.precioVenta;
+                    ins.precio = msg.precio;
+                    if (msg.cantidadPorcion) ins.cantidadPorcion = msg.cantidadPorcion;
+                    if (msg.margenPorcentaje !== undefined) ins.margenPorcentaje = msg.margenPorcentaje;
+                    if (msg.medida) ins.medida = msg.medida;
+                    encontrado = true;
+                }
+            });
+            if (encontrado) {
+                try { localStorage.setItem(CACHE_EXPRESS_INSUMOS + nodoActual, JSON.stringify(insumosReales)); } catch (e) {}
+                procesarInsumosBodegaArmado(insumosReales);
+                if (categoriaActual === 'Armar') {
+                    pintarVistaArmaTuBatido();
+                }
+            }
+        }
+        // Respaldar con recarga fresca desde BD si no estaba en memoria
+        if (!encontrado) {
+            cargarInsumosReales(nodoActual);
+        }
+    }
+
+    try {
+        var canalSync = new BroadcastChannel('raices_canal_sync');
+        canalSync.onmessage = function(ev) {
+            if (ev.data && ev.data.tipo === 'PRECIO_PRODUCTO_ACTUALIZADO') aplicarSyncPrecioProducto(ev.data);
+            else aplicarSyncPrecio(ev.data);
+        };
+    } catch (e) {}
+
+    window.addEventListener('storage', function(ev) {
+        if (ev.key === 'raices_sync_precio_porcion' && ev.newValue) {
+            try { aplicarSyncPrecio(JSON.parse(ev.newValue)); } catch (e) {}
+        }
+        if (ev.key === 'raices_sync_precio_producto' && ev.newValue) {
+            try { aplicarSyncPrecioProducto(JSON.parse(ev.newValue)); } catch (e) {}
+        }
+    });
+
+    // Precio real de producto calculado desde los Estructuradores de Fórmulas (1 - %)
+    var ultimoTsProducto = 0;
+    function aplicarSyncPrecioProducto(msg) {
+        if (!msg || msg.tipo !== 'PRECIO_PRODUCTO_ACTUALIZADO') return;
+        if (msg.ts && msg.ts === ultimoTsProducto) return;
+        ultimoTsProducto = msg.ts || Date.now();
+        var nomNorm = msg.nombre ? normalizarStr(msg.nombre) : '';
+        var nuevo = Math.round(Number(msg.precio) || 0);
+        if (nuevo <= 0) return;
+        var encontrado = false;
+        (productos || []).forEach(function(p) {
+            if (String(p.id) === String(msg.idProducto) || (nomNorm && normalizarStr(p.nombre || '') === nomNorm)) {
+                p.precio = nuevo;
+                encontrado = true;
+            }
+        });
+        if (encontrado) {
+            if (categoriaActual !== 'Armar' && categoriaActual !== 'Comunidad') renderCatalogo();
+        } else {
+            var nodoActual = $('sucursal-activa') ? $('sucursal-activa').value : 'Antofagasta';
+            cargarCatalogo(nodoActual);
+        }
+    }
+})();
