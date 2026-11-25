@@ -88,15 +88,29 @@ public class InventarioService {
                     if (gasto <= 0) continue;
                     
                     Insumo insumoMatch = null;
+                    if (partes.length >= 3 && !partes[2].trim().isEmpty()) {
+                        try {
+                            Long idIns = Long.valueOf(partes[2].trim());
+                            Optional<Insumo> byId = insumoRepository.findById(idIns);
+                            if (byId.isPresent()) {
+                                String catById = byId.get().getCategoria() != null ? byId.get().getCategoria().toLowerCase() : "";
+                                if (esArmaTuBatido || !catById.contains("pulpa")) {
+                                    insumoMatch = byId.get();
+                                }
+                            }
+                        } catch (Exception ignored) {}
+                    }
                     String nomLimpioNorm = normalizar(nombreLimpio);
                     // REGLA SAGRADA: Para "Arma tu Batido", buscar en la bodega de Arma tu Batido / Porciones
-                    for (Insumo ins : insumosSucursal) {
-                        String catIns = ins.getCategoria() != null ? ins.getCategoria().toLowerCase() : "";
-                        if (catIns.contains("arma tu batido") || catIns.contains("porciones")) {
-                            String insNombre = normalizar(ins.getNombre());
-                            if (insNombre.equals(nomLimpioNorm) || insNombre.contains(nomLimpioNorm) || nomLimpioNorm.contains(insNombre)) {
-                                insumoMatch = ins;
-                                break;
+                    if (insumoMatch == null) {
+                        for (Insumo ins : insumosSucursal) {
+                            String catIns = ins.getCategoria() != null ? ins.getCategoria().toLowerCase() : "";
+                            if (catIns.contains("arma tu batido") || catIns.contains("porciones")) {
+                                String insNombre = normalizar(ins.getNombre());
+                                if (insNombre.equals(nomLimpioNorm) || insNombre.contains(nomLimpioNorm) || nomLimpioNorm.contains(insNombre)) {
+                                    insumoMatch = ins;
+                                    break;
+                                }
                             }
                         }
                     }

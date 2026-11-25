@@ -1009,7 +1009,7 @@
                                         </div>
                                         <div class="col-md-1">
                                             <label class="form-label-neon text-info">Precio Porción</label>
-                                            <input type="number" id="ins-precio-porcion" class="form-control bg-dark text-info fw-bold text-center border-info" readonly placeholder="$0">
+                                            <input type="number" id="ins-precio-porcion" class="form-control bg-dark text-info fw-bold text-center border-info" step="1" placeholder="$0" oninput="recalcularPrecioKiloDesdePorcion('pulpas')" title="Puedes escribir directo el valor de la porción (ej: 1600 para 500gr) y calculará el Precio/Kilo automáticamente">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label-neon" style="color:var(--p-bio-green)">Stock Real (gr/mls)</label>
@@ -1096,7 +1096,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label-neon text-info">Precio Porción</label>
-                                            <input type="number" id="vaso-precio-porcion" class="form-control bg-dark text-info fw-bold text-center border-info" readonly placeholder="$0">
+                                            <input type="number" id="vaso-precio-porcion" class="form-control bg-dark text-info fw-bold text-center border-info" step="1" placeholder="$0" oninput="recalcularPrecioKiloDesdePorcion('vasos')">
                                         </div>
                                         <div class="col-md-1">
                                             <label class="form-label-neon" style="color:var(--p-cyan)">Stock</label>
@@ -1188,7 +1188,7 @@
                                         </div>
                                         <div class="col-md-1">
                                             <label class="form-label-neon text-info">Precio Porción</label>
-                                            <input type="number" id="shot-precio-porcion" class="form-control bg-dark text-info fw-bold text-center border-info" readonly placeholder="$0">
+                                            <input type="number" id="shot-precio-porcion" class="form-control bg-dark text-info fw-bold text-center border-info" step="1" placeholder="$0" oninput="recalcularPrecioKiloDesdePorcion('shots')">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label-neon" style="color:var(--p-magenta)">Stock Real</label>
@@ -1482,7 +1482,7 @@
                                         </div>
                                         <div class="col-md-1">
                                             <label class="form-label-neon text-info">Precio Porción</label>
-                                            <input type="number" id="exoticos-precio-porcion" class="form-control bg-dark text-info fw-bold text-center border-info" readonly placeholder="$0">
+                                            <input type="number" id="exoticos-precio-porcion" class="form-control bg-dark text-info fw-bold text-center border-info" step="1" placeholder="$0" oninput="recalcularPrecioKiloDesdePorcion('exoticos')">
                                         </div>
                                         <div class="col-md-2">
                                             <label class="form-label-neon" style="color: #bd00ff;" id="lbl-exoticos-stock">Reserva Stock</label>
@@ -1697,33 +1697,39 @@
                     <!-- 1. ESTRUCTURADOR DE FÓRMULAS DE PULPAS (PACKS / PRODUCCIÓN) -->
                     <div class="accordion-item bg-transparent border-0 mb-4">
                         <h2 class="accordion-header" id="headingRecetasPulpas">
-                            <button class="accordion-button font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasPulpas" aria-expanded="true" aria-controls="collapseRecetasPulpas" style="background: rgba(0,255,0,0.05); border: 1px solid var(--p-bio-green); color: var(--p-bio-green); box-shadow: 0 0 10px rgba(0,255,0,0.2);">
-                                <i class="bi bi-tree me-2"></i> 1. ESTRUCTURADOR DE FÓRMULAS DE PULPAS (PACKS / PRODUCCIÓN)
+                            <button class="accordion-button font-orbitron fw-bold d-flex justify-content-between align-items-center flex-wrap gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasPulpas" aria-expanded="true" aria-controls="collapseRecetasPulpas" style="background: rgba(0,255,0,0.05); border: 1px solid var(--p-bio-green); color: var(--p-bio-green); box-shadow: 0 0 10px rgba(0,255,0,0.2);">
+                                <span><i class="bi bi-tree me-2"></i> 1. FÓRMULAS DE PACKS DE PULPAS (PRODUCCIÓN)</span>
+                                <span class="badge bg-dark border border-success text-success font-orbitron me-3" style="font-size:0.72rem;"><i class="bi bi-boxes me-1"></i> BODEGA 1: MATERIA PRIMA (PULPAS)</span>
                             </button>
                         </h2>
                         <div id="collapseRecetasPulpas" class="accordion-collapse collapse show" aria-labelledby="headingRecetasPulpas" data-bs-parent="#accordionRecetas">
                             <div class="accordion-body p-0 pt-3">
                                 <div class="table-container mb-0" style="border-top: 3px solid var(--p-bio-green);">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+                                        <span class="small font-orbitron" style="color:var(--p-bio-green);"><i class="bi bi-link-45deg me-1"></i> BODEGA VINCULADA: <b>1. REGISTRO BOTÁNICO: MATERIA PRIMA (PULPAS)</b></span>
+                                        <button type="button" class="btn btn-xs btn-outline-success font-orbitron px-2 py-1" style="font-size:0.75rem;" onclick="irABodegaEspecifica('pulpas')"><i class="bi bi-box-arrow-up-right me-1"></i> IR A BODEGA DE PULPAS</button>
+                                    </div>
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <label class="form-label-neon" style="color: var(--p-bio-green);">PULPA EN PACK / PRODUCCIÓN (OUTPUT)</label>
+                                            <label class="form-label-neon" style="color: var(--p-bio-green);">PACK DE PULPAS (PRODUCTO CON FÓRMULA)</label>
                                             <select id="rec-producto-pulpas" class="form-select border-success text-white" onchange="cargarTablaReceta('pulpas')"></select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label-neon" style="color: var(--p-bio-green);">MATERIA PRIMA / BOTÁNICA (INPUT)</label>
-                                            <select id="rec-insumo-pulpas" class="form-select border-success text-white" onchange="actualizarUnidadDefaultInsumo('pulpas')"></select>
+                                            <label class="form-label-neon" style="color: var(--p-bio-green);">INSUMO DE BODEGA 1: MATERIA PRIMA (PULPAS)</label>
+                                            <select id="rec-insumo-pulpas" class="form-select border-success text-white" onchange="actualizarUnidadDefaultInsumo('pulpas'); previsualizarCostoDosisFormula('pulpas')"></select>
                                         </div>
                                     </div>
                                     <div class="row g-3 mt-2 align-items-end">
                                         <div class="col-md-5">
-                                            <label class="form-label-neon" style="color: var(--p-bio-green);">DOSIS REQUERIDA POR PULPA</label>
-                                            <input type="number" id="rec-cantidad-pulpas" class="form-control border-success text-white fs-4" placeholder="0.00" step="0.01">
+                                            <label class="form-label-neon" style="color: var(--p-bio-green);">DOSIS REQUERIDA EN LA FÓRMULA</label>
+                                            <input type="number" id="rec-cantidad-pulpas" class="form-control border-success text-white fs-4" placeholder="Ej: 500" step="0.01" oninput="previsualizarCostoDosisFormula('pulpas')">
                                         </div>
                                         <div class="col-md-3">
                                             <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
-                                            <select id="rec-unidad-pulpas" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;">
+                                            <select id="rec-unidad-pulpas" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;" onchange="previsualizarCostoDosisFormula('pulpas')">
                                                 <option value="gr">🌾 Gramos (gr)</option>
                                                 <option value="mls">💧 Mililitros (mls)</option>
+                                                <option value="porc">🥣 Porciones Bodega (porc)</option>
                                                 <option value="und">🍏 Unidades (und)</option>
                                             </select>
                                         </div>
@@ -1732,16 +1738,21 @@
                                                 <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR A FÓRMULA DE PULPA
                                             </button>
                                         </div>
+                                        <div class="col-12">
+                                            <div id="preview-costo-dosis-pulpas" class="small font-orbitron px-3 py-2 rounded border border-secondary text-info" style="background: rgba(0,255,166,0.05);">
+                                                <i class="bi bi-calculator me-1"></i> Selecciona un insumo e ingresa la dosis (ej: 500 gr) para ver el costo exacto según Bodega de Pulpas.
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="mt-4 p-3 rounded-3" style="background: rgba(0,0,0,0.6); border: 1px dashed var(--p-bio-green);">
-                                        <h6 class="form-label-neon mb-3 fs-6 text-center" style="color: var(--p-bio-green);">BIOLOGÍA DE LA FÓRMULA ACTIVA (PULPA)</h6>
+                                        <h6 class="form-label-neon mb-3 fs-6 text-center" style="color: var(--p-bio-green);">BIOLOGÍA DE LA FÓRMULA ACTIVA (PACK DE PULPAS • PRECIOS BODEGA 1)</h6>
                                         <div class="table-responsive">
                                             <table class="table text-center align-middle m-0">
                                                 <thead class="table-dark">
                                                     <tr>
-                                                        <th>EXTRACTO / MATERIAL</th>
-                                                        <th>DOSIS_REQUERIDA</th>
-                                                        <th>COSTO PROYECTADO</th>
+                                                        <th>INSUMO / BODEGA ORIGEN</th>
+                                                        <th>DOSIS REQUERIDA</th>
+                                                        <th>COSTO SEGÚN BODEGA</th>
                                                         <th>SEPARAR</th>
                                                     </tr>
                                                 </thead>
@@ -1757,33 +1768,42 @@
                     <!-- 2. ESTRUCTURADOR DE FÓRMULAS DE VASOS DE 500 MLS (ELÍXIRES) -->
                     <div class="accordion-item bg-transparent border-0 mb-4">
                         <h2 class="accordion-header" id="headingRecetasVasos">
-                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasVasos" aria-expanded="false" aria-controls="collapseRecetasVasos" style="background: rgba(0,255,255,0.05); border: 1px solid var(--p-cyan); color: var(--p-cyan); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
-                                <i class="bi bi-cup-straw me-2"></i> 2. ESTRUCTURADOR DE FÓRMULAS DE VASOS DE 500 MLS (ELÍXIRES)
+                            <button class="accordion-button collapsed font-orbitron fw-bold d-flex justify-content-between align-items-center flex-wrap gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasVasos" aria-expanded="false" aria-controls="collapseRecetasVasos" style="background: rgba(0,255,255,0.05); border: 1px solid var(--p-cyan); color: var(--p-cyan); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
+                                <span><i class="bi bi-cup-straw me-2"></i> 2. FÓRMULAS DE ELÍXIRES (VASOS 500 MLS)</span>
+                                <span class="badge bg-dark border border-info text-info font-orbitron me-3" style="font-size:0.72rem;"><i class="bi bi-boxes me-1"></i> BODEGAS 2 & 4: VASOS + PORCIONES 500 MLS</span>
                             </button>
                         </h2>
                         <div id="collapseRecetasVasos" class="accordion-collapse collapse" aria-labelledby="headingRecetasVasos" data-bs-parent="#accordionRecetas">
                             <div class="accordion-body p-0 pt-3">
                                 <div class="table-container mb-0" style="border-top: 3px solid var(--p-cyan);">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+                                        <span class="small font-orbitron text-info"><i class="bi bi-link-45deg me-1"></i> BODEGAS VINCULADAS: <b>2. VASOS Y PACKAGING (500 MLS) + 4. PORCIONES (500 MLS) + 1. MATERIA PRIMA</b></span>
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-xs btn-outline-info font-orbitron px-2 py-1" style="font-size:0.75rem;" onclick="irABodegaEspecifica('vasos')"><i class="bi bi-cup-straw me-1"></i> BODEGA VASOS</button>
+                                            <button type="button" class="btn btn-xs btn-outline-warning font-orbitron px-2 py-1" style="font-size:0.75rem;" onclick="irABodegaEspecifica('armatubatido')"><i class="bi bi-sliders me-1"></i> BODEGA PORCIONES</button>
+                                        </div>
+                                    </div>
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <label class="form-label-neon text-info">BATIDO EN VASO 500 MLS (OUTPUT)</label>
+                                            <label class="form-label-neon text-info">ELÍXIR EN VASO 500 MLS (PRODUCTO CON FÓRMULA)</label>
                                             <select id="rec-producto-vasos" class="form-select border-info text-white" onchange="cargarTablaReceta('vasos')"></select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label-neon text-info">INGREDIENTE / VASO / PACKAGING (INPUT)</label>
-                                            <select id="rec-insumo-vasos" class="form-select border-info text-white" onchange="actualizarUnidadDefaultInsumo('vasos')"></select>
+                                            <label class="form-label-neon text-info">INSUMO / PORCIÓN / PACKAGING DE BODEGA (INPUT)</label>
+                                            <select id="rec-insumo-vasos" class="form-select border-info text-white" onchange="actualizarUnidadDefaultInsumo('vasos'); previsualizarCostoDosisFormula('vasos')"></select>
                                         </div>
                                     </div>
                                     <div class="row g-3 mt-2 align-items-end">
                                         <div class="col-md-5">
                                             <label class="form-label-neon text-info">DOSIS REQUERIDA POR VASO DE 500 MLS</label>
-                                            <input type="number" id="rec-cantidad-vasos" class="form-control border-info text-white fs-4" placeholder="0.00" step="0.01">
+                                            <input type="number" id="rec-cantidad-vasos" class="form-control border-info text-white fs-4" placeholder="0.00" step="0.01" oninput="previsualizarCostoDosisFormula('vasos')">
                                         </div>
                                         <div class="col-md-3">
                                             <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
-                                            <select id="rec-unidad-vasos" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;">
+                                            <select id="rec-unidad-vasos" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;" onchange="previsualizarCostoDosisFormula('vasos')">
                                                 <option value="gr">🌾 Gramos (gr)</option>
                                                 <option value="mls">💧 Mililitros (mls)</option>
+                                                <option value="porc">🥣 Porciones Bodega (porc)</option>
                                                 <option value="und">🍏 Unidades (und)</option>
                                             </select>
                                         </div>
@@ -1792,16 +1812,21 @@
                                                 <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR A FÓRMULA DE VASO
                                             </button>
                                         </div>
+                                        <div class="col-12">
+                                            <div id="preview-costo-dosis-vasos" class="small font-orbitron px-3 py-2 rounded border border-secondary text-info" style="background: rgba(0,229,255,0.05);">
+                                                <i class="bi bi-calculator me-1"></i> Selecciona un insumo e ingresa la dosis para ver el costo exacto según Bodega.
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="mt-4 p-3 rounded-3" style="background: rgba(0,0,0,0.6); border: 1px dashed var(--p-cyan);">
-                                        <h6 class="form-label-neon mb-3 fs-6 text-center text-info">BIOLOGÍA DE LA FÓRMULA ACTIVA (VASO 500 MLS)</h6>
+                                        <h6 class="form-label-neon mb-3 fs-6 text-center text-info">BIOLOGÍA DE LA FÓRMULA ACTIVA (ELÍXIR 500 MLS)</h6>
                                         <div class="table-responsive">
                                             <table class="table text-center align-middle m-0">
                                                 <thead class="table-dark">
                                                     <tr>
-                                                        <th>EXTRACTO / MATERIAL / PACKAGING</th>
-                                                        <th>DOSIS_REQUERIDA</th>
-                                                        <th>COSTO PROYECTADO</th>
+                                                        <th>INSUMO / BODEGA ORIGEN</th>
+                                                        <th>DOSIS REQUERIDA</th>
+                                                        <th>COSTO SEGÚN BODEGA</th>
                                                         <th>SEPARAR</th>
                                                     </tr>
                                                 </thead>
@@ -1817,33 +1842,39 @@
                     <!-- 3. ESTRUCTURADOR DE FÓRMULAS DE SHOTS Y CALDOS DE HUESO -->
                     <div class="accordion-item bg-transparent border-0 mb-4">
                         <h2 class="accordion-header" id="headingRecetasShots">
-                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasShots" aria-expanded="false" aria-controls="collapseRecetasShots" style="background: rgba(255,0,234,0.05); border: 1px solid var(--p-magenta); color: var(--p-magenta); box-shadow: 0 0 10px rgba(255,0,234,0.2);">
-                                <i class="bi bi-lightning-charge me-2"></i> 3. ESTRUCTURADOR DE FÓRMULAS DE SHOTS Y CALDOS DE HUESO
+                            <button class="accordion-button collapsed font-orbitron fw-bold d-flex justify-content-between align-items-center flex-wrap gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasShots" aria-expanded="false" aria-controls="collapseRecetasShots" style="background: rgba(255,0,234,0.05); border: 1px solid var(--p-magenta); color: var(--p-magenta); box-shadow: 0 0 10px rgba(255,0,234,0.2);">
+                                <span><i class="bi bi-lightning-charge me-2"></i> 3. FÓRMULAS DE SHOTS Y CALDOS DE HUESO</span>
+                                <span class="badge bg-dark border text-white font-orbitron me-3" style="border-color:var(--p-magenta) !important; color:var(--p-magenta) !important; font-size:0.72rem;"><i class="bi bi-boxes me-1"></i> BODEGA 3: SHOTS Y CALDOS</span>
                             </button>
                         </h2>
                         <div id="collapseRecetasShots" class="accordion-collapse collapse" aria-labelledby="headingRecetasShots" data-bs-parent="#accordionRecetas">
                             <div class="accordion-body p-0 pt-3">
                                 <div class="table-container mb-0" style="border-top: 3px solid var(--p-magenta);">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+                                        <span class="small font-orbitron" style="color:var(--p-magenta);"><i class="bi bi-link-45deg me-1"></i> BODEGA VINCULADA: <b>3. SUMINISTROS Y MATERIA PRIMA: SHOTS Y CALDOS DE HUESO</b></span>
+                                        <button type="button" class="btn btn-xs btn-outline-light font-orbitron px-2 py-1" style="border-color:var(--p-magenta); color:var(--p-magenta); font-size:0.75rem;" onclick="irABodegaEspecifica('shots')"><i class="bi bi-box-arrow-up-right me-1"></i> IR A BODEGA DE SHOTS</button>
+                                    </div>
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <label class="form-label-neon" style="color:var(--p-magenta);">SHOT O CALDO DE HUESO (OUTPUT)</label>
+                                            <label class="form-label-neon" style="color:var(--p-magenta);">SHOT O CALDO DE HUESO (PRODUCTO CON FÓRMULA)</label>
                                             <select id="rec-producto-shots" class="form-select text-white" style="border-color:var(--p-magenta);" onchange="cargarTablaReceta('shots')"></select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label-neon" style="color:var(--p-magenta);">EXTRACTO / INGREDIENTE ESPECÍFICO (INPUT)</label>
-                                            <select id="rec-insumo-shots" class="form-select text-white" style="border-color:var(--p-magenta);" onchange="actualizarUnidadDefaultInsumo('shots')"></select>
+                                            <label class="form-label-neon" style="color:var(--p-magenta);">INSUMO DE BODEGA 3: SHOTS Y CALDOS (INPUT)</label>
+                                            <select id="rec-insumo-shots" class="form-select text-white" style="border-color:var(--p-magenta);" onchange="actualizarUnidadDefaultInsumo('shots'); previsualizarCostoDosisFormula('shots')"></select>
                                         </div>
                                     </div>
                                     <div class="row g-3 mt-2 align-items-end">
                                         <div class="col-md-5">
                                             <label class="form-label-neon" style="color:var(--p-magenta);">DOSIS REQUERIDA POR SHOT / CALDO</label>
-                                            <input type="number" id="rec-cantidad-shots" class="form-control text-white fs-4" style="border-color:var(--p-magenta);" placeholder="0.00" step="0.01">
+                                            <input type="number" id="rec-cantidad-shots" class="form-control text-white fs-4" style="border-color:var(--p-magenta);" placeholder="0.00" step="0.01" oninput="previsualizarCostoDosisFormula('shots')">
                                         </div>
                                         <div class="col-md-3">
                                             <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
-                                            <select id="rec-unidad-shots" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;">
+                                            <select id="rec-unidad-shots" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;" onchange="previsualizarCostoDosisFormula('shots')">
                                                 <option value="gr">🌾 Gramos (gr)</option>
                                                 <option value="mls">💧 Mililitros (mls)</option>
+                                                <option value="porc">🥣 Porciones Bodega (porc)</option>
                                                 <option value="und">🍏 Unidades (und)</option>
                                             </select>
                                         </div>
@@ -1852,16 +1883,21 @@
                                                 <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR A FÓRMULA DE SHOT/CALDO
                                             </button>
                                         </div>
+                                        <div class="col-12">
+                                            <div id="preview-costo-dosis-shots" class="small font-orbitron px-3 py-2 rounded border border-secondary text-info" style="background: rgba(255,0,234,0.05);">
+                                                <i class="bi bi-calculator me-1"></i> Selecciona un insumo e ingresa la dosis para ver el costo exacto según Bodega de Shots.
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="mt-4 p-3 rounded-3" style="background: rgba(0,0,0,0.6); border: 1px dashed var(--p-magenta);">
-                                        <h6 class="form-label-neon mb-3 fs-6 text-center" style="color:var(--p-magenta);">BIOLOGÍA DE LA FÓRMULA ACTIVA (SHOT / CALDO DE HUESO)</h6>
+                                        <h6 class="form-label-neon mb-3 fs-6 text-center" style="color:var(--p-magenta);">BIOLOGÍA DE LA FÓRMULA ACTIVA (SHOT / CALDO • PRECIOS BODEGA 3)</h6>
                                         <div class="table-responsive">
                                             <table class="table text-center align-middle m-0">
                                                 <thead class="table-dark">
                                                     <tr>
-                                                        <th>EXTRACTO / MATERIAL / BASE</th>
-                                                        <th>DOSIS_REQUERIDA</th>
-                                                        <th>COSTO PROYECTADO</th>
+                                                        <th>INSUMO / BODEGA ORIGEN</th>
+                                                        <th>DOSIS REQUERIDA</th>
+                                                        <th>COSTO SEGÚN BODEGA</th>
                                                         <th>SEPARAR</th>
                                                     </tr>
                                                 </thead>
@@ -1877,33 +1913,39 @@
                     <!-- 4. ESTRUCTURADOR DE FÓRMULAS DE EXÓTICOS -->
                     <div class="accordion-item bg-transparent border-0 mb-4">
                         <h2 class="accordion-header" id="headingRecetasExoticos">
-                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasExoticos" aria-expanded="false" aria-controls="collapseRecetasExoticos" style="background: rgba(189,0,255,0.05); border: 1px solid #bd00ff; color: #bd00ff; box-shadow: 0 0 10px rgba(189,0,255,0.2);">
-                                <i class="bi bi-stars me-2"></i> 4. ESTRUCTURADOR DE FÓRMULAS DE EXÓTICOS
+                            <button class="accordion-button collapsed font-orbitron fw-bold d-flex justify-content-between align-items-center flex-wrap gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasExoticos" aria-expanded="false" aria-controls="collapseRecetasExoticos" style="background: rgba(189,0,255,0.05); border: 1px solid #bd00ff; color: #bd00ff; box-shadow: 0 0 10px rgba(189,0,255,0.2);">
+                                <span><i class="bi bi-stars me-2"></i> 4. FÓRMULAS DE LÍNEA EXÓTICOS</span>
+                                <span class="badge bg-dark border font-orbitron me-3" style="border-color:#bd00ff !important; color:#bd00ff !important; font-size:0.72rem;"><i class="bi bi-boxes me-1"></i> BODEGA 5: LÍNEA EXÓTICOS</span>
                             </button>
                         </h2>
                         <div id="collapseRecetasExoticos" class="accordion-collapse collapse" aria-labelledby="headingRecetasExoticos" data-bs-parent="#accordionRecetas">
                             <div class="accordion-body p-0 pt-3">
                                 <div class="table-container mb-0" style="border-top: 3px solid #bd00ff;">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+                                        <span class="small font-orbitron" style="color:#bd00ff;"><i class="bi bi-link-45deg me-1"></i> BODEGA VINCULADA: <b>5. SUMINISTROS Y MATERIA PRIMA: LÍNEA EXÓTICOS</b></span>
+                                        <button type="button" class="btn btn-xs btn-outline-light font-orbitron px-2 py-1" style="border-color:#bd00ff; color:#bd00ff; font-size:0.75rem;" onclick="irABodegaEspecifica('exoticos')"><i class="bi bi-box-arrow-up-right me-1"></i> IR A BODEGA EXÓTICOS</button>
+                                    </div>
                                     <div class="row g-3">
                                         <div class="col-md-6">
-                                            <label class="form-label-neon" style="color: #bd00ff;">PRODUCTO EXÓTICO (OUTPUT)</label>
+                                            <label class="form-label-neon" style="color: #bd00ff;">PRODUCTO EXÓTICO (PRODUCTO CON FÓRMULA)</label>
                                             <select id="rec-producto-exoticos" class="form-select text-white" style="border-color: #bd00ff;" onchange="cargarTablaReceta('exoticos')"></select>
                                         </div>
                                         <div class="col-md-6">
-                                            <label class="form-label-neon" style="color: #bd00ff;">INSUMO / BASE EXÓTICA (INPUT)</label>
-                                            <select id="rec-insumo-exoticos" class="form-select text-white" style="border-color: #bd00ff;" onchange="actualizarUnidadDefaultInsumo('exoticos')"></select>
+                                            <label class="form-label-neon" style="color: #bd00ff;">INSUMO DE BODEGA 5: LÍNEA EXÓTICOS (INPUT)</label>
+                                            <select id="rec-insumo-exoticos" class="form-select text-white" style="border-color: #bd00ff;" onchange="actualizarUnidadDefaultInsumo('exoticos'); previsualizarCostoDosisFormula('exoticos')"></select>
                                         </div>
                                     </div>
                                     <div class="row g-3 mt-2 align-items-end">
                                         <div class="col-md-5">
                                             <label class="form-label-neon" style="color: #bd00ff;">DOSIS REQUERIDA POR PRODUCTO EXÓTICO</label>
-                                            <input type="number" id="rec-cantidad-exoticos" class="form-control text-white fs-4" style="border-color: #bd00ff;" placeholder="0.00" step="0.01">
+                                            <input type="number" id="rec-cantidad-exoticos" class="form-control text-white fs-4" style="border-color: #bd00ff;" placeholder="0.00" step="0.01" oninput="previsualizarCostoDosisFormula('exoticos')">
                                         </div>
                                         <div class="col-md-3">
                                             <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
-                                            <select id="rec-unidad-exoticos" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;">
+                                            <select id="rec-unidad-exoticos" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;" onchange="previsualizarCostoDosisFormula('exoticos')">
                                                 <option value="gr">🌾 Gramos (gr)</option>
                                                 <option value="mls">💧 Mililitros (mls)</option>
+                                                <option value="porc">🥣 Porciones Bodega (porc)</option>
                                                 <option value="und">🍏 Unidades (und)</option>
                                             </select>
                                         </div>
@@ -1912,16 +1954,21 @@
                                                 <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR A FÓRMULA DE EXÓTICO
                                             </button>
                                         </div>
+                                        <div class="col-12">
+                                            <div id="preview-costo-dosis-exoticos" class="small font-orbitron px-3 py-2 rounded border border-secondary text-info" style="background: rgba(189,0,255,0.05);">
+                                                <i class="bi bi-calculator me-1"></i> Selecciona un insumo e ingresa la dosis para ver el costo exacto según Bodega Exóticos.
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="mt-4 p-3 rounded-3" style="background: rgba(0,0,0,0.6); border: 1px dashed #bd00ff;">
-                                        <h6 class="form-label-neon mb-3 fs-6 text-center" style="color: #bd00ff;">BIOLOGÍA DE LA FÓRMULA ACTIVA (PRODUCTO EXÓTICO)</h6>
+                                        <h6 class="form-label-neon mb-3 fs-6 text-center" style="color: #bd00ff;">BIOLOGÍA DE LA FÓRMULA ACTIVA (EXÓTICO • PRECIOS BODEGA 5)</h6>
                                         <div class="table-responsive">
                                             <table class="table text-center align-middle m-0">
                                                 <thead class="table-dark">
                                                     <tr>
-                                                        <th>EXTRACTO / MATERIAL / BASE</th>
-                                                        <th>DOSIS_REQUERIDA</th>
-                                                        <th>COSTO PROYECTADO</th>
+                                                        <th>INSUMO / BODEGA ORIGEN</th>
+                                                        <th>DOSIS REQUERIDA</th>
+                                                        <th>COSTO SEGÚN BODEGA</th>
                                                         <th>SEPARAR</th>
                                                     </tr>
                                                 </thead>
@@ -3214,6 +3261,7 @@
                     <td>${fVencHtml}</td>
                     <td class="pe-4">${barraHtml}</td>
                     <td class="text-nowrap">
+                        <button class="btn btn-sm btn-outline-light font-orbitron fw-bold me-1" style="border-color:var(--p-bio-green); color:var(--p-bio-green);" onclick="irAFormulaDeProducto(${p.id}, 'pulpas')" title="Ver / Editar Fórmula en Bodega de Pulpas"><i class="bi bi-flask me-1"></i>FÓRMULA</button>
                         <button class="btn btn-sm btn-outline-warning font-orbitron fw-bold me-1" onclick="editarPrecioRapido(${p.id})" title="Modificar Precio"><i class="bi bi-tag-fill me-1"></i>PRECIO</button>
                         <button class="btn btn-sm btn-outline-success font-orbitron fw-bold me-1" onclick="aumentarStockRapido(${p.id})" title="Aumentar Stock"><i class="bi bi-plus-circle-fill me-1"></i>AUMENTAR</button>
                         <button class="btn btn-sm btn-outline-info font-orbitron fw-bold me-1" onclick="cargarEditorProduccion(${p.id})" title="Editar Lote / Stock"><i class="bi bi-pencil-square"></i></button>
@@ -5845,10 +5893,10 @@
             if (rawKilo > 0 && rawKilo <= 100) rawKilo *= 1000;
             let rawPorc = parseFloat(document.getElementById('armatubatido-precio') ? document.getElementById('armatubatido-precio').value : 0) || 0;
             let esMasaVol = (uni === 'gr' || uni === 'mls');
-            if (rawPorc <= 0 && rawKilo > 0) {
+            if (rawPorc > 0 && dosisVal > 0) {
+                rawKilo = esMasaVol ? Math.round((rawPorc * 1000) / Math.max(0.01, dosisVal)) : Math.round(rawPorc / Math.max(0.01, dosisVal));
+            } else if (rawPorc <= 0 && rawKilo > 0) {
                 rawPorc = esMasaVol ? Math.round((rawKilo / 1000) * dosisVal) : Math.round(rawKilo * dosisVal);
-            } else if (rawKilo <= 0 && rawPorc > 0) {
-                rawKilo = esMasaVol ? Math.round((rawPorc * 1000) / Math.max(1, dosisVal)) : Math.round(rawPorc / Math.max(1, dosisVal));
             }
             precioVal = Math.round(rawPorc);
             precioKiloVal = Math.round(rawKilo);
@@ -5872,6 +5920,10 @@
             stock=document.getElementById('ins-stock').value; 
             suc=document.getElementById('ins-sucursal').value;
             precioVal = normalizarPrecioCLP(document.getElementById('ins-precio').value);
+            const porcPulpasInp = parseFloat(document.getElementById('ins-precio-porcion')?.value) || 0;
+            if (precioVal <= 0 && porcPulpasInp > 0 && dosisVal > 0) {
+                precioVal = (uni === 'gr' || uni === 'mls') ? Math.round((porcPulpasInp * 1000) / dosisVal) : Math.round(porcPulpasInp / dosisVal);
+            }
             precioKiloVal = precioVal;
             imgVal = document.getElementById('ins-imagen') ? document.getElementById('ins-imagen').value.trim() : '';
         } else if(tipo==='vasos') { 
@@ -5883,7 +5935,11 @@
             dosisVal=parseFloat(document.getElementById('vaso-dosis') ? document.getElementById('vaso-dosis').value : 1) || 1;
             stock=document.getElementById('vaso-stock').value; 
             suc=document.getElementById('vaso-sucursal').value;
-            precioVal = normalizarPrecioCLP(document.getElementById('vaso-precio').value);
+            precioVal = (uni === 'und') ? (Math.round(parseFloat(document.getElementById('vaso-precio').value) || 0)) : normalizarPrecioCLP(document.getElementById('vaso-precio').value);
+            const porcVasoInp = parseFloat(document.getElementById('vaso-precio-porcion')?.value) || 0;
+            if (precioVal <= 0 && porcVasoInp > 0 && dosisVal > 0) {
+                precioVal = (uni === 'gr' || uni === 'mls') ? Math.round((porcVasoInp * 1000) / dosisVal) : Math.round(porcVasoInp / dosisVal);
+            }
             precioKiloVal = precioVal;
             imgVal = document.getElementById('vaso-imagen') ? document.getElementById('vaso-imagen').value.trim() : '';
         } else if(tipo==='shots') {
@@ -5896,6 +5952,10 @@
             stock=document.getElementById('shot-stock').value; 
             suc=document.getElementById('shot-sucursal').value;
             precioVal = normalizarPrecioCLP(document.getElementById('shot-precio').value);
+            const porcShotInp = parseFloat(document.getElementById('shot-precio-porcion')?.value) || 0;
+            if (precioVal <= 0 && porcShotInp > 0 && dosisVal > 0) {
+                precioVal = (uni === 'gr' || uni === 'mls') ? Math.round((porcShotInp * 1000) / dosisVal) : Math.round(porcShotInp / dosisVal);
+            }
             precioKiloVal = precioVal;
             imgVal = document.getElementById('shot-imagen') ? document.getElementById('shot-imagen').value.trim() : '';
         } else if(tipo==='exoticos') {
@@ -5910,6 +5970,10 @@
             stock = (modoStock === 'porc' && (uni === 'gr' || uni === 'mls')) ? (stockRaw * dosisVal) : stockRaw;
             suc=document.getElementById('exoticos-sucursal') ? document.getElementById('exoticos-sucursal').value : 'Antofagasta';
             precioVal = normalizarPrecioCLP(document.getElementById('exoticos-precio') ? document.getElementById('exoticos-precio').value : 0);
+            const porcExoInp = parseFloat(document.getElementById('exoticos-precio-porcion')?.value) || 0;
+            if (precioVal <= 0 && porcExoInp > 0 && dosisVal > 0) {
+                precioVal = (uni === 'gr' || uni === 'mls') ? Math.round((porcExoInp * 1000) / dosisVal) : Math.round(porcExoInp / dosisVal);
+            }
             precioKiloVal = precioVal;
             imgVal = document.getElementById('exoticos-imagen') ? document.getElementById('exoticos-imagen').value.trim() : '';
         }
@@ -6497,6 +6561,42 @@
                 inpKilo.value = pKilo;
             }
             recalcularVentaArmaTuBatidoDesdeMargen();
+        } else if (tipo === 'pulpas') {
+            const unidad = document.getElementById('ins-unidad')?.value || 'gr';
+            const dosis = parseFloat(document.getElementById('ins-dosis')?.value) || (unidad === 'und' ? 1 : 50);
+            const pPorcion = parseFloat(document.getElementById('ins-precio-porcion')?.value) || 0;
+            const inpKilo = document.getElementById('ins-precio');
+            if (inpKilo && pPorcion > 0 && dosis > 0) {
+                inpKilo.value = (unidad === 'gr' || unidad === 'mls') ? Math.round((pPorcion * 1000) / dosis) : Math.round(pPorcion / dosis);
+            }
+            actualizarBadgeCostoEnVivo('pulpas', true);
+        } else if (tipo === 'vasos') {
+            const unidad = document.getElementById('vaso-unidad')?.value || 'und';
+            const dosis = parseFloat(document.getElementById('vaso-dosis')?.value) || 1;
+            const pPorcion = parseFloat(document.getElementById('vaso-precio-porcion')?.value) || 0;
+            const inpKilo = document.getElementById('vaso-precio');
+            if (inpKilo && pPorcion > 0 && dosis > 0) {
+                inpKilo.value = (unidad === 'gr' || unidad === 'mls') ? Math.round((pPorcion * 1000) / dosis) : Math.round(pPorcion / dosis);
+            }
+            actualizarBadgeCostoEnVivo('vasos', true);
+        } else if (tipo === 'shots') {
+            const unidad = document.getElementById('shot-unidad')?.value || 'mls';
+            const dosis = parseFloat(document.getElementById('shot-dosis')?.value) || (unidad === 'und' ? 1 : 30);
+            const pPorcion = parseFloat(document.getElementById('shot-precio-porcion')?.value) || 0;
+            const inpKilo = document.getElementById('shot-precio');
+            if (inpKilo && pPorcion > 0 && dosis > 0) {
+                inpKilo.value = (unidad === 'gr' || unidad === 'mls') ? Math.round((pPorcion * 1000) / dosis) : Math.round(pPorcion / dosis);
+            }
+            actualizarBadgeCostoEnVivo('shots', true);
+        } else if (tipo === 'exoticos') {
+            const unidad = document.getElementById('exoticos-unidad')?.value || 'gr';
+            const dosis = parseFloat(document.getElementById('exoticos-dosis')?.value) || (unidad === 'und' ? 1 : 50);
+            const pPorcion = parseFloat(document.getElementById('exoticos-precio-porcion')?.value) || 0;
+            const inpKilo = document.getElementById('exoticos-precio');
+            if (inpKilo && pPorcion > 0 && dosis > 0) {
+                inpKilo.value = (unidad === 'gr' || unidad === 'mls') ? Math.round((pPorcion * 1000) / dosis) : Math.round(pPorcion / dosis);
+            }
+            actualizarBadgeCostoEnVivo('exoticos', true);
         }
     }
 
@@ -6524,7 +6624,7 @@
         actualizarBadgeCostoEnVivo('armatubatido');
     }
 
-    function actualizarBadgeCostoEnVivo(tipo) {
+    function actualizarBadgeCostoEnVivo(tipo, desdePorcion = false) {
         const suc = 'Antofagasta';
         if (tipo === 'pulpas') {
             let precio = parseFloat(document.getElementById('ins-precio')?.value) || 0;
@@ -6532,9 +6632,9 @@
             const dosis = parseFloat(document.getElementById('ins-dosis')?.value) || 50;
             const unidad = document.getElementById('ins-unidad')?.value || 'gr';
             const stock = parseFloat(document.getElementById('ins-stock')?.value) || 0;
-            let costo = (unidad === 'gr' || unidad === 'mls') ? Math.round((precio / 1000) * dosis) : Math.round(precio * dosis);
             const inpPorc = document.getElementById('ins-precio-porcion');
-            if (inpPorc && costo > 0) inpPorc.value = costo;
+            let costo = desdePorcion ? (parseFloat(inpPorc?.value) || 0) : ((unidad === 'gr' || unidad === 'mls') ? Math.round((precio / 1000) * dosis) : Math.round(precio * dosis));
+            if (!desdePorcion && inpPorc && costo > 0 && document.activeElement !== inpPorc) inpPorc.value = costo;
             let porcRend = (stock > 0 && dosis > 0) ? ((unidad === 'gr' || unidad === 'mls') ? Math.floor(stock / dosis) : Math.floor(stock)) : 0;
             const b = document.getElementById('badge-costo-porcion-pulpas');
             if (b) {
@@ -6545,9 +6645,9 @@
             const precio = parseFloat(document.getElementById('vaso-precio')?.value) || 0;
             const dosis = parseFloat(document.getElementById('vaso-dosis')?.value) || 1;
             const unidad = document.getElementById('vaso-unidad')?.value || 'und';
-            let costo = (unidad === 'gr' || unidad === 'mls') ? Math.round((precio / 1000) * dosis) : Math.round(precio * dosis);
             const inpPorc = document.getElementById('vaso-precio-porcion');
-            if (inpPorc && costo > 0) inpPorc.value = costo;
+            let costo = desdePorcion ? (parseFloat(inpPorc?.value) || 0) : ((unidad === 'gr' || unidad === 'mls') ? Math.round((precio / 1000) * dosis) : Math.round(precio * dosis));
+            if (!desdePorcion && inpPorc && costo > 0 && document.activeElement !== inpPorc) inpPorc.value = costo;
             const b = document.getElementById('badge-costo-porcion-vasos');
             if (b) b.innerText = `${formatMoney(costo, suc)} / porc (${dosis}${unidad})`;
         } else if (tipo === 'shots') {
@@ -6556,9 +6656,9 @@
             const dosis = parseFloat(document.getElementById('shot-dosis')?.value) || 30;
             const unidad = document.getElementById('shot-unidad')?.value || 'mls';
             const stock = parseFloat(document.getElementById('shot-stock')?.value) || 0;
-            let costo = (unidad === 'gr' || unidad === 'mls') ? Math.round((precio / 1000) * dosis) : Math.round(precio * dosis);
             const inpPorc = document.getElementById('shot-precio-porcion');
-            if (inpPorc && costo > 0) inpPorc.value = costo;
+            let costo = desdePorcion ? (parseFloat(inpPorc?.value) || 0) : ((unidad === 'gr' || unidad === 'mls') ? Math.round((precio / 1000) * dosis) : Math.round(precio * dosis));
+            if (!desdePorcion && inpPorc && costo > 0 && document.activeElement !== inpPorc) inpPorc.value = costo;
             let porcRend = (stock > 0 && dosis > 0) ? ((unidad === 'gr' || unidad === 'mls') ? Math.floor(stock / dosis) : Math.floor(stock)) : 0;
             const b = document.getElementById('badge-costo-porcion-shots');
             if (b) {
@@ -6592,9 +6692,9 @@
             const optFisico = document.querySelector('#exoticos-stock-tipo option[value="fisico"]');
             if (optFisico) optFisico.innerText = (unidad === 'gr' ? 'Gramos' : (unidad === 'mls' ? 'Mls' : 'Unidades'));
 
-            let costoPorc = (unidad === 'gr' || unidad === 'mls') ? Math.round((precio / 1000) * dosis) : Math.round(precio * dosis);
             const inpPorc = document.getElementById('exoticos-precio-porcion');
-            if (inpPorc && costoPorc > 0) inpPorc.value = costoPorc;
+            let costoPorc = desdePorcion ? (parseFloat(inpPorc?.value) || 0) : ((unidad === 'gr' || unidad === 'mls') ? Math.round((precio / 1000) * dosis) : Math.round(precio * dosis));
+            if (!desdePorcion && inpPorc && costoPorc > 0 && document.activeElement !== inpPorc) inpPorc.value = costoPorc;
             let stockPorc = (modoStock === 'porc') ? stockInpVal : ((dosis > 0 && (unidad === 'gr' || unidad === 'mls')) ? (stockInpVal / dosis) : stockInpVal);
             let totalStockVal = stockPorc * costoPorc;
 
@@ -6668,7 +6768,321 @@
         });
     }
 
-    // --- RECETAS DE PULPAS, VASOS Y SHOTS/CALDOS ---
+    // =========================================================================
+    // MOTOR UNIFICADO BODEGA <-> FÓRMULAS (PRECIO EXACTO POR PORCIÓN Y GRAMO)
+    // =========================================================================
+    function clasificarTipoBodegaInsumo(i) {
+        if (!i) return 'pulpas';
+        const cat = (i.categoria || '').toLowerCase();
+        const sub = (i.subcategoria || '').toLowerCase();
+        const nom = (i.nombre || '').toLowerCase();
+        if (cat.includes('arma') || cat.includes('porci')) return 'armatubatido';
+        if (cat.includes('exot') || cat.includes('exótico') || sub.includes('exot') || nom.includes('exot')) return 'exoticos';
+        if (cat.includes('vaso') || cat.includes('packaging')) return 'vasos';
+        if (cat.includes('shot') || cat.includes('caldo')) return 'shots';
+        return 'pulpas';
+    }
+
+    function obtenerConfigBodegaFormula(tipoFormula) {
+        if (tipoFormula === 'vasos') {
+            return {
+                tipo: 'vasos',
+                bodegaNombre: '2. Vasos y Packaging (500 mls) + 4. Porciones (500 mls) + 1. Materia Prima',
+                bodegaCorta: 'Bodegas 500 mls (Vasos / Porciones / Materia Prima)',
+                color: 'var(--p-cyan)',
+                collapseBodegaId: 'collapseVasos',
+                collapseRecetaId: 'collapseRecetasVasos',
+                selectProdId: 'rec-producto-vasos'
+            };
+        }
+        if (tipoFormula === 'shots') {
+            return {
+                tipo: 'shots',
+                bodegaNombre: '3. Suministros y Materia Prima: Shots y Caldos de Hueso',
+                bodegaCorta: 'Bodega 3: Shots y Caldos',
+                color: 'var(--p-magenta)',
+                collapseBodegaId: 'collapseShots',
+                collapseRecetaId: 'collapseRecetasShots',
+                selectProdId: 'rec-producto-shots'
+            };
+        }
+        if (tipoFormula === 'exoticos') {
+            return {
+                tipo: 'exoticos',
+                bodegaNombre: '5. Suministros y Materia Prima: Línea Exóticos',
+                bodegaCorta: 'Bodega 5: Línea Exóticos',
+                color: '#bd00ff',
+                collapseBodegaId: 'collapseExoticos',
+                collapseRecetaId: 'collapseRecetasExoticos',
+                selectProdId: 'rec-producto-exoticos'
+            };
+        }
+        return {
+            tipo: 'pulpas',
+            bodegaNombre: '1. Registro Botánico: Materia Prima (Pulpas)',
+            bodegaCorta: 'Bodega 1: Materia Prima (Pulpas)',
+            color: 'var(--p-bio-green)',
+            collapseBodegaId: 'collapsePulpas',
+            collapseRecetaId: 'collapseRecetasPulpas',
+            selectProdId: 'rec-producto-pulpas'
+        };
+    }
+
+    function obtenerTipoFormulaDeProducto(p) {
+        const clasif = clasificarProductoMatriz(p || {});
+        if (clasif.esArmaTuBatido) return null; // Arma tu Batido es dinámico por porción
+        if (clasif.esPack) return 'pulpas';
+        if (clasif.esShot) return 'shots';
+        if (clasif.esExotico) return 'exoticos';
+        return 'vasos';
+    }
+
+    function obtenerNombreBodegaInsumo(tipoBodega) {
+        if (tipoBodega === 'vasos') return 'Bodega 2: Vasos y Packaging';
+        if (tipoBodega === 'shots') return 'Bodega 3: Shots y Caldos';
+        if (tipoBodega === 'armatubatido') return 'Bodega 4: Porciones 500 mls';
+        if (tipoBodega === 'exoticos') return 'Bodega 5: Línea Exóticos';
+        return 'Bodega 1: Materia Prima (Pulpas)';
+    }
+
+    function obtenerMetricasPrecioInsumo(i) {
+        if (!i) return { tipoBodega: 'pulpas', nombreBodega: 'Bodega 1: Materia Prima (Pulpas)', medIns: 'gr', esMasaVol: true, dosisPorc: 50, precioBase: 0, costoPorcion: 0 };
+        const tipoBodega = clasificarTipoBodegaInsumo(i);
+        const esArma = (tipoBodega === 'armatubatido');
+        const medIns = (i.medida || 'gr').toLowerCase();
+        const esMasaVol = (medIns === 'gr' || medIns === 'mls');
+        const defaultDosis = (medIns === 'und') ? 1 : (esArma ? 30 : (tipoBodega === 'shots' ? 30 : 50));
+        const dosisPorc = (parseFloat(i.cantidadPorcion) > 0) ? parseFloat(i.cantidadPorcion) : defaultDosis;
+
+        let precioBase = 0;
+        let costoPorcion = 0;
+
+        if (esArma) {
+            const pPorcRaw = parseFloat(i.precio) || 0;
+            let pKiloRaw = parseFloat(i.precioKilo) || 0;
+            if (pKiloRaw > 0 && pKiloRaw <= 100 && esMasaVol) pKiloRaw *= 1000;
+            if (pPorcRaw > 0) {
+                costoPorcion = pPorcRaw;
+                precioBase = esMasaVol ? ((costoPorcion * 1000) / dosisPorc) : (costoPorcion / dosisPorc);
+            } else if (pKiloRaw > 0) {
+                precioBase = pKiloRaw;
+                costoPorcion = esMasaVol ? ((precioBase / 1000) * dosisPorc) : (precioBase * dosisPorc);
+            }
+        } else {
+            const pAlmacenado = (medIns === 'und') ? (parseFloat(i.precio) || 0) : normalizarPrecioCLP(i.precio || 0);
+            const pKiloDB = (medIns === 'und') ? (parseFloat(i.precioKilo) || 0) : normalizarPrecioCLP(i.precioKilo || 0);
+            precioBase = pKiloDB > 0 ? pKiloDB : pAlmacenado;
+            costoPorcion = esMasaVol ? ((precioBase / 1000) * dosisPorc) : (precioBase * dosisPorc);
+        }
+
+        return {
+            tipoBodega,
+            nombreBodega: obtenerNombreBodegaInsumo(tipoBodega),
+            medIns,
+            esMasaVol,
+            dosisPorc,
+            precioBase,
+            costoPorcion
+        };
+    }
+
+    function calcularCostoIngredienteFormula(insumo, gastoVal, unidadFormula) {
+        if (!insumo || !(gastoVal > 0)) return 0;
+        const m = obtenerMetricasPrecioInsumo(insumo);
+        const uni = (unidadFormula || m.medIns || 'gr').toLowerCase();
+
+        if (m.esMasaVol) {
+            // Si en la fórmula ingresó gramos o mililitros, calculamos directamente sobre el valor de la porción en Bodega:
+            // Ej: si en Bodega la porción de 500 gr vale $1.600 -> al ingresar 500 gr: (500 / 500) * 1600 = $1.600 exactos.
+            if (uni === 'gr' || uni === 'mls') {
+                if (m.dosisPorc > 0 && m.costoPorcion > 0) {
+                    return (gastoVal / m.dosisPorc) * m.costoPorcion;
+                }
+                return (gastoVal / 1000) * m.precioBase;
+            }
+            // Si ingresó porciones ('porc') o unidades ('und') de un insumo en gr/mls: cada porción equivale a costoPorcion
+            return gastoVal * m.costoPorcion;
+        } else {
+            if (uni === 'porc') return gastoVal * m.costoPorcion;
+            if (uni === 'und') return gastoVal * m.precioBase;
+            // Si el insumo se registró como 'und' pero representa una bolsa/porción con peso (ej: 500 gr = $1.600)
+            if (m.dosisPorc > 1) {
+                return (gastoVal / m.dosisPorc) * m.precioBase;
+            }
+            const matchPeso = (insumo.nombre || '').match(/(\d+(?:[.,]\d+)?)\s*(gr|g|mls|ml)\b/i);
+            if (matchPeso) {
+                const pesoNom = parseFloat(matchPeso[1].replace(',', '.'));
+                if (pesoNom > 0) return (gastoVal / pesoNom) * m.precioBase;
+            }
+            return (gastoVal / 1000) * m.precioBase;
+        }
+    }
+
+    function renderOptionInsumoFormula(i, suc = 'Antofagasta') {
+        const m = obtenerMetricasPrecioInsumo(i);
+        const lblBase = m.medIns === 'gr' ? 'Kg' : (m.medIns === 'mls' ? 'Lt' : 'Und');
+        const costoPorcFmt = formatMoney(Math.round(m.costoPorcion), suc);
+        const baseFmt = formatMoney(Math.round(m.precioBase), suc);
+        const textoPrecio = m.esMasaVol
+            ? `Porción ${m.dosisPorc}${m.medIns} = ${costoPorcFmt} (${baseFmt}/${lblBase})`
+            : `${baseFmt}/${lblBase} (Porc ${m.dosisPorc}${m.medIns} = ${costoPorcFmt})`;
+        return `<option value="${i.idInsumo}" data-nombre="${(i.nombre || '').replace(/"/g, '&quot;')}" data-medida="${m.medIns}" data-dosis="${m.dosisPorc}">${i.nombre} — ${textoPrecio}</option>`;
+    }
+
+    function construirHtmlSelectInsumosBodega(insNodo, tipoFormula, suc = 'Antofagasta') {
+        const lista = Array.isArray(insNodo) ? insNodo : [];
+        if (tipoFormula === 'pulpas') {
+            const items = lista.filter(i => clasificarTipoBodegaInsumo(i) === 'pulpas');
+            if (items.length === 0) return '<option value="">(Bodega 1: Materia Prima - Pulpas vacía)</option>';
+            return `<optgroup label="🌿 Bodega 1: Materia Prima (Pulpas)">${items.map(i => renderOptionInsumoFormula(i, suc)).join('')}</optgroup>`;
+        }
+        if (tipoFormula === 'shots') {
+            const items = lista.filter(i => clasificarTipoBodegaInsumo(i) === 'shots');
+            if (items.length === 0) return '<option value="">(Bodega 3: Shots y Caldos vacía)</option>';
+            return `<optgroup label="⚡ Bodega 3: Shots y Caldos de Hueso">${items.map(i => renderOptionInsumoFormula(i, suc)).join('')}</optgroup>`;
+        }
+        if (tipoFormula === 'exoticos') {
+            const items = lista.filter(i => clasificarTipoBodegaInsumo(i) === 'exoticos');
+            if (items.length === 0) return '<option value="">(Bodega 5: Línea Exóticos vacía)</option>';
+            return `<optgroup label="🌺 Bodega 5: Línea Exóticos">${items.map(i => renderOptionInsumoFormula(i, suc)).join('')}</optgroup>`;
+        }
+        // tipoFormula === 'vasos' (Elíxires 500 mls: Vasos/Packaging + Porciones 500 mls + Materia Prima)
+        const gVasos = lista.filter(i => clasificarTipoBodegaInsumo(i) === 'vasos');
+        const gArma = lista.filter(i => clasificarTipoBodegaInsumo(i) === 'armatubatido');
+        const gPulpas = lista.filter(i => clasificarTipoBodegaInsumo(i) === 'pulpas');
+        if (gVasos.length === 0 && gArma.length === 0 && gPulpas.length === 0) {
+            return '<option value="">(Bodegas de 500 mls vacías)</option>';
+        }
+        let html = '';
+        if (gVasos.length > 0) html += `<optgroup label="🥤 Bodega 2: Vasos y Packaging (500 mls)">${gVasos.map(i => renderOptionInsumoFormula(i, suc)).join('')}</optgroup>`;
+        if (gArma.length > 0) html += `<optgroup label="🍓 Bodega 4: Porciones (500 mls)">${gArma.map(i => renderOptionInsumoFormula(i, suc)).join('')}</optgroup>`;
+        if (gPulpas.length > 0) html += `<optgroup label="🌿 Bodega 1: Materia Prima (Pulpas)">${gPulpas.map(i => renderOptionInsumoFormula(i, suc)).join('')}</optgroup>`;
+        return html;
+    }
+
+    function buscarInsumoParaFormula(nombreIng, idInsumoOpt, tipoFormula = 'pulpas', suc = 'Antofagasta') {
+        if (!Array.isArray(insMem) || insMem.length === 0) return null;
+
+        // 1. Si la línea tiene el ID exacto del insumo de bodega, usarlo sin ambigüedad
+        if (idInsumoOpt) {
+            const exactoId = insMem.find(i => String(i.idInsumo) === String(idInsumoOpt));
+            if (exactoId) return exactoId;
+        }
+
+        const nomNorm = normalizarStr(nombreIng || '');
+        const sucNorm = normalizarStr(suc || 'Antofagasta');
+        const enSucursal = insMem.filter(i => !i.sucursal || normalizarStr(i.sucursal).includes(sucNorm) || sucNorm.includes(normalizarStr(i.sucursal)));
+        const baseBusqueda = enSucursal.length > 0 ? enSucursal : insMem;
+
+        const tiposBodegaPrioritarios = (tipoFormula === 'vasos')
+            ? ['vasos', 'armatubatido', 'pulpas']
+            : [tipoFormula];
+
+        // 2. Buscar primero estrictamente en la Bodega Correspondiente (si hay duplicados, preferir el más reciente / calibrado)
+        for (const tb of tiposBodegaPrioritarios) {
+            const candidatosBodega = baseBusqueda.filter(i => clasificarTipoBodegaInsumo(i) === tb && normalizarStr(i.nombre) === nomNorm);
+            if (candidatosBodega.length > 0) {
+                candidatosBodega.sort((a, b) => (Number(b.idInsumo) || 0) - (Number(a.idInsumo) || 0));
+                return candidatosBodega[0];
+            }
+        }
+
+        // 3. Fallback: coincidencia exacta en otras bodegas de la misma sucursal (para recetas antiguas)
+        const candidatosSuc = baseBusqueda.filter(i => normalizarStr(i.nombre) === nomNorm);
+        if (candidatosSuc.length > 0) {
+            candidatosSuc.sort((a, b) => (Number(b.idInsumo) || 0) - (Number(a.idInsumo) || 0));
+            return candidatosSuc[0];
+        }
+        return null;
+    }
+
+    async function asegurarInsumosCargadosFormula() {
+        if (!Array.isArray(insMem) || insMem.length === 0) {
+            try {
+                const res = await fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' });
+                if (res.ok) insMem = await res.json();
+            } catch (e) {}
+        }
+        return insMem || [];
+    }
+
+    function irABodegaEspecifica(tipoBodega) {
+        const tabInvBtn = document.querySelector('button[data-bs-target="#tab-inventario"]');
+        if (tabInvBtn) tabInvBtn.click();
+        playSound('click');
+        const mapCollapse = {
+            pulpas: 'collapsePulpas',
+            vasos: 'collapseVasos',
+            shots: 'collapseShots',
+            armatubatido: 'collapseArmaTuBatido',
+            exoticos: 'collapseExoticos'
+        };
+        const targetId = mapCollapse[tipoBodega] || 'collapsePulpas';
+        setTimeout(() => {
+            const el = document.getElementById(targetId);
+            if (el) {
+                if (!el.classList.contains('show')) new bootstrap.Collapse(el, { toggle: true });
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 180);
+    }
+
+    async function irAFormulaDeProducto(idProducto, tipoFormulaOpt = null) {
+        playSound('click');
+        const tabRecetasBtn = document.querySelector('button[data-bs-target="#tab-recetas"]');
+        if (tabRecetasBtn) tabRecetasBtn.click();
+        await prepararRecetas();
+        let tipo = tipoFormulaOpt;
+        if (!tipo && Array.isArray(window.productosRecetasMem)) {
+            const p = window.productosRecetasMem.find(x => String(x.id) === String(idProducto));
+            if (p) tipo = obtenerTipoFormulaDeProducto(p);
+        }
+        tipo = tipo || 'pulpas';
+        const cfg = obtenerConfigBodegaFormula(tipo);
+        const c = document.getElementById(cfg.collapseRecetaId);
+        if (c && !c.classList.contains('show')) new bootstrap.Collapse(c, { toggle: true });
+        const selProd = document.getElementById(cfg.selectProdId);
+        if (selProd) {
+            selProd.value = String(idProducto);
+            await cargarTablaReceta(tipo);
+        }
+        if (c) setTimeout(() => c.scrollIntoView({ behavior: 'smooth', block: 'start' }), 180);
+    }
+
+    function previsualizarCostoDosisFormula(tipo = 'pulpas', prodIdEmbebido = null) {
+        const esEmbebido = prodIdEmbebido !== null && prodIdEmbebido !== undefined;
+        const idInsSelect = esEmbebido ? `prod-rec-insumo-${prodIdEmbebido}` : (
+            tipo === 'vasos' ? 'rec-insumo-vasos' : (tipo === 'shots' ? 'rec-insumo-shots' : (tipo === 'exoticos' ? 'rec-insumo-exoticos' : 'rec-insumo-pulpas'))
+        );
+        const idCantInput = esEmbebido ? `prod-rec-cant-${prodIdEmbebido}` : (
+            tipo === 'vasos' ? 'rec-cantidad-vasos' : (tipo === 'shots' ? 'rec-cantidad-shots' : (tipo === 'exoticos' ? 'rec-cantidad-exoticos' : 'rec-cantidad-pulpas'))
+        );
+        const idUniSelect = esEmbebido ? `prod-rec-uni-${prodIdEmbebido}` : (
+            tipo === 'vasos' ? 'rec-unidad-vasos' : (tipo === 'shots' ? 'rec-unidad-shots' : (tipo === 'exoticos' ? 'rec-unidad-exoticos' : 'rec-unidad-pulpas'))
+        );
+        const idPreview = esEmbebido ? `prod-rec-preview-${prodIdEmbebido}` : `preview-costo-dosis-${tipo}`;
+
+        const sel = document.getElementById(idInsSelect);
+        const cantVal = parseFloat(document.getElementById(idCantInput)?.value) || 0;
+        const uniVal = document.getElementById(idUniSelect)?.value || 'gr';
+        const box = document.getElementById(idPreview);
+        if (!box || !sel || !sel.value) return;
+
+        const ins = (insMem || []).find(i => String(i.idInsumo) === String(sel.value));
+        if (!ins) return;
+        const m = obtenerMetricasPrecioInsumo(ins);
+        const suc = ins.sucursal || 'Antofagasta';
+        const lblBase = m.medIns === 'gr' ? 'Kg' : (m.medIns === 'mls' ? 'Lt' : 'Und');
+
+        if (cantVal > 0) {
+            const costoCalc = Math.round(calcularCostoIngredienteFormula(ins, cantVal, uniVal));
+            box.innerHTML = `<i class="bi bi-check-circle-fill text-success me-1"></i> <b>${ins.nombre}</b> (${m.nombreBodega}): <b>${cantVal} ${uniVal}</b> = <b class="text-warning fs-6">${formatMoney(costoCalc, suc)}</b> <span class="text-white-50 ms-2">[En Bodega: porción ${m.dosisPorc}${m.medIns} = ${formatMoney(Math.round(m.costoPorcion), suc)} • ${formatMoney(Math.round(m.precioBase), suc)}/${lblBase}]</span>`;
+        } else {
+            box.innerHTML = `<i class="bi bi-info-circle text-info me-1"></i> <b>${ins.nombre}</b> (${m.nombreBodega}): Porción en bodega <b>${m.dosisPorc} ${m.medIns} = ${formatMoney(Math.round(m.costoPorcion), suc)}</b> (${formatMoney(Math.round(m.precioBase), suc)}/${lblBase}). Ingresa la dosis para proyectar.`;
+        }
+    }
+
+    // --- RECETAS DE PULPAS, VASOS, SHOTS/CALDOS Y EXÓTICOS ---
     async function prepararRecetas() { 
         try { 
             const [rP, rI] = await Promise.all([
@@ -6678,133 +7092,98 @@
             const productos = await rP.json(); 
             window.productosRecetasMem = Array.isArray(productos) ? productos : [];
             const insumos = await rI.json(); 
-            insMem = insumos; // <-- CRUCIAL PARA CALCULAR PRECIO
+            insMem = Array.isArray(insumos) ? insumos : [];
             const suc = document.getElementById('filtro-sucursal-recetas') ? document.getElementById('filtro-sucursal-recetas').value : 'Antofagasta'; 
-            
-            const prodsNodo = productos.filter(p => p.sucursal === suc);
-            const insNodo = insumos.filter(i => i.sucursal === suc);
+            const sucNorm = normalizarStr(suc);
 
-            // 1. PRODUCTOS Y INSUMOS PARA PULPAS (PACKS / PRODUCCIÓN)
-            let prodsPulpas = prodsNodo.filter(p => {
-                const cat = (p.categoria || '').toLowerCase();
-                const nom = (p.nombre || '').toLowerCase();
-                return (cat.includes('pack') || cat.includes('pulpa') || nom.includes('pulpa')) && !cat.includes('shot') && !cat.includes('caldo');
+            const prodsNodo = window.productosRecetasMem.filter(p => {
+                if (!p || esInsumoCrudo(p.nombre || '')) return false;
+                const c = (p.categoria || '').toLowerCase();
+                const n = (p.nombre || '').toLowerCase();
+                if (c.includes('arma') || c.includes('porcion') || c.includes('personalizado') || n.startsWith('batido armado') || n.startsWith('batido personalizado')) return false;
+                return !p.sucursal || normalizarStr(p.sucursal).includes(sucNorm);
             });
-            prodsPulpas = deduplicarProductos(prodsPulpas);
+            const insNodo = insMem.filter(i => !i.sucursal || normalizarStr(i.sucursal).includes(sucNorm));
+
+            // Conservar selección previa si el usuario ya tenía un producto elegido
+            const prevSelPulpas = document.getElementById('rec-producto-pulpas')?.value;
+            const prevSelVasos = document.getElementById('rec-producto-vasos')?.value;
+            const prevSelShots = document.getElementById('rec-producto-shots')?.value;
+            const prevSelExo = document.getElementById('rec-producto-exoticos')?.value;
+
+            // 1. PACKS DE PULPAS <-> BODEGA 1: MATERIA PRIMA (PULPAS)
+            const prodsPulpas = deduplicarProductos(prodsNodo.filter(p => obtenerTipoFormulaDeProducto(p) === 'pulpas'));
             const selectProdPulpas = document.getElementById('rec-producto-pulpas');
             if (selectProdPulpas) {
-                if (prodsPulpas.length === 0) {
-                    selectProdPulpas.innerHTML = '<option value="">(Sin productos de Pulpas registrados)</option>';
-                } else {
-                    selectProdPulpas.innerHTML = prodsPulpas.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || 'Packs'})</option>`).join('');
-                }
+                selectProdPulpas.innerHTML = prodsPulpas.length === 0
+                    ? '<option value="">(Sin Packs de Pulpas registrados)</option>'
+                    : prodsPulpas.map(p => `<option value="${p.id}">${p.nombre} (Pack de Pulpas)</option>`).join('');
+                if (prevSelPulpas && prodsPulpas.some(p => String(p.id) === String(prevSelPulpas))) selectProdPulpas.value = prevSelPulpas;
             }
-
-            const insPulpas = insNodo.filter(i => {
-                const cat = (i.categoria || '').toLowerCase();
-                return cat.includes('pulpa') || (!cat.includes('vaso') && !cat.includes('packaging') && !cat.includes('shot') && !cat.includes('caldo'));
-            });
             const selectInsPulpas = document.getElementById('rec-insumo-pulpas');
             if (selectInsPulpas) {
-                if (insPulpas.length === 0) {
-                    selectInsPulpas.innerHTML = '<option value="">(Bodega de Pulpas vacía)</option>';
-                } else {
-                    selectInsPulpas.innerHTML = insPulpas.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
-                }
+                selectInsPulpas.innerHTML = construirHtmlSelectInsumosBodega(insNodo, 'pulpas', suc);
             }
 
-            // 2. PRODUCTOS Y INSUMOS PARA VASOS DE 500 MLS (ELÍXIRES)
-            let prodsVasos = prodsNodo.filter(p => {
-                const cat = (p.categoria || '').toLowerCase();
-                return (cat.includes('500') || cat.includes('elixir') || cat.includes('vaso')) && !cat.includes('pack') && !cat.includes('pulpa') && !cat.includes('shot') && !cat.includes('caldo');
-            });
-            if (prodsVasos.length === 0) prodsVasos = prodsNodo.filter(p => !p.categoria || (!p.categoria.toLowerCase().includes('pack') && !p.categoria.toLowerCase().includes('shot')));
-            prodsVasos = deduplicarProductos(prodsVasos);
+            // 2. ELÍXIRES (500 MLS) <-> BODEGAS DE 500 MLS (VASOS + PORCIONES + MATERIA PRIMA)
+            const prodsVasos = deduplicarProductos(prodsNodo.filter(p => obtenerTipoFormulaDeProducto(p) === 'vasos'));
             const selectProdVasos = document.getElementById('rec-producto-vasos');
             if (selectProdVasos) {
-                if (prodsVasos.length === 0) {
-                    selectProdVasos.innerHTML = '<option value="">(Sin productos de 500 mls registrados)</option>';
-                } else {
-                    selectProdVasos.innerHTML = prodsVasos.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || '500 mls'})</option>`).join('');
-                }
+                selectProdVasos.innerHTML = prodsVasos.length === 0
+                    ? '<option value="">(Sin Elíxires de 500 mls registrados)</option>'
+                    : prodsVasos.map(p => `<option value="${p.id}">${p.nombre} (Elíxir 500 mls)</option>`).join('');
+                if (prevSelVasos && prodsVasos.some(p => String(p.id) === String(prevSelVasos))) selectProdVasos.value = prevSelVasos;
             }
-
-            const insVasos = insNodo.filter(i => {
-                const cat = (i.categoria || '').toLowerCase();
-                return cat.includes('vaso') || cat.includes('packaging') || cat.includes('500') || cat.includes('batido');
-            });
             const selectInsVasos = document.getElementById('rec-insumo-vasos');
             if (selectInsVasos) {
-                if (insVasos.length === 0) {
-                    selectInsVasos.innerHTML = '<option value="">(Bodega de Vasos 500 mls vacía)</option>';
-                } else {
-                    selectInsVasos.innerHTML = insVasos.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
-                }
+                selectInsVasos.innerHTML = construirHtmlSelectInsumosBodega(insNodo, 'vasos', suc);
             }
 
-            // 3. PRODUCTOS Y INSUMOS PARA SHOTS Y CALDOS DE HUESO
-            let prodsShots = prodsNodo.filter(p => {
-                const cat = (p.categoria || '').toLowerCase();
-                const nom = (p.nombre || '').toLowerCase();
-                return cat.includes('shot') || cat.includes('caldo') || nom.includes('shot') || nom.includes('caldo');
-            });
-            prodsShots = deduplicarProductos(prodsShots);
+            // 3. SHOTS Y CALDOS <-> BODEGA 3: SHOTS Y CALDOS DE HUESO
+            const prodsShots = deduplicarProductos(prodsNodo.filter(p => obtenerTipoFormulaDeProducto(p) === 'shots'));
             const selectProdShots = document.getElementById('rec-producto-shots');
             if (selectProdShots) {
-                if (prodsShots.length === 0) {
-                    selectProdShots.innerHTML = '<option value="">(Sin productos de Shots/Caldos registrados)</option>';
-                } else {
-                    selectProdShots.innerHTML = prodsShots.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || 'Shots'})</option>`).join('');
-                }
+                selectProdShots.innerHTML = prodsShots.length === 0
+                    ? '<option value="">(Sin Shots/Caldos registrados)</option>'
+                    : prodsShots.map(p => `<option value="${p.id}">${p.nombre} (Shots)</option>`).join('');
+                if (prevSelShots && prodsShots.some(p => String(p.id) === String(prevSelShots))) selectProdShots.value = prevSelShots;
             }
-
-            const insShots = insNodo.filter(i => {
-                const cat = (i.categoria || '').toLowerCase();
-                return cat.includes('shot') || cat.includes('caldo');
-            });
             const selectInsShots = document.getElementById('rec-insumo-shots');
             if (selectInsShots) {
-                if (insShots.length === 0) {
-                    selectInsShots.innerHTML = '<option value="">(Bodega de Shots y Caldos vacía)</option>';
-                } else {
-                    selectInsShots.innerHTML = insShots.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
-                }
+                selectInsShots.innerHTML = construirHtmlSelectInsumosBodega(insNodo, 'shots', suc);
             }
 
-            // 4. PRODUCTOS E INSUMOS PARA EXÓTICOS
-            const esExo = (s) => { const t = (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); return t.includes('exot'); };
-            let prodsExoticos = deduplicarProductos(prodsNodo.filter(p => esExo(p.categoria) || esExo(p.nombre)));
+            // 4. LÍNEA EXÓTICOS <-> BODEGA 5: LÍNEA EXÓTICOS
+            const prodsExoticos = deduplicarProductos(prodsNodo.filter(p => obtenerTipoFormulaDeProducto(p) === 'exoticos'));
             const selectProdExoticos = document.getElementById('rec-producto-exoticos');
             if (selectProdExoticos) {
                 selectProdExoticos.innerHTML = prodsExoticos.length === 0
                     ? '<option value="">(Sin productos Exóticos registrados)</option>'
-                    : prodsExoticos.map(p => `<option value="${p.id}">${p.nombre} (${p.categoria || 'Exóticos'})</option>`).join('');
+                    : prodsExoticos.map(p => `<option value="${p.id}">${p.nombre} (Exóticos)</option>`).join('');
+                if (prevSelExo && prodsExoticos.some(p => String(p.id) === String(prevSelExo))) selectProdExoticos.value = prevSelExo;
             }
-            const insExoticos = insNodo.filter(i => esExo(i.categoria) || esExo(i.subcategoria));
             const selectInsExoticos = document.getElementById('rec-insumo-exoticos');
             if (selectInsExoticos) {
-                selectInsExoticos.innerHTML = insExoticos.length === 0
-                    ? '<option value="">(Bodega de Exóticos vacía)</option>'
-                    : insExoticos.map(i => `<option value="${i.nombre}" data-medida="${i.medida || 'gr'}">${i.nombre} (${i.medida || 'gr'})</option>`).join('');
+                selectInsExoticos.innerHTML = construirHtmlSelectInsumosBodega(insNodo, 'exoticos', suc);
             }
 
-            actualizarUnidadDefaultInsumo('pulpas');
-            actualizarUnidadDefaultInsumo('vasos');
-            actualizarUnidadDefaultInsumo('shots');
-            actualizarUnidadDefaultInsumo('exoticos');
-            cargarTablaReceta('pulpas'); 
-            cargarTablaReceta('vasos'); 
-            cargarTablaReceta('shots'); 
-            cargarTablaReceta('exoticos'); 
+            ['pulpas', 'vasos', 'shots', 'exoticos'].forEach(t => {
+                actualizarUnidadDefaultInsumo(t);
+                previsualizarCostoDosisFormula(t);
+                cargarTablaReceta(t);
+            });
         } catch(e) { console.error('Error preparando recetas:', e); } 
     }
 
-    function actualizarUnidadDefaultInsumo(tipo = 'pulpas') {
-        let idIns = 'rec-insumo-pulpas';
-        let idUni = 'rec-unidad-pulpas';
-        if (tipo === 'vasos') { idIns = 'rec-insumo-vasos'; idUni = 'rec-unidad-vasos'; }
-        else if (tipo === 'shots') { idIns = 'rec-insumo-shots'; idUni = 'rec-unidad-shots'; }
-        else if (tipo === 'exoticos') { idIns = 'rec-insumo-exoticos'; idUni = 'rec-unidad-exoticos'; }
+    function actualizarUnidadDefaultInsumo(tipo = 'pulpas', prodIdEmbebido = null) {
+        const esEmbebido = prodIdEmbebido !== null && prodIdEmbebido !== undefined;
+        let idIns = esEmbebido ? `prod-rec-insumo-${prodIdEmbebido}` : 'rec-insumo-pulpas';
+        let idUni = esEmbebido ? `prod-rec-uni-${prodIdEmbebido}` : 'rec-unidad-pulpas';
+        if (!esEmbebido) {
+            if (tipo === 'vasos') { idIns = 'rec-insumo-vasos'; idUni = 'rec-unidad-vasos'; }
+            else if (tipo === 'shots') { idIns = 'rec-insumo-shots'; idUni = 'rec-unidad-shots'; }
+            else if (tipo === 'exoticos') { idIns = 'rec-insumo-exoticos'; idUni = 'rec-unidad-exoticos'; }
+        }
 
         const insSelect = document.getElementById(idIns);
         const uniSelect = document.getElementById(idUni);
@@ -6818,59 +7197,218 @@
         }
     }
 
-    async function guardarReceta(tipo = 'pulpas') { 
+    async function guardarReceta(tipo = 'pulpas', prodIdEmbebido = null) { 
+        const esEmbebido = prodIdEmbebido !== null && prodIdEmbebido !== undefined;
         let idProdSelect = 'rec-producto-pulpas';
         let idInsSelect = 'rec-insumo-pulpas';
         let idCantInput = 'rec-cantidad-pulpas';
         let idUniSelect = 'rec-unidad-pulpas';
 
-        if (tipo === 'vasos') {
-            idProdSelect = 'rec-producto-vasos'; idInsSelect = 'rec-insumo-vasos'; idCantInput = 'rec-cantidad-vasos'; idUniSelect = 'rec-unidad-vasos';
-        } else if (tipo === 'shots') {
-            idProdSelect = 'rec-producto-shots'; idInsSelect = 'rec-insumo-shots'; idCantInput = 'rec-cantidad-shots'; idUniSelect = 'rec-unidad-shots';
-        } else if (tipo === 'exoticos') {
-            idProdSelect = 'rec-producto-exoticos'; idInsSelect = 'rec-insumo-exoticos'; idCantInput = 'rec-cantidad-exoticos'; idUniSelect = 'rec-unidad-exoticos';
+        if (!esEmbebido) {
+            if (tipo === 'vasos') {
+                idProdSelect = 'rec-producto-vasos'; idInsSelect = 'rec-insumo-vasos'; idCantInput = 'rec-cantidad-vasos'; idUniSelect = 'rec-unidad-vasos';
+            } else if (tipo === 'shots') {
+                idProdSelect = 'rec-producto-shots'; idInsSelect = 'rec-insumo-shots'; idCantInput = 'rec-cantidad-shots'; idUniSelect = 'rec-unidad-shots';
+            } else if (tipo === 'exoticos') {
+                idProdSelect = 'rec-producto-exoticos'; idInsSelect = 'rec-insumo-exoticos'; idCantInput = 'rec-cantidad-exoticos'; idUniSelect = 'rec-unidad-exoticos';
+            }
+        } else {
+            idInsSelect = `prod-rec-insumo-${prodIdEmbebido}`;
+            idCantInput = `prod-rec-cant-${prodIdEmbebido}`;
+            idUniSelect = `prod-rec-uni-${prodIdEmbebido}`;
         }
 
-        const id = document.getElementById(idProdSelect) ? document.getElementById(idProdSelect).value : null; 
-        const ing = document.getElementById(idInsSelect) ? document.getElementById(idInsSelect).value : null; 
+        const id = esEmbebido ? String(prodIdEmbebido) : (document.getElementById(idProdSelect) ? document.getElementById(idProdSelect).value : null); 
+        const selEl = document.getElementById(idInsSelect);
+        const valSelect = selEl ? selEl.value : null; 
+        const optSel = (selEl && selEl.selectedIndex >= 0) ? selEl.options[selEl.selectedIndex] : null;
+        const nombreIng = (optSel && optSel.dataset && optSel.dataset.nombre) ? optSel.dataset.nombre : valSelect;
+        const idInsumoNum = (valSelect && /^\d+$/.test(String(valSelect))) ? Number(valSelect) : null;
         const cant = document.getElementById(idCantInput) ? document.getElementById(idCantInput).value : null; 
         const uni = document.getElementById(idUniSelect) ? document.getElementById(idUniSelect).value : 'gr'; 
 
-        if (!id || !ing || !cant || parseFloat(cant) <= 0) {
-            alert("Por favor selecciona un producto, un ingrediente e ingresa una dosis válida mayor a 0.");
+        if (!id || !valSelect || !cant || parseFloat(cant) <= 0) {
+            alert("Por favor selecciona un producto, un insumo de su bodega correspondiente e ingresa una dosis válida mayor a 0.");
             return;
         }
 
-        const gastoConUnidad = cant + ' ' + uni;
+        const gastoConUnidad = parseFloat(cant) + ' ' + uni;
+        const payload = { ingrediente: nombreIng, gasto: gastoConUnidad };
+        if (idInsumoNum) payload.idInsumo = idInsumoNum;
 
         await fetch(`/api/insumos/${id}/vincular-ingrediente`, {
             method:'POST',
             headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({ingrediente: ing, gasto: gastoConUnidad})
+            body:JSON.stringify(payload)
         }); 
 
         if (document.getElementById(idCantInput)) document.getElementById(idCantInput).value = '';
-        cargarTablaReceta(tipo); 
+        if (esEmbebido) {
+            await cargarFormulaEnTarjetaProducto(prodIdEmbebido);
+            previsualizarCostoDosisFormula(tipo, prodIdEmbebido);
+        } else {
+            await cargarTablaReceta(tipo); 
+            previsualizarCostoDosisFormula(tipo);
+            // Si la tarjeta del producto en Matriz Total existe en el DOM, sincronizarla también
+            if (document.getElementById(`prod-tabla-formula-${id}`)) {
+                cargarFormulaEnTarjetaProducto(id);
+            }
+        }
         playSound('click'); 
     }
 
-    async function desvincularIngrediente(nombreIngrediente, tipo = 'pulpas') { 
+    async function desvincularIngrediente(identificador, tipo = 'pulpas', prodIdEmbebido = null, etiquetaLegible = '') { 
+        const esEmbebido = prodIdEmbebido !== null && prodIdEmbebido !== undefined;
         let idProdSelect = 'rec-producto-pulpas';
         if (tipo === 'vasos') idProdSelect = 'rec-producto-vasos';
         else if (tipo === 'shots') idProdSelect = 'rec-producto-shots';
         else if (tipo === 'exoticos') idProdSelect = 'rec-producto-exoticos';
 
-        const id = document.getElementById(idProdSelect) ? document.getElementById(idProdSelect).value : null; 
+        const id = esEmbebido ? String(prodIdEmbebido) : (document.getElementById(idProdSelect) ? document.getElementById(idProdSelect).value : null); 
         if(!id) return;
-        if(confirm(`¿Desvincular ${nombreIngrediente} de la fórmula?`)){ 
-            await fetch(`/api/insumos/${id}/desvincular/${encodeURIComponent(nombreIngrediente)}`, {method:'DELETE'}); 
-            cargarTablaReceta(tipo); 
+        const nombreMostrar = etiquetaLegible || identificador;
+        if(confirm(`¿Desvincular ${nombreMostrar} de la fórmula?`)){ 
+            await fetch(`/api/insumos/${id}/desvincular/${encodeURIComponent(identificador)}`, {method:'DELETE'}); 
+            if (esEmbebido) {
+                await cargarFormulaEnTarjetaProducto(prodIdEmbebido);
+            } else {
+                await cargarTablaReceta(tipo); 
+                if (document.getElementById(`prod-tabla-formula-${id}`)) {
+                    cargarFormulaEnTarjetaProducto(id);
+                }
+            }
             playSound('error'); 
         } 
     }
 
+    function renderFilasYCalculadoraFormula({ idProducto, txtReceta, tipoFormula, suc, claveCalc, colorTipo, esEmbebido = false }) {
+        let costoTotal = 0;
+        let filasHtml = '';
+        let numIngredientes = 0;
+
+        (txtReceta || '').split('\n').forEach(l => {
+            if (!l || !l.includes(':')) return;
+            const partes = l.split(':');
+            if (partes.length < 2) return;
+            const nombre = partes[0].trim();
+            const rawGasto = partes[1].trim();
+            const idInsLinea = partes.length >= 3 ? partes[2].trim() : '';
+            if (!nombre) return;
+
+            const numClean = rawGasto.replace(/[^0-9.]/g, '');
+            const gastoVal = parseFloat(numClean) || 0;
+            if (gastoVal <= 0) return;
+            numIngredientes++;
+
+            let unidadTxt = '';
+            const rawLower = rawGasto.toLowerCase();
+            if (rawLower.includes('porc')) unidadTxt = 'porc';
+            else if (rawLower.includes('mls')) unidadTxt = 'mls';
+            else if (rawLower.includes('und')) unidadTxt = 'und';
+            else if (rawLower.includes('gr')) unidadTxt = 'gr';
+
+            const insumo = buscarInsumoParaFormula(nombre, idInsLinea, tipoFormula, suc);
+            let costoHtml = '<span class="badge bg-danger bg-opacity-25 text-danger border border-danger">No hallado en Bodega</span>';
+            let subInfoBodega = '';
+
+            if (insumo) {
+                const m = obtenerMetricasPrecioInsumo(insumo);
+                if (!unidadTxt) unidadTxt = m.medIns || 'gr';
+                const costoIngrediente = calcularCostoIngredienteFormula(insumo, gastoVal, unidadTxt);
+                costoTotal += costoIngrediente;
+                const lblBase = m.medIns === 'gr' ? 'Kg' : (m.medIns === 'mls' ? 'Lt' : 'Und');
+                costoHtml = `<span class="text-warning fw-bold">${formatMoney(Math.round(costoIngrediente), suc)}</span>`;
+                subInfoBodega = `<div class="small text-white-50 font-rajdhani" style="font-size:0.78rem;"><i class="bi bi-boxes me-1 text-info"></i>${m.nombreBodega} • Porc. ${m.dosisPorc}${m.medIns} = ${formatMoney(Math.round(m.costoPorcion), suc)} (${formatMoney(Math.round(m.precioBase), suc)}/${lblBase})</div>`;
+            } else if (!unidadTxt) {
+                unidadTxt = 'gr';
+            }
+
+            const identDesvincular = idInsLinea ? (`id:${idInsLinea}`) : nombre;
+            const identEsc = identDesvincular.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+            const nomEsc = nombre.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+            const prodArg = esEmbebido ? idProducto : 'null';
+
+            filasHtml += `<tr>
+                <td class="text-start ps-3">
+                    <div class="text-white fw-bold ${esEmbebido ? 'fs-6' : 'fs-5'}">${insumo ? insumo.nombre : nombre}</div>
+                    ${subInfoBodega}
+                </td>
+                <td class="${esEmbebido ? 'fs-5' : 'fs-4'} fw-bold" style="color:${colorTipo}; text-shadow:0 0 10px currentColor;">${gastoVal} <span class="fs-6 text-white-50">${unidadTxt}</span></td>
+                <td class="${esEmbebido ? 'fs-5' : 'fs-4'}">${costoHtml}</td>
+                <td><i class="bi bi-scissors text-danger ${esEmbebido ? 'fs-4' : 'fs-3'}" style="cursor:pointer;" title="Quitar de la fórmula" onclick="desvincularIngrediente('${identEsc}', '${tipoFormula}', ${prodArg}, '${nomEsc}')"></i></td>
+            </tr>`;
+        });
+
+        if (numIngredientes === 0) {
+            filasHtml = `<tr><td colspan="4" class="text-white-50 py-3 font-orbitron small"><i class="bi bi-flask me-1"></i> Sin ingredientes vinculados aún. Selecciona insumos de su Bodega correspondiente arriba para crear la fórmula.</td></tr>`;
+        }
+
+        if (costoTotal > 0) {
+            window.costoFormulaActual = window.costoFormulaActual || {};
+            window.costoFormulaActual[claveCalc] = { idProducto: idProducto, costoTotal: costoTotal, sucursal: suc, tipoFormula: tipoFormula, esEmbebido: esEmbebido };
+
+            const fuenteProds = (window.productosRecetasMem && window.productosRecetasMem.length) ? window.productosRecetasMem : (typeof catalogoGlobal !== 'undefined' ? catalogoGlobal : []);
+            const prodSel = fuenteProds.find(p => String(p.id) === String(idProducto));
+            const inputPrecioDom = document.getElementById(`precio-prod-${idProducto}`);
+            const precioActualProd = inputPrecioDom ? normalizarPrecioCLP(inputPrecioDom.value || 0) : (prodSel ? normalizarPrecioCLP(prodSel.precio || 0) : 0);
+            let margenGuardado = parseFloat(localStorage.getItem('raices_margen_formula_' + idProducto));
+            if (!(margenGuardado > 0 && margenGuardado < 100)) margenGuardado = 65;
+
+            filasHtml += `<tr style="border-top: 2px solid var(--p-magenta);">
+                <td colspan="2" class="text-end fw-bold ${esEmbebido ? 'fs-5' : 'fs-3'}" style="color:var(--p-magenta)">COSTO TOTAL FÓRMULA (SEGÚN BODEGA):</td>
+                <td class="fw-bold ${esEmbebido ? 'fs-4' : 'fs-3'}" style="color:var(--p-magenta); text-shadow: var(--magenta-glow);">${formatMoney(Math.round(costoTotal), suc)}</td>
+                <td></td>
+            </tr>
+            <tr style="border-top: 1px dashed ${colorTipo}; background: rgba(255, 215, 0, 0.04);">
+                <td colspan="4" class="p-3 text-start">
+                    <div class="p-3 rounded-3" style="background: rgba(0,0,0,0.65); border: 2px solid ${colorTipo}; box-shadow: 0 0 15px rgba(0,0,0,0.5);">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 pb-2 border-bottom border-secondary">
+                            <h6 class="font-orbitron fw-bold m-0" style="color:${colorTipo};">
+                                <i class="bi bi-calculator-fill me-2"></i> CALCULADORA MARGEN REAL (1 - %) • COSTO TOTAL FÓRMULA
+                            </h6>
+                            <span class="small text-white-50 font-rajdhani">Precio actual en menú: <b class="text-white">${precioActualProd > 0 ? formatMoney(precioActualProd, suc) : 'Sin precio'}</b></span>
+                        </div>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label class="form-label-neon small text-warning">Costo Total Fórmula ($)</label>
+                                <input type="number" id="calcf-${claveCalc}-costo" class="form-control text-warning fw-bold" value="${Math.round(costoTotal)}" readonly style="background: rgba(255,215,0,0.06);">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label-neon small text-info">% Margen Real (manual)</label>
+                                <div class="input-group">
+                                    <input type="number" id="calcf-${claveCalc}-margen" class="form-control text-info fw-bold" value="${margenGuardado}" min="0" max="99.9" step="0.1" placeholder="Ej: 62.5" oninput="actualizarCalcFormula('${claveCalc}')">
+                                    <span class="input-group-text bg-dark text-info border-secondary">%</span>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="p-2 rounded-3 text-end" style="background: rgba(0,0,0,0.5); border: 1px dashed ${colorTipo};">
+                                    <div class="small font-monospace text-info" id="calcf-${claveCalc}-formula">Costo / (1 - 0.65)</div>
+                                    <div class="font-orbitron fw-bold fs-3" style="color:${colorTipo}; text-shadow:0 0 10px ${colorTipo};" id="calcf-${claveCalc}-precio">$0</div>
+                                    <div class="small text-white-50 font-rajdhani">Ganancia neta: <b class="text-success" id="calcf-${claveCalc}-ganancia">$0</b></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-2 mt-2 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label-neon small text-success">Precio final a publicar ($) — editable</label>
+                                <input type="number" id="calcf-${claveCalc}-precio-final" class="form-control text-success fw-bold fs-5 border-success" step="1" placeholder="Precio redondeado" oninput="this.dataset.manual='1'">
+                            </div>
+                            <div class="col-md-8">
+                                <button type="button" id="calcf-${claveCalc}-btn" class="btn w-100 py-2 fw-bold font-orbitron text-dark" style="background:${colorTipo};" onclick="aplicarPrecioFormulaAProducto('${claveCalc}')">
+                                    <i class="bi bi-check-circle-fill me-1"></i> APLICAR PRECIO REAL AL PRODUCTO (MENÚ + MENÚ CLÁSICO)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>`;
+        }
+
+        return { filasHtml, costoTotal, numIngredientes };
+    }
+
     async function cargarTablaReceta(tipo = 'pulpas') { 
+        await asegurarInsumosCargadosFormula();
         let idProdSelect = 'rec-producto-pulpas';
         let idTabla = 'tabla-vista-formula-pulpas';
         let colorTipo = 'var(--p-bio-green)';
@@ -6889,115 +7427,93 @@
         tb.innerHTML=''; 
         if(!id) return; 
         try { 
-            const res = await fetch(`/api/insumos/${id}/receta`); 
+            const res = await fetch(`/api/insumos/${id}/receta?_t=` + Date.now(), { cache: 'no-store' }); 
             const txt = await res.text(); 
-            
-            let costoTotal = 0;
             const suc = document.getElementById('filtro-sucursal-recetas') ? document.getElementById('filtro-sucursal-recetas').value : 'Antofagasta';
 
-            txt.split('\n').forEach(l=>{ 
-                if(l.includes(':')) {
-                    const nombre = l.split(':')[0].trim();
-                    const rawGasto = l.split(':')[1].trim();
-                    
-                    const numClean = rawGasto.replace(/[^0-9.]/g, '');
-                    const gastoVal = parseFloat(numClean) || 0;
-                    
-                    let unidadTxt = 'gr';
-                    if (rawGasto.toLowerCase().includes('mls')) unidadTxt = 'mls';
-                    else if (rawGasto.toLowerCase().includes('und')) unidadTxt = 'und';
-                    else if (rawGasto.toLowerCase().includes('gr')) unidadTxt = 'gr';
+            const renderRes = renderFilasYCalculadoraFormula({
+                idProducto: id,
+                txtReceta: txt,
+                tipoFormula: tipo,
+                suc,
+                claveCalc: tipo,
+                colorTipo,
+                esEmbebido: false
+            });
 
-                    // Buscar precio del insumo
-                    const insumo = insMem.find(i => normalizarStr(i.nombre) === normalizarStr(nombre) && i.sucursal === suc);
-                    let costoHtml = '<span class="text-muted">N/A</span>';
-                    
-                    if(insumo) {
-                        // Precio base por kilo/litro/unidad (prioriza precioKilo si existe)
-                        let pKiloIns = parseFloat(insumo.precioKilo) || 0;
-                        if (pKiloIns > 0 && pKiloIns <= 100) pKiloIns *= 1000;
-                        let precio = pKiloIns > 0 ? pKiloIns : normalizarPrecioCLP(insumo.precio || 0);
-                        let costoIngrediente = 0;
-                        if(unidadTxt === 'gr' || unidadTxt === 'mls' || insumo.medida === 'gr' || insumo.medida === 'mls') {
-                            costoIngrediente = (gastoVal / 1000) * precio;
-                        } else {
-                            costoIngrediente = gastoVal * precio;
-                        }
-                        costoTotal += costoIngrediente;
-                        costoHtml = `<span class="text-warning fw-bold">${formatMoney(costoIngrediente, suc)}</span>`;
-                        if (insumo.medida && (!unidadTxt || unidadTxt === 'gr')) unidadTxt = insumo.medida;
-                    }
-
-                    tb.innerHTML+=`<tr>
-                        <td class="text-white fw-bold fs-4">${nombre}</td>
-                        <td class="fs-4" style="color:${colorTipo}; text-shadow:0 0 10px currentColor;">${gastoVal} <span class="fs-6 text-white-50">${unidadTxt}</span></td>
-                        <td class="fs-4">${costoHtml}</td>
-                        <td><i class="bi bi-scissors text-danger fs-3" style="cursor:pointer;" onclick="desvincularIngrediente('${nombre}', '${tipo}')"></i></td>
-                    </tr>`; 
-                }
-            }); 
-            
-            if (costoTotal > 0) {
-                window.costoFormulaActual = window.costoFormulaActual || {};
-                window.costoFormulaActual[tipo] = { idProducto: id, costoTotal: costoTotal, sucursal: suc };
-
-                const fuenteProds = (window.productosRecetasMem && window.productosRecetasMem.length) ? window.productosRecetasMem : (typeof catalogoGlobal !== 'undefined' ? catalogoGlobal : []);
-                const prodSel = fuenteProds.find(p => String(p.id) === String(id));
-                const precioActualProd = prodSel ? normalizarPrecioCLP(prodSel.precio || 0) : 0;
-                let margenGuardado = parseFloat(localStorage.getItem('raices_margen_formula_' + id));
-                if (!(margenGuardado > 0 && margenGuardado < 100)) margenGuardado = 65;
-
-                tb.innerHTML += `<tr style="border-top: 2px solid var(--p-magenta);">
-                    <td colspan="2" class="text-end fw-bold fs-3" style="color:var(--p-magenta)">COSTO TOTAL FÓRMULA:</td>
-                    <td class="fw-bold fs-3" style="color:var(--p-magenta); text-shadow: var(--magenta-glow);">${formatMoney(costoTotal, suc)}</td>
-                    <td></td>
-                </tr>
-                <tr style="border-top: 1px dashed ${colorTipo}; background: rgba(255, 215, 0, 0.04);">
-                    <td colspan="4" class="p-3 text-start">
-                        <div class="p-3 rounded-3" style="background: rgba(0,0,0,0.65); border: 2px solid ${colorTipo}; box-shadow: 0 0 15px rgba(0,0,0,0.5);">
-                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 pb-2 border-bottom border-secondary">
-                                <h6 class="font-orbitron fw-bold m-0" style="color:${colorTipo};">
-                                    <i class="bi bi-calculator-fill me-2"></i> CALCULADORA MARGEN REAL (1 - %) • COSTO TOTAL FÓRMULA
-                                </h6>
-                                <span class="small text-white-50 font-rajdhani">Precio actual en menú: <b class="text-white">${precioActualProd > 0 ? formatMoney(precioActualProd, suc) : 'Sin precio'}</b></span>
-                            </div>
-                            <div class="row g-3 align-items-end">
-                                <div class="col-md-3">
-                                    <label class="form-label-neon small text-warning">Costo Total Fórmula ($)</label>
-                                    <input type="number" id="calcf-${tipo}-costo" class="form-control text-warning fw-bold" value="${Math.round(costoTotal)}" readonly style="background: rgba(255,215,0,0.06);">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label-neon small text-info">% Margen Real (manual)</label>
-                                    <div class="input-group">
-                                        <input type="number" id="calcf-${tipo}-margen" class="form-control text-info fw-bold" value="${margenGuardado}" min="0" max="99.9" step="0.1" placeholder="Ej: 62.5" oninput="actualizarCalcFormula('${tipo}')">
-                                        <span class="input-group-text bg-dark text-info border-secondary">%</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-5">
-                                    <div class="p-2 rounded-3 text-end" style="background: rgba(0,0,0,0.5); border: 1px dashed ${colorTipo};">
-                                        <div class="small font-monospace text-info" id="calcf-${tipo}-formula">Costo / (1 - 0.65)</div>
-                                        <div class="font-orbitron fw-bold fs-3" style="color:${colorTipo}; text-shadow:0 0 10px ${colorTipo};" id="calcf-${tipo}-precio">$0</div>
-                                        <div class="small text-white-50 font-rajdhani">Ganancia neta: <b class="text-success" id="calcf-${tipo}-ganancia">$0</b></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row g-2 mt-2 align-items-end">
-                                <div class="col-md-4">
-                                    <label class="form-label-neon small text-success">Precio final a publicar ($) — editable</label>
-                                    <input type="number" id="calcf-${tipo}-precio-final" class="form-control text-success fw-bold fs-5 border-success" step="1" placeholder="Precio redondeado" oninput="this.dataset.manual='1'">
-                                </div>
-                                <div class="col-md-8">
-                                    <button type="button" id="calcf-${tipo}-btn" class="btn w-100 py-2 fw-bold font-orbitron text-dark" style="background:${colorTipo};" onclick="aplicarPrecioFormulaAProducto('${tipo}')">
-                                        <i class="bi bi-check-circle-fill me-1"></i> APLICAR PRECIO REAL AL PRODUCTO (MENÚ + MENÚ CLÁSICO)
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-                </tr>`;
+            tb.innerHTML = renderRes.filasHtml;
+            if (renderRes.costoTotal > 0) {
                 actualizarCalcFormula(tipo);
             }
         } catch(e) { console.error('Error cargando fórmula:', e); } 
+    }
+
+    async function cargarFormulaEnTarjetaProducto(idProducto, forzarProductoObj = null) {
+        await asegurarInsumosCargadosFormula();
+        const tb = document.getElementById(`prod-tabla-formula-${idProducto}`);
+        const selIns = document.getElementById(`prod-rec-insumo-${idProducto}`);
+        if (!tb && !selIns) return;
+
+        const catInput = document.getElementById(`cat-prod-${idProducto}`)?.value;
+        const nomInput = document.getElementById(`nombre-prod-${idProducto}`)?.value;
+        const sucInput = document.getElementById(`sucursal-prod-${idProducto}`)?.value || document.getElementById('filtro-sucursal-catalogo')?.value || 'Antofagasta';
+
+        const prodRef = forzarProductoObj || { id: idProducto, nombre: nomInput || '', categoria: catInput || '' };
+        const tipoFormula = obtenerTipoFormulaDeProducto(prodRef);
+        if (!tipoFormula) return;
+
+        const cfg = obtenerConfigBodegaFormula(tipoFormula);
+        const sucNorm = normalizarStr(sucInput);
+        const insNodo = (insMem || []).filter(i => !i.sucursal || normalizarStr(i.sucursal).includes(sucNorm));
+
+        const lblBod = document.getElementById(`prod-bodega-label-${idProducto}`);
+        if (lblBod) {
+            lblBod.innerHTML = `<i class="bi bi-boxes me-1"></i> BODEGA CORRESPONDIENTE: <b>${cfg.bodegaNombre.toUpperCase()}</b>`;
+            lblBod.style.color = cfg.color;
+        }
+        const btnIrBod = document.getElementById(`prod-btn-ir-bodega-${idProducto}`);
+        if (btnIrBod) {
+            btnIrBod.setAttribute('onclick', `irABodegaEspecifica('${tipoFormula}')`);
+        }
+
+        if (selIns) {
+            const prevVal = selIns.value;
+            selIns.innerHTML = construirHtmlSelectInsumosBodega(insNodo, tipoFormula, sucInput);
+            if (prevVal && Array.from(selIns.options).some(o => o.value === prevVal)) {
+                selIns.value = prevVal;
+            }
+            actualizarUnidadDefaultInsumo(tipoFormula, idProducto);
+            previsualizarCostoDosisFormula(tipoFormula, idProducto);
+        }
+
+        if (tb) {
+            try {
+                const res = await fetch(`/api/insumos/${idProducto}/receta?_t=` + Date.now(), { cache: 'no-store' });
+                const txt = await res.text();
+                const claveCalc = `prod_${idProducto}`;
+                const renderRes = renderFilasYCalculadoraFormula({
+                    idProducto,
+                    txtReceta: txt,
+                    tipoFormula,
+                    suc: sucInput,
+                    claveCalc,
+                    colorTipo: cfg.color,
+                    esEmbebido: true
+                });
+                tb.innerHTML = renderRes.filasHtml;
+                if (renderRes.costoTotal > 0) {
+                    actualizarCalcFormula(claveCalc);
+                }
+                const badgeHeader = document.getElementById(`header-formula-badge-${idProducto}`);
+                if (badgeHeader) {
+                    badgeHeader.innerHTML = renderRes.numIngredientes > 0
+                        ? `<i class="bi bi-flask me-1"></i>Fórmula (${renderRes.numIngredientes}) • Costo: ${formatMoney(Math.round(renderRes.costoTotal), sucInput)}`
+                        : `<i class="bi bi-flask me-1"></i>Sin fórmula (${cfg.bodegaCorta})`;
+                }
+            } catch (e) {
+                console.error('Error cargando fórmula en tarjeta de producto:', e);
+            }
+        }
     }
 
     function actualizarCalcFormula(tipo) {
@@ -7109,11 +7625,29 @@
             });
 
             playSound('success');
+            const inpPrecioCard = document.getElementById(`precio-prod-${datos.idProducto}`);
+            if (inpPrecioCard) inpPrecioCard.value = precioFinal;
+            const inpPrecioTabla = document.getElementById(`precio-prod-tabla-${datos.idProducto}`);
+            if (inpPrecioTabla) inpPrecioTabla.value = precioFinal;
+            if (typeof calcularPrecioFinalAcordeon === 'function') {
+                try { calcularPrecioFinalAcordeon(datos.idProducto); } catch (e) {}
+            }
+
             if (btn) {
                 btn.innerHTML = `<i class="bi bi-check2-all me-1"></i> PUBLICADO ${formatMoney(precioFinal, datos.sucursal)} EN MENÚ`;
-                setTimeout(() => { btn.disabled = false; btn.innerHTML = htmlOrig; cargarTablaReceta(tipo); }, 2000);
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = htmlOrig;
+                    if (datos.esEmbebido) {
+                        cargarFormulaEnTarjetaProducto(datos.idProducto);
+                    } else {
+                        cargarTablaReceta(tipo);
+                    }
+                }, 1800);
             }
-            if (typeof cargarCatalogo === 'function') { try { cargarCatalogo(); } catch (e) {} }
+            if (!datos.esEmbebido && typeof cargarCatalogo === 'function') {
+                try { cargarCatalogo(); } catch (e) {}
+            }
         } catch (err) {
             console.error('Error aplicando precio de fórmula:', err);
             alert('❌ No se pudo actualizar el precio del producto: ' + (err.message || err));
@@ -7289,8 +7823,15 @@
         const esSupremo = (rolUsuario === 'SUPREMO');
 
         try {
-            const res = await fetch('/api/productos/sucursal/' + suc + '?_t=' + Date.now(), { cache: 'no-store' });
+            const [res, resIns] = await Promise.all([
+                fetch('/api/productos/sucursal/' + suc + '?_t=' + Date.now(), { cache: 'no-store' }),
+                fetch('/api/insumos/todos?_t=' + Date.now(), { cache: 'no-store' })
+            ]);
             let data = await res.json();
+            if (resIns && resIns.ok) {
+                insMem = await resIns.json();
+            }
+            window.productosRecetasMem = Array.isArray(data) ? data : [];
             data = deduplicarProductos(data || []).filter(p => {
                 const cat = (p.categoria || '').toLowerCase();
                 const nom = (p.nombre || '').toLowerCase();
@@ -7339,6 +7880,12 @@
                 const esPack = clasif.esPack;
                 const esShot = clasif.esShot;
                 const esExotico = clasif.esExotico;
+                const tipoFormulaProd = obtenerTipoFormulaDeProducto(p);
+                const cfgFormulaProd = tipoFormulaProd ? obtenerConfigBodegaFormula(tipoFormulaProd) : null;
+                const lineasRecetaInicial = (p.recetaDetalle || '').split('\n').filter(ln => ln && ln.includes(':'));
+                const badgeFormulaHeader = cfgFormulaProd
+                    ? `<span class="badge bg-dark border font-orbitron" id="header-formula-badge-${p.id}" style="font-size:0.72rem; border-color:${cfgFormulaProd.color} !important; color:${cfgFormulaProd.color} !important;"><i class="bi bi-flask me-1"></i>${lineasRecetaInicial.length > 0 ? `Fórmula (${lineasRecetaInicial.length}) • ${cfgFormulaProd.bodegaCorta}` : `Sin fórmula (${cfgFormulaProd.bodegaCorta})`}</span>`
+                    : '';
                 const badgeStockHeader = es500
                     ? `<span class="badge bg-dark border border-cyan text-info" style="font-size:0.75rem;" id="header-stock-${p.id}" title="Stock físico sincronizado con Bodega: Vasos y Packaging (500 mls)"><i class="bi bi-cup-straw me-1"></i>Stock Vasos: ${p.stock || 0}</span>`
                     : `<span class="badge bg-dark border border-success text-success" style="font-size:0.75rem;" id="header-stock-${p.id}"><i class="bi bi-box-seam me-1"></i>Stock: ${p.stock || 0}</span>`;
@@ -7386,6 +7933,7 @@
                                                 <span class="badge badge-categoria" id="header-cat-${p.id}">${catMostrar}</span>
                                                 <span class="badge bg-dark border border-cyan text-info" style="font-size:0.75rem;"><i class="bi bi-geo-alt me-1"></i>${p.sucursal || 'Antofagasta'}</span>
                                                 ${badgeStockHeader}
+                                                ${badgeFormulaHeader}
                                             </div>
                                         </div>
                                     </div>
@@ -7492,6 +8040,78 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    ${cfgFormulaProd ? `
+                                    <!-- SECCIÓN FÓRMULA DEL PRODUCTO CON SU BODEGA CORRESPONDIENTE -->
+                                    <div class="mt-4 pt-3 border-top border-secondary" id="prod-seccion-formula-${p.id}">
+                                        <div class="p-3 rounded-3" style="background: rgba(5, 10, 15, 0.88); border: 1px solid ${cfgFormulaProd.color}; box-shadow: 0 0 18px rgba(0,0,0,0.6);">
+                                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-25">
+                                                <div>
+                                                    <h6 class="font-orbitron fw-bold m-0" style="color: ${cfgFormulaProd.color};">
+                                                        <i class="bi bi-flask me-2"></i> SECCIÓN FÓRMULA DEL PRODUCTO
+                                                    </h6>
+                                                    <span class="small font-orbitron d-block mt-1" id="prod-bodega-label-${p.id}" style="color: ${cfgFormulaProd.color};">
+                                                        <i class="bi bi-boxes me-1"></i> BODEGA CORRESPONDIENTE: <b>${cfgFormulaProd.bodegaNombre.toUpperCase()}</b>
+                                                    </span>
+                                                </div>
+                                                <div class="d-flex gap-2 flex-wrap">
+                                                    <button type="button" id="prod-btn-ir-bodega-${p.id}" class="btn btn-xs btn-outline-info font-orbitron px-2 py-1" style="font-size:0.74rem;" onclick="irABodegaEspecifica('${tipoFormulaProd}')">
+                                                        <i class="bi bi-boxes me-1"></i> IR A BODEGA CORRESPONDIENTE
+                                                    </button>
+                                                    <button type="button" class="btn btn-xs btn-outline-warning font-orbitron px-2 py-1" style="font-size:0.74rem;" onclick="irAFormulaDeProducto(${p.id}, '${tipoFormulaProd}')">
+                                                        <i class="bi bi-flower3 me-1"></i> VER EN PESTAÑA FÓRMULAS
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            ${esSupremo ? `
+                                            <div class="row g-2 align-items-end mb-3">
+                                                <div class="col-lg-5 col-md-12">
+                                                    <label class="form-label-neon small" style="color: ${cfgFormulaProd.color};">Insumo de la Bodega Correspondiente</label>
+                                                    <select id="prod-rec-insumo-${p.id}" class="form-select bg-dark text-white" style="border-color: ${cfgFormulaProd.color};" onchange="actualizarUnidadDefaultInsumo('${tipoFormulaProd}', ${p.id}); previsualizarCostoDosisFormula('${tipoFormulaProd}', ${p.id})"></select>
+                                                </div>
+                                                <div class="col-lg-2 col-md-4">
+                                                    <label class="form-label-neon small" style="color: ${cfgFormulaProd.color};">Dosis Requerida</label>
+                                                    <input type="number" id="prod-rec-cant-${p.id}" class="form-control bg-dark text-white fw-bold" style="border-color: ${cfgFormulaProd.color};" placeholder="Ej: 500" step="0.01" oninput="previsualizarCostoDosisFormula('${tipoFormulaProd}', ${p.id})">
+                                                </div>
+                                                <div class="col-lg-2 col-md-4">
+                                                    <label class="form-label-neon small text-warning">Unidad</label>
+                                                    <select id="prod-rec-uni-${p.id}" class="form-select bg-dark text-warning border-warning fw-bold" onchange="previsualizarCostoDosisFormula('${tipoFormulaProd}', ${p.id})">
+                                                        <option value="gr">🌾 Gramos (gr)</option>
+                                                        <option value="mls">💧 Mililitros (mls)</option>
+                                                        <option value="porc">🥣 Porciones Bodega (porc)</option>
+                                                        <option value="und">🍏 Unidades (und)</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-3 col-md-4">
+                                                    <button type="button" class="btn btn-bio w-100 py-2 fw-bold text-dark font-orbitron" style="background: ${cfgFormulaProd.color};" onclick="guardarReceta('${tipoFormulaProd}', ${p.id})">
+                                                        <i class="bi bi-link-45deg me-1"></i> AGREGAR / ACTUALIZAR
+                                                    </button>
+                                                </div>
+                                                <div class="col-12 mt-2">
+                                                    <div id="prod-rec-preview-${p.id}" class="small font-orbitron px-3 py-1 rounded border border-secondary text-info" style="background: rgba(0,0,0,0.45);">
+                                                        <i class="bi bi-calculator me-1"></i> Selecciona un insumo e ingresa la dosis para proyectar el costo exacto desde su Bodega.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            ` : ''}
+
+                                            <div class="table-responsive">
+                                                <table class="table text-center align-middle m-0">
+                                                    <thead class="table-dark small font-orbitron">
+                                                        <tr>
+                                                            <th class="text-start ps-3">INSUMO / BODEGA ORIGEN</th>
+                                                            <th>DOSIS REQUERIDA</th>
+                                                            <th>COSTO SEGÚN BODEGA</th>
+                                                            <th>QUITAR</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="prod-tabla-formula-${p.id}"></tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    ` : ''}
                                 </div>
                             </div>
                         </div>
@@ -7536,6 +8156,16 @@
                             ${colComandos}
                         </td>
                     </tr>`;
+                }
+            });
+
+            // Vincular apertura de cada tarjeta de producto para cargar en vivo su Sección Fórmula y su Bodega correspondiente
+            data.forEach(p => {
+                const colEl = document.getElementById(`collapse-${p.id}`);
+                if (colEl) {
+                    colEl.addEventListener('show.bs.collapse', () => {
+                        cargarFormulaEnTarjetaProducto(p.id);
+                    });
                 }
             });
 
@@ -7919,6 +8549,8 @@
                 btn.classList.remove('collapsed');
                 btn.setAttribute('aria-expanded', 'true');
             }
+            const idProd = (el.id || '').replace('collapse-', '');
+            if (idProd) cargarFormulaEnTarjetaProducto(idProd);
         });
     }
 
@@ -8072,8 +8704,9 @@
                     headerStock.innerHTML = `<i class="bi bi-box-seam me-1"></i>Stock: ${nuevoStock}`;
                 }
 
-                // Sincronizar recálculo de precios
+                // Sincronizar recálculo de precios y Sección Fórmula con la Bodega correspondiente
                 calcularPrecioFinalAcordeon(id);
+                cargarFormulaEnTarjetaProducto(id, { id, nombre: nuevoNombre, categoria: nuevaCategoria });
 
                 // Si hay vista tabla, sincronizar inputs
                 const tNombre = document.getElementById(`nombre-prod-tabla-${id}`);

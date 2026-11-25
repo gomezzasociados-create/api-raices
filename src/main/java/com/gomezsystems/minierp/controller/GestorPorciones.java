@@ -53,12 +53,38 @@ public class GestorPorciones {
         try {
             String catLower = insumo.getCategoria() != null ? insumo.getCategoria().toLowerCase() : "";
             boolean esArma = catLower.contains("arma") || catLower.contains("porci");
-            if (!esArma && insumo.getPrecio() != null && insumo.getPrecio() > 0 && insumo.getPrecio() <= 100.0) {
+            String medLower = insumo.getMedida() != null ? insumo.getMedida().toLowerCase() : "gr";
+            boolean esMasaVol = "gr".equals(medLower) || "mls".equals(medLower);
+            double dosisCal = (insumo.getCantidadPorcion() != null && insumo.getCantidadPorcion() > 0)
+                    ? insumo.getCantidadPorcion()
+                    : ("und".equals(medLower) ? 1.0 : (esArma ? 30.0 : 50.0));
+
+            if (!esArma && insumo.getPrecio() != null && insumo.getPrecio() > 0 && insumo.getPrecio() <= 100.0 && esMasaVol) {
                 insumo.setPrecio(insumo.getPrecio() * 1000.0);
             }
-            if (insumo.getPrecioKilo() != null && insumo.getPrecioKilo() > 0 && insumo.getPrecioKilo() <= 100.0) {
+            if (insumo.getPrecioKilo() != null && insumo.getPrecioKilo() > 0 && insumo.getPrecioKilo() <= 100.0 && esMasaVol) {
                 insumo.setPrecioKilo(insumo.getPrecioKilo() * 1000.0);
             }
+
+            // Mantener precio y precioKilo siempre sincronizados según el tipo de bodega
+            if (esArma) {
+                Double prPorc = insumo.getPrecio();
+                Double prKilo = insumo.getPrecioKilo();
+                if (prPorc != null && prPorc > 0) {
+                    double calcKilo = esMasaVol ? Math.round((prPorc * 1000.0) / dosisCal) : Math.round(prPorc / dosisCal);
+                    insumo.setPrecioKilo(calcKilo);
+                } else if (prKilo != null && prKilo > 0) {
+                    double calcPorc = esMasaVol ? Math.round((prKilo / 1000.0) * dosisCal) : Math.round(prKilo * dosisCal);
+                    insumo.setPrecio(calcPorc);
+                }
+            } else {
+                if (insumo.getPrecio() != null && insumo.getPrecio() > 0) {
+                    insumo.setPrecioKilo(insumo.getPrecio());
+                } else if (insumo.getPrecioKilo() != null && insumo.getPrecioKilo() > 0) {
+                    insumo.setPrecio(insumo.getPrecioKilo());
+                }
+            }
+
             if (insumo.getIdInsumo() != null) {
                 Optional<Insumo> existenteOpt = insumoRepository.findById(insumo.getIdInsumo());
                 if (existenteOpt.isPresent()) {
@@ -86,7 +112,7 @@ public class GestorPorciones {
                     existente.setCategoria(insumo.getCategoria());
                     existente.setSubcategoria(insumo.getSubcategoria());
                     existente.setPrecio(insumo.getPrecio());
-                    if (insumo.getPrecioKilo() != null) existente.setPrecioKilo(insumo.getPrecioKilo());
+                    existente.setPrecioKilo(insumo.getPrecioKilo());
                     if (insumo.getPrecioVenta() != null) existente.setPrecioVenta(insumo.getPrecioVenta());
                     if (insumo.getMargenPorcentaje() != null) existente.setMargenPorcentaje(insumo.getMargenPorcentaje());
                     if (insumo.getDescuento() != null) existente.setDescuento(insumo.getDescuento());
@@ -184,6 +210,7 @@ public class GestorPorciones {
                     } else {
                         i.setPrecio(0.0);
                     }
+                    i.setPrecioKilo(i.getPrecio());
 
                     // Inicializamos cantidadPorcion en 1 por defecto para evitar nulos
                     i.setCantidadPorcion(1.0);
@@ -203,18 +230,63 @@ public class GestorPorciones {
         }
     }
 
-    // --- RUTAS DE FÓRMULAS MANTIENEN SU ESTRUCTURA NORMAL ---
+    // --- RUTAS DE FÓRMULAS CON VINCULACIÓN EXACTA A ID DE INSUMO DE BODEGA ---
     @PostMapping("/{idProducto}/vincular-ingrediente")
     public ResponseEntity<String> vincularIngrediente(@PathVariable Long idProducto, @RequestBody Map<String, Object> datos) {
         Optional<Producto> prodOpt = productoRepository.findById(idProducto);
         if (prodOpt.isPresent()) {
             Producto producto = prodOpt.get();
-            String ingrediente = datos.get("ingrediente").toString().trim();
-            String gasto = datos.get("gasto").toString().trim();
-            String nuevaLinea = ingrediente + ":" + gasto;
+            String ingrediente = datos.get("ingrediente") != null ? datos.get("ingrediente").toString().trim() : "";
+            String gasto = datos.get("gasto") != null ? datos.get("gasto").toString().trim() : "";
+            String idInsumoStr = datos.get("idInsumo") != null ? datos.get("idInsumo").toString().trim() : "";
+
+            // Si viene idInsumo, tomamos el nombre real de la Bodega para evitar discrepancias
+            if (!idInsumoStr.isEmpty()) {
+                try {
+                    Long idIns = Long.valueOf(idInsumoStr);
+                    Optional<Insumo> insOpt = insumoRepository.findById(idIns);
+                    if (insOpt.isPresent() && insOpt.get().getNombre() != null) {
+                        ingrediente = insOpt.get().getNombre().trim();
+                    }
+                } catch (Exception ignored) {}
+            }
+
+            if (ingrediente.isEmpty() || gasto.isEmpty()) {
+                return ResponseEntity.badRequest().body("Datos de fórmula incompletos");
+            }
+
+            String nuevaLinea = !idInsumoStr.isEmpty()
+                    ? (ingrediente + ":" + gasto + ":" + idInsumoStr)
+                    : (ingrediente + ":" + gasto);
+
             String recetaActual = producto.getRecetaDetalle();
-            if (recetaActual == null || recetaActual.isEmpty()) producto.setRecetaDetalle(nuevaLinea);
-            else producto.setRecetaDetalle(recetaActual + "\n" + nuevaLinea);
+            if (recetaActual == null || recetaActual.trim().isEmpty()) {
+                producto.setRecetaDetalle(nuevaLinea);
+            } else {
+                StringBuilder sb = new StringBuilder();
+                boolean reemplazado = false;
+                for (String linea : recetaActual.split("\\n")) {
+                    if (linea.trim().isEmpty()) continue;
+                    String[] p = linea.split(":");
+                    String nomExist = p.length > 0 ? p[0].trim() : "";
+                    String idExist = p.length >= 3 ? p[2].trim() : "";
+                    boolean mismoInsumo = (!idInsumoStr.isEmpty() && !idExist.isEmpty() && idInsumoStr.equals(idExist))
+                            || (idExist.isEmpty() && nomExist.equalsIgnoreCase(ingrediente))
+                            || (idInsumoStr.isEmpty() && nomExist.equalsIgnoreCase(ingrediente));
+                    if (mismoInsumo) {
+                        if (!reemplazado) {
+                            sb.append(nuevaLinea).append("\n");
+                            reemplazado = true;
+                        }
+                    } else {
+                        sb.append(linea.trim()).append("\n");
+                    }
+                }
+                if (!reemplazado) {
+                    sb.append(nuevaLinea);
+                }
+                producto.setRecetaDetalle(sb.toString().trim());
+            }
             productoRepository.save(producto);
             return ResponseEntity.ok("Vínculo exitoso");
         }
@@ -237,13 +309,22 @@ public class GestorPorciones {
             Producto producto = prodOpt.get();
             String recetaActual = producto.getRecetaDetalle();
             if (recetaActual != null && !recetaActual.isEmpty()) {
+                String targetTrim = nombreIngrediente != null ? nombreIngrediente.trim() : "";
+                boolean buscarPorId = targetTrim.toLowerCase().startsWith("id:");
+                String targetId = buscarPorId ? targetTrim.substring(3).trim() : "";
+
                 StringBuilder nuevaReceta = new StringBuilder();
                 String[] lineas = recetaActual.split("\\n");
                 for (String linea : lineas) {
                     if (linea.trim().isEmpty()) continue;
-                    String nombreEnLinea = linea.split(":")[0].trim().toLowerCase();
-                    if (!nombreEnLinea.equals(nombreIngrediente.toLowerCase())) {
-                        nuevaReceta.append(linea).append("\n");
+                    String[] p = linea.split(":");
+                    String nombreEnLinea = p[0].trim();
+                    String idEnLinea = p.length >= 3 ? p[2].trim() : "";
+                    boolean coincide = buscarPorId
+                            ? (!targetId.isEmpty() && targetId.equals(idEnLinea))
+                            : nombreEnLinea.equalsIgnoreCase(targetTrim);
+                    if (!coincide) {
+                        nuevaReceta.append(linea.trim()).append("\n");
                     }
                 }
                 producto.setRecetaDetalle(nuevaReceta.toString().trim());

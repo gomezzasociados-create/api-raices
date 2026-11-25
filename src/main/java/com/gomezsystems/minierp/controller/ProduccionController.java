@@ -50,6 +50,7 @@ public class ProduccionController {
                         
                         String nombreLimpio = partes[0].trim().toLowerCase();
                         double gastoPorUnidad = 0.0;
+                        String unidadReceta = partes[1].toLowerCase();
                         try { 
                             String cantClean = partes[1].replaceAll("[^0-9.]", "").trim();
                             gastoPorUnidad = Double.parseDouble(cantClean); 
@@ -57,25 +58,57 @@ public class ProduccionController {
 
                         if (nombreLimpio.isEmpty() || gastoPorUnidad <= 0) continue;
 
-                        for (Insumo ins : insumosSucursal) {
-                            String insNombre = ins.getNombre().toLowerCase().trim();
-                            if (insNombre.equals(nombreLimpio) || insNombre.contains(nombreLimpio) || nombreLimpio.contains(insNombre)) {
-                                double totalADescontar = gastoPorUnidad * cantidadAProducir;
-                                ins.setUnidadActual(ins.getUnidadActual() - totalADescontar);
-                                insumoRepository.save(ins);
-
-                                // Registrar en Kardex la salida de pulpas / materia prima en Génesis Producción
-                                MovimientoKardex mk = new MovimientoKardex();
-                                mk.setNombreInsumo(ins.getNombre());
-                                mk.setCategoria(ins.getCategoria() != null ? ins.getCategoria() : "Materia Prima (Pulpas)");
-                                mk.setSucursal(ins.getSucursal());
-                                mk.setFechaHora(LocalDateTime.now());
-                                mk.setTipoMovimiento("Salida por Génesis Producción");
-                                mk.setVariacion(-totalADescontar);
-                                mk.setActor("Génesis Producción (" + producto.getNombre() + ")");
-                                kardexRepository.save(mk);
-                                break;
+                        Insumo insMatch = null;
+                        if (partes.length >= 3 && !partes[2].trim().isEmpty()) {
+                            try {
+                                Long idIns = Long.valueOf(partes[2].trim());
+                                insMatch = insumoRepository.findById(idIns).orElse(null);
+                            } catch (Exception ignored) {}
+                        }
+                        if (insMatch == null) {
+                            // Priorizar Bodega de Pulpas / Materia Prima para Génesis Producción
+                            for (Insumo ins : insumosSucursal) {
+                                String catIns = ins.getCategoria() != null ? ins.getCategoria().toLowerCase() : "";
+                                boolean esBodegaPulpas = catIns.contains("pulpa") || (!catIns.contains("arma") && !catIns.contains("porci") && !catIns.contains("vaso") && !catIns.contains("packaging") && !catIns.contains("shot") && !catIns.contains("caldo") && !catIns.contains("exot"));
+                                String insNombre = ins.getNombre() != null ? ins.getNombre().toLowerCase().trim() : "";
+                                if (esBodegaPulpas && (insNombre.equals(nombreLimpio) || insNombre.contains(nombreLimpio) || nombreLimpio.contains(insNombre))) {
+                                    insMatch = ins;
+                                    break;
+                                }
                             }
+                        }
+                        if (insMatch == null) {
+                            for (Insumo ins : insumosSucursal) {
+                                String insNombre = ins.getNombre() != null ? ins.getNombre().toLowerCase().trim() : "";
+                                if (insNombre.equals(nombreLimpio) || insNombre.contains(nombreLimpio) || nombreLimpio.contains(insNombre)) {
+                                    insMatch = ins;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (insMatch != null) {
+                            double totalADescontar = gastoPorUnidad * cantidadAProducir;
+                            // Si la fórmula especificó porciones ("porc") y el insumo está en gr/mls, convertir a masa/volumen real
+                            String medIns = insMatch.getMedida() != null ? insMatch.getMedida().toLowerCase() : "gr";
+                            if (unidadReceta.contains("porc") && ("gr".equals(medIns) || "mls".equals(medIns))) {
+                                double dosis = (insMatch.getCantidadPorcion() != null && insMatch.getCantidadPorcion() > 0) ? insMatch.getCantidadPorcion() : 50.0;
+                                totalADescontar = (gastoPorUnidad * dosis) * cantidadAProducir;
+                            }
+                            double stockPrev = insMatch.getUnidadActual() != null ? insMatch.getUnidadActual() : 0.0;
+                            insMatch.setUnidadActual(Math.max(0.0, stockPrev - totalADescontar));
+                            insumoRepository.save(insMatch);
+
+                            // Registrar en Kardex la salida de pulpas / materia prima en Génesis Producción
+                            MovimientoKardex mk = new MovimientoKardex();
+                            mk.setNombreInsumo(insMatch.getNombre());
+                            mk.setCategoria(insMatch.getCategoria() != null ? insMatch.getCategoria() : "Materia Prima (Pulpas)");
+                            mk.setSucursal(insMatch.getSucursal());
+                            mk.setFechaHora(LocalDateTime.now());
+                            mk.setTipoMovimiento("Salida por Génesis Producción");
+                            mk.setVariacion(-totalADescontar);
+                            mk.setActor("Génesis Producción (" + producto.getNombre() + ")");
+                            kardexRepository.save(mk);
                         }
                     }
                 }

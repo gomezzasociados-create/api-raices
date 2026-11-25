@@ -109,13 +109,26 @@ public class ProductoController {
                     } catch (Exception ignored) {}
                     if (cantReq <= 0) cantReq = 1.0;
 
-                    // Buscar insumo correspondiente en la bodega
+                    // Buscar insumo correspondiente en la bodega (priorizando ID exacto si existe)
                     com.gomezsystems.minierp.model.Insumo match = null;
-                    for (com.gomezsystems.minierp.model.Insumo ins : insBodega) {
-                        String nomIns = normalizar(ins.getNombre());
-                        if (nomIns.equals(nomIng) || nomIns.contains(nomIng) || nomIng.contains(nomIns)) {
-                            match = ins;
-                            break;
+                    if (partes.length >= 3 && !partes[2].trim().isEmpty()) {
+                        try {
+                            Long idIns = Long.valueOf(partes[2].trim());
+                            for (com.gomezsystems.minierp.model.Insumo ins : insBodega) {
+                                if (idIns.equals(ins.getIdInsumo())) {
+                                    match = ins;
+                                    break;
+                                }
+                            }
+                        } catch (Exception ignored) {}
+                    }
+                    if (match == null) {
+                        for (com.gomezsystems.minierp.model.Insumo ins : insBodega) {
+                            String nomIns = normalizar(ins.getNombre());
+                            if (nomIns.equals(nomIng) || nomIns.contains(nomIng) || nomIng.contains(nomIns)) {
+                                match = ins;
+                                break;
+                            }
                         }
                     }
 
