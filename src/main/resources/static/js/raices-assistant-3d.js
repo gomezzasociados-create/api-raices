@@ -980,6 +980,8 @@ function RaicesKioskAssistantApp() {
         isSpeakingRef.current = false;
         stopAudioMeter();
         setAvatarState(AVATAR_STATES.IDLE);
+        const bgAudio = document.getElementById('mainAudio');
+        if (bgAudio && !bgAudio.paused) bgAudio.volume = 0.14;
 
         if (expectingReply && conversationActiveRef.current && handsFreeRef.current) {
             clearTimeout(autoListenTimerRef.current);
@@ -1022,18 +1024,21 @@ function RaicesKioskAssistantApp() {
             const analyser = audioCtxRef.current.createAnalyser();
             analyser.fftSize = 256;
             const gainNode = audioCtxRef.current.createGain();
-            gainNode.gain.value = 2.0;
-            const compressor = audioCtxRef.current.createDynamicsCompressor();
-            compressor.threshold.value = -14;
-            compressor.knee.value = 18;
-            compressor.ratio.value = 6;
-            compressor.attack.value = 0.003;
-            compressor.release.value = 0.2;
+            gainNode.gain.value = 3.2;
+            const limiter = audioCtxRef.current.createDynamicsCompressor();
+            limiter.threshold.value = -2;
+            limiter.knee.value = 4;
+            limiter.ratio.value = 12;
+            limiter.attack.value = 0.002;
+            limiter.release.value = 0.15;
+
+            const bgAudio = document.getElementById('mainAudio');
+            if (bgAudio && !bgAudio.paused) bgAudio.volume = 0.03;
 
             source.connect(analyser);
             analyser.connect(gainNode);
-            gainNode.connect(compressor);
-            compressor.connect(audioCtxRef.current.destination);
+            gainNode.connect(limiter);
+            limiter.connect(audioCtxRef.current.destination);
 
             const timeData = new Uint8Array(analyser.frequencyBinCount);
             isSpeakingRef.current = true;
