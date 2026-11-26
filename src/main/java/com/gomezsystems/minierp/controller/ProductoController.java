@@ -78,11 +78,13 @@ public class ProductoController {
                 insumos = insumoRepository.findAll();
             }
 
-            // Filtrar insumos pertenecientes a la bodega de Vasos / Packaging (500 mls)
+            // Filtrar insumos pertenecientes a la bodega unificada de Vasos / Packaging (500 mls) & Exóticos
             List<com.gomezsystems.minierp.model.Insumo> insBodega = insumos.stream().filter(i -> {
                 String c = i.getCategoria() != null ? i.getCategoria().toLowerCase() : "";
                 String s = i.getSubcategoria() != null ? i.getSubcategoria().toLowerCase() : "";
-                return c.contains("vaso") || c.contains("packaging") || s.contains("packaging");
+                String n = i.getNombre() != null ? i.getNombre().toLowerCase() : "";
+                return c.contains("vaso") || c.contains("packaging") || s.contains("packaging")
+                        || c.contains("exot") || s.contains("exot") || n.contains("exot");
             }).toList();
 
             if (insBodega.isEmpty()) {

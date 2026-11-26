@@ -1057,7 +1057,7 @@
                     <div class="accordion-item bg-transparent border-0 mb-4">
                         <h2 class="accordion-header" id="headingVasos">
                             <button class="accordion-button collapsed font-orbitron fw-bold d-flex justify-content-between align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#collapseVasos" aria-expanded="false" aria-controls="collapseVasos" style="background: rgba(0,255,255,0.05); border: 1px solid var(--p-cyan); color: var(--p-cyan); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
-                                <span><i class="bi bi-cup-straw me-2"></i> SUMINISTROS FÍSICOS: VASOS Y PACKAGING (500 MLS)</span>
+                                <span><i class="bi bi-cup-straw me-2"></i> SUMINISTROS FÍSICOS: VASOS, PACKAGING (500 MLS) & LÍNEA EXÓTICOS</span>
                                 <span id="badge-alerta-vasos" class="ms-2"></span>
                             </button>
                         </h2>
@@ -1430,107 +1430,7 @@
                         </div>
                     </div>
 
-                    <!-- 5. SUMINISTROS Y MATERIA PRIMA: LÍNEA EXÓTICOS -->
-                    <div class="accordion-item bg-transparent border-0 mb-4">
-                        <h2 class="accordion-header" id="headingExoticos">
-                            <button class="accordion-button collapsed font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExoticos" aria-expanded="false" aria-controls="collapseExoticos" style="background: rgba(189,0,255,0.05); border: 1px solid #bd00ff; color: #bd00ff; box-shadow: 0 0 10px rgba(189,0,255,0.2);">
-                                <i class="bi bi-stars me-2"></i> 5. SUMINISTROS Y MATERIA PRIMA: LÍNEA EXÓTICOS
-                            </button>
-                        </h2>
-                        <div id="collapseExoticos" class="accordion-collapse collapse" aria-labelledby="headingExoticos" data-bs-parent="#accordionInventario">
-                            <div class="accordion-body p-0 pt-3">
-                                <div class="table-container mb-0" style="border-top: 3px solid #bd00ff;">
-                                    <div class="d-flex justify-content-end align-items-center mb-3 mt-2 flex-wrap gap-2">
-                                        <div class="p-2 border rounded" style="border-color: #bd00ff !important; background: rgba(189,0,255,0.1); box-shadow: 0 0 10px rgba(189,0,255,0.2);">
-                                            <span style="color:#bd00ff; font-family:'Orbitron'; font-size:0.9rem; letter-spacing: 1px;" class="me-2">VALOR GLOBAL BODEGA:</span>
-                                            <span class="fw-bold text-white fs-4" id="total-valor-exoticos" style="text-shadow: 0 0 10px rgba(189,0,255,0.5);">$0</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="row g-3 mb-4 mt-1 align-items-end">
-                                        <input type="hidden" id="exoticos-id">
-                                        <div class="col-md-3">
-                                            <label class="form-label-neon" style="color: #bd00ff;">Insumo / Fruta Exótica</label>
-                                            <input type="text" id="exoticos-nombre" class="form-control" placeholder="Ej: Pitahaya Roja, Açai Silvestre, Camu Camu">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label-neon" style="color: #bd00ff;">Subcategoría</label>
-                                            <select id="exoticos-subcategoria" class="form-select">
-                                                <option value="Frutas Exóticas">Frutas Exóticas</option>
-                                                <option value="Superfoods">Superfoods</option>
-                                                <option value="Bases Exóticas">Bases Exóticas</option>
-                                                <option value="Semillas / Toppings">Semillas / Toppings</option>
-                                                <option value="Especias Exóticas">Especias Exóticas</option>
-                                                <option value="Extractos Puros">Extractos Puros</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-1">
-                                            <label class="form-label-neon" style="color: #bd00ff;">Métrica</label>
-                                            <select id="exoticos-unidad" class="form-select" onchange="recalcularPrecioPorcionEnVivo('exoticos')">
-                                                <option value="gr">Gramos (gr)</option>
-                                                <option value="mls">Mililitros (mls)</option>
-                                                <option value="und">Unidades (und)</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label-neon text-warning" id="lbl-exoticos-precio-kilo">Precio / Kilo ($)</label>
-                                            <input type="number" id="exoticos-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 18000" oninput="recalcularPrecioPorcionEnVivo('exoticos')">
-                                        </div>
-                                        <div class="col-md-1">
-                                            <label class="form-label-neon" style="color: #bd00ff;">Cant. Porción</label>
-                                            <input type="number" id="exoticos-dosis" class="form-control fw-bold text-center" style="color: #bd00ff;" step="0.1" placeholder="50" oninput="recalcularPrecioPorcionEnVivo('exoticos')">
-                                        </div>
-                                        <div class="col-md-1">
-                                            <label class="form-label-neon text-info">Precio Porción</label>
-                                            <input type="number" id="exoticos-precio-porcion" class="form-control bg-dark text-info fw-bold text-center border-info" step="1" placeholder="$0" oninput="recalcularPrecioKiloDesdePorcion('exoticos')">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label-neon" style="color: #bd00ff;" id="lbl-exoticos-stock">Reserva Stock</label>
-                                            <div class="input-group">
-                                                <input type="number" id="exoticos-stock" class="form-control fw-bold" placeholder="13" oninput="actualizarBadgeCostoEnVivo('exoticos')">
-                                                <select id="exoticos-stock-tipo" class="form-select bg-dark text-info border-secondary fw-bold" style="max-width: 90px; font-size: 0.8rem; padding: 2px 6px;" onchange="actualizarBadgeCostoEnVivo('exoticos')">
-                                                    <option value="porc" selected>Porc.</option>
-                                                    <option value="fisico">Gramos</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label-neon text-info">Análisis Porción & Stock</label>
-                                            <div id="badge-costo-porcion-exoticos" class="form-control bg-dark text-info fw-bold text-center border-secondary fs-6 py-2">$0 / porc</div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label class="form-label-neon" style="color: #bd00ff;">Foto / Video (URL o Subida)</label>
-                                            <div class="input-group">
-                                                <input type="text" id="exoticos-imagen" class="form-control" placeholder="/uploads/media/... o https://...">
-                                                <button class="btn btn-outline-light" type="button" id="btn-upload-exoticos" onclick="document.getElementById('upload-exoticos-file').click()" title="Subir desde dispositivo" style="color: #bd00ff; border-color: #bd00ff;">
-                                                    <i class="bi bi-cloud-arrow-up-fill"></i>
-                                                </button>
-                                            </div>
-                                            <input type="file" id="upload-exoticos-file" class="d-none" accept="image/*,video/*" onchange="subirMultimediaExoticos(this)">
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label-neon" style="color: #bd00ff;">Nodo Destino</label>
-                                            <select id="exoticos-sucursal" class="form-select auth-select" onchange="cargarInsumos(); playSound('click')">
-                                                <option value="Antofagasta">Antofagasta</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <button class="btn btn-bio w-100 py-2 fs-5 font-orbitron text-white" style="background: #bd00ff;" onclick="guardarInsumo('exoticos')">
-                                                <i class="bi bi-plus-circle-fill me-2"></i> GUARDAR / ACTUALIZAR
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="mt-3">
-                                        <div class="d-flex justify-content-between align-items-center mb-2 px-1">
-                                            <span class="text-white-50 font-orbitron small" style="color:#bd00ff !important;"><i class="bi bi-boxes me-1"></i> LÍNEA EXÓTICOS (TARJETAS PLEGABLES)</span>
-                                            <small class="text-info font-orbitron"><i class="bi bi-info-circle me-1"></i> Haz clic en cualquier tarjeta para desplegar el detalle u operar</small>
-                                        </div>
-                                        <div id="tabla-exoticos" class="accordion d-flex flex-column gap-2"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Bodega 5 (Línea Exóticos) unificada en Bodega 2: Vasos, Packaging (500 mls) & Línea Exóticos -->
                 </div>
             </div>
 
@@ -1601,12 +1501,11 @@
                         <div class="col-md-4">
                             <label class="form-label-neon text-info small"><i class="bi bi-funnel-fill me-1"></i> Filtrar por Bodega</label>
                             <select id="filtro-bodega-compras" class="form-select bg-dark text-info border-info font-orbitron" onchange="renderizarListaComprasActiva()">
-                                <option value="TODAS">📦 TODAS LAS BODEGAS (5 BODEGAS)</option>
+                                <option value="TODAS">📦 TODAS LAS BODEGAS (4 BODEGAS)</option>
                                 <option value="1. Materia Prima (Pulpas)">🌿 1. Materia Prima (Pulpas)</option>
-                                <option value="2. Vasos y Packaging (500 mls)">🥤 2. Vasos y Packaging (500 mls)</option>
+                                <option value="2. Vasos y Packaging (500 mls) & Exóticos">🥤 2. Vasos y Packaging (500 mls) & Exóticos</option>
                                 <option value="3. Shots y Caldos de Hueso">⚡ 3. Shots y Caldos de Hueso</option>
                                 <option value="4. Bodega de Porciones: Arma tu Batido">🍓 4. Bodega de Porciones: Arma tu Batido</option>
-                                <option value="5. Línea Exóticos">🌺 5. Línea Exóticos</option>
                             </select>
                         </div>
                         <div class="col-md-3">
@@ -1769,15 +1668,15 @@
                     <div class="accordion-item bg-transparent border-0 mb-4">
                         <h2 class="accordion-header" id="headingRecetasVasos">
                             <button class="accordion-button collapsed font-orbitron fw-bold d-flex justify-content-between align-items-center flex-wrap gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasVasos" aria-expanded="false" aria-controls="collapseRecetasVasos" style="background: rgba(0,255,255,0.05); border: 1px solid var(--p-cyan); color: var(--p-cyan); box-shadow: 0 0 10px rgba(0,255,255,0.2);">
-                                <span><i class="bi bi-cup-straw me-2"></i> 2. FÓRMULAS DE ELÍXIRES (VASOS 500 MLS)</span>
-                                <span class="badge bg-dark border border-info text-info font-orbitron me-3" style="font-size:0.72rem;"><i class="bi bi-boxes me-1"></i> BODEGAS 2 & 4: VASOS + PORCIONES 500 MLS</span>
+                                <span><i class="bi bi-cup-straw me-2"></i> 2. FÓRMULAS DE ELÍXIRES (VASOS 500 MLS) & LÍNEA EXÓTICOS</span>
+                                <span class="badge bg-dark border border-info text-info font-orbitron me-3" style="font-size:0.72rem;"><i class="bi bi-boxes me-1"></i> BODEGAS 2 & 4: VASOS 500 MLS + EXÓTICOS + PORCIONES</span>
                             </button>
                         </h2>
                         <div id="collapseRecetasVasos" class="accordion-collapse collapse" aria-labelledby="headingRecetasVasos" data-bs-parent="#accordionRecetas">
                             <div class="accordion-body p-0 pt-3">
                                 <div class="table-container mb-0" style="border-top: 3px solid var(--p-cyan);">
                                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-25">
-                                        <span class="small font-orbitron text-info"><i class="bi bi-link-45deg me-1"></i> BODEGAS VINCULADAS: <b>2. VASOS Y PACKAGING (500 MLS) + 4. PORCIONES (500 MLS) + 1. MATERIA PRIMA</b></span>
+                                        <span class="small font-orbitron text-info"><i class="bi bi-link-45deg me-1"></i> BODEGAS VINCULADAS: <b>2. VASOS Y PACKAGING (500 MLS) & EXÓTICOS + 4. PORCIONES (500 MLS) + 1. MATERIA PRIMA</b></span>
                                         <div class="d-flex gap-2">
                                             <button type="button" class="btn btn-xs btn-outline-info font-orbitron px-2 py-1" style="font-size:0.75rem;" onclick="irABodegaEspecifica('vasos')"><i class="bi bi-cup-straw me-1"></i> BODEGA VASOS</button>
                                             <button type="button" class="btn btn-xs btn-outline-warning font-orbitron px-2 py-1" style="font-size:0.75rem;" onclick="irABodegaEspecifica('armatubatido')"><i class="bi bi-sliders me-1"></i> BODEGA PORCIONES</button>
@@ -1910,76 +1809,7 @@
                         </div>
                     </div>
 
-                    <!-- 4. ESTRUCTURADOR DE FÓRMULAS DE EXÓTICOS -->
-                    <div class="accordion-item bg-transparent border-0 mb-4">
-                        <h2 class="accordion-header" id="headingRecetasExoticos">
-                            <button class="accordion-button collapsed font-orbitron fw-bold d-flex justify-content-between align-items-center flex-wrap gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseRecetasExoticos" aria-expanded="false" aria-controls="collapseRecetasExoticos" style="background: rgba(189,0,255,0.05); border: 1px solid #bd00ff; color: #bd00ff; box-shadow: 0 0 10px rgba(189,0,255,0.2);">
-                                <span><i class="bi bi-stars me-2"></i> 4. FÓRMULAS DE LÍNEA EXÓTICOS</span>
-                                <span class="badge bg-dark border font-orbitron me-3" style="border-color:#bd00ff !important; color:#bd00ff !important; font-size:0.72rem;"><i class="bi bi-boxes me-1"></i> BODEGA 5: LÍNEA EXÓTICOS</span>
-                            </button>
-                        </h2>
-                        <div id="collapseRecetasExoticos" class="accordion-collapse collapse" aria-labelledby="headingRecetasExoticos" data-bs-parent="#accordionRecetas">
-                            <div class="accordion-body p-0 pt-3">
-                                <div class="table-container mb-0" style="border-top: 3px solid #bd00ff;">
-                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-25">
-                                        <span class="small font-orbitron" style="color:#bd00ff;"><i class="bi bi-link-45deg me-1"></i> BODEGA VINCULADA: <b>5. SUMINISTROS Y MATERIA PRIMA: LÍNEA EXÓTICOS</b></span>
-                                        <button type="button" class="btn btn-xs btn-outline-light font-orbitron px-2 py-1" style="border-color:#bd00ff; color:#bd00ff; font-size:0.75rem;" onclick="irABodegaEspecifica('exoticos')"><i class="bi bi-box-arrow-up-right me-1"></i> IR A BODEGA EXÓTICOS</button>
-                                    </div>
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <label class="form-label-neon" style="color: #bd00ff;">PRODUCTO EXÓTICO (PRODUCTO CON FÓRMULA)</label>
-                                            <select id="rec-producto-exoticos" class="form-select text-white" style="border-color: #bd00ff;" onchange="cargarTablaReceta('exoticos')"></select>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label class="form-label-neon" style="color: #bd00ff;">INSUMO DE BODEGA 5: LÍNEA EXÓTICOS (INPUT)</label>
-                                            <select id="rec-insumo-exoticos" class="form-select text-white" style="border-color: #bd00ff;" onchange="actualizarUnidadDefaultInsumo('exoticos'); previsualizarCostoDosisFormula('exoticos')"></select>
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mt-2 align-items-end">
-                                        <div class="col-md-5">
-                                            <label class="form-label-neon" style="color: #bd00ff;">DOSIS REQUERIDA POR PRODUCTO EXÓTICO</label>
-                                            <input type="number" id="rec-cantidad-exoticos" class="form-control text-white fs-4" style="border-color: #bd00ff;" placeholder="0.00" step="0.01" oninput="previsualizarCostoDosisFormula('exoticos')">
-                                        </div>
-                                        <div class="col-md-3">
-                                            <label class="form-label-neon text-warning">UNIDAD DE MEDIDA</label>
-                                            <select id="rec-unidad-exoticos" class="form-select border-warning text-warning fw-bold fs-5" style="background-color: #1a1500 !important;" onchange="previsualizarCostoDosisFormula('exoticos')">
-                                                <option value="gr">🌾 Gramos (gr)</option>
-                                                <option value="mls">💧 Mililitros (mls)</option>
-                                                <option value="porc">🥣 Porciones Bodega (porc)</option>
-                                                <option value="und">🍏 Unidades (und)</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <button class="btn btn-bio w-100 py-3 fw-bold text-white" style="background: #bd00ff;" onclick="guardarReceta('exoticos')">
-                                                <i class="bi bi-link-45deg fs-4 me-1"></i> FUSIONAR A FÓRMULA DE EXÓTICO
-                                            </button>
-                                        </div>
-                                        <div class="col-12">
-                                            <div id="preview-costo-dosis-exoticos" class="small font-orbitron px-3 py-2 rounded border border-secondary text-info" style="background: rgba(189,0,255,0.05);">
-                                                <i class="bi bi-calculator me-1"></i> Selecciona un insumo e ingresa la dosis para ver el costo exacto según Bodega Exóticos.
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-4 p-3 rounded-3" style="background: rgba(0,0,0,0.6); border: 1px dashed #bd00ff;">
-                                        <h6 class="form-label-neon mb-3 fs-6 text-center" style="color: #bd00ff;">BIOLOGÍA DE LA FÓRMULA ACTIVA (EXÓTICO • PRECIOS BODEGA 5)</h6>
-                                        <div class="table-responsive">
-                                            <table class="table text-center align-middle m-0">
-                                                <thead class="table-dark">
-                                                    <tr>
-                                                        <th>INSUMO / BODEGA ORIGEN</th>
-                                                        <th>DOSIS REQUERIDA</th>
-                                                        <th>COSTO SEGÚN BODEGA</th>
-                                                        <th>SEPARAR</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="tabla-vista-formula-exoticos"></tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Sección 4 (Fórmulas de Línea Exóticos) unificada en Sección 2: Fórmulas de Elíxires (Vasos 500 mls) & Línea Exóticos -->
                 </div>
             </div>
 
@@ -4815,12 +4645,11 @@
                 const cat = (i.categoria || '').toLowerCase();
                 const isArmaTuBatido = cat.includes('arma tu batido') || cat.includes('porciones');
                 const isExotico = !isArmaTuBatido && (cat.includes('exot') || cat.includes('exótico') || (i.subcategoria || '').toLowerCase().includes('exot') || (i.nombre || '').toLowerCase().includes('exot'));
-                const isVaso = !isArmaTuBatido && !isExotico && (cat.includes('vaso') || cat.includes('packaging'));
-                const isShot = !isArmaTuBatido && !isExotico && (cat.includes('shot') || cat.includes('caldo'));
+                const isVaso = !isArmaTuBatido && (isExotico || cat.includes('vaso') || cat.includes('packaging'));
+                const isShot = !isArmaTuBatido && !isVaso && (cat.includes('shot') || cat.includes('caldo'));
 
                 let selectFiltroId = 'ins-sucursal';
                 if (isArmaTuBatido) selectFiltroId = 'armatubatido-sucursal';
-                else if (isExotico) selectFiltroId = 'exoticos-sucursal';
                 else if (isVaso) selectFiltroId = 'vaso-sucursal';
                 else if (isShot) selectFiltroId = 'shot-sucursal';
 
@@ -4881,7 +4710,7 @@
                     } else {
                         valorInsumo = stockTotal * precioKiloExotico;
                     }
-                    totalExoticos += valorInsumo;
+                    totalVasos += valorInsumo;
                 } else if (isVaso) {
                     valorInsumo = esMasaVol ? ((stockTotal / 1000) * precioKiloVaso) : (stockTotal * precioKiloVaso);
                 } else if (isShot) {
@@ -4975,21 +4804,14 @@
                     precioKiloBase = precioKiloArma;
                     precioVentaPorc = precioVentaArma;
                     margenRealPct = margenRealArma;
-                } else if (isExotico) {
-                    tipoBodega = 'exoticos';
-                    colorTheme = '#bd00ff';
-                    borderImg = 'border-light';
-                    dosis = dosisExotico;
-                    costoPorc = costoPorcExotico;
-                    precioKiloBase = precioKiloExotico;
                 } else if (isVaso) {
                     tipoBodega = 'vasos';
-                    colorTheme = 'var(--p-cyan)';
-                    borderImg = 'border-info';
+                    colorTheme = isExotico ? '#bd00ff' : 'var(--p-cyan)';
+                    borderImg = isExotico ? 'border-light' : 'border-info';
                     defaultFallback = 'https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?auto=format&fit=crop&w=350&q=80';
-                    dosis = dosisVaso;
-                    costoPorc = costoPorcVaso;
-                    precioKiloBase = precioKiloVaso;
+                    dosis = isExotico ? dosisExotico : dosisVaso;
+                    costoPorc = isExotico ? costoPorcExotico : costoPorcVaso;
+                    precioKiloBase = isExotico ? precioKiloExotico : precioKiloVaso;
                 } else if (isShot) {
                     tipoBodega = 'shots';
                     colorTheme = 'var(--p-magenta)';
@@ -5016,7 +4838,6 @@
                 });
 
                 if (isArmaTuBatido && tbArmaTuBatido) tbArmaTuBatido.innerHTML += cardHtml;
-                else if (isExotico && tbExoticos) tbExoticos.innerHTML += cardHtml;
                 else if (isVaso && tbVasos) tbVasos.innerHTML += cardHtml;
                 else if (isShot && tbShots) tbShots.innerHTML += cardHtml;
                 else if (tbPulpas) tbPulpas.innerHTML += cardHtml;
@@ -5076,7 +4897,7 @@
     function poblarSelectorManualCompras() {
         const sel = document.getElementById('select-insumo-manual-compra');
         if (!sel || !Array.isArray(insMem)) return;
-        sel.innerHTML = '<option value="">-- Selecciona cualquier insumo de las 5 bodegas --</option>' +
+        sel.innerHTML = '<option value="">-- Selecciona cualquier insumo de las 4 bodegas --</option>' +
             insMem.map(i => {
                 const cat = i.categoria || 'Pulpas';
                 const med = (i.medida || 'gr').toLowerCase();
@@ -6822,18 +6643,17 @@
         const sub = (i.subcategoria || '').toLowerCase();
         const nom = (i.nombre || '').toLowerCase();
         if (cat.includes('arma') || cat.includes('porci')) return 'armatubatido';
-        if (cat.includes('exot') || cat.includes('exótico') || sub.includes('exot') || nom.includes('exot')) return 'exoticos';
-        if (cat.includes('vaso') || cat.includes('packaging')) return 'vasos';
+        if (cat.includes('vaso') || cat.includes('packaging') || cat.includes('exot') || cat.includes('exótico') || sub.includes('exot') || nom.includes('exot')) return 'vasos';
         if (cat.includes('shot') || cat.includes('caldo')) return 'shots';
         return 'pulpas';
     }
 
     function obtenerConfigBodegaFormula(tipoFormula) {
-        if (tipoFormula === 'vasos') {
+        if (tipoFormula === 'vasos' || tipoFormula === 'exoticos') {
             return {
                 tipo: 'vasos',
-                bodegaNombre: '2. Vasos y Packaging (500 mls) + 4. Porciones (500 mls) + 1. Materia Prima',
-                bodegaCorta: 'Bodegas 500 mls (Vasos / Porciones / Materia Prima)',
+                bodegaNombre: '2. Vasos y Packaging (500 mls) & Exóticos + 4. Porciones (500 mls) + 1. Materia Prima',
+                bodegaCorta: 'Bodegas 500 mls & Exóticos (Vasos / Porciones / Materia Prima)',
                 color: 'var(--p-cyan)',
                 collapseBodegaId: 'collapseVasos',
                 collapseRecetaId: 'collapseRecetasVasos',
@@ -6849,17 +6669,6 @@
                 collapseBodegaId: 'collapseShots',
                 collapseRecetaId: 'collapseRecetasShots',
                 selectProdId: 'rec-producto-shots'
-            };
-        }
-        if (tipoFormula === 'exoticos') {
-            return {
-                tipo: 'exoticos',
-                bodegaNombre: '5. Suministros y Materia Prima: Línea Exóticos',
-                bodegaCorta: 'Bodega 5: Línea Exóticos',
-                color: '#bd00ff',
-                collapseBodegaId: 'collapseExoticos',
-                collapseRecetaId: 'collapseRecetasExoticos',
-                selectProdId: 'rec-producto-exoticos'
             };
         }
         return {
@@ -6878,15 +6687,13 @@
         if (clasif.esArmaTuBatido) return null; // Arma tu Batido es dinámico por porción
         if (clasif.esPack) return 'pulpas';
         if (clasif.esShot) return 'shots';
-        if (clasif.esExotico) return 'exoticos';
-        return 'vasos';
+        return 'vasos'; // Elíxires 500 mls y Línea Exóticos comparten bodega y fórmulas unificadas
     }
 
     function obtenerNombreBodegaInsumo(tipoBodega) {
-        if (tipoBodega === 'vasos') return 'Bodega 2: Vasos y Packaging';
+        if (tipoBodega === 'vasos' || tipoBodega === 'exoticos') return 'Bodega 2: Vasos 500 mls & Exóticos';
         if (tipoBodega === 'shots') return 'Bodega 3: Shots y Caldos';
         if (tipoBodega === 'armatubatido') return 'Bodega 4: Porciones 500 mls';
-        if (tipoBodega === 'exoticos') return 'Bodega 5: Línea Exóticos';
         return 'Bodega 1: Materia Prima (Pulpas)';
     }
 
@@ -6986,20 +6793,15 @@
             if (items.length === 0) return '<option value="">(Bodega 3: Shots y Caldos vacía)</option>';
             return `<optgroup label="⚡ Bodega 3: Shots y Caldos de Hueso">${items.map(i => renderOptionInsumoFormula(i, suc)).join('')}</optgroup>`;
         }
-        if (tipoFormula === 'exoticos') {
-            const items = lista.filter(i => clasificarTipoBodegaInsumo(i) === 'exoticos');
-            if (items.length === 0) return '<option value="">(Bodega 5: Línea Exóticos vacía)</option>';
-            return `<optgroup label="🌺 Bodega 5: Línea Exóticos">${items.map(i => renderOptionInsumoFormula(i, suc)).join('')}</optgroup>`;
-        }
-        // tipoFormula === 'vasos' (Elíxires 500 mls: Vasos/Packaging + Porciones 500 mls + Materia Prima)
+        // tipoFormula === 'vasos' o 'exoticos' (Elíxires 500 mls & Exóticos: Vasos/Packaging/Exóticos + Porciones 500 mls + Materia Prima)
         const gVasos = lista.filter(i => clasificarTipoBodegaInsumo(i) === 'vasos');
         const gArma = lista.filter(i => clasificarTipoBodegaInsumo(i) === 'armatubatido');
         const gPulpas = lista.filter(i => clasificarTipoBodegaInsumo(i) === 'pulpas');
         if (gVasos.length === 0 && gArma.length === 0 && gPulpas.length === 0) {
-            return '<option value="">(Bodegas de 500 mls vacías)</option>';
+            return '<option value="">(Bodegas de 500 mls & Exóticos vacías)</option>';
         }
         let html = '';
-        if (gVasos.length > 0) html += `<optgroup label="🥤 Bodega 2: Vasos y Packaging (500 mls)">${gVasos.map(i => renderOptionInsumoFormula(i, suc)).join('')}</optgroup>`;
+        if (gVasos.length > 0) html += `<optgroup label="🥤 Bodega 2: Vasos y Packaging (500 mls) & Exóticos">${gVasos.map(i => renderOptionInsumoFormula(i, suc)).join('')}</optgroup>`;
         if (gArma.length > 0) html += `<optgroup label="🍓 Bodega 4: Porciones (500 mls)">${gArma.map(i => renderOptionInsumoFormula(i, suc)).join('')}</optgroup>`;
         if (gPulpas.length > 0) html += `<optgroup label="🌿 Bodega 1: Materia Prima (Pulpas)">${gPulpas.map(i => renderOptionInsumoFormula(i, suc)).join('')}</optgroup>`;
         return html;
@@ -7170,13 +6972,16 @@
                 selectInsPulpas.innerHTML = construirHtmlSelectInsumosBodega(insNodo, 'pulpas', suc);
             }
 
-            // 2. ELÍXIRES (500 MLS) <-> BODEGAS DE 500 MLS (VASOS + PORCIONES + MATERIA PRIMA)
+            // 2. ELÍXIRES (500 MLS) & EXÓTICOS <-> BODEGAS UNIFICADAS (VASOS/EXÓTICOS + PORCIONES + MATERIA PRIMA)
             const prodsVasos = deduplicarProductos(prodsNodo.filter(p => obtenerTipoFormulaDeProducto(p) === 'vasos'));
             const selectProdVasos = document.getElementById('rec-producto-vasos');
             if (selectProdVasos) {
                 selectProdVasos.innerHTML = prodsVasos.length === 0
-                    ? '<option value="">(Sin Elíxires de 500 mls registrados)</option>'
-                    : prodsVasos.map(p => `<option value="${p.id}">${p.nombre} (Elíxir 500 mls)</option>`).join('');
+                    ? '<option value="">(Sin Elíxires de 500 mls o Exóticos registrados)</option>'
+                    : prodsVasos.map(p => {
+                        const esExo = clasificarProductoMatriz(p).esExotico;
+                        return `<option value="${p.id}">${p.nombre} (${esExo ? 'Exóticos' : 'Elíxir 500 mls'})</option>`;
+                    }).join('');
                 if (prevSelVasos && prodsVasos.some(p => String(p.id) === String(prevSelVasos))) selectProdVasos.value = prevSelVasos;
             }
             const selectInsVasos = document.getElementById('rec-insumo-vasos');
@@ -7198,21 +7003,7 @@
                 selectInsShots.innerHTML = construirHtmlSelectInsumosBodega(insNodo, 'shots', suc);
             }
 
-            // 4. LÍNEA EXÓTICOS <-> BODEGA 5: LÍNEA EXÓTICOS
-            const prodsExoticos = deduplicarProductos(prodsNodo.filter(p => obtenerTipoFormulaDeProducto(p) === 'exoticos'));
-            const selectProdExoticos = document.getElementById('rec-producto-exoticos');
-            if (selectProdExoticos) {
-                selectProdExoticos.innerHTML = prodsExoticos.length === 0
-                    ? '<option value="">(Sin productos Exóticos registrados)</option>'
-                    : prodsExoticos.map(p => `<option value="${p.id}">${p.nombre} (Exóticos)</option>`).join('');
-                if (prevSelExo && prodsExoticos.some(p => String(p.id) === String(prevSelExo))) selectProdExoticos.value = prevSelExo;
-            }
-            const selectInsExoticos = document.getElementById('rec-insumo-exoticos');
-            if (selectInsExoticos) {
-                selectInsExoticos.innerHTML = construirHtmlSelectInsumosBodega(insNodo, 'exoticos', suc);
-            }
-
-            ['pulpas', 'vasos', 'shots', 'exoticos'].forEach(t => {
+            ['pulpas', 'vasos', 'shots'].forEach(t => {
                 actualizarUnidadDefaultInsumo(t);
                 previsualizarCostoDosisFormula(t);
                 cargarTablaReceta(t);

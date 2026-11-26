@@ -31,10 +31,8 @@ public class ListaComprasController {
 
         if (cat.contains("arma") || cat.contains("porcion")) {
             return "4. Bodega de Porciones: Arma tu Batido";
-        } else if (cat.contains("exot") || cat.contains("exótico") || sub.contains("exot") || nom.contains("exot")) {
-            return "5. Línea Exóticos";
-        } else if (cat.contains("vaso") || cat.contains("packaging")) {
-            return "2. Vasos y Packaging (500 mls)";
+        } else if (cat.contains("vaso") || cat.contains("packaging") || cat.contains("exot") || cat.contains("exótico") || sub.contains("exot") || nom.contains("exot")) {
+            return "2. Vasos y Packaging (500 mls) & Exóticos";
         } else if (cat.contains("shot") || cat.contains("caldo")) {
             return "3. Shots y Caldos de Hueso";
         } else {
