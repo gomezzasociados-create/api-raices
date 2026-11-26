@@ -1021,8 +1021,19 @@ function RaicesKioskAssistantApp() {
 
             const analyser = audioCtxRef.current.createAnalyser();
             analyser.fftSize = 256;
+            const gainNode = audioCtxRef.current.createGain();
+            gainNode.gain.value = 2.0;
+            const compressor = audioCtxRef.current.createDynamicsCompressor();
+            compressor.threshold.value = -14;
+            compressor.knee.value = 18;
+            compressor.ratio.value = 6;
+            compressor.attack.value = 0.003;
+            compressor.release.value = 0.2;
+
             source.connect(analyser);
-            analyser.connect(audioCtxRef.current.destination);
+            analyser.connect(gainNode);
+            gainNode.connect(compressor);
+            compressor.connect(audioCtxRef.current.destination);
 
             const timeData = new Uint8Array(analyser.frequencyBinCount);
             isSpeakingRef.current = true;
@@ -1106,7 +1117,8 @@ function RaicesKioskAssistantApp() {
             utt.lang = 'es-AR';
         }
         utt.rate = 1.30;
-        utt.pitch = 1.0;
+        utt.pitch = 1.02;
+        utt.volume = 1.0;
 
         utt.onstart = () => setAvatarState(celebrate ? AVATAR_STATES.CELEBRATING : AVATAR_STATES.TALKING);
         utt.onboundary = () => setAudioLevel(0.35 + Math.random() * 0.55);

@@ -88,13 +88,13 @@ public class VozHumanaTTSService {
     private byte[] sintetizarConOpenAiExpresivo(String texto, String apiKey) {
         String voiceName = (openAiVoice != null && !openAiVoice.isBlank()) ? openAiVoice.trim() : "ash";
 
-        // Intento 1: tts-1 optimizado para baja latencia en tiempo real con ritmo ágil
+        // Intento 1: tts-1 optimizado para baja latencia en tiempo real con voz cálida y ritmo ágil
         try {
             Map<String, Object> bodyTts1 = Map.of(
                     "model", "tts-1",
-                    "voice", "onyx",
+                    "voice", "echo",
                     "input", texto,
-                    "speed", 1.32
+                    "speed", 1.28
             );
             HttpRequest req = HttpRequest.newBuilder()
                     .uri(URI.create("https://api.openai.com/v1/audio/speech"))
@@ -116,8 +116,8 @@ public class VozHumanaTTSService {
             body4o.put("voice", voiceName);
             body4o.put("input", texto);
             body4o.put("response_format", "mp3");
-            body4o.put("speed", 1.32);
-            body4o.put("instructions", "Habla en español latinoamericano con ritmo rápido, ágil, directo y cordial de mostrador, sin pausas largas.");
+            body4o.put("speed", 1.28);
+            body4o.put("instructions", "Habla en español latinoamericano con voz muy cálida, amigable, sonriente, cercana y ágil de mostrador, sin pausas largas.");
 
             HttpRequest req = HttpRequest.newBuilder()
                     .uri(URI.create("https://api.openai.com/v1/audio/speech"))
