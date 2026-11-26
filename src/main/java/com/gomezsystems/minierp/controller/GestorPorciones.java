@@ -59,22 +59,16 @@ public class GestorPorciones {
                     ? insumo.getCantidadPorcion()
                     : ("und".equals(medLower) ? 1.0 : (esArma ? 30.0 : 50.0));
 
-            if (!esArma && insumo.getPrecio() != null && insumo.getPrecio() > 0 && insumo.getPrecio() <= 100.0 && esMasaVol) {
-                insumo.setPrecio(insumo.getPrecio() * 1000.0);
-            }
-            if (insumo.getPrecioKilo() != null && insumo.getPrecioKilo() > 0 && insumo.getPrecioKilo() <= 100.0 && esMasaVol) {
-                insumo.setPrecioKilo(insumo.getPrecioKilo() * 1000.0);
-            }
-
+            // Respetar siempre el precio exacto ingresado por el usuario (desde $1 en cualquier bodega)
             // Mantener precio y precioKilo siempre sincronizados según el tipo de bodega
             if (esArma) {
                 Double prPorc = insumo.getPrecio();
                 Double prKilo = insumo.getPrecioKilo();
-                if (prPorc != null && prPorc > 0) {
-                    double calcKilo = esMasaVol ? Math.round((prPorc * 1000.0) / dosisCal) : Math.round(prPorc / dosisCal);
+                if (prPorc != null && prPorc > 0 && (prKilo == null || prKilo <= 0)) {
+                    double calcKilo = esMasaVol ? Math.round((prPorc * 1000.0) / dosisCal) : (Math.round((prPorc / dosisCal) * 100.0) / 100.0);
                     insumo.setPrecioKilo(calcKilo);
-                } else if (prKilo != null && prKilo > 0) {
-                    double calcPorc = esMasaVol ? Math.round((prKilo / 1000.0) * dosisCal) : Math.round(prKilo * dosisCal);
+                } else if (prKilo != null && prKilo > 0 && (prPorc == null || prPorc <= 0)) {
+                    double calcPorc = esMasaVol ? Math.round((prKilo / 1000.0) * dosisCal) : (Math.round((prKilo * dosisCal) * 100.0) / 100.0);
                     insumo.setPrecio(calcPorc);
                 }
             } else {

@@ -73,8 +73,7 @@ public class ListaComprasController {
                 || "Paquete".equalsIgnoreCase(uniPre) || "Caja".equalsIgnoreCase(uniPre) || "und".equals(med);
 
         double pKilo = (i.getPrecioKilo() != null && i.getPrecioKilo() > 0) ? i.getPrecioKilo() : 0.0;
-        if (!esPrecioDirecto && pKilo > 0 && pKilo <= 100.0) pKilo *= 1000.0;
-        if (pKilo > 0) return esPrecioDirecto ? (Math.round(pKilo * 100.0) / 100.0) : Math.round(pKilo);
+        if (pKilo > 0) return Math.round(pKilo * 100.0) / 100.0;
 
         double pr = i.getPrecio() != null ? i.getPrecio() : 0.0;
         String cat = (i.getCategoria() != null ? i.getCategoria() : "").toLowerCase();
@@ -87,8 +86,7 @@ public class ListaComprasController {
             }
             return Math.round((pr / Math.max(1.0, dosis)) * 100.0) / 100.0;
         } else {
-            if (!esPrecioDirecto && pr > 0 && pr <= 100.0) pr *= 1000.0;
-            return esPrecioDirecto ? (Math.round(pr * 100.0) / 100.0) : Math.round(pr);
+            return Math.round(pr * 100.0) / 100.0;
         }
     }
 
@@ -257,11 +255,7 @@ public class ListaComprasController {
         if (opt.isEmpty()) return ResponseEntity.notFound().build();
         ItemCompra item = opt.get();
 
-        double rawPrecioKilo = payload.get("precioKiloNuevo") != null ? Double.parseDouble(payload.get("precioKiloNuevo").toString()) : (item.getPrecioKiloNuevo() != null ? item.getPrecioKiloNuevo() : 0.0);
-        if (rawPrecioKilo > 0 && rawPrecioKilo <= 100.0 && !"und".equalsIgnoreCase(item.getMedida())) {
-            rawPrecioKilo *= 1000.0;
-        }
-        final double nuevoPrecioKilo = rawPrecioKilo;
+        final double nuevoPrecioKilo = payload.get("precioKiloNuevo") != null ? Double.parseDouble(payload.get("precioKiloNuevo").toString()) : (item.getPrecioKiloNuevo() != null ? item.getPrecioKiloNuevo() : 0.0);
         double cantidadComprar = payload.get("cantidadAComprar") != null ? Double.parseDouble(payload.get("cantidadAComprar").toString()) : (item.getCantidadAComprar() != null ? item.getCantidadAComprar() : 1.0);
         String unidadCompra = normalizarUnidadCompra(
                 payload.get("unidadCompra") != null ? payload.get("unidadCompra").toString() : item.getUnidadCompra(),
@@ -326,13 +320,9 @@ public class ListaComprasController {
         String nuevoEstado = payload.get("estado") != null ? payload.get("estado").toString().toUpperCase() : "COMPRADO";
         String estadoAnterior = item.getEstado() != null ? item.getEstado().toUpperCase() : "PENDIENTE";
 
-        double rawPrecioKilo2 = payload.get("precioKiloNuevo") != null
+        final double nuevoPrecioKilo = payload.get("precioKiloNuevo") != null
                 ? Double.parseDouble(payload.get("precioKiloNuevo").toString())
                 : (item.getPrecioKiloNuevo() != null ? item.getPrecioKiloNuevo() : 0.0);
-        if (rawPrecioKilo2 > 0 && rawPrecioKilo2 <= 100.0 && !"und".equalsIgnoreCase(item.getMedida())) {
-            rawPrecioKilo2 *= 1000.0;
-        }
-        final double nuevoPrecioKilo = rawPrecioKilo2;
 
         double cantidadComprar = payload.get("cantidadAComprar") != null
                 ? Double.parseDouble(payload.get("cantidadAComprar").toString())
