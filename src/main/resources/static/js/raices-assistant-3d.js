@@ -406,10 +406,10 @@ function buildKioskSceneAndCharacter(scene) {
         let headRoll = Math.sin(t * 0.6) * 0.025;
 
         if (isTypingPos) {
-            // Mira brevemente hacia la pantalla de su terminal POS en el mostrador como en el video
-            headYaw = 0.08;
-            headPitch = 0.20 + Math.sin(t * 8.0) * 0.02;
-            headRoll = -0.04;
+            // Inclina la cabeza mirando activamente la pantalla del monitor POS mientras busca/teclea
+            headYaw = -0.10 + Math.sin(t * 4.5) * 0.05;
+            headPitch = 0.25 + Math.sin(t * 9.0) * 0.025;
+            headRoll = -0.05;
         } else if (isListening) {
             // Atención activa: leve inclinación empática escuchando al cliente
             headYaw = 0.09 + Math.sin(t * 1.6) * 0.03;
@@ -579,14 +579,14 @@ function buildKioskSceneAndCharacter(scene) {
         );
 
         const naturalYaw = isTypingPos
-            ? 0.08
+            ? -0.10 + Math.sin(t * 3.8) * 0.045
             : isListening
             ? 0.10 + Math.sin(t * 1.6) * 0.03
             : isTalking
             ? Math.sin(t * 2.1) * 0.14 + Math.cos(t * 1.1) * 0.05
             : Math.sin(t * 0.85) * 0.06;
         const naturalPitch = isTypingPos
-            ? 0.09
+            ? 0.15 + Math.sin(t * 7.5) * 0.02
             : isListening
             ? -0.03
             : isTalking
@@ -1105,7 +1105,7 @@ function RaicesKioskAssistantApp() {
         } else {
             utt.lang = 'es-AR';
         }
-        utt.rate = 1.18;
+        utt.rate = 1.30;
         utt.pitch = 1.0;
 
         utt.onstart = () => setAvatarState(celebrate ? AVATAR_STATES.CELEBRATING : AVATAR_STATES.TALKING);
@@ -1256,6 +1256,7 @@ function RaicesKioskAssistantApp() {
             setUserSubtitle(txt);
         }
         setAvatarState(AVATAR_STATES.THINKING);
+        setAssistantSubtitle('🔍 Consultando en el monitor POS...');
         setGestureSignal({ type: 'POS_TAP', ts: Date.now() });
 
         const bridge = window.RaicesMenuBridge;
@@ -1536,6 +1537,8 @@ function RaicesKioskAssistantApp() {
                         background:
                             avatarState === AVATAR_STATES.LISTENING
                                 ? '#00f0ff'
+                                : avatarState === AVATAR_STATES.THINKING
+                                ? '#00f0ff'
                                 : avatarState === AVATAR_STATES.TALKING
                                 ? '#ffd700'
                                 : '#22ffa3',
@@ -1555,6 +1558,8 @@ function RaicesKioskAssistantApp() {
                     },
                     avatarState === AVATAR_STATES.LISTENING
                         ? 'TE ESCUCHO...'
+                        : avatarState === AVATAR_STATES.THINKING
+                        ? 'BUSCANDO EN EL POS...'
                         : avatarState === AVATAR_STATES.TALKING
                         ? 'GM GUARDIÁN · HABLANDO'
                         : 'GM GUARDIÁN DE RAÍCES'

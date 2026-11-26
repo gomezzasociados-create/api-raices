@@ -88,22 +88,20 @@ public class VozHumanaTTSService {
     private byte[] sintetizarConOpenAiExpresivo(String texto, String apiKey) {
         String voiceName = (openAiVoice != null && !openAiVoice.isBlank()) ? openAiVoice.trim() : "ash";
 
-        // Intento 1: gpt-4o-mini-tts con instrucciones de actuación vocal humana de mostrador
+        // Intento 1: tts-1 optimizado para baja latencia en tiempo real con ritmo ágil
         try {
-            Map<String, Object> body4o = new HashMap<>();
-            body4o.put("model", "gpt-4o-mini-tts");
-            body4o.put("voice", voiceName);
-            body4o.put("input", texto);
-            body4o.put("response_format", "mp3");
-            body4o.put("speed", 1.18);
-            body4o.put("instructions", "Habla en español latinoamericano como un encargado de mostrador joven, cálido, simpático y con ritmo rápido, ágil y dinámico (sin pausas largas ni tono lento).");
-
+            Map<String, Object> bodyTts1 = Map.of(
+                    "model", "tts-1",
+                    "voice", "onyx",
+                    "input", texto,
+                    "speed", 1.32
+            );
             HttpRequest req = HttpRequest.newBuilder()
                     .uri(URI.create("https://api.openai.com/v1/audio/speech"))
                     .header("Authorization", "Bearer " + apiKey)
                     .header("Content-Type", "application/json")
-                    .timeout(Duration.ofSeconds(8))
-                    .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(body4o)))
+                    .timeout(Duration.ofSeconds(5))
+                    .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(bodyTts1)))
                     .build();
             HttpResponse<byte[]> res = httpClient.send(req, HttpResponse.BodyHandlers.ofByteArray());
             if (res.statusCode() == 200 && res.body() != null && res.body().length > 256) {
@@ -111,20 +109,22 @@ public class VozHumanaTTSService {
             }
         } catch (Exception ignored) {}
 
-        // Intento 2: tts-1 estándar de baja latencia
+        // Intento 2: respaldo con gpt-4o-mini-tts
         try {
-            Map<String, Object> bodyTts1 = Map.of(
-                    "model", "tts-1",
-                    "voice", "onyx",
-                    "input", texto,
-                    "speed", 1.18
-            );
+            Map<String, Object> body4o = new HashMap<>();
+            body4o.put("model", "gpt-4o-mini-tts");
+            body4o.put("voice", voiceName);
+            body4o.put("input", texto);
+            body4o.put("response_format", "mp3");
+            body4o.put("speed", 1.32);
+            body4o.put("instructions", "Habla en español latinoamericano con ritmo rápido, ágil, directo y cordial de mostrador, sin pausas largas.");
+
             HttpRequest req = HttpRequest.newBuilder()
                     .uri(URI.create("https://api.openai.com/v1/audio/speech"))
                     .header("Authorization", "Bearer " + apiKey)
                     .header("Content-Type", "application/json")
-                    .timeout(Duration.ofSeconds(7))
-                    .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(bodyTts1)))
+                    .timeout(Duration.ofSeconds(6))
+                    .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(body4o)))
                     .build();
             HttpResponse<byte[]> res = httpClient.send(req, HttpResponse.BodyHandlers.ofByteArray());
             if (res.statusCode() == 200 && res.body() != null && res.body().length > 256) {

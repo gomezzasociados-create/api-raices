@@ -56,7 +56,7 @@ public class AsistenteVentasIAService {
         public void registrarTurnoHistorial(String rol, String contenido) {
             if (contenido == null || contenido.isBlank()) return;
             historialOpenAi.add(Map.of("role", rol, "content", contenido));
-            while (historialOpenAi.size() > 18) {
+            while (historialOpenAi.size() > 10) {
                 historialOpenAi.remove(0);
             }
         }
@@ -204,15 +204,9 @@ public class AsistenteVentasIAService {
                     .collect(Collectors.joining("\n"));
 
             String insumosPrompt = insumosArmado.stream()
-                    .limit(60)
-                    .map(i -> {
-                        String sub = (i.getSubcategoria() != null && !i.getSubcategoria().isBlank()) ? i.getSubcategoria() : "Extra";
-                        String porcion = (i.getCantidadPorcion() != null && i.getMedida() != null)
-                                ? String.format(" (%s %s)", Math.round(i.getCantidadPorcion()), i.getMedida())
-                                : "";
-                        return String.format("[%s] %s%s: $%d CLP", sub, i.getNombre(), porcion, calcularPrecioPorcionInsumo(i));
-                    })
-                    .collect(Collectors.joining(" | "));
+                    .limit(35)
+                    .map(i -> String.format("%s ($%d)", i.getNombre(), calcularPrecioPorcionInsumo(i)))
+                    .collect(Collectors.joining(", "));
 
             String carritoPrompt;
             if (carritoCliente.isEmpty()) {
@@ -305,8 +299,8 @@ public class AsistenteVentasIAService {
             Map<String, Object> reqBody = new HashMap<>();
             reqBody.put("model", (openAiModel != null && !openAiModel.isBlank()) ? openAiModel.trim() : "gpt-4o-mini");
             reqBody.put("messages", messages);
-            reqBody.put("temperature", 0.6);
-            reqBody.put("max_tokens", 450);
+            reqBody.put("temperature", 0.5);
+            reqBody.put("max_tokens", 220);
             reqBody.put("response_format", Map.of("type", "json_object"));
 
             HttpRequest request = HttpRequest.newBuilder()
@@ -554,11 +548,16 @@ public class AsistenteVentasIAService {
                 : "";
         String descLimpia = limpiarTextoFicha(p.getDescripcion());
         if (descLimpia.isEmpty()) {
-            descLimpia = "100% natural prensado en frío, sin azúcar añadida, endulzado con stevia";
+            descLimpia = "100% natural prensado en frío, sin azúcar añadida, stevia";
+        } else if (descLimpia.length() > 95) {
+            descLimpia = descLimpia.substring(0, 95) + "...";
         }
         String recetaLimpia = limpiarTextoFicha(p.getRecetaDetalle());
-        String recetaStr = recetaLimpia.isEmpty() ? "" : " | Fórmula:" + recetaLimpia;
-        return String.format("ID:%d | %s | Cat:%s | $%d CLP%s%s | Info: %s%s",
+        if (recetaLimpia.length() > 80) {
+            recetaLimpia = recetaLimpia.substring(0, 80) + "...";
+        }
+        String recetaStr = recetaLimpia.isEmpty() ? "" : " | Ing:" + recetaLimpia;
+        return String.format("ID:%d|%s|%s|$%d%s%s|%s%s",
                 p.getId(), p.getNombre(), p.getCategoria(), pf, dtoStr, stockStr, descLimpia, recetaStr);
     }
 
