@@ -1,0 +1,10 @@
+# Variables de entorno y credenciales sensibles (NUNCA subir a GitHub)
+.env
+.env.*
+*.env
+
+# Compilados Maven / IDE
+target/
+target-*/
+.idea/
+*.iml
