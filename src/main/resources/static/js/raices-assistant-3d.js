@@ -1105,7 +1105,7 @@ function RaicesKioskAssistantApp() {
         } else {
             utt.lang = 'es-AR';
         }
-        utt.rate = 1.04;
+        utt.rate = 1.18;
         utt.pitch = 1.0;
 
         utt.onstart = () => setAvatarState(celebrate ? AVATAR_STATES.CELEBRATING : AVATAR_STATES.TALKING);

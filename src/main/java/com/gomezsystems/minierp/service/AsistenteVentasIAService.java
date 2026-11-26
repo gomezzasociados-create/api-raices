@@ -272,14 +272,14 @@ public class AsistenteVentasIAService {
                     %s
 
                     REGLAS DE ACCIONES AUTÓNOMAS (respondé SIEMPRE un único objeto JSON válido):
-                    1. "ADD_ITEMS": cuando el cliente pide, acepta ("sí", "dale", "dame dos", "ese", "el primero") o confirma sumar productos. Llená "itemsToAdd": [{"productId": <ID numérico del catálogo>, "quantity": <entero>}]. Si pide un batido personalizado con ingredientes sueltos, llená "customSmoothieIngredients": ["nombre ingrediente 1", ...]. Poné "gesture": "POS_TAP" y "state": "CELEBRATING".
+                    1. "ADD_ITEMS": ÚNICAMENTE cuando el cliente confirme explícitamente que quiere llevar o sumar el producto al carrito (ej: "sí", "dale", "sumalo", "agregame uno", "dame dos", "ese quiero"). NUNCA uses "ADD_ITEMS" cuando el cliente solo esté preguntando por un producto, su sabor, ingredientes, beneficios o precio (ej: "¿qué trae el Green Detox?", "¿cuánto cuesta?", "¿tienen de piña?"): en esos casos usá "NONE", respondé su consulta y preguntale si desea que lo sumes al carrito. Cuando sí confirme, llená "itemsToAdd": [{"productId": <ID numérico del catálogo>, "quantity": <entero>}]. Si pide y confirma un batido personalizado con ingredientes sueltos, llená "customSmoothieIngredients": ["nombre ingrediente 1", ...]. Poné "gesture": "POS_TAP" y "state": "CELEBRATING".
                     2. "REMOVE_ITEM": cuando pide sacar/quitar algo del carrito. Poné "removeCartIndex": <idx entero del carrito>.
                     3. "CLEAR_CART": cuando pide vaciar/borrar todo el carrito.
                     4. "FILTER_CATEGORY": si pide mirar una sección ("500 mls", "Shots", "Packs", "Exóticos", "Arma tu Batido", "Comunidad"), ponelo en "categoryFilter".
                     5. "SHOW_QR_PAYMENT": cuando hay productos en el carrito y el cliente dice "¿cómo pago?", "cobrame", "quiero pagar", "con QR", "eso es todo" o "cerrar pedido" (sin pedir envío a domicilio). Poné "paymentMethod": "MercadoPago" (o "Efectivo"/"Transferencia" si lo especificó) y decí algo fresco como "¡Fácil, con QR! Ya te lo dejo en pantalla, escaneá o decime confirmar."
                     6. "FILL_CHECKOUT": si el cliente quiere ENVÍO A DOMICILIO o te dicta su nombre, dirección o teléfono, guardá lo que te haya dicho en "checkoutFields": {"nombre": "...", "direccion": "...", "telefono": "...", "medioPago": "MercadoPago|Transferencia|Efectivo"} y pedile de forma breve y humana el siguiente dato faltante (Nombre -> Dirección -> Teléfono -> Medio de pago -> Confirmación).
                     7. "SUBMIT_ORDER": cuando el cliente YA tiene productos en el carrito y confirma el pago en el QR ("listo", "ya pagué", "confirmar", "dale", "enviar") o confirma el resumen final de su envío a domicilio. Poné "state": "CELEBRATING", "gesture": "CELEBRATE", "expectingReply": false, y despedite con buena onda agradeciendo la compra.
-                    8. "NONE": para saludar, diagnosticar necesidad, responder preguntas nutricionales/precios, persuadir o hacer upselling antes de que el cliente acepte.
+                    8. "NONE": para saludar, diagnosticar necesidad, responder preguntas sobre productos, sabores, ingredientes o precios, persuadir o hacer upselling antes de que el cliente confirme explícitamente que lo quiere sumar al carrito.
 
                     ESQUEMA JSON OBLIGATORIO DE SALIDA:
                     {
@@ -643,8 +643,17 @@ public class AsistenteVentasIAService {
             return ejecutarAgregadoProductosLocal(sesion, List.of(new ItemOrdenado(sesion.ultimoProductoSugerido, cant)), carritoCliente, catalogo);
         }
 
+        boolean esSoloPregunta = contieneAlguno(cmd, "que trae", "que tiene", "ingredientes", "cuanto vale", "cuanto cuesta", "precio", "como es", "a que sabe", "de que es", "beneficios", "sirve para", "tienen ");
         List<ItemOrdenado> itemsDetectados = extraerItemsOrdenados(catalogo, cmd);
         if (!itemsDetectados.isEmpty()) {
+            if (esSoloPregunta) {
+                Producto p = itemsDetectados.get(0).producto;
+                sesion.ultimoProductoSugerido = p;
+                String desc = limpiarTextoFicha(p.getDescripcion());
+                String info = desc.isEmpty() ? "es 100% natural prensado en frío" : desc;
+                resp.put("text", p.getNombre() + " cuesta " + formatearPesos(calcularPrecioFinal(p)) + " y " + info + ". ¿Te gustaría que lo sume al carrito?");
+                return resp;
+            }
             return ejecutarAgregadoProductosLocal(sesion, itemsDetectados, carritoCliente, catalogo);
         }
 

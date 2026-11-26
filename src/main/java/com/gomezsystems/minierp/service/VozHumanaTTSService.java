@@ -95,7 +95,8 @@ public class VozHumanaTTSService {
             body4o.put("voice", voiceName);
             body4o.put("input", texto);
             body4o.put("response_format", "mp3");
-            body4o.put("instructions", "Habla en español latinoamericano como un encargado de mostrador joven, súper cálido, simpático, espontáneo y humano, con sonrisa natural y ritmo ágil.");
+            body4o.put("speed", 1.18);
+            body4o.put("instructions", "Habla en español latinoamericano como un encargado de mostrador joven, cálido, simpático y con ritmo rápido, ágil y dinámico (sin pausas largas ni tono lento).");
 
             HttpRequest req = HttpRequest.newBuilder()
                     .uri(URI.create("https://api.openai.com/v1/audio/speech"))
@@ -116,7 +117,7 @@ public class VozHumanaTTSService {
                     "model", "tts-1",
                     "voice", "onyx",
                     "input", texto,
-                    "speed", 1.04
+                    "speed", 1.18
             );
             HttpRequest req = HttpRequest.newBuilder()
                     .uri(URI.create("https://api.openai.com/v1/audio/speech"))
