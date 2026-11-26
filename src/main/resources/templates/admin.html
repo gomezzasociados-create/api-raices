@@ -836,6 +836,46 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- CONGELADORES MAYORISTAS (CLIENTES PREFERENCIALES CON PRECIOS MÁS BAJOS Y VENTA DIRECTA A TESORERÍA) -->
+                <div class="table-container p-4 mt-4" style="border-top: 3px solid var(--p-magenta);">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3 pb-3 border-bottom border-secondary">
+                        <div>
+                            <h5 class="fw-bold font-orbitron m-0" style="color: var(--p-magenta); text-shadow: var(--magenta-glow);">
+                                <i class="bi bi-snow2 me-2"></i> CONGELADORES MAYORISTAS & CLIENTES PREFERENCIALES (PACKS DE PULPAS)
+                            </h5>
+                            <small class="text-white-50 font-rajdhani">Crea una tarjeta / congelador por cada cliente mayorista, almacena allí sus packs de pulpas a precio preferencial más bajo y registra sus ventas directamente hacia Tesorería.</small>
+                        </div>
+                    </div>
+
+                    <!-- FORMULARIO PARA CREAR NUEVO CONGELADOR / TARJETA MAYORISTA -->
+                    <div class="row g-2 align-items-end mb-4 p-3 rounded-3" style="background: rgba(255,0,234,0.05); border: 1px dashed rgba(255,0,234,0.4);">
+                        <div class="col-md-3">
+                            <label class="form-label-neon small" style="color:var(--p-magenta);">Cliente Mayorista</label>
+                            <input type="text" id="may-cliente" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: Café Central / Gym Titan">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label-neon small text-info">Nombre del Congelador</label>
+                            <input type="text" id="may-congelador" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: Congelador Mayorista #1">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon small text-white-50">Teléfono / WhatsApp</label>
+                            <input type="text" id="may-contacto" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="+56 9 ...">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon small text-white-50">Notas / Acuerdo</label>
+                            <input type="text" id="may-notas" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: Pago quincenal">
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn btn-sm w-100 fw-bold font-orbitron text-white py-2" style="background: var(--p-magenta);" onclick="crearCongeladorMayorista()">
+                                <i class="bi bi-plus-circle-fill me-1"></i> CREAR CONGELADOR
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- GRID DE TARJETAS DE CONGELADORES MAYORISTAS -->
+                    <div id="contenedor-congeladores-mayoristas" class="row g-3"></div>
+                </div>
             </div>
 
             <!-- TAB 2: TESORERÍA -->
@@ -3536,7 +3576,188 @@
                     </td>
                 </tr>`;
             });
+            await cargarCongeladoresMayoristas();
         } catch(e) {}
+    }
+
+    async function cargarCongeladoresMayoristas() {
+        const suc = document.getElementById('prod-sucursal')?.value || 'Antofagasta';
+        const cont = document.getElementById('contenedor-congeladores-mayoristas');
+        if (!cont) return;
+
+        try {
+            const res = await fetch(`/api/produccion/mayoristas/${encodeURIComponent(suc)}?_t=${Date.now()}`, { cache: 'no-store' });
+            if (!res.ok) return;
+            const lista = await res.json();
+            window.congeladoresMayoristasMem = Array.isArray(lista) ? lista : [];
+
+            const packsDisponibles = (catalogoGlobal || []).filter(p => {
+                if (!p || !p.nombre) return false;
+                const c = normalizarStr(p.categoria || '');
+                const n = normalizarStr(p.nombre || '');
+                if (esInsumoCrudo(p.nombre)) return false;
+                return c.includes('pack') || c.includes('pulpa') || n.includes('pack');
+            });
+            const optsPacks = packsDisponibles.length === 0
+                ? '<option value="">(Sin Packs de Pulpas)</option>'
+                : packsDisponibles.map(p => `<option value="${p.id}" data-precio="${Math.round(p.precio || 0)}">${p.nombre} (Normal: ${formatMoney(p.precio || 0, suc)})</option>`).join('');
+
+            if (window.congeladoresMayoristasMem.length === 0) {
+                cont.innerHTML = `<div class="col-12"><div class="p-4 text-center text-white-50 border border-secondary rounded bg-black font-orbitron">Aún no has creado tarjetas de clientes mayoristas / congeladores. Crea el primero arriba.</div></div>`;
+                return;
+            }
+
+            cont.innerHTML = window.congeladoresMayoristasMem.map(c => {
+                const stocks = Array.isArray(c.stocks) ? c.stocks : [];
+                const totalPacks = stocks.reduce((acc, s) => acc + (s.stockPacks || 0), 0);
+                const filasStock = stocks.length === 0
+                    ? `<tr><td colspan="4" class="text-white-50 small py-2">Congelador vacío. Almacena packs de pulpas arriba.</td></tr>`
+                    : stocks.map(s => `
+                        <tr>
+                            <td class="text-white text-start fw-bold">${s.nombreProducto}</td>
+                            <td><span class="badge ${s.stockPacks > 0 ? 'bg-success' : 'bg-danger'} font-orbitron">${s.stockPacks || 0} pks</span></td>
+                            <td class="text-warning fw-bold">${formatMoney(s.precioMayorista || 0, suc)}</td>
+                            <td class="text-nowrap">
+                                <button class="btn btn-xs btn-success font-orbitron fw-bold px-2 py-1" onclick="venderDesdeCongelador(${c.id}, ${s.id}, '${(s.nombreProducto || '').replace(/'/g, '')}', ${s.precioMayorista || 0}, ${s.stockPacks || 0})" ${s.stockPacks <= 0 ? 'disabled' : ''}>
+                                    <i class="bi bi-cash-coin me-1"></i> VENDER
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+
+                return `
+                    <div class="col-lg-6">
+                        <div class="p-3 rounded-3 border h-100" style="border-color: var(--p-magenta) !important; background: rgba(15, 10, 25, 0.85); box-shadow: 0 0 14px rgba(255,0,234,0.15);">
+                            <div class="d-flex justify-content-between align-items-start mb-2 pb-2 border-bottom border-secondary">
+                                <div>
+                                    <h6 class="font-orbitron fw-bold text-white m-0"><i class="bi bi-snow2 text-info me-1"></i> ${c.nombreCongelador}</h6>
+                                    <div class="small text-warning fw-bold mt-1"><i class="bi bi-person-badge me-1"></i> ${c.nombreCliente} ${c.contacto ? `<span class="text-white-50">• ${c.contacto}</span>` : ''}</div>
+                                    ${c.notas ? `<small class="text-white-50 d-block">${c.notas}</small>` : ''}
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-dark border border-info text-info font-orbitron">${totalPacks} packs</span>
+                                    <button class="btn btn-sm btn-outline-danger border-0" onclick="eliminarCongeladorMayorista(${c.id})" title="Eliminar Tarjeta Mayorista"><i class="bi bi-trash3-fill"></i></button>
+                                </div>
+                            </div>
+
+                            <!-- ALMACENAR PACKS CON PRECIO MAYORISTA -->
+                            <div class="row g-1 align-items-end mb-2 p-2 rounded" style="background: rgba(0,229,255,0.05); border: 1px solid rgba(0,229,255,0.2);">
+                                <div class="col-md-5">
+                                    <label class="small text-info font-orbitron" style="font-size:0.65rem;">Pack de Pulpa</label>
+                                    <select id="may-pack-${c.id}" class="form-select form-select-sm bg-dark text-white border-secondary">${optsPacks}</select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="small text-white font-orbitron" style="font-size:0.65rem;">Cant.</label>
+                                    <input type="number" id="may-cant-${c.id}" class="form-control form-control-sm bg-dark text-white border-secondary text-center" value="5" min="1">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="small text-warning font-orbitron" style="font-size:0.65rem;">Precio May. ($)</label>
+                                    <input type="number" id="may-precio-${c.id}" class="form-control form-control-sm bg-dark text-warning border-warning fw-bold text-center" value="15000" min="1">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-sm btn-info w-100 fw-bold text-dark" onclick="cargarPackEnCongelador(${c.id})" title="Almacenar en congelador"><i class="bi bi-plus-lg"></i></button>
+                                </div>
+                                <div class="col-12 mt-1">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="may-fabricar-${c.id}">
+                                        <label class="form-check-label small text-white-50" for="may-fabricar-${c.id}">Descontar materia prima de Bodega Pulpas al almacenar</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- STOCK EN EL CONGELADOR MAYORISTA -->
+                            <div class="table-responsive" style="max-height: 220px; overflow-y: auto;">
+                                <table class="table table-sm text-center align-middle m-0">
+                                    <thead class="table-dark"><tr><th>PACK</th><th>STOCK</th><th>$ MAYORISTA</th><th>VENTA</th></tr></thead>
+                                    <tbody>${filasStock}</tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        } catch (e) {
+            console.error('Error cargando congeladores mayoristas:', e);
+        }
+    }
+
+    async function crearCongeladorMayorista() {
+        const nombreCliente = document.getElementById('may-cliente')?.value.trim();
+        if (!nombreCliente) return alert("Ingresa el nombre del cliente mayorista.");
+        const payload = {
+            sucursal: document.getElementById('prod-sucursal')?.value || 'Antofagasta',
+            nombreCliente,
+            nombreCongelador: document.getElementById('may-congelador')?.value.trim() || `Congelador ${nombreCliente}`,
+            contacto: document.getElementById('may-contacto')?.value.trim() || '',
+            notas: document.getElementById('may-notas')?.value.trim() || ''
+        };
+        const res = await fetch('/api/produccion/mayoristas', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if (!res.ok) return alert("❌ Error: " + (await res.text()));
+        playSound('success');
+        document.getElementById('may-cliente').value = '';
+        document.getElementById('may-congelador').value = '';
+        document.getElementById('may-contacto').value = '';
+        document.getElementById('may-notas').value = '';
+        await cargarCongeladoresMayoristas();
+    }
+
+    async function eliminarCongeladorMayorista(id) {
+        if (!confirm("¿Eliminar este congelador mayorista y su stock almacenado?")) return;
+        await fetch(`/api/produccion/mayoristas/${id}`, { method: 'DELETE' });
+        playSound('error');
+        await cargarCongeladoresMayoristas();
+    }
+
+    async function cargarPackEnCongelador(idCongelador) {
+        const idProducto = document.getElementById(`may-pack-${idCongelador}`)?.value;
+        const cantidad = parseInt(document.getElementById(`may-cant-${idCongelador}`)?.value) || 0;
+        const precioMayorista = parseFloat(document.getElementById(`may-precio-${idCongelador}`)?.value) || 0;
+        const fabricarDesdeBodega = document.getElementById(`may-fabricar-${idCongelador}`)?.checked || false;
+
+        if (!idProducto) return alert("Selecciona un Pack de Pulpa.");
+        if (cantidad <= 0 || precioMayorista <= 0) return alert("Ingresa cantidad y precio mayorista válidos.");
+
+        const res = await fetch(`/api/produccion/mayoristas/${idCongelador}/cargar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idProducto, cantidad, precioMayorista, fabricarDesdeBodega })
+        });
+        if (!res.ok) return alert("❌ Error: " + (await res.text()));
+        playSound('add');
+        if (fabricarDesdeBodega) cargarInsumos();
+        await cargarCongeladoresMayoristas();
+    }
+
+    async function venderDesdeCongelador(idCongelador, idStock, nombrePack, precioDef, stockDisp) {
+        const cantStr = prompt(`Vender "${nombrePack}" (Disponible: ${stockDisp} packs)\n¿Cuántos packs vendiste?`, "1");
+        if (cantStr === null) return;
+        const cantidad = parseInt(cantStr);
+        if (isNaN(cantidad) || cantidad <= 0 || cantidad > stockDisp) {
+            return alert("Cantidad inválida o supera el stock del congelador.");
+        }
+        const precioStr = prompt("Precio unitario mayorista ($):", precioDef);
+        if (precioStr === null) return;
+        const precioUnitario = parseFloat(precioStr);
+        if (isNaN(precioUnitario) || precioUnitario <= 0) return alert("Precio inválido.");
+
+        const medioPago = prompt("Medio de pago (Transferencia / Efectivo / MercadoPago):", "Transferencia");
+        if (medioPago === null) return;
+
+        const res = await fetch(`/api/produccion/mayoristas/${idCongelador}/vender`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idStock, cantidad, precioUnitario, medioPago: medioPago.trim() || 'Transferencia' })
+        });
+        if (!res.ok) return alert("❌ Error: " + (await res.text()));
+        const data = await res.json();
+        playSound('cash');
+        alert(`✅ Venta mayorista registrada por ${formatMoney(data.total, 'Antofagasta')} y enviada directamente a Tesorería.`);
+        await cargarCongeladoresMayoristas();
+        if (typeof cargarTesoreria === 'function') cargarTesoreria();
     }
 
     async function procesarEnsamblaje() {
