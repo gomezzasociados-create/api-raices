@@ -1075,8 +1075,16 @@
                                     <div class="row g-3 mb-4 mt-1 align-items-end">
                                         <input type="hidden" id="vaso-id">
                                         <div class="col-md-3">
-                                            <label class="form-label-neon" style="color:var(--p-cyan)">Elemento Físico</label>
-                                            <input type="text" id="vaso-nombre" class="form-control" placeholder="Ej: Vaso 500ml con Tapa">
+                                            <label class="form-label-neon" style="color:var(--p-cyan)">Elemento Físico / Insumo</label>
+                                            <input type="text" id="vaso-nombre" class="form-control" placeholder="Ej: Vaso 500ml con Tapa / Pitahaya">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label-neon" style="color:var(--p-cyan)">Destino / Línea</label>
+                                            <select id="vaso-destino-linea" class="form-select bg-dark text-info border-info fw-bold">
+                                                <option value="Compartido (500 mls y Exóticos)">Compartido (500 mls y Exóticos)</option>
+                                                <option value="Vaso de 500 mls">Vaso de 500 mls</option>
+                                                <option value="Exótico">Exótico</option>
+                                            </select>
                                         </div>
                                         <div class="col-md-1">
                                             <label class="form-label-neon" style="color:var(--p-cyan)">Métrica</label>
@@ -1094,17 +1102,17 @@
                                             <label class="form-label-neon text-info">Cant. Uso</label>
                                             <input type="number" id="vaso-dosis" class="form-control text-white fw-bold text-center" step="1" value="1" placeholder="1" oninput="recalcularPrecioPorcionEnVivo('vasos')">
                                         </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label-neon text-info">Precio Porción</label>
+                                        <div class="col-md-1">
+                                            <label class="form-label-neon text-info">Precio Porc.</label>
                                             <input type="number" id="vaso-precio-porcion" class="form-control bg-dark text-info fw-bold text-center border-info" step="1" placeholder="$0" oninput="recalcularPrecioKiloDesdePorcion('vasos')">
                                         </div>
                                         <div class="col-md-1">
                                             <label class="form-label-neon" style="color:var(--p-cyan)">Stock</label>
                                             <input type="number" id="vaso-stock" class="form-control text-center fw-bold" placeholder="Stock" oninput="actualizarBadgeCostoEnVivo('vasos')">
                                         </div>
-                                        <div class="col-md-2">
-                                            <label class="form-label-neon text-info">Análisis Costo</label>
-                                            <div id="badge-costo-porcion-vasos" class="form-control bg-dark text-info fw-bold text-center border-secondary fs-6 py-2">$0 / porc</div>
+                                        <div class="col-md-1">
+                                            <label class="form-label-neon text-info">Costo</label>
+                                            <div id="badge-costo-porcion-vasos" class="form-control bg-dark text-info fw-bold text-center border-secondary fs-6 py-2">$0</div>
                                         </div>
                                         <div class="col-md-5">
                                             <label class="form-label-neon" style="color:var(--p-cyan)">Foto / Imagen (URL o Subida)</label>
@@ -5671,45 +5679,25 @@
                 actualizarBadgeCostoEnVivo('armatubatido');
                 const heading = document.getElementById('headingArmaTuBatido');
                 if (heading) heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } else if(isExotico) {
-                if (document.getElementById('exoticos-id')) document.getElementById('exoticos-id').value = ins.idInsumo;
-                if (document.getElementById('exoticos-nombre')) document.getElementById('exoticos-nombre').value = ins.nombre;
-                if (ins.subcategoria && document.getElementById('exoticos-subcategoria')) document.getElementById('exoticos-subcategoria').value = ins.subcategoria;
-                if (document.getElementById('exoticos-unidad')) document.getElementById('exoticos-unidad').value = ins.medida || 'gr';
-                let dosisIns = ins.cantidadPorcion || 50;
-                if (document.getElementById('exoticos-dosis')) document.getElementById('exoticos-dosis').value = dosisIns;
-                let stockFisico = parseFloat(ins.unidadActual) || 0;
-                let porcEquiv = (dosisIns > 0 && esMasaVol) ? (stockFisico / dosisIns) : stockFisico;
-                if (document.getElementById('exoticos-stock')) {
-                    if (stockFisico > 0 && stockFisico < dosisIns) {
-                        document.getElementById('exoticos-stock').value = stockFisico;
-                        if (document.getElementById('exoticos-stock-tipo')) document.getElementById('exoticos-stock-tipo').value = 'porc';
-                    } else if (Number.isInteger(porcEquiv) && porcEquiv > 0 && porcEquiv <= 500) {
-                        document.getElementById('exoticos-stock').value = porcEquiv;
-                        if (document.getElementById('exoticos-stock-tipo')) document.getElementById('exoticos-stock-tipo').value = 'porc';
-                    } else {
-                        document.getElementById('exoticos-stock').value = stockFisico;
-                        if (document.getElementById('exoticos-stock-tipo')) document.getElementById('exoticos-stock-tipo').value = 'fisico';
-                    }
-                }
-                if (document.getElementById('exoticos-sucursal')) document.getElementById('exoticos-sucursal').value = ins.sucursal;
-                let prExot = (ins.precioKilo && ins.precioKilo > 0) ? ins.precioKilo : (ins.precio || 0);
-                if (document.getElementById('exoticos-precio')) document.getElementById('exoticos-precio').value = prExot;
-                if (document.getElementById('exoticos-imagen')) document.getElementById('exoticos-imagen').value = ins.imagen || '';
-                recalcularPrecioPorcionEnVivo('exoticos');
-                const heading = document.getElementById('headingExoticos');
-                if (heading) heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            } else if(cat.includes('vaso') || cat.includes('packaging')) {
+            } else if(isExotico || cat.includes('vaso') || cat.includes('packaging')) {
                 document.getElementById('vaso-id').value = ins.idInsumo;
                 document.getElementById('vaso-nombre').value = ins.nombre;
+                const selDestino = document.getElementById('vaso-destino-linea');
+                if (selDestino) {
+                    if (sub.includes('compartid')) selDestino.value = 'Compartido (500 mls y Exóticos)';
+                    else if (sub.includes('vaso') || sub.includes('500') || (!isExotico && (cat.includes('vaso') || cat.includes('packaging')))) selDestino.value = 'Vaso de 500 mls';
+                    else selDestino.value = 'Exótico';
+                }
                 document.getElementById('vaso-unidad').value = ins.medida || 'und';
-                if (document.getElementById('vaso-dosis')) document.getElementById('vaso-dosis').value = ins.cantidadPorcion || 1;
+                if (document.getElementById('vaso-dosis')) document.getElementById('vaso-dosis').value = ins.cantidadPorcion || (esMasaVol && isExotico ? 50 : 1);
                 document.getElementById('vaso-stock').value = ins.unidadActual;
                 document.getElementById('vaso-sucursal').value = ins.sucursal;
                 let prVaso = (ins.precioKilo && ins.precioKilo > 0) ? ins.precioKilo : (ins.precio || 0);
                 document.getElementById('vaso-precio').value = prVaso;
                 if (document.getElementById('vaso-imagen')) document.getElementById('vaso-imagen').value = ins.imagen || '';
                 recalcularPrecioPorcionEnVivo('vasos');
+                const colVasos = document.getElementById('collapseVasos');
+                if (colVasos && !colVasos.classList.contains('show')) new bootstrap.Collapse(colVasos, { toggle: true });
                 const heading = document.getElementById('headingVasos');
                 if (heading) heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } else if(cat.includes('shot') || cat.includes('caldo')) {
@@ -5795,8 +5783,9 @@
         } else if(tipo==='vasos') { 
             id = document.getElementById('vaso-id').value; 
             nombre = document.getElementById('vaso-nombre').value; 
-            cat='Insumos Vaso'; 
-            subcat='Packaging'; 
+            const destinoLinea = document.getElementById('vaso-destino-linea')?.value || 'Compartido (500 mls y Exóticos)';
+            cat = (destinoLinea === 'Exótico') ? 'Exóticos' : 'Insumos Vaso'; 
+            subcat = destinoLinea; 
             uni=document.getElementById('vaso-unidad').value; 
             dosisVal=parseFloat(document.getElementById('vaso-dosis') ? document.getElementById('vaso-dosis').value : 1) || 1;
             stock=document.getElementById('vaso-stock').value; 
@@ -5890,7 +5879,9 @@
             if (document.getElementById('ins-dosis')) document.getElementById('ins-dosis').value='';
             if (document.getElementById('ins-precio')) document.getElementById('ins-precio').value='';
             if (document.getElementById('ins-precio-porcion')) document.getElementById('ins-precio-porcion').value='';
+            if (document.getElementById('vaso-id')) document.getElementById('vaso-id').value=''; 
             if (document.getElementById('vaso-nombre')) document.getElementById('vaso-nombre').value=''; 
+            if (document.getElementById('vaso-destino-linea')) document.getElementById('vaso-destino-linea').value='Compartido (500 mls y Exóticos)'; 
             if (document.getElementById('vaso-stock')) document.getElementById('vaso-stock').value='';
             if (document.getElementById('vaso-dosis')) document.getElementById('vaso-dosis').value='';
             if (document.getElementById('vaso-precio')) document.getElementById('vaso-precio').value='';
