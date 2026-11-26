@@ -1348,7 +1348,7 @@
                                         <div class="col-md-2">
                                             <label class="form-label-neon text-warning" id="lbl-ins-precio-kilo">Precio / Kilo ($)</label>
                                             <div class="input-group">
-                                                <input type="number" id="ins-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 5000" oninput="recalcularPrecioPorcionEnVivo('pulpas')">
+                                                <input type="number" id="ins-precio" class="form-control text-warning fw-bold" step="any" placeholder="Ej: 5000" oninput="recalcularPrecioPorcionEnVivo('pulpas')">
                                                 <select id="ins-precio-unidad" class="form-select bg-dark text-warning border-secondary fw-bold px-1" style="max-width: 92px; font-size: 0.78rem;" onchange="recalcularPrecioPorcionEnVivo('pulpas')">
                                                     <option value="Kilo">Kilo</option>
                                                     <option value="Paquete">Paquete</option>
@@ -1471,7 +1471,7 @@
                                         <div class="col-md-2">
                                             <label class="form-label-neon text-warning" id="lbl-vaso-precio-kilo">Valor / Unidad ($)</label>
                                             <div class="input-group">
-                                                <input type="number" id="vaso-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 250" oninput="recalcularPrecioPorcionEnVivo('vasos')">
+                                                <input type="number" id="vaso-precio" class="form-control text-warning fw-bold" step="any" placeholder="Ej: 250" oninput="recalcularPrecioPorcionEnVivo('vasos')">
                                                 <select id="vaso-precio-unidad" class="form-select bg-dark text-warning border-secondary fw-bold px-1" style="max-width: 92px; font-size: 0.78rem;" onchange="recalcularPrecioPorcionEnVivo('vasos')">
                                                     <option value="Unidad" selected>Unidad</option>
                                                     <option value="Kilo">Kilo</option>
@@ -1581,7 +1581,7 @@
                                         <div class="col-md-2">
                                             <label class="form-label-neon text-warning" id="lbl-shot-precio-kilo">Precio / Litro ($)</label>
                                             <div class="input-group">
-                                                <input type="number" id="shot-precio" class="form-control text-warning fw-bold" step="1" placeholder="Ej: 8000" oninput="recalcularPrecioPorcionEnVivo('shots')">
+                                                <input type="number" id="shot-precio" class="form-control text-warning fw-bold" step="any" placeholder="Ej: 8000" oninput="recalcularPrecioPorcionEnVivo('shots')">
                                                 <select id="shot-precio-unidad" class="form-select bg-dark text-warning border-secondary fw-bold px-1" style="max-width: 92px; font-size: 0.78rem;" onchange="recalcularPrecioPorcionEnVivo('shots')">
                                                     <option value="Litro" selected>Litro</option>
                                                     <option value="Mililitro">Mililitro</option>
@@ -1792,7 +1792,7 @@
                                         <div class="col-md-2">
                                             <label class="form-label-neon text-info" id="lbl-armatubatido-precio-kilo">Precio / Kilo ($)</label>
                                             <div class="input-group">
-                                                <input type="number" id="armatubatido-precio-kilo" class="form-control text-info fw-bold" step="1" placeholder="Ej: 13333" oninput="recalcularPrecioPorcionEnVivo('armatubatido')">
+                                                <input type="number" id="armatubatido-precio-kilo" class="form-control text-info fw-bold" step="any" placeholder="Ej: 13333" oninput="recalcularPrecioPorcionEnVivo('armatubatido')">
                                                 <select id="armatubatido-precio-unidad" class="form-select bg-dark text-info border-secondary fw-bold px-1" style="max-width: 92px; font-size: 0.78rem;" onchange="recalcularPrecioPorcionEnVivo('armatubatido')">
                                                     <option value="Kilo" selected>Kilo</option>
                                                     <option value="Paquete">Paquete</option>
@@ -5673,25 +5673,34 @@
                 let stockTotal = parseFloat(i.unidadActual) || 0;
                 let medidaIns = (i.medida || 'gr').toLowerCase();
                 let esMasaVol = (medidaIns === 'gr' || medidaIns === 'mls');
-                let precioAlmacenado = isArmaTuBatido ? (parseFloat(i.precio) || 0) : normalizarPrecioCLP(i.precio || 0);
+                const uniPre = (i.unidadPrecio || '').trim();
+                const esPrecioDirecto = uniPre === 'Unidad' || uniPre === 'Mililitro' || uniPre === 'Paquete' || uniPre === 'Caja' || medidaIns === 'und';
+                const factorEnvase = (uniPre === 'Paquete' || uniPre === 'Caja') ? Math.max(1, parseFloat(i.unidadesPorEnvase) || 1) : 1;
+                let precioAlmacenado = (isArmaTuBatido || esPrecioDirecto) ? (parseFloat(i.precio) || 0) : normalizarPrecioCLP(i.precio || 0);
                 let precioKiloDB = parseFloat(i.precioKilo) || 0;
-                if (precioKiloDB > 0 && precioKiloDB <= 100) precioKiloDB *= 1000;
+                if (!esPrecioDirecto && precioKiloDB > 0 && precioKiloDB <= 100) precioKiloDB *= 1000;
+
+                const calcCostoPorcGeneral = (pBase, dosisVal) => {
+                    if (uniPre === 'Paquete' || uniPre === 'Caja') return Math.round(((pBase / factorEnvase) * dosisVal) * 100) / 100;
+                    if (uniPre === 'Unidad' || uniPre === 'Mililitro') return Math.round((pBase * dosisVal) * 100) / 100;
+                    return esMasaVol ? Math.round((pBase / 1000) * dosisVal) : Math.round((pBase * dosisVal) * 100) / 100;
+                };
 
                 let dosisPulpa = i.cantidadPorcion || (medidaIns === 'und' ? 1 : 50);
                 let precioKiloPulpa = precioKiloDB > 0 ? precioKiloDB : precioAlmacenado;
-                let costoPorcPulpa = esMasaVol ? Math.round((precioKiloPulpa / 1000) * dosisPulpa) : Math.round(precioKiloPulpa * dosisPulpa);
+                let costoPorcPulpa = calcCostoPorcGeneral(precioKiloPulpa, dosisPulpa);
 
                 let dosisVaso = i.cantidadPorcion || 1;
                 let precioKiloVaso = precioKiloDB > 0 ? precioKiloDB : precioAlmacenado;
-                let costoPorcVaso = esMasaVol ? Math.round((precioKiloVaso / 1000) * dosisVaso) : Math.round(precioKiloVaso * dosisVaso);
+                let costoPorcVaso = calcCostoPorcGeneral(precioKiloVaso, dosisVaso);
 
                 let dosisShot = i.cantidadPorcion || (medidaIns === 'und' ? 1 : 30);
                 let precioKiloShot = precioKiloDB > 0 ? precioKiloDB : precioAlmacenado;
-                let costoPorcShot = esMasaVol ? Math.round((precioKiloShot / 1000) * dosisShot) : Math.round(precioKiloShot * dosisShot);
+                let costoPorcShot = calcCostoPorcGeneral(precioKiloShot, dosisShot);
 
                 let dosisExotico = i.cantidadPorcion || (medidaIns === 'und' ? 1 : 50);
                 let precioKiloExotico = precioKiloDB > 0 ? precioKiloDB : precioAlmacenado;
-                let costoPorcExotico = esMasaVol ? Math.round((precioKiloExotico / 1000) * dosisExotico) : Math.round(precioKiloExotico * dosisExotico);
+                let costoPorcExotico = calcCostoPorcGeneral(precioKiloExotico, dosisExotico);
 
                 let dosisArma = i.cantidadPorcion || (medidaIns === 'und' ? 1 : 30);
                 let costoPorcArma = precioAlmacenado;
@@ -6750,26 +6759,35 @@
 
     function guardarInsumo(tipo) {
         let id, nombre, cat, subcat, uni, stock, suc, precioVal, precioKiloVal = 0, precioVentaVal = null, margenVal = null, dosisVal, imgVal = '';
+        const leerPrecioExactoSegunUnidad = (rawVal, uPrecio) => {
+            const num = parseFloat((rawVal ?? '').toString().replace(',', '.')) || 0;
+            if (uPrecio === 'Kilo' || uPrecio === 'Litro') {
+                return normalizarPrecioCLP(num);
+            }
+            return num; // Respeta cifra exacta por Unidad, Paquete, Caja o Mililitro (ej: 32.5)
+        };
+
         if(tipo==='armatubatido') {
             id = document.getElementById('armatubatido-id').value; 
             nombre = document.getElementById('armatubatido-nombre').value; 
             cat='Arma tu Batido'; 
             subcat=document.getElementById('armatubatido-subcategoria')?document.getElementById('armatubatido-subcategoria').value:'Vegetales'; 
             uni=document.getElementById('armatubatido-unidad').value; 
+            const uPreArma = document.getElementById('armatubatido-precio-unidad')?.value || 'Kilo';
+            const undEnvArma = Math.max(1, parseFloat(document.getElementById('armatubatido-unidades-envase')?.value) || 1);
             dosisVal=parseFloat(document.getElementById('armatubatido-dosis').value) || (uni === 'und' ? 1 : 30);
             stock=document.getElementById('armatubatido-stock').value; 
             suc=document.getElementById('armatubatido-sucursal').value;
-            let rawKilo = parseFloat(document.getElementById('armatubatido-precio-kilo') ? document.getElementById('armatubatido-precio-kilo').value : 0) || 0;
-            if (rawKilo > 0 && rawKilo <= 100) rawKilo *= 1000;
+            let rawKilo = leerPrecioExactoSegunUnidad(document.getElementById('armatubatido-precio-kilo')?.value, uPreArma);
             let rawPorc = parseFloat(document.getElementById('armatubatido-precio') ? document.getElementById('armatubatido-precio').value : 0) || 0;
             let esMasaVol = (uni === 'gr' || uni === 'mls');
-            if (rawPorc > 0 && dosisVal > 0) {
-                rawKilo = esMasaVol ? Math.round((rawPorc * 1000) / Math.max(0.01, dosisVal)) : Math.round(rawPorc / Math.max(0.01, dosisVal));
+            if (rawPorc > 0 && dosisVal > 0 && rawKilo <= 0) {
+                rawKilo = esMasaVol ? Math.round((rawPorc * 1000) / Math.max(0.01, dosisVal)) : Math.round((rawPorc / Math.max(0.01, dosisVal)) * 100) / 100;
             } else if (rawPorc <= 0 && rawKilo > 0) {
-                rawPorc = esMasaVol ? Math.round((rawKilo / 1000) * dosisVal) : Math.round(rawKilo * dosisVal);
+                rawPorc = calcularPorcionDesdeUnidadPrecio(rawKilo, dosisVal, uni, uPreArma, undEnvArma);
             }
-            precioVal = Math.round(rawPorc);
-            precioKiloVal = Math.round(rawKilo);
+            precioVal = rawPorc;
+            precioKiloVal = rawKilo;
             let rawVenta = parseFloat(document.getElementById('armatubatido-precio-venta') ? document.getElementById('armatubatido-precio-venta').value : 0) || 0;
             let rawMargen = parseFloat(document.getElementById('armatubatido-margen') ? document.getElementById('armatubatido-margen').value : 0) || 0;
             if (rawVenta <= 0 && rawMargen > 0 && rawMargen < 100 && precioVal > 0) {
@@ -6789,10 +6807,11 @@
             dosisVal=parseFloat(document.getElementById('ins-dosis') ? document.getElementById('ins-dosis').value : 50) || 50;
             stock=document.getElementById('ins-stock').value; 
             suc=document.getElementById('ins-sucursal').value;
-            precioVal = normalizarPrecioCLP(document.getElementById('ins-precio').value);
+            const uPrePulpa = document.getElementById('ins-precio-unidad')?.value || 'Kilo';
+            precioVal = leerPrecioExactoSegunUnidad(document.getElementById('ins-precio').value, uPrePulpa);
             const porcPulpasInp = parseFloat(document.getElementById('ins-precio-porcion')?.value) || 0;
             if (precioVal <= 0 && porcPulpasInp > 0 && dosisVal > 0) {
-                precioVal = (uni === 'gr' || uni === 'mls') ? Math.round((porcPulpasInp * 1000) / dosisVal) : Math.round(porcPulpasInp / dosisVal);
+                precioVal = (uni === 'gr' || uni === 'mls') ? Math.round((porcPulpasInp * 1000) / dosisVal) : Math.round((porcPulpasInp / dosisVal) * 100) / 100;
             }
             precioKiloVal = precioVal;
             imgVal = document.getElementById('ins-imagen') ? document.getElementById('ins-imagen').value.trim() : '';
@@ -6807,10 +6826,11 @@
             dosisVal=parseFloat(document.getElementById('vaso-dosis') ? document.getElementById('vaso-dosis').value : 1) || 1;
             stock=document.getElementById('vaso-stock').value; 
             suc=document.getElementById('vaso-sucursal').value;
-            precioVal = (uni === 'und') ? (Math.round(parseFloat(document.getElementById('vaso-precio').value) || 0)) : normalizarPrecioCLP(document.getElementById('vaso-precio').value);
+            const uPreVaso = document.getElementById('vaso-precio-unidad')?.value || 'Unidad';
+            precioVal = leerPrecioExactoSegunUnidad(document.getElementById('vaso-precio').value, uPreVaso);
             const porcVasoInp = parseFloat(document.getElementById('vaso-precio-porcion')?.value) || 0;
             if (precioVal <= 0 && porcVasoInp > 0 && dosisVal > 0) {
-                precioVal = (uni === 'gr' || uni === 'mls') ? Math.round((porcVasoInp * 1000) / dosisVal) : Math.round(porcVasoInp / dosisVal);
+                precioVal = (uni === 'gr' || uni === 'mls') ? Math.round((porcVasoInp * 1000) / dosisVal) : Math.round((porcVasoInp / dosisVal) * 100) / 100;
             }
             precioKiloVal = precioVal;
             imgVal = document.getElementById('vaso-imagen') ? document.getElementById('vaso-imagen').value.trim() : '';
@@ -6823,10 +6843,11 @@
             dosisVal=parseFloat(document.getElementById('shot-dosis') ? document.getElementById('shot-dosis').value : 30) || 30;
             stock=document.getElementById('shot-stock').value; 
             suc=document.getElementById('shot-sucursal').value;
-            precioVal = normalizarPrecioCLP(document.getElementById('shot-precio').value);
+            const uPreShot = document.getElementById('shot-precio-unidad')?.value || 'Litro';
+            precioVal = leerPrecioExactoSegunUnidad(document.getElementById('shot-precio').value, uPreShot);
             const porcShotInp = parseFloat(document.getElementById('shot-precio-porcion')?.value) || 0;
             if (precioVal <= 0 && porcShotInp > 0 && dosisVal > 0) {
-                precioVal = (uni === 'gr' || uni === 'mls') ? Math.round((porcShotInp * 1000) / dosisVal) : Math.round(porcShotInp / dosisVal);
+                precioVal = (uni === 'gr' || uni === 'mls') ? Math.round((porcShotInp * 1000) / dosisVal) : Math.round((porcShotInp / dosisVal) * 100) / 100;
             }
             precioKiloVal = precioVal;
             imgVal = document.getElementById('shot-imagen') ? document.getElementById('shot-imagen').value.trim() : '';
@@ -7381,17 +7402,17 @@
 
     function calcularPorcionDesdeUnidadPrecio(pBase, dosis, unidadMedida, unidadPrecio, unidadesPorEnvase = 1) {
         if (pBase <= 0 || dosis <= 0) return 0;
+        let res = 0;
         if (unidadPrecio === 'Paquete' || unidadPrecio === 'Caja') {
             const cantEnvase = Math.max(1, parseFloat(unidadesPorEnvase) || 1);
-            return Math.round((pBase / cantEnvase) * dosis);
+            res = (pBase / cantEnvase) * dosis;
+        } else if ((unidadPrecio === 'Kilo' && unidadMedida === 'gr') || (unidadPrecio === 'Litro' && unidadMedida === 'mls')
+                || ((unidadPrecio === 'Kilo' || unidadPrecio === 'Litro') && (unidadMedida === 'gr' || unidadMedida === 'mls'))) {
+            res = (pBase / 1000) * dosis;
+        } else {
+            res = pBase * dosis;
         }
-        if (unidadPrecio === 'Kilo' && unidadMedida === 'gr') return Math.round((pBase / 1000) * dosis);
-        if (unidadPrecio === 'Litro' && unidadMedida === 'mls') return Math.round((pBase / 1000) * dosis);
-        if (unidadPrecio === 'Mililitro' && unidadMedida === 'mls') return Math.round(pBase * dosis);
-        if ((unidadPrecio === 'Kilo' || unidadPrecio === 'Litro') && (unidadMedida === 'gr' || unidadMedida === 'mls')) {
-            return Math.round((pBase / 1000) * dosis);
-        }
-        return Math.round(pBase * dosis);
+        return Math.round(res * 100) / 100;
     }
 
     function recalcularPrecioPorcionEnVivo(tipo) {
@@ -7551,54 +7572,61 @@
     function actualizarBadgeCostoEnVivo(tipo, desdePorcion = false) {
         const suc = 'Antofagasta';
         if (tipo === 'pulpas') {
+            const unidadPrecio = document.getElementById('ins-precio-unidad')?.value || 'Kilo';
+            const undEnvase = parseFloat(document.getElementById('ins-unidades-envase')?.value) || 1;
             let precio = parseFloat(document.getElementById('ins-precio')?.value) || 0;
-            if (precio > 0 && precio <= 100) precio *= 1000;
+            if (precio > 0 && precio <= 100 && (unidadPrecio === 'Kilo' || unidadPrecio === 'Litro')) precio *= 1000;
             const dosis = parseFloat(document.getElementById('ins-dosis')?.value) || 50;
             const unidad = document.getElementById('ins-unidad')?.value || 'gr';
             const stock = parseFloat(document.getElementById('ins-stock')?.value) || 0;
             const inpPorc = document.getElementById('ins-precio-porcion');
-            let costo = desdePorcion ? (parseFloat(inpPorc?.value) || 0) : ((unidad === 'gr' || unidad === 'mls') ? Math.round((precio / 1000) * dosis) : Math.round(precio * dosis));
+            let costo = desdePorcion ? (parseFloat(inpPorc?.value) || 0) : calcularPorcionDesdeUnidadPrecio(precio, dosis, unidad, unidadPrecio, undEnvase);
             if (!desdePorcion && inpPorc && costo > 0 && document.activeElement !== inpPorc) inpPorc.value = costo;
             let porcRend = (stock > 0 && dosis > 0) ? ((unidad === 'gr' || unidad === 'mls') ? Math.floor(stock / dosis) : Math.floor(stock)) : 0;
             const b = document.getElementById('badge-costo-porcion-pulpas');
             if (b) {
-                let lblBase = (unidad === 'gr') ? 'Kg' : ((unidad === 'mls') ? 'Lt' : 'Und');
-                b.innerText = `${formatMoney(costo, suc)} / porc (${dosis}${unidad}) • ${lblBase}: ${formatMoney(precio, suc)}${porcRend > 0 ? ' • Rinde: ' + porcRend + ' porc' : ''}`;
+                b.innerText = `${formatMoney(costo, suc)} / porc (${dosis}${unidad}) • ${unidadPrecio}: ${precio}${porcRend > 0 ? ' • Rinde: ' + porcRend + ' porc' : ''}`;
             }
         } else if (tipo === 'vasos') {
-            const precio = parseFloat(document.getElementById('vaso-precio')?.value) || 0;
+            const unidadPrecio = document.getElementById('vaso-precio-unidad')?.value || 'Unidad';
+            const undEnvase = parseFloat(document.getElementById('vaso-unidades-envase')?.value) || 1;
+            let precio = parseFloat(document.getElementById('vaso-precio')?.value) || 0;
+            if (precio > 0 && precio <= 100 && (unidadPrecio === 'Kilo' || unidadPrecio === 'Litro')) precio *= 1000;
             const dosis = parseFloat(document.getElementById('vaso-dosis')?.value) || 1;
             const unidad = document.getElementById('vaso-unidad')?.value || 'und';
             const inpPorc = document.getElementById('vaso-precio-porcion');
-            let costo = desdePorcion ? (parseFloat(inpPorc?.value) || 0) : ((unidad === 'gr' || unidad === 'mls') ? Math.round((precio / 1000) * dosis) : Math.round(precio * dosis));
+            let costo = desdePorcion ? (parseFloat(inpPorc?.value) || 0) : calcularPorcionDesdeUnidadPrecio(precio, dosis, unidad, unidadPrecio, undEnvase);
             if (!desdePorcion && inpPorc && costo > 0 && document.activeElement !== inpPorc) inpPorc.value = costo;
             const b = document.getElementById('badge-costo-porcion-vasos');
             if (b) b.innerText = `${formatMoney(costo, suc)} / porc (${dosis}${unidad})`;
         } else if (tipo === 'shots') {
+            const unidadPrecio = document.getElementById('shot-precio-unidad')?.value || 'Litro';
+            const undEnvase = parseFloat(document.getElementById('shot-unidades-envase')?.value) || 1;
             let precio = parseFloat(document.getElementById('shot-precio')?.value) || 0;
-            if (precio > 0 && precio <= 100) precio *= 1000;
+            if (precio > 0 && precio <= 100 && (unidadPrecio === 'Kilo' || unidadPrecio === 'Litro')) precio *= 1000;
             const dosis = parseFloat(document.getElementById('shot-dosis')?.value) || 30;
             const unidad = document.getElementById('shot-unidad')?.value || 'mls';
             const stock = parseFloat(document.getElementById('shot-stock')?.value) || 0;
             const inpPorc = document.getElementById('shot-precio-porcion');
-            let costo = desdePorcion ? (parseFloat(inpPorc?.value) || 0) : ((unidad === 'gr' || unidad === 'mls') ? Math.round((precio / 1000) * dosis) : Math.round(precio * dosis));
+            let costo = desdePorcion ? (parseFloat(inpPorc?.value) || 0) : calcularPorcionDesdeUnidadPrecio(precio, dosis, unidad, unidadPrecio, undEnvase);
             if (!desdePorcion && inpPorc && costo > 0 && document.activeElement !== inpPorc) inpPorc.value = costo;
             let porcRend = (stock > 0 && dosis > 0) ? ((unidad === 'gr' || unidad === 'mls') ? Math.floor(stock / dosis) : Math.floor(stock)) : 0;
             const b = document.getElementById('badge-costo-porcion-shots');
             if (b) {
-                let lblBase = (unidad === 'gr') ? 'Kg' : ((unidad === 'mls') ? 'Lt' : 'Und');
-                b.innerText = `${formatMoney(costo, suc)} / porc (${dosis}${unidad}) • ${lblBase}: ${formatMoney(precio, suc)}${porcRend > 0 ? ' • Rinde: ' + porcRend + ' porc' : ''}`;
+                b.innerText = `${formatMoney(costo, suc)} / porc (${dosis}${unidad}) • ${unidadPrecio}: ${precio}${porcRend > 0 ? ' • Rinde: ' + porcRend + ' porc' : ''}`;
             }
         } else if (tipo === 'armatubatido') {
             const unidad = document.getElementById('armatubatido-unidad')?.value || 'gr';
+            const unidadPrecio = document.getElementById('armatubatido-precio-unidad')?.value || 'Kilo';
+            const undEnvase = parseFloat(document.getElementById('armatubatido-unidades-envase')?.value) || 1;
             const dosis = parseFloat(document.getElementById('armatubatido-dosis')?.value) || (unidad === 'und' ? 1 : 30);
             let pKilo = parseFloat(document.getElementById('armatubatido-precio-kilo')?.value) || 0;
-            if (pKilo > 0 && pKilo <= 100) pKilo *= 1000;
+            if (pKilo > 0 && pKilo <= 100 && (unidadPrecio === 'Kilo' || unidadPrecio === 'Litro')) pKilo *= 1000;
             let precioPorc = parseFloat(document.getElementById('armatubatido-precio')?.value) || 0;
             if (precioPorc <= 0 && pKilo > 0 && dosis > 0) {
-                precioPorc = (unidad === 'gr' || unidad === 'mls') ? Math.round((pKilo / 1000) * dosis) : Math.round(pKilo * dosis);
+                precioPorc = calcularPorcionDesdeUnidadPrecio(pKilo, dosis, unidad, unidadPrecio, undEnvase);
             } else if (pKilo <= 0 && precioPorc > 0 && dosis > 0) {
-                pKilo = (unidad === 'gr' || unidad === 'mls') ? Math.round((precioPorc * 1000) / dosis) : Math.round(precioPorc / dosis);
+                pKilo = (unidad === 'gr' || unidad === 'mls') ? Math.round((precioPorc * 1000) / dosis) : Math.round((precioPorc / dosis) * 100) / 100;
             }
             let precioVenta = parseFloat(document.getElementById('armatubatido-precio-venta')?.value) || precioPorc;
             let ganancia = Math.max(0, precioVenta - precioPorc);
@@ -7767,22 +7795,31 @@
         let precioBase = 0;
         let costoPorcion = 0;
 
+        const uniPre = (i.unidadPrecio || '').trim();
+        const esPrecioDirecto = uniPre === 'Unidad' || uniPre === 'Mililitro' || uniPre === 'Paquete' || uniPre === 'Caja' || medIns === 'und';
+        const factorEnvase = (uniPre === 'Paquete' || uniPre === 'Caja') ? Math.max(1, parseFloat(i.unidadesPorEnvase) || 1) : 1;
+
         if (esArma) {
             const pPorcRaw = parseFloat(i.precio) || 0;
             let pKiloRaw = parseFloat(i.precioKilo) || 0;
-            if (pKiloRaw > 0 && pKiloRaw <= 100 && esMasaVol) pKiloRaw *= 1000;
+            if (!esPrecioDirecto && pKiloRaw > 0 && pKiloRaw <= 100 && esMasaVol) pKiloRaw *= 1000;
             if (pPorcRaw > 0) {
                 costoPorcion = pPorcRaw;
-                precioBase = esMasaVol ? ((costoPorcion * 1000) / dosisPorc) : (costoPorcion / dosisPorc);
+                precioBase = esMasaVol && !esPrecioDirecto ? ((costoPorcion * 1000) / dosisPorc) : (costoPorcion / dosisPorc);
             } else if (pKiloRaw > 0) {
-                precioBase = pKiloRaw;
-                costoPorcion = esMasaVol ? ((precioBase / 1000) * dosisPorc) : (precioBase * dosisPorc);
+                precioBase = pKiloRaw / factorEnvase;
+                costoPorcion = (esMasaVol && uniPre !== 'Mililitro' && uniPre !== 'Paquete' && uniPre !== 'Caja' && uniPre !== 'Unidad')
+                    ? ((precioBase / 1000) * dosisPorc)
+                    : (precioBase * dosisPorc);
             }
         } else {
-            const pAlmacenado = (medIns === 'und') ? (parseFloat(i.precio) || 0) : normalizarPrecioCLP(i.precio || 0);
-            const pKiloDB = (medIns === 'und') ? (parseFloat(i.precioKilo) || 0) : normalizarPrecioCLP(i.precioKilo || 0);
-            precioBase = pKiloDB > 0 ? pKiloDB : pAlmacenado;
-            costoPorcion = esMasaVol ? ((precioBase / 1000) * dosisPorc) : (precioBase * dosisPorc);
+            const pAlmacenado = esPrecioDirecto ? (parseFloat(i.precio) || 0) : normalizarPrecioCLP(i.precio || 0);
+            const pKiloDB = esPrecioDirecto ? (parseFloat(i.precioKilo) || 0) : normalizarPrecioCLP(i.precioKilo || 0);
+            const rawBase = pKiloDB > 0 ? pKiloDB : pAlmacenado;
+            precioBase = rawBase / factorEnvase;
+            costoPorcion = (uniPre === 'Unidad' || uniPre === 'Mililitro' || uniPre === 'Paquete' || uniPre === 'Caja' || !esMasaVol)
+                ? (precioBase * dosisPorc)
+                : ((precioBase / 1000) * dosisPorc);
         }
 
         return {

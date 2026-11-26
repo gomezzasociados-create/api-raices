@@ -67,24 +67,28 @@ public class ListaComprasController {
     }
 
     public static double obtenerPrecioKiloActual(Insumo i) {
+        String uniPre = i.getUnidadPrecio() != null ? i.getUnidadPrecio().trim() : "";
+        String med = (i.getMedida() != null ? i.getMedida() : "gr").toLowerCase();
+        boolean esPrecioDirecto = "Unidad".equalsIgnoreCase(uniPre) || "Mililitro".equalsIgnoreCase(uniPre)
+                || "Paquete".equalsIgnoreCase(uniPre) || "Caja".equalsIgnoreCase(uniPre) || "und".equals(med);
+
         double pKilo = (i.getPrecioKilo() != null && i.getPrecioKilo() > 0) ? i.getPrecioKilo() : 0.0;
-        if (pKilo > 0 && pKilo <= 100.0) pKilo *= 1000.0;
-        if (pKilo > 0) return Math.round(pKilo);
+        if (!esPrecioDirecto && pKilo > 0 && pKilo <= 100.0) pKilo *= 1000.0;
+        if (pKilo > 0) return esPrecioDirecto ? (Math.round(pKilo * 100.0) / 100.0) : Math.round(pKilo);
 
         double pr = i.getPrecio() != null ? i.getPrecio() : 0.0;
         String cat = (i.getCategoria() != null ? i.getCategoria() : "").toLowerCase();
         boolean isArma = cat.contains("arma") || cat.contains("porcion");
-        String med = (i.getMedida() != null ? i.getMedida() : "gr").toLowerCase();
         double dosis = (i.getCantidadPorcion() != null && i.getCantidadPorcion() > 0) ? i.getCantidadPorcion() : 30.0;
 
         if (isArma) {
-            if ("gr".equals(med) || "mls".equals(med)) {
+            if (("gr".equals(med) || "mls".equals(med)) && !esPrecioDirecto) {
                 return Math.round((pr * 1000.0) / Math.max(1.0, dosis));
             }
-            return Math.round(pr / Math.max(1.0, dosis));
+            return Math.round((pr / Math.max(1.0, dosis)) * 100.0) / 100.0;
         } else {
-            if (pr > 0 && pr <= 100.0) pr *= 1000.0;
-            return Math.round(pr);
+            if (!esPrecioDirecto && pr > 0 && pr <= 100.0) pr *= 1000.0;
+            return esPrecioDirecto ? (Math.round(pr * 100.0) / 100.0) : Math.round(pr);
         }
     }
 
@@ -92,16 +96,21 @@ public class ListaComprasController {
         String cat = (i.getCategoria() != null ? i.getCategoria() : "").toLowerCase();
         boolean isArma = cat.contains("arma") || cat.contains("porcion");
         String med = (i.getMedida() != null ? i.getMedida() : "gr").toLowerCase();
+        String uniPre = i.getUnidadPrecio() != null ? i.getUnidadPrecio().trim() : "";
         double dosis = (i.getCantidadPorcion() != null && i.getCantidadPorcion() > 0) ? i.getCantidadPorcion() : 30.0;
         double pKilo = obtenerPrecioKiloActual(i);
 
         if (isArma && i.getPrecio() != null && i.getPrecio() > 0) {
-            return Math.round(i.getPrecio());
+            return Math.round(i.getPrecio() * 100.0) / 100.0;
         }
-        if ("gr".equals(med) || "mls".equals(med)) {
-            return Math.round((pKilo / 1000.0) * dosis);
+        if ("Paquete".equalsIgnoreCase(uniPre) || "Caja".equalsIgnoreCase(uniPre)) {
+            double env = (i.getUnidadesPorEnvase() != null && i.getUnidadesPorEnvase() > 0) ? i.getUnidadesPorEnvase() : 1.0;
+            return Math.round(((pKilo / env) * dosis) * 100.0) / 100.0;
         }
-        return Math.round(pKilo * dosis);
+        if (("gr".equals(med) || "mls".equals(med)) && !"Unidad".equalsIgnoreCase(uniPre) && !"Mililitro".equalsIgnoreCase(uniPre)) {
+            return Math.round(((pKilo / 1000.0) * dosis) * 100.0) / 100.0;
+        }
+        return Math.round((pKilo * dosis) * 100.0) / 100.0;
     }
 
     @Transactional
