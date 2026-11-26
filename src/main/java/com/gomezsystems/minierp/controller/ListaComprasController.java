@@ -349,6 +349,7 @@ public class ListaComprasController {
             item.setEstado("COMPRADO");
             item.setFechaCompra(LocalDateTime.now(ZoneId.of("America/Santiago")));
             item.setRegistradoEnHistorial(true);
+            item.setActivoEnLista(false);
 
             // 1. Actualizar Bodega: Precio por Kilo, Precio por Porción y Stock
             if (item.getIdInsumo() != null) {
