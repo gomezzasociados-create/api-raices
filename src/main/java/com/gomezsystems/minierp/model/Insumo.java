@@ -27,6 +27,7 @@ public class Insumo {
     private Double precio; // <--- PRECIO DE COMPRA POR PORCIÓN (EN ARMA TU BATIDO) O PRECIO BASE (KILO/LITRO/UNIDAD EN OTRAS BODEGAS)
     private Double precioKilo; // <--- PRECIO POR KILO / LITRO / ENVASE BASE (PARA CALCULAR PRECIO DE LA PORCIÓN AUTOMÁTICAMENTE)
     private String unidadPrecio; // Unidad del precio base: Unidad, Kilo, Paquete, Caja, Mililitro, Litro
+    private Double unidadesPorEnvase; // Cantidad de unidades que trae el Paquete o la Caja
     private Double precioVenta; // <--- PRECIO DE VENTA POR PORCIÓN EN EL MENÚ DEL FRONTEND (ARMA TU BATIDO)
     private Double margenPorcentaje; // <--- % MARGEN REAL (1 - %) APLICADO AL INSUMO
     private Double descuento = 0.0;
@@ -92,4 +93,7 @@ public class Insumo {
 
     public String getUnidadPrecio() { return unidadPrecio; }
     public void setUnidadPrecio(String unidadPrecio) { this.unidadPrecio = unidadPrecio; }
+
+    public Double getUnidadesPorEnvase() { return unidadesPorEnvase; }
+    public void setUnidadesPorEnvase(Double unidadesPorEnvase) { this.unidadesPorEnvase = unidadesPorEnvase; }
 }
