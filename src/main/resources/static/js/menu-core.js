@@ -844,6 +844,14 @@ function procesarInsumosBodegaArmado(insumosBase) {
     (insumosBase || []).forEach(function(ins) {
         if (!ins || !ins.nombre) return;
         var cat = normalizarStr(ins.categoria || '');
+        var subNorm = normalizarStr(ins.subcategoria || '');
+        var nomNorm = normalizarStr(ins.nombre || '');
+        var esEmpaqueNoMenu =
+            subNorm.includes('vaso') || subNorm.includes('sticker') || subNorm.includes('sello') ||
+            subNorm.includes('tapa') || subNorm.includes('bolsa') || subNorm.includes('empaque') || subNorm.includes('packaging') ||
+            nomNorm.includes('vaso') || nomNorm.includes('sticker') || nomNorm.includes('sello') ||
+            nomNorm.includes('tapa') || nomNorm.includes('bolsa');
+        if (esEmpaqueNoMenu) return;
         if (cat.includes('arma') || cat.includes('porcion')) {
             var porcionDosis = (ins.cantidadPorcion && ins.cantidadPorcion > 0) ? ins.cantidadPorcion : 1;
             var medidaIns = (ins.medida || 'gr').toLowerCase();

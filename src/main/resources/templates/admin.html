@@ -1333,6 +1333,8 @@
                                                 <option value="Grasas">Grasas</option>
                                                 <option value="Proteínas">Proteínas</option>
                                                 <option value="Cereales">Cereales</option>
+                                                <option value="Bolsas Gofradas">Bolsas Gofradas</option>
+                                                <option value="Bolsas de Envío">Bolsas de Envío</option>
                                             </select>
                                         </div>
                                         <div class="col-md-1">
@@ -1430,6 +1432,18 @@
                                                 <option value="Exótico">Exótico</option>
                                             </select>
                                         </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label-neon" style="color:var(--p-cyan)">Etiqueta</label>
+                                            <select id="vaso-etiqueta" class="form-select bg-dark text-white border-info">
+                                                <option value="">General / Packaging</option>
+                                                <option value="Vaso">Vaso</option>
+                                                <option value="Sello">Sello</option>
+                                                <option value="Tapa">Tapa</option>
+                                                <option value="Bolsa Envío">Bolsa Envío</option>
+                                                <option value="Sticker">Sticker</option>
+                                                <option value="Insumo / Fruta">Insumo / Fruta</option>
+                                            </select>
+                                        </div>
                                         <div class="col-md-1">
                                             <label class="form-label-neon" style="color:var(--p-cyan)">Métrica</label>
                                             <select id="vaso-unidad" class="form-select" onchange="recalcularPrecioPorcionEnVivo('vasos')">
@@ -1520,6 +1534,8 @@
                                                 <option value="Frutas">Frutas</option>
                                                 <option value="Vegetales">Vegetales</option>
                                                 <option value="Endulzantes">Endulzantes</option>
+                                                <option value="Bolsas de Empaque">Bolsas de Empaque</option>
+                                                <option value="Bolsas de Envío">Bolsas de Envío</option>
                                             </select>
                                         </div>
                                         <div class="col-md-1">
@@ -1710,6 +1726,11 @@
                                                 <option value="Grasas">Grasas</option>
                                                 <option value="Proteínas">Proteínas</option>
                                                 <option value="Cereales">Cereales</option>
+                                                <option value="Vaso">Vaso</option>
+                                                <option value="Sello">Sello</option>
+                                                <option value="Tapa">Tapa</option>
+                                                <option value="Bolsa Envío">Bolsa Envío</option>
+                                                <option value="Sticker">Sticker</option>
                                             </select>
                                         </div>
                                         <div class="col-md-1">
@@ -6601,10 +6622,15 @@
                 document.getElementById('vaso-id').value = ins.idInsumo;
                 document.getElementById('vaso-nombre').value = ins.nombre;
                 const selDestino = document.getElementById('vaso-destino-linea');
+                const selEtiqueta = document.getElementById('vaso-etiqueta');
                 if (selDestino) {
                     if (sub.includes('compartid')) selDestino.value = 'Compartido (500 mls y Exóticos)';
                     else if (sub.includes('vaso') || sub.includes('500') || (!isExotico && (cat.includes('vaso') || cat.includes('packaging')))) selDestino.value = 'Vaso de 500 mls';
                     else selDestino.value = 'Exótico';
+                }
+                if (selEtiqueta) {
+                    const partesSub = (ins.subcategoria || '').split('·').map(x => x.trim());
+                    selEtiqueta.value = partesSub.length > 1 ? partesSub[1] : '';
                 }
                 document.getElementById('vaso-unidad').value = ins.medida || 'und';
                 if (document.getElementById('vaso-dosis')) document.getElementById('vaso-dosis').value = ins.cantidadPorcion || (esMasaVol && isExotico ? 50 : 1);
@@ -6702,8 +6728,9 @@
             id = document.getElementById('vaso-id').value; 
             nombre = document.getElementById('vaso-nombre').value; 
             const destinoLinea = document.getElementById('vaso-destino-linea')?.value || 'Compartido (500 mls y Exóticos)';
+            const etiquetaVaso = document.getElementById('vaso-etiqueta')?.value || '';
             cat = (destinoLinea === 'Exótico') ? 'Exóticos' : 'Insumos Vaso'; 
-            subcat = destinoLinea; 
+            subcat = etiquetaVaso ? `${destinoLinea} · ${etiquetaVaso}` : destinoLinea; 
             uni=document.getElementById('vaso-unidad').value; 
             dosisVal=parseFloat(document.getElementById('vaso-dosis') ? document.getElementById('vaso-dosis').value : 1) || 1;
             stock=document.getElementById('vaso-stock').value; 
@@ -6800,6 +6827,7 @@
             if (document.getElementById('vaso-id')) document.getElementById('vaso-id').value=''; 
             if (document.getElementById('vaso-nombre')) document.getElementById('vaso-nombre').value=''; 
             if (document.getElementById('vaso-destino-linea')) document.getElementById('vaso-destino-linea').value='Compartido (500 mls y Exóticos)'; 
+            if (document.getElementById('vaso-etiqueta')) document.getElementById('vaso-etiqueta').value=''; 
             if (document.getElementById('vaso-stock')) document.getElementById('vaso-stock').value='';
             if (document.getElementById('vaso-dosis')) document.getElementById('vaso-dosis').value='';
             if (document.getElementById('vaso-precio')) document.getElementById('vaso-precio').value='';

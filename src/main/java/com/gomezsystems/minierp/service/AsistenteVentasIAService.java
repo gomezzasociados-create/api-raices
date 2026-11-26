@@ -1008,6 +1008,12 @@ public class AsistenteVentasIAService {
         if (base == null || base.isEmpty()) base = insumoRepository.findAll();
         return base.stream()
                 .filter(i -> i.getCategoria() != null && (normalizar(i.getCategoria()).contains("arma") || normalizar(i.getCategoria()).contains("porcion")))
+                .filter(i -> {
+                    String sub = normalizar(i.getSubcategoria());
+                    String nom = normalizar(i.getNombre());
+                    return !(sub.contains("vaso") || sub.contains("sticker") || sub.contains("sello") || sub.contains("tapa") || sub.contains("bolsa") || sub.contains("empaque") || sub.contains("packaging")
+                            || nom.contains("vaso") || nom.contains("sticker") || nom.contains("sello") || nom.contains("tapa") || nom.contains("bolsa"));
+                })
                 .filter(i -> i.getUnidadActual() == null || i.getUnidadActual() > 0)
                 .toList();
     }
