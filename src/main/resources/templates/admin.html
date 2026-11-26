@@ -5277,10 +5277,10 @@
                 const id = it.id;
                 const med = (it.medida || 'gr').toLowerCase();
                 const dosis = it.cantidadPorcion || 30;
+                const unidadSel = normalizarUnidadCompraUI(it.unidadCompra, med);
                 const lblMeasureBase = med === 'gr' ? 'PRECIO / KILO' : (med === 'mls' ? 'PRECIO / LITRO' : 'PRECIO / UND');
                 const lblPrecioBase = med === 'gr' ? 'Precio / Kilo ($)' : (med === 'mls' ? 'Precio / Litro ($)' : 'Precio / Und ($)');
-                const lblCantCompra = med === 'gr' ? 'Cant. a Comprar (Kilos)' : (med === 'mls' ? 'Cant. a Comprar (Litros)' : 'Cant. a Comprar (Und)');
-                const uniCorto = med === 'gr' ? 'Kg' : (med === 'mls' ? 'Lt' : 'Und');
+                const uniCorto = etiquetaCortaUnidadCompra(unidadSel);
                 const stockUnd = Math.floor(it.stockActualUnidades || 0);
                 const estado = (it.estado || 'PENDIENTE').toUpperCase();
 
@@ -5413,10 +5413,20 @@
                                            value="$${pPorcNue.toLocaleString('es-CL')}" readonly>
                                 </div>
                                 <div class="col-md-2">
-                                    <label class="form-label-neon small text-white">${lblCantCompra}</label>
-                                    <input type="number" id="compra-cant-${id}" class="form-control form-control-sm text-white fw-bold text-center"
-                                           value="${cantComp}" step="0.5" min="0.1"
-                                           oninput="recalcularFilaCompraEnVivo(${id}, ${dosis}, '${med}')">
+                                    <label class="form-label-neon small text-white">Cant. y Unidad</label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="number" id="compra-cant-${id}" class="form-control text-white fw-bold text-center"
+                                               value="${cantComp}" step="0.1" min="0.1"
+                                               oninput="recalcularFilaCompraEnVivo(${id}, ${dosis}, '${med}')">
+                                        <select id="compra-unidad-${id}" class="form-select bg-dark text-warning border-secondary fw-bold px-1" style="max-width: 72px;"
+                                                onchange="recalcularFilaCompraEnVivo(${id}, ${dosis}, '${med}')">
+                                            <option value="kg" ${unidadSel === 'kg' ? 'selected' : ''}>Kg</option>
+                                            <option value="gr" ${unidadSel === 'gr' ? 'selected' : ''}>gr</option>
+                                            <option value="mls" ${unidadSel === 'mls' ? 'selected' : ''}>mls</option>
+                                            <option value="lt" ${unidadSel === 'lt' ? 'selected' : ''}>Lt</option>
+                                            <option value="und" ${unidadSel === 'und' ? 'selected' : ''}>Und</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="col-md-2">
                                     <label class="form-label-neon small text-success">Total Gasto Tesorería ($)</label>
@@ -5456,16 +5466,48 @@
         cont.innerHTML = html;
     }
 
+    function normalizarUnidadCompraUI(unidadStr, medFallback) {
+        const u = (unidadStr || '').toString().trim().toLowerCase();
+        if (u.includes('kg') || u.includes('kilo')) return 'kg';
+        if (u.includes('lt') || u.includes('litro')) return 'lt';
+        if (u.includes('ml') || u.includes('mili')) return 'mls';
+        if (u.includes('gr') || u.includes('gramo')) return 'gr';
+        if (u.includes('und') || u.includes('unidad') || u.includes('porc')) return 'und';
+        const m = (medFallback || 'gr').toLowerCase();
+        if (m === 'mls') return 'lt';
+        if (m === 'und') return 'und';
+        return 'kg';
+    }
+
+    function etiquetaCortaUnidadCompra(u) {
+        switch (u) {
+            case 'kg': return 'Kg';
+            case 'gr': return 'gr';
+            case 'mls': return 'mls';
+            case 'lt': return 'Lt';
+            default: return 'Und';
+        }
+    }
+
     function recalcularFilaCompraEnVivo(id, dosis, med) {
         let pKilo = parseFloat(document.getElementById(`compra-pkilo-${id}`)?.value) || 0;
         if (pKilo > 0 && pKilo <= 100 && med !== 'und') pKilo *= 1000;
         const cant = parseFloat(document.getElementById(`compra-cant-${id}`)?.value) || 0;
-        const uniCorto = med === 'gr' ? 'Kg' : (med === 'mls' ? 'Lt' : 'Und');
+        const unidad = document.getElementById(`compra-unidad-${id}`)?.value || normalizarUnidadCompraUI('', med);
+        const uniCorto = etiquetaCortaUnidadCompra(unidad);
 
         let pPorc = (med === 'gr' || med === 'mls')
             ? Math.round((pKilo / 1000) * dosis)
             : Math.round(pKilo * dosis);
-        let total = Math.round(pKilo * cant);
+
+        let total = 0;
+        if (unidad === 'kg' || unidad === 'lt') {
+            total = Math.round(pKilo * cant);
+        } else if (unidad === 'gr' || unidad === 'mls') {
+            total = Math.round((pKilo / 1000) * cant);
+        } else {
+            total = Math.round((med === 'und' ? pKilo : pPorc) * cant);
+        }
 
         const elPorc = document.getElementById(`compra-pporc-${id}`);
         if (elPorc) elPorc.value = '$' + pPorc.toLocaleString('es-CL');
@@ -5490,6 +5532,7 @@
     async function actualizarSoloPrecioKiloBodega(id) {
         const precioKiloNuevo = parseFloat(document.getElementById(`compra-pkilo-${id}`)?.value) || 0;
         const cantidadAComprar = parseFloat(document.getElementById(`compra-cant-${id}`)?.value) || 1;
+        const unidadCompra = document.getElementById(`compra-unidad-${id}`)?.value || '';
         const costoTotalCompra = parseFloat(document.getElementById(`compra-total-${id}`)?.value) || 0;
         const proveedorNota = document.getElementById(`compra-nota-${id}`)?.value || '';
 
@@ -5497,7 +5540,7 @@
             const res = await fetch(`/api/compras/${id}/actualizar-precio`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ precioKiloNuevo, cantidadAComprar, costoTotalCompra, proveedorNota })
+                body: JSON.stringify({ precioKiloNuevo, cantidadAComprar, unidadCompra, costoTotalCompra, proveedorNota })
             });
             if (res.ok) {
                 playSound('click');
@@ -5513,6 +5556,7 @@
     async function cambiarEstadoItemCompra(id, nuevoEstado) {
         const precioKiloNuevo = parseFloat(document.getElementById(`compra-pkilo-${id}`)?.value) || 0;
         const cantidadAComprar = parseFloat(document.getElementById(`compra-cant-${id}`)?.value) || 1;
+        const unidadCompra = document.getElementById(`compra-unidad-${id}`)?.value || '';
         const costoTotalCompra = parseFloat(document.getElementById(`compra-total-${id}`)?.value) || 0;
         const proveedorNota = document.getElementById(`compra-nota-${id}`)?.value || '';
 
@@ -5524,6 +5568,7 @@
                     estado: nuevoEstado,
                     precioKiloNuevo,
                     cantidadAComprar,
+                    unidadCompra,
                     costoTotalCompra,
                     proveedorNota,
                     reponerStock: true
@@ -5592,7 +5637,7 @@
         historialComprasMem.forEach(h => {
             const fechaStr = h.fechaCompra ? new Date(h.fechaCompra).toLocaleString('es-CL') : (h.fechaDeteccion ? new Date(h.fechaDeteccion).toLocaleString('es-CL') : '---');
             const med = (h.medida || 'gr').toLowerCase();
-            const uniCompraLbl = med === 'gr' ? 'Kg' : (med === 'mls' ? 'Lt' : 'Und');
+            const uniCompraLbl = etiquetaCortaUnidadCompra(normalizarUnidadCompraUI(h.unidadCompra, med));
             const pKiloAnt = Math.round(h.precioKiloAnterior || 0);
             const pKiloNue = Math.round(h.precioKiloNuevo || 0);
             const pPorcAnt = Math.round(h.precioPorcionAnterior || 0);
@@ -5660,7 +5705,7 @@
         let totalPresupuesto = 0;
         items.forEach(it => {
             const med = (it.medida || 'gr').toLowerCase();
-            const uniLbl = med === 'gr' ? 'Kg' : (med === 'mls' ? 'Lt' : 'Und');
+            const uniLbl = etiquetaCortaUnidadCompra(normalizarUnidadCompraUI(it.unidadCompra, med));
             const costo = Math.round(it.costoTotalCompra || 0);
             if ((it.estado || 'PENDIENTE') === 'PENDIENTE') totalPresupuesto += costo;
             filasHtml += `
@@ -5716,7 +5761,7 @@
         items.forEach(h => {
             const fechaStr = h.fechaCompra ? new Date(h.fechaCompra).toLocaleString('es-CL') : '---';
             const med = (h.medida || 'gr').toLowerCase();
-            const uniLbl = med === 'gr' ? 'Kg' : (med === 'mls' ? 'Lt' : 'Und');
+            const uniLbl = etiquetaCortaUnidadCompra(normalizarUnidadCompraUI(h.unidadCompra, med));
             const costo = (h.estado === 'COMPRADO') ? Math.round(h.costoTotalCompra || 0) : 0;
             sumaTotal += costo;
             filasHtml += `

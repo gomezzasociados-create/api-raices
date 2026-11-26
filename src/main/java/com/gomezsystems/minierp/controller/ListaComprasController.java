@@ -256,6 +256,10 @@ public class ListaComprasController {
         }
         final double nuevoPrecioKilo = rawPrecioKilo;
         double cantidadComprar = payload.get("cantidadAComprar") != null ? Double.parseDouble(payload.get("cantidadAComprar").toString()) : (item.getCantidadAComprar() != null ? item.getCantidadAComprar() : 1.0);
+        String unidadCompra = normalizarUnidadCompra(
+                payload.get("unidadCompra") != null ? payload.get("unidadCompra").toString() : item.getUnidadCompra(),
+                item.getMedida()
+        );
         String nota = payload.get("proveedorNota") != null ? payload.get("proveedorNota").toString() : item.getProveedorNota();
 
         double dosis = (item.getCantidadPorcion() != null && item.getCantidadPorcion() > 0) ? item.getCantidadPorcion() : 30.0;
@@ -266,11 +270,12 @@ public class ListaComprasController {
 
         double costoTotal = payload.get("costoTotalCompra") != null
                 ? Double.parseDouble(payload.get("costoTotalCompra").toString())
-                : Math.round(nuevoPrecioKilo * cantidadComprar);
+                : calcularCostoPorUnidadCompra(nuevoPrecioKilo, nuevoPrecioPorcion, cantidadComprar, unidadCompra, med);
 
         item.setPrecioKiloNuevo((double) Math.round(nuevoPrecioKilo));
         item.setPrecioPorcionNuevo(nuevoPrecioPorcion);
         item.setCantidadAComprar(cantidadComprar);
+        item.setUnidadCompra(formatearEtiquetaUnidad(unidadCompra));
         item.setCostoTotalCompra((double) Math.round(costoTotal));
         if (nota != null) item.setProveedorNota(nota);
         itemCompraRepository.save(item);
@@ -326,6 +331,11 @@ public class ListaComprasController {
                 ? Double.parseDouble(payload.get("cantidadAComprar").toString())
                 : (item.getCantidadAComprar() != null && item.getCantidadAComprar() > 0 ? item.getCantidadAComprar() : 1.0);
 
+        String unidadCompra = normalizarUnidadCompra(
+                payload.get("unidadCompra") != null ? payload.get("unidadCompra").toString() : item.getUnidadCompra(),
+                item.getMedida()
+        );
+
         String nota = payload.get("proveedorNota") != null ? payload.get("proveedorNota").toString() : item.getProveedorNota();
         boolean reponerStock = payload.get("reponerStock") == null || Boolean.parseBoolean(payload.get("reponerStock").toString());
 
@@ -337,11 +347,12 @@ public class ListaComprasController {
 
         double costoTotal = payload.get("costoTotalCompra") != null
                 ? Double.parseDouble(payload.get("costoTotalCompra").toString())
-                : Math.round(nuevoPrecioKilo * cantidadComprar);
+                : calcularCostoPorUnidadCompra(nuevoPrecioKilo, nuevoPrecioPorcion, cantidadComprar, unidadCompra, med);
 
         item.setPrecioKiloNuevo((double) Math.round(nuevoPrecioKilo));
         item.setPrecioPorcionNuevo(nuevoPrecioPorcion);
         item.setCantidadAComprar(cantidadComprar);
+        item.setUnidadCompra(formatearEtiquetaUnidad(unidadCompra));
         item.setCostoTotalCompra((double) Math.round(costoTotal));
         if (nota != null) item.setProveedorNota(nota);
 
@@ -375,21 +386,26 @@ public class ListaComprasController {
 
                     if (reponerStock && cantidadComprar > 0) {
                         double stockActual = ins.getUnidadActual() != null ? Math.max(0.0, ins.getUnidadActual()) : 0.0;
+                        double cantidadEnMasaVol = ("kg".equals(unidadCompra) || "lt".equals(unidadCompra))
+                                ? cantidadComprar * 1000.0
+                                : ("gr".equals(unidadCompra) || "mls".equals(unidadCompra)
+                                    ? cantidadComprar
+                                    : cantidadComprar * Math.max(1.0, dosis));
                         double incrementoStock = 0.0;
                         if (isArma) {
-                            // En Arma tu Batido el stock se guarda en Porciones. 1 Kilo (1000gr) = 1000 / dosis porciones
-                            if (esMasaVol) {
-                                incrementoStock = Math.round((cantidadComprar * 1000.0) / Math.max(1.0, dosis));
+                            // En Arma tu Batido el stock se guarda en Porciones.
+                            if (esMasaVol && !"und".equals(unidadCompra)) {
+                                incrementoStock = Math.round(cantidadEnMasaVol / Math.max(1.0, dosis));
                             } else {
                                 incrementoStock = cantidadComprar;
                             }
                         } else if (isExot && esMasaVol && stockActual > 0 && stockActual < dosis) {
                             // Exóticos estaba en modo porciones; lo pasamos a gramos totales limpios
                             double gramosExistentes = stockActual * dosis;
-                            ins.setUnidadActual(gramosExistentes + (cantidadComprar * 1000.0));
-                            incrementoStock = cantidadComprar * 1000.0;
+                            ins.setUnidadActual(gramosExistentes + cantidadEnMasaVol);
+                            incrementoStock = cantidadEnMasaVol;
                         } else if (esMasaVol) {
-                            incrementoStock = cantidadComprar * 1000.0;
+                            incrementoStock = cantidadEnMasaVol;
                         } else {
                             incrementoStock = cantidadComprar;
                         }
@@ -424,9 +440,9 @@ public class ListaComprasController {
             // 2. Registrar automáticamente como Gasto en Tesorería
             if (costoTotal > 0) {
                 Gasto g = new Gasto();
-                String unidadLbl = "gr".equals(med) ? "Kg" : ("mls".equals(med) ? "Lt" : "Und");
-                g.setConcepto(String.format("🛒 COMPRA BODEGA [%s]: %s (%.1f %s a $%,.0f/%s)",
-                        item.getBodega(), item.getNombreInsumo(), cantidadComprar, unidadLbl, nuevoPrecioKilo, unidadLbl));
+                String unidadLbl = formatearEtiquetaCorta(unidadCompra);
+                g.setConcepto(String.format("🛒 COMPRA BODEGA [%s]: %s (%.1f %s)",
+                        item.getBodega(), item.getNombreInsumo(), cantidadComprar, unidadLbl));
                 g.setMonto((double) Math.round(costoTotal));
                 g.setSucursal(item.getSucursal() != null ? item.getSucursal() : "Antofagasta");
                 g.setFecha(LocalDateTime.now(ZoneId.of("America/Santiago")));
@@ -537,5 +553,51 @@ public class ListaComprasController {
                 }
             }
         } catch (Exception ignored) {}
+    }
+
+    private String normalizarUnidadCompra(String unidadRaw, String medFallback) {
+        String u = unidadRaw != null ? unidadRaw.trim().toLowerCase() : "";
+        if (u.contains("kg") || u.contains("kilo")) return "kg";
+        if (u.contains("lt") || u.contains("litro")) return "lt";
+        if (u.contains("ml") || u.contains("mili")) return "mls";
+        if (u.contains("gr") || u.contains("gramo")) return "gr";
+        if (u.contains("und") || u.contains("unidad") || u.contains("porc")) return "und";
+        String m = medFallback != null ? medFallback.trim().toLowerCase() : "gr";
+        if ("mls".equals(m)) return "mls";
+        if ("und".equals(m)) return "und";
+        return "kg";
+    }
+
+    private String formatearEtiquetaUnidad(String unidadNorm) {
+        return switch (unidadNorm) {
+            case "kg" -> "Kilos (kg)";
+            case "gr" -> "Gramos (gr)";
+            case "mls" -> "Mililitros (mls)";
+            case "lt" -> "Litros (lt)";
+            default -> "Unidades (und)";
+        };
+    }
+
+    private String formatearEtiquetaCorta(String unidadNorm) {
+        return switch (unidadNorm) {
+            case "kg" -> "Kg";
+            case "gr" -> "gr";
+            case "mls" -> "mls";
+            case "lt" -> "Lt";
+            default -> "Und";
+        };
+    }
+
+    private double calcularCostoPorUnidadCompra(double precioBase, double precioPorcion, double cantidad, String unidadNorm, String medInsumo) {
+        if ("kg".equals(unidadNorm) || "lt".equals(unidadNorm)) {
+            return Math.round(precioBase * cantidad);
+        }
+        if ("gr".equals(unidadNorm) || "mls".equals(unidadNorm)) {
+            return Math.round((precioBase / 1000.0) * cantidad);
+        }
+        if ("und".equals(medInsumo)) {
+            return Math.round(precioBase * cantidad);
+        }
+        return Math.round(precioPorcion * cantidad);
     }
 }
