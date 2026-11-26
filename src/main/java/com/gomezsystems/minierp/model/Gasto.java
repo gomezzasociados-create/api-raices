@@ -15,6 +15,7 @@ public class Gasto {
     private Double monto;
     private String sucursal;
     private LocalDateTime fecha;
+    private String tipoGasto = "OPEX"; // OPEX (operativo / COPEX) o CAPEX (inversión / capital)
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean archivada = false;
@@ -37,4 +38,7 @@ public class Gasto {
 
     public boolean isArchivada() { return archivada; }
     public void setArchivada(boolean archivada) { this.archivada = archivada; }
+
+    public String getTipoGasto() { return tipoGasto; }
+    public void setTipoGasto(String tipoGasto) { this.tipoGasto = tipoGasto; }
 }

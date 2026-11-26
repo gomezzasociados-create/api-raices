@@ -896,18 +896,179 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="table-container">
-                            <h5 class="mb-4 fw-bold font-orbitron" style="color: #ff0055;"><i class="bi bi-graph-down"></i> REGISTRO DE GASTOS / PAGOS</h5>
+                            <h5 class="mb-4 fw-bold font-orbitron" style="color: #ff0055;"><i class="bi bi-graph-down"></i> REGISTRO DE GASTOS / PAGOS (OPEX / CAPEX)</h5>
                             <div class="row g-2 mb-4">
-                                <div class="col-md-6"><input type="text" id="gasto-concepto" class="form-control bg-dark border-secondary text-white" placeholder="Ej: Pago de Luz"></div>
-                                <div class="col-md-4"><input type="number" id="gasto-monto" class="form-control bg-dark border-secondary text-white" placeholder="Monto"></div>
-                                <div class="col-md-2"><button class="btn btn-danger w-100" onclick="guardarGasto()"><i class="bi bi-plus-lg"></i></button></div>
+                                <div class="col-md-4"><input type="text" id="gasto-concepto" class="form-control bg-dark border-secondary text-white" placeholder="Ej: Pago de Luz / Licuadora"></div>
+                                <div class="col-md-3">
+                                    <select id="gasto-tipo" class="form-select bg-dark border-warning text-warning fw-bold" title="OPEX/COPEX = gasto operativo diario; CAPEX = inversión en maquinaria/activos">
+                                        <option value="OPEX">OPEX / COPEX (Operativo)</option>
+                                        <option value="CAPEX">CAPEX (Inversión)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3"><input type="number" id="gasto-monto" class="form-control bg-dark border-secondary text-white" placeholder="Monto"></div>
+                                <div class="col-md-2"><button class="btn btn-danger w-100" onclick="guardarGasto()" title="Registrar Gasto"><i class="bi bi-plus-lg"></i></button></div>
                             </div>
                             <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                                 <table class="table text-center align-middle">
-                                    <thead class="table-dark"><tr><th>CONCEPTO</th><th>EGRESO</th><th>ACCIÓN</th></tr></thead>
+                                    <thead class="table-dark"><tr><th>CONCEPTO</th><th>TIPO</th><th>EGRESO</th><th>ACCIÓN 🔒</th></tr></thead>
                                     <tbody id="tabla-historico-gastos"></tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL EBITDA EN TESORERÍA (CAPEX / OPEX / HISTORIAL / GUÍA / IMPRIMIBLE / EDICIÓN BAJO CLAVE) -->
+                <div class="table-container p-4 mt-4" style="border-top: 3px solid var(--p-bio-green);">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3 pb-3 border-bottom border-secondary">
+                        <div>
+                            <h5 class="fw-bold font-orbitron m-0" style="color: var(--p-bio-green); text-shadow: 0 0 10px rgba(0,255,166,0.35);">
+                                <i class="bi bi-bar-chart-line-fill me-2"></i> ESTADO DE RESULTADOS & EBITDA (CAPEX / OPEX)
+                            </h5>
+                            <small class="text-white-50 font-rajdhani">Control financiero real, historial mensual, guía práctica, balance imprimible y corrección de errores bajo clave.</small>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap align-items-center">
+                            <button class="btn btn-sm btn-outline-info font-orbitron fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGuiaEbitda">
+                                <i class="bi bi-book-half me-1"></i> GUÍA EBITDA / CAPEX / OPEX
+                            </button>
+                            <button class="btn btn-sm btn-outline-light font-orbitron fw-bold" type="button" onclick="imprimirBalanceEbitda()">
+                                <i class="bi bi-printer-fill me-1"></i> IMPRIMIR BALANCE EBITDA
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- GUÍA PRÁCTICA COLAPSABLE -->
+                    <div class="collapse mb-4" id="collapseGuiaEbitda">
+                        <div class="p-3 rounded-3 border border-info" style="background: rgba(0, 229, 255, 0.06);">
+                            <h6 class="font-orbitron text-info fw-bold mb-2"><i class="bi bi-lightbulb-fill me-1"></i> GUÍA RÁPIDA DE INTERPRETACIÓN PARA RAÍCES</h6>
+                            <div class="row g-3 font-rajdhani text-white">
+                                <div class="col-md-4">
+                                    <div class="p-2 rounded border border-success bg-black h-100">
+                                        <b class="text-success font-orbitron small d-block mb-1">1. EBITDA = INGRESOS − OPEX</b>
+                                        <small class="text-white-50">Mide la ganancia operativa real de tu negocio antes de inversiones grandes en activos. Si el EBITDA es positivo y su margen supera el 20%–30%, la operación diaria es sana.</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-2 rounded border border-warning bg-black h-100">
+                                        <b class="text-warning font-orbitron small d-block mb-1">2. OPEX / COPEX (GASTO OPERATIVO)</b>
+                                        <small class="text-white-50">Gastos recurrentes del día a día: pulpas, frutas, vasos, tapas, arriendo, luz, agua, sueldos, delivery y publicidad. <b>SÍ descuenta del EBITDA.</b></small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-2 rounded border border-info bg-black h-100">
+                                        <b class="text-info font-orbitron small d-block mb-1">3. CAPEX (INVERSIÓN DE CAPITAL)</b>
+                                        <small class="text-white-50">Compra de bienes duraderos o mejoras: licuadoras, congeladores, tótem 3D, remodelación del local, mobiliario. <b>NO reduce el EBITDA</b>, se descuenta después en el Flujo Neto.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FILTROS DE PERÍODO EBITDA -->
+                    <div class="row g-2 align-items-end mb-4 p-3 rounded-3" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                        <div class="col-md-3">
+                            <label class="form-label-neon small text-info">Desde</label>
+                            <input type="date" id="ebitda-desde" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label-neon small text-info">Hasta</label>
+                            <input type="date" id="ebitda-hasta" class="form-control form-control-sm bg-dark text-white border-secondary">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label-neon small text-warning">Alcance</label>
+                            <select id="ebitda-alcance" class="form-select form-select-sm bg-dark text-warning border-warning font-orbitron" onchange="cargarEbitda()">
+                                <option value="true" selected>TODO EL HISTORIAL (INCL. CIERRES)</option>
+                                <option value="false">SOLO TURNO ACTIVO</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex gap-2">
+                            <button class="btn btn-sm btn-success w-100 font-orbitron fw-bold" onclick="cargarEbitda()">
+                                <i class="bi bi-calculator me-1"></i> CALCULAR
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary font-orbitron" onclick="limpiarFiltrosEbitda()" title="Ver todo el historial">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- KPIs EBITDA -->
+                    <div class="row g-3 text-center mb-4">
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded-3 border-success bg-black">
+                                <span class="text-success font-orbitron small d-block">INGRESOS TOTALES</span>
+                                <h3 class="fw-bold text-white mb-0" id="ebitda-ingresos">$0</h3>
+                                <small class="text-white-50" id="ebitda-ingresos-sub">0 ventas pagadas</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded-3 border-warning bg-black">
+                                <span class="text-warning font-orbitron small d-block">OPEX / COPEX (OPERATIVO)</span>
+                                <h3 class="fw-bold text-warning mb-0" id="ebitda-opex">$0</h3>
+                                <small class="text-white-50" id="ebitda-opex-sub">0 egresos operativos</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded-3 bg-black" style="border-color: var(--p-bio-green) !important; box-shadow: 0 0 14px rgba(0,255,166,0.2);">
+                                <span style="color:var(--p-bio-green);" class="font-orbitron small d-block">EBITDA (INGRESOS - OPEX)</span>
+                                <h3 class="fw-bold text-white mb-0" id="ebitda-valor">$0</h3>
+                                <small class="text-info fw-bold" id="ebitda-margen">Margen: 0%</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded-3 border-info bg-black">
+                                <span class="text-info font-orbitron small d-block">CAPEX & FLUJO NETO</span>
+                                <h4 class="fw-bold text-info mb-0" id="ebitda-capex">$0</h4>
+                                <small class="text-white-50" id="ebitda-flujo-neto">Flujo Neto: $0</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- HISTORIAL MENSUAL EBITDA -->
+                    <div class="mb-4">
+                        <h6 class="font-orbitron text-info fw-bold mb-2"><i class="bi bi-calendar3 me-1"></i> HISTORIAL MENSUAL DE EBITDA</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm text-center align-middle">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>PERÍODO</th>
+                                        <th>INGRESOS</th>
+                                        <th>OPEX / COPEX</th>
+                                        <th>EBITDA</th>
+                                        <th>MARGEN %</th>
+                                        <th>CAPEX</th>
+                                        <th>FLUJO NETO</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-ebitda-mensual"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- AUDITORÍA Y CORRECCIÓN BAJO CLAVE DE INGRESOS Y GASTOS -->
+                    <div>
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                            <h6 class="font-orbitron text-warning fw-bold m-0"><i class="bi bi-shield-lock-fill me-1"></i> HISTORIAL DETALLADO & CORRECCIÓN BAJO CLAVE (ERRORES HUMANOS)</h6>
+                            <select id="ebitda-filtro-movs" class="form-select form-select-sm bg-dark text-white border-secondary w-auto font-orbitron" onchange="renderizarMovimientosEbitda()">
+                                <option value="TODOS">TODOS LOS MOVIMIENTOS</option>
+                                <option value="INGRESO">SOLO INGRESOS (VENTAS)</option>
+                                <option value="OPEX">SOLO OPEX / COPEX</option>
+                                <option value="CAPEX">SOLO CAPEX</option>
+                            </select>
+                        </div>
+                        <div class="table-responsive" style="max-height: 360px; overflow-y: auto;">
+                            <table class="table table-sm text-center align-middle">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>FECHA</th>
+                                        <th>CLASIFICACIÓN</th>
+                                        <th>DETALLE / CONCEPTO</th>
+                                        <th>MONTO</th>
+                                        <th>ESTADO</th>
+                                        <th>EDITAR / ELIMINAR 🔒</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabla-ebitda-movimientos"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -3559,22 +3720,33 @@
                     <td>${v.origen}</td>
                     <td style="color:var(--p-cyan)">${v.medioPago || 'Por Definir'}</td>
                     <td class="text-money-green fw-bold">${formatMoney(v.total, v.pais)}</td>
-                    <td>${badgeEstado} <button class="btn btn-sm btn-outline-info ms-2 border-0" onclick="imprimirTicket(${v.id})" title="Ver e Imprimir Recibo"><i class="bi bi-printer fs-5"></i></button> <button class="btn btn-sm btn-outline-success ms-1 border-0" onclick="descargarTicket(${v.id})" title="Descargar Comprobante (PDF)"><i class="bi bi-download fs-5"></i></button>${btnCobrar}${btnCancelar}</td>
+                    <td>${badgeEstado} <button class="btn btn-sm btn-outline-info ms-2 border-0" onclick="imprimirTicket(${v.id})" title="Ver e Imprimir Recibo"><i class="bi bi-printer fs-5"></i></button> <button class="btn btn-sm btn-outline-success ms-1 border-0" onclick="descargarTicket(${v.id})" title="Descargar Comprobante (PDF)"><i class="bi bi-download fs-5"></i></button>${btnCobrar}${btnCancelar}<button class="btn btn-sm btn-outline-warning ms-1 border-0" onclick="editarIngresoConClave(${v.id})" title="Editar Ingreso (Requiere Clave)"><i class="bi bi-pencil-square"></i></button><button class="btn btn-sm btn-outline-danger ms-1 border-0" onclick="eliminarIngresoConClave(${v.id})" title="Eliminar Ingreso (Requiere Clave)"><i class="bi bi-trash3"></i></button></td>
                 </tr>`;
             });
 
             // GASTOS ACTIVOS
             const resGastos = await fetch(`/api/finanzas/gastos/${paisVenta}`);
             const dataGastos = await resGastos.json();
+            window.gastosActivosMem = dataGastos;
             const tbGastos = document.getElementById('tabla-historico-gastos'); tbGastos.innerHTML='';
 
             dataGastos.forEach(g => {
+                const tipoG = (g.tipoGasto || 'OPEX').toUpperCase();
+                const badgeTipo = tipoG === 'CAPEX'
+                    ? `<span class="badge bg-info text-dark font-orbitron">CAPEX</span>`
+                    : `<span class="badge bg-warning text-dark font-orbitron">OPEX</span>`;
                 tbGastos.innerHTML += `<tr>
                     <td class="text-white">${g.concepto}</td>
+                    <td>${badgeTipo}</td>
                     <td style="color:#ff0055" class="fw-bold">-${formatMoney(g.monto, paisVenta)}</td>
-                    <td><button class="btn btn-sm btn-outline-warning border-0" onclick="eliminarGasto(${g.id})"><i class="bi bi-trash fs-5"></i></button></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-info border-0" onclick="editarGastoConClave(${g.id})" title="Editar Gasto (Requiere Clave)"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-sm btn-outline-danger border-0" onclick="eliminarGasto(${g.id})" title="Eliminar Gasto (Requiere Clave)"><i class="bi bi-trash"></i></button>
+                    </td>
                 </tr>`;
             });
+
+            await cargarEbitda();
 
         } catch(e) { console.error("Error cargando Tesorería", e); }
     }
@@ -3619,6 +3791,7 @@
     async function guardarGasto() {
         playSound('click');
         const concepto = document.getElementById('gasto-concepto').value;
+        const tipoGasto = document.getElementById('gasto-tipo')?.value || 'OPEX';
         const monto = parseFloat(document.getElementById('gasto-monto').value);
         const sucursal = document.getElementById('tesoreria-sucursal').value;
         if (!concepto || !monto) { alert("Complete parámetros del egreso."); return; }
@@ -3626,7 +3799,7 @@
         await fetch('/api/finanzas/gastos', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({concepto, monto, sucursal, archivada: false})
+            body: JSON.stringify({concepto, tipoGasto, monto, sucursal, archivada: false})
         });
 
         document.getElementById('gasto-concepto').value = '';
@@ -3635,11 +3808,285 @@
     }
 
     async function eliminarGasto(id) {
+        const pin = prompt("🔑 Ingresa la CLAVE DE AUTORIZACIÓN (PIN Admin) para eliminar este gasto:");
+        if (pin === null || !pin.trim()) return;
         playSound('error');
-        if(confirm("¿Eliminar este registro de gasto?")) {
-            await fetch(`/api/finanzas/gastos/${id}`, { method: 'DELETE' });
-            cargarTesoreria();
+        const res = await fetch(`/api/finanzas/gastos/${id}?pin=${encodeURIComponent(pin.trim())}`, { method: 'DELETE' });
+        if (!res.ok) {
+            alert("❌ " + (await res.text() || "Clave incorrecta."));
+            return;
         }
+        cargarTesoreria();
+    }
+
+    let ebitdaDataMem = null;
+
+    function limpiarFiltrosEbitda() {
+        if (document.getElementById('ebitda-desde')) document.getElementById('ebitda-desde').value = '';
+        if (document.getElementById('ebitda-hasta')) document.getElementById('ebitda-hasta').value = '';
+        if (document.getElementById('ebitda-alcance')) document.getElementById('ebitda-alcance').value = 'true';
+        cargarEbitda();
+    }
+
+    async function cargarEbitda() {
+        const suc = document.getElementById('tesoreria-sucursal')?.value || 'Antofagasta';
+        const desde = document.getElementById('ebitda-desde')?.value || '';
+        const hasta = document.getElementById('ebitda-hasta')?.value || '';
+        const incluirArchivados = document.getElementById('ebitda-alcance')?.value || 'true';
+
+        const params = new URLSearchParams({ incluirArchivados });
+        if (desde) params.append('desde', desde);
+        if (hasta) params.append('hasta', hasta);
+
+        try {
+            const res = await fetch(`/api/finanzas/ebitda/${encodeURIComponent(suc)}?${params.toString()}&_t=${Date.now()}`, { cache: 'no-store' });
+            if (!res.ok) return;
+            const d = await res.json();
+            ebitdaDataMem = d;
+
+            const elIng = document.getElementById('ebitda-ingresos');
+            if (elIng) elIng.innerText = formatMoney(d.ingresosTotales || 0, suc);
+            const elIngSub = document.getElementById('ebitda-ingresos-sub');
+            if (elIngSub) elIngSub.innerText = `${d.cantidadVentas || 0} ventas pagadas`;
+
+            const elOpex = document.getElementById('ebitda-opex');
+            if (elOpex) elOpex.innerText = formatMoney(d.opexTotal || 0, suc);
+            const elOpexSub = document.getElementById('ebitda-opex-sub');
+            if (elOpexSub) elOpexSub.innerText = `${d.cantidadOpex || 0} egresos operativos`;
+
+            const elEbitda = document.getElementById('ebitda-valor');
+            if (elEbitda) {
+                elEbitda.innerText = formatMoney(d.ebitda || 0, suc);
+                elEbitda.style.color = (d.ebitda || 0) >= 0 ? 'var(--p-bio-green)' : '#ff0055';
+            }
+            const elMargen = document.getElementById('ebitda-margen');
+            if (elMargen) elMargen.innerText = `Margen EBITDA: ${d.margenEbitda || 0}%`;
+
+            const elCapex = document.getElementById('ebitda-capex');
+            if (elCapex) elCapex.innerText = `CAPEX: ${formatMoney(d.capexTotal || 0, suc)}`;
+            const elFlujo = document.getElementById('ebitda-flujo-neto');
+            if (elFlujo) elFlujo.innerText = `Flujo Neto: ${formatMoney(d.flujoCajaNeto || 0, suc)}`;
+
+            const tbMensual = document.getElementById('tabla-ebitda-mensual');
+            if (tbMensual) {
+                const hist = d.historialMensual || [];
+                tbMensual.innerHTML = hist.length === 0
+                    ? `<tr><td colspan="7" class="text-white-50 py-3">Sin registros en el período seleccionado.</td></tr>`
+                    : hist.map(m => `
+                        <tr>
+                            <td class="fw-bold text-info font-orbitron">${m.periodo}</td>
+                            <td class="text-money-green fw-bold">${formatMoney(m.ingresos, suc)}</td>
+                            <td class="text-warning fw-bold">-${formatMoney(m.opex, suc)}</td>
+                            <td class="fw-bold ${m.ebitda >= 0 ? 'text-success' : 'text-danger'}">${formatMoney(m.ebitda, suc)}</td>
+                            <td><span class="badge ${m.margenPct >= 0 ? 'bg-success' : 'bg-danger'}">${m.margenPct}%</span></td>
+                            <td class="text-info">-${formatMoney(m.capex, suc)}</td>
+                            <td class="fw-bold text-white">${formatMoney(m.flujoNeto, suc)}</td>
+                        </tr>
+                    `).join('');
+            }
+
+            renderizarMovimientosEbitda();
+        } catch (e) {
+            console.error('Error cargando EBITDA:', e);
+        }
+    }
+
+    function renderizarMovimientosEbitda() {
+        const tb = document.getElementById('tabla-ebitda-movimientos');
+        if (!tb || !ebitdaDataMem) return;
+        const suc = document.getElementById('tesoreria-sucursal')?.value || 'Antofagasta';
+        const filtro = document.getElementById('ebitda-filtro-movs')?.value || 'TODOS';
+
+        let movs = [];
+        (ebitdaDataMem.ventas || []).forEach(v => {
+            movs.push({
+                clase: 'INGRESO',
+                id: v.id,
+                fecha: v.fecha,
+                detalle: `Venta #${v.id} (${v.origen || 'POS'} • ${v.medioPago || 'N/A'}${v.nombreCliente ? ' • ' + v.nombreCliente : ''})`,
+                monto: v.total || 0,
+                archivada: v.archivada
+            });
+        });
+        (ebitdaDataMem.gastos || []).forEach(g => {
+            movs.push({
+                clase: (g.tipoGasto || 'OPEX').toUpperCase(),
+                id: g.id,
+                fecha: g.fecha,
+                detalle: g.concepto || 'Gasto',
+                monto: g.monto || 0,
+                archivada: g.archivada
+            });
+        });
+
+        movs.sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0));
+        if (filtro !== 'TODOS') movs = movs.filter(m => m.clase === filtro);
+
+        if (movs.length === 0) {
+            tb.innerHTML = `<tr><td colspan="6" class="text-white-50 py-3">No hay movimientos para mostrar en este filtro.</td></tr>`;
+            return;
+        }
+
+        tb.innerHTML = movs.map(m => {
+            const fechaTxt = m.fecha ? new Date(m.fecha).toLocaleString('es-CL') : '---';
+            const badge = m.clase === 'INGRESO'
+                ? `<span class="badge bg-success font-orbitron">INGRESO</span>`
+                : (m.clase === 'CAPEX'
+                    ? `<span class="badge bg-info text-dark font-orbitron">CAPEX</span>`
+                    : `<span class="badge bg-warning text-dark font-orbitron">OPEX / COPEX</span>`);
+            const montoHtml = m.clase === 'INGRESO'
+                ? `<span class="text-money-green fw-bold">+${formatMoney(m.monto, suc)}</span>`
+                : `<span class="text-danger fw-bold">-${formatMoney(m.monto, suc)}</span>`;
+            const estadoTxt = m.archivada ? `<span class="badge bg-secondary">Cierre Ant.</span>` : `<span class="badge bg-dark border border-success text-success">Activo</span>`;
+            const btns = m.clase === 'INGRESO'
+                ? `<button class="btn btn-sm btn-outline-warning border-0" onclick="editarIngresoConClave(${m.id})" title="Corregir Ingreso bajo Clave"><i class="bi bi-pencil-square"></i></button>
+                   <button class="btn btn-sm btn-outline-danger border-0" onclick="eliminarIngresoConClave(${m.id})" title="Eliminar Ingreso bajo Clave"><i class="bi bi-trash3"></i></button>`
+                : `<button class="btn btn-sm btn-outline-info border-0" onclick="editarGastoConClave(${m.id})" title="Corregir Gasto bajo Clave"><i class="bi bi-pencil-square"></i></button>
+                   <button class="btn btn-sm btn-outline-danger border-0" onclick="eliminarGasto(${m.id})" title="Eliminar Gasto bajo Clave"><i class="bi bi-trash3"></i></button>`;
+
+            return `<tr>
+                <td class="text-white-50 small">${fechaTxt}</td>
+                <td>${badge}</td>
+                <td class="text-white text-start">${m.detalle}</td>
+                <td>${montoHtml}</td>
+                <td>${estadoTxt}</td>
+                <td>${btns}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    async function editarGastoConClave(id) {
+        const lista = (ebitdaDataMem?.gastos || []).concat(window.gastosActivosMem || []);
+        const actual = lista.find(g => g.id === id) || {};
+        const pin = prompt("🔑 Ingresa la CLAVE DE AUTORIZACIÓN (PIN Admin) para editar este gasto:");
+        if (pin === null || !pin.trim()) return;
+
+        const concepto = prompt("Nuevo concepto del gasto:", actual.concepto || "");
+        if (concepto === null || !concepto.trim()) return;
+
+        const montoStr = prompt("Nuevo monto ($):", actual.monto ?? "");
+        if (montoStr === null) return;
+        const monto = parseFloat(montoStr);
+        if (isNaN(monto) || monto < 0) return alert("Monto inválido.");
+
+        const tipoStr = prompt("Tipo de gasto (escribe OPEX o CAPEX):", actual.tipoGasto || "OPEX");
+        if (tipoStr === null) return;
+        const tipoGasto = tipoStr.toUpperCase().includes("CAPEX") ? "CAPEX" : "OPEX";
+
+        const res = await fetch(`/api/finanzas/gastos/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pin: pin.trim(), concepto: concepto.trim(), monto, tipoGasto })
+        });
+        if (!res.ok) {
+            alert("❌ " + (await res.text() || "Error o clave incorrecta."));
+            return;
+        }
+        playSound('click');
+        alert("✅ Gasto corregido correctamente.");
+        cargarTesoreria();
+    }
+
+    async function editarIngresoConClave(id) {
+        const actual = (ebitdaDataMem?.ventas || []).find(v => v.id === id) || {};
+        const pin = prompt("🔑 Ingresa la CLAVE DE AUTORIZACIÓN (PIN Admin) para editar este ingreso/venta:");
+        if (pin === null || !pin.trim()) return;
+
+        const totalStr = prompt("Nuevo monto total del ingreso ($):", actual.total ?? "");
+        if (totalStr === null) return;
+        const total = parseFloat(totalStr);
+        if (isNaN(total) || total < 0) return alert("Monto inválido.");
+
+        const medioPago = prompt("Medio de pago (Efectivo / MercadoPago / Transferencia):", actual.medioPago || "Efectivo");
+        if (medioPago === null) return;
+
+        const res = await fetch(`/api/finanzas/ingresos/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pin: pin.trim(), total, medioPago: medioPago.trim() })
+        });
+        if (!res.ok) {
+            alert("❌ " + (await res.text() || "Error o clave incorrecta."));
+            return;
+        }
+        playSound('click');
+        alert("✅ Ingreso corregido correctamente.");
+        cargarTesoreria();
+    }
+
+    async function eliminarIngresoConClave(id) {
+        const pin = prompt("🔑 Ingresa la CLAVE DE AUTORIZACIÓN (PIN Admin) para ELIMINAR este ingreso/venta:");
+        if (pin === null || !pin.trim()) return;
+        if (!confirm(`⚠️ ¿Confirmas eliminar permanentemente el ingreso #${id}?`)) return;
+        playSound('error');
+        const res = await fetch(`/api/finanzas/ingresos/${id}?pin=${encodeURIComponent(pin.trim())}`, { method: 'DELETE' });
+        if (!res.ok) {
+            alert("❌ " + (await res.text() || "Clave incorrecta."));
+            return;
+        }
+        alert("✅ Ingreso eliminado correctamente.");
+        cargarTesoreria();
+    }
+
+    function imprimirBalanceEbitda() {
+        if (!ebitdaDataMem) {
+            alert("Calcula primero el EBITDA para imprimir.");
+            return;
+        }
+        playSound('magic');
+        const d = ebitdaDataMem;
+        const suc = d.sucursal || 'Antofagasta';
+        const desde = document.getElementById('ebitda-desde')?.value || 'Inicio';
+        const hasta = document.getElementById('ebitda-hasta')?.value || 'Hoy';
+
+        const filasMes = (d.historialMensual || []).map(m => `
+            <tr>
+                <td style="padding:6px; border:1px solid #000; font-weight:bold;">${m.periodo}</td>
+                <td style="padding:6px; border:1px solid #000; text-align:right;">${formatMoney(m.ingresos, suc)}</td>
+                <td style="padding:6px; border:1px solid #000; text-align:right;">-${formatMoney(m.opex, suc)}</td>
+                <td style="padding:6px; border:1px solid #000; text-align:right; font-weight:bold;">${formatMoney(m.ebitda, suc)} (${m.margenPct}%)</td>
+                <td style="padding:6px; border:1px solid #000; text-align:right;">-${formatMoney(m.capex, suc)}</td>
+                <td style="padding:6px; border:1px solid #000; text-align:right; font-weight:bold;">${formatMoney(m.flujoNeto, suc)}</td>
+            </tr>
+        `).join('');
+
+        const zona = document.getElementById('impresion-zona');
+        zona.innerHTML = `
+            <div class="libro-print w-100 p-4">
+                <div class="header-print">
+                    <h2 style="margin:0;">ESTADO DE RESULTADOS & BALANCE EBITDA (CAPEX / OPEX)</h2>
+                    <h4 style="margin:5px 0;">BATIDOS RAÍCES ERP • NODO ${suc.toUpperCase()}</h4>
+                    <p>Período: ${desde} al ${hasta} • Emitido: ${new Date().toLocaleString('es-CL')}</p>
+                </div>
+                <table style="width:100%; border-collapse:collapse; margin-top:15px; font-size:14px;">
+                    <tr><td style="padding:8px; border:1px solid #000; font-weight:bold;">(+) INGRESOS TOTALES (VENTAS PAGADAS)</td><td style="padding:8px; border:1px solid #000; text-align:right; font-weight:bold;">${formatMoney(d.ingresosTotales, suc)}</td></tr>
+                    <tr><td style="padding:8px; border:1px solid #000;">(-) OPEX / COPEX (GASTOS OPERATIVOS)</td><td style="padding:8px; border:1px solid #000; text-align:right; color:#b00;">-${formatMoney(d.opexTotal, suc)}</td></tr>
+                    <tr style="background:#eee;"><td style="padding:8px; border:1px solid #000; font-weight:bold;">(=) EBITDA OPERATIVO</td><td style="padding:8px; border:1px solid #000; text-align:right; font-weight:bold;">${formatMoney(d.ebitda, suc)} (Margen: ${d.margenEbitda}%)</td></tr>
+                    <tr><td style="padding:8px; border:1px solid #000;">(-) CAPEX (INVERSIONES / ACTIVOS FIJOS)</td><td style="padding:8px; border:1px solid #000; text-align:right;">-${formatMoney(d.capexTotal, suc)}</td></tr>
+                    <tr style="background:#e6ffe6;"><td style="padding:8px; border:1px solid #000; font-weight:bold;">(=) FLUJO DE CAJA NETO (POST-CAPEX)</td><td style="padding:8px; border:1px solid #000; text-align:right; font-weight:bold;">${formatMoney(d.flujoCajaNeto, suc)}</td></tr>
+                </table>
+                <h4 style="margin-top:22px;">DESGLOSE MENSUAL HISTÓRICO</h4>
+                <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                    <thead>
+                        <tr style="background:#eee;">
+                            <th style="padding:6px; border:1px solid #000;">PERÍODO</th>
+                            <th style="padding:6px; border:1px solid #000;">INGRESOS</th>
+                            <th style="padding:6px; border:1px solid #000;">OPEX</th>
+                            <th style="padding:6px; border:1px solid #000;">EBITDA (%)</th>
+                            <th style="padding:6px; border:1px solid #000;">CAPEX</th>
+                            <th style="padding:6px; border:1px solid #000;">FLUJO NETO</th>
+                        </tr>
+                    </thead>
+                    <tbody>${filasMes || '<tr><td colspan="6" style="padding:8px; text-align:center; border:1px solid #000;">Sin movimientos</td></tr>'}</tbody>
+                </table>
+                <div style="margin-top:45px; text-align:center;">
+                    <p>____________________________________</p>
+                    <p style="font-size:13px; font-weight:bold;">FIRMA RESPONSABLE / ADMINISTRACIÓN</p>
+                </div>
+            </div>
+        `;
+        window.print();
+        setTimeout(() => { zona.innerHTML = ''; }, 1000);
     }
 
     async function ejecutarCierreAdmin() {
