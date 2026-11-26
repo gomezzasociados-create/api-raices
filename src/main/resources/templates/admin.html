@@ -896,21 +896,85 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="table-container">
-                            <h5 class="mb-4 fw-bold font-orbitron" style="color: #ff0055;"><i class="bi bi-graph-down"></i> REGISTRO DE GASTOS / PAGOS (OPEX / CAPEX)</h5>
-                            <div class="row g-2 mb-4">
-                                <div class="col-md-4"><input type="text" id="gasto-concepto" class="form-control bg-dark border-secondary text-white" placeholder="Ej: Pago de Luz / Licuadora"></div>
-                                <div class="col-md-3">
-                                    <select id="gasto-tipo" class="form-select bg-dark border-warning text-warning fw-bold" title="OPEX/COPEX = gasto operativo diario; CAPEX = inversión en maquinaria/activos">
+                            <h5 class="mb-3 fw-bold font-orbitron" style="color: #ff0055;"><i class="bi bi-graph-down"></i> REGISTRO DE GASTOS / PAGOS (OPEX / CAPEX)</h5>
+                            <div class="row g-2 mb-2">
+                                <div class="col-md-5">
+                                    <label class="form-label-neon small text-white-50">Gasto Común</label>
+                                    <select id="gasto-categoria-comun" class="form-select form-select-sm bg-dark border-secondary text-white" onchange="aplicarGastoComunSeleccionado()">
+                                        <option value="">-- Seleccionar gasto común --</option>
+                                        <optgroup label="OPEX / COPEX (Operativos)">
+                                            <option value="OPEX|Compra de Insumos / Materia Prima">Compra de Insumos / Materia Prima</option>
+                                            <option value="OPEX|Arriendo de Local">Arriendo de Local</option>
+                                            <option value="OPEX|Electricidad / Luz">Electricidad / Luz</option>
+                                            <option value="OPEX|Agua Potable">Agua Potable</option>
+                                            <option value="OPEX|Internet / Telefonía">Internet / Telefonía</option>
+                                            <option value="OPEX|Gas / Combustible">Gas / Combustible</option>
+                                            <option value="OPEX|Packaging / Desechables">Packaging / Desechables</option>
+                                            <option value="OPEX|Sueldos y Remuneraciones">Sueldos y Remuneraciones</option>
+                                            <option value="OPEX|Leyes Sociales / Imposiciones">Leyes Sociales / Imposiciones</option>
+                                            <option value="OPEX|Publicidad / Marketing">Publicidad / Marketing</option>
+                                            <option value="OPEX|Mantenimiento / Reparación">Mantenimiento / Reparación</option>
+                                            <option value="OPEX|Aseo / Limpieza">Aseo / Limpieza</option>
+                                            <option value="OPEX|Comisiones Delivery / POS">Comisiones Delivery / POS</option>
+                                            <option value="OPEX|Contabilidad / Servicios">Contabilidad / Servicios</option>
+                                            <option value="OPEX|Otros Gastos Operativos">Otros Gastos Operativos</option>
+                                        </optgroup>
+                                        <optgroup label="CAPEX (Inversión y Activos)">
+                                            <option value="CAPEX|Compra de Maquinaria (Licuadoras / Prensas)">Compra de Maquinaria (Licuadoras / Prensas)</option>
+                                            <option value="CAPEX|Refrigeración / Congeladores">Refrigeración / Congeladores</option>
+                                            <option value="CAPEX|Mobiliario y Mostrador">Mobiliario y Mostrador</option>
+                                            <option value="CAPEX|Equipamiento POS / Tecnología">Equipamiento POS / Tecnología</option>
+                                            <option value="CAPEX|Remodelación / Infraestructura">Remodelación / Infraestructura</option>
+                                            <option value="CAPEX|Utensilios Duraderos">Utensilios Duraderos</option>
+                                            <option value="CAPEX|Otros Activos / Inversión">Otros Activos / Inversión</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label-neon small text-warning">Tipo</label>
+                                    <select id="gasto-tipo" class="form-select form-select-sm bg-dark border-warning text-warning fw-bold" onchange="toggleCamposCapex()" title="OPEX/COPEX = gasto operativo diario; CAPEX = inversión en maquinaria/activos">
                                         <option value="OPEX">OPEX / COPEX (Operativo)</option>
                                         <option value="CAPEX">CAPEX (Inversión)</option>
                                     </select>
                                 </div>
-                                <div class="col-md-3"><input type="number" id="gasto-monto" class="form-control bg-dark border-secondary text-white" placeholder="Monto"></div>
-                                <div class="col-md-2"><button class="btn btn-danger w-100" onclick="guardarGasto()" title="Registrar Gasto"><i class="bi bi-plus-lg"></i></button></div>
+                                <div class="col-md-3">
+                                    <label class="form-label-neon small text-danger">Monto ($)</label>
+                                    <input type="number" id="gasto-monto" class="form-control form-control-sm bg-dark border-secondary text-white fw-bold" placeholder="Monto" oninput="recalcularDepreciacionGastoEnVivo()">
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="text" id="gasto-concepto" class="form-control form-control-sm bg-dark border-secondary text-white" placeholder="Concepto (ej: Licuadora Industrial)">
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="text" id="gasto-motivo" class="form-control form-control-sm bg-dark border-secondary text-white" placeholder="Motivo / detalle (ej: Reemplazo barra)">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-sm btn-danger w-100 fw-bold" onclick="guardarGasto()" title="Registrar Gasto"><i class="bi bi-plus-lg"></i></button>
+                                </div>
+                            </div>
+                            <!-- CAMPOS DE DEPRECIACIÓN PARA CAPEX -->
+                            <div id="box-capex-depreciacion" class="row g-2 mb-3 p-2 rounded border border-info align-items-end" style="display:none; background: rgba(0,229,255,0.06);">
+                                <div class="col-md-4">
+                                    <label class="form-label-neon small text-info">Vida Útil (Períodos)</label>
+                                    <input type="number" id="gasto-vida-util" class="form-control form-control-sm bg-dark text-white border-info text-center" value="12" min="1" oninput="recalcularDepreciacionGastoEnVivo()">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label-neon small text-info">Depreciación</label>
+                                    <select id="gasto-freq-depreciacion" class="form-select form-select-sm bg-dark text-info border-info fw-bold" onchange="recalcularDepreciacionGastoEnVivo()">
+                                        <option value="MENSUAL">Mensual</option>
+                                        <option value="SEMANAL">Semanal</option>
+                                        <option value="DIARIA">Diaria</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center p-1 rounded bg-black border border-secondary">
+                                        <small class="text-white-50 d-block" style="font-size:0.65rem;">CUOTA DEPRECIACIÓN</small>
+                                        <b class="text-info font-orbitron small" id="preview-depreciacion-capex">$0 / mes</b>
+                                    </div>
+                                </div>
                             </div>
                             <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
                                 <table class="table text-center align-middle">
-                                    <thead class="table-dark"><tr><th>CONCEPTO</th><th>TIPO</th><th>EGRESO</th><th>ACCIÓN 🔒</th></tr></thead>
+                                    <thead class="table-dark"><tr><th>CONCEPTO / MOTIVO</th><th>TIPO / DEPREC.</th><th>EGRESO</th><th>ACCIÓN 🔒</th></tr></thead>
                                     <tbody id="tabla-historico-gastos"></tbody>
                                 </table>
                             </div>
@@ -1070,6 +1134,125 @@
                                 <tbody id="tabla-ebitda-movimientos"></tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN NÓMINA Y PAGO DE TRABAJADORES EN TESORERÍA -->
+                <div class="table-container p-4 mt-4" style="border-top: 3px solid var(--p-cyan);">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3 pb-3 border-bottom border-secondary">
+                        <div>
+                            <h5 class="fw-bold font-orbitron m-0" style="color: var(--p-cyan); text-shadow: 0 0 10px rgba(0,229,255,0.35);">
+                                <i class="bi bi-people-fill me-2"></i> PAGO DE TRABAJADORES, HORAS EXTRAS, BONOS Y LEYES SOCIALES
+                            </h5>
+                            <small class="text-white-50 font-rajdhani">Control desde Administrador hasta Meseros: días trabajados, horas extras, bonos, incentivos y pagos legales al gobierno. Se descuenta automáticamente en OPEX / Tesorería.</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-light font-orbitron fw-bold" type="button" onclick="imprimirPlanillaTrabajadores()">
+                            <i class="bi bi-printer-fill me-1"></i> IMPRIMIR PLANILLA NÓMINA
+                        </button>
+                    </div>
+
+                    <div class="row g-2 align-items-end mb-3 p-3 rounded-3" style="background: rgba(0,229,255,0.04); border: 1px solid rgba(0,229,255,0.2);">
+                        <div class="col-md-3">
+                            <label class="form-label-neon small text-info">Trabajador</label>
+                            <input type="text" id="nom-nombre" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Nombre completo">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon small text-info">Cargo / Rol</label>
+                            <select id="nom-cargo" class="form-select form-select-sm bg-dark text-info border-info fw-bold">
+                                <option value="Administrador">Administrador</option>
+                                <option value="Cajero / Atención">Cajero / Atención</option>
+                                <option value="Barista / Preparador">Barista / Preparador</option>
+                                <option value="Cocina / Producción">Cocina / Producción</option>
+                                <option value="Mesero">Mesero</option>
+                                <option value="Repartidor">Repartidor</option>
+                                <option value="Aseo / Mantención">Aseo / Mantención</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon small text-white-50">Período</label>
+                            <input type="text" id="nom-periodo" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: 2026-11 / Sem 4">
+                        </div>
+                        <div class="col-md-1">
+                            <label class="form-label-neon small text-white">Días Trab.</label>
+                            <input type="number" id="nom-dias" class="form-control form-control-sm bg-dark text-white border-secondary text-center" value="30" step="0.5" min="0" oninput="recalcularNominaEnVivo()">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon small text-warning">Valor Día ($)</label>
+                            <input type="number" id="nom-val-dia" class="form-control form-control-sm bg-dark text-warning border-secondary fw-bold" value="20000" step="100" min="0" oninput="recalcularNominaEnVivo()">
+                        </div>
+                        <div class="col-md-1">
+                            <label class="form-label-neon small text-white">Hrs Ext.</label>
+                            <input type="number" id="nom-hrs-ext" class="form-control form-control-sm bg-dark text-white border-secondary text-center" value="0" step="0.5" min="0" oninput="recalcularNominaEnVivo()">
+                        </div>
+                        <div class="col-md-1">
+                            <label class="form-label-neon small text-warning">$/Hr Ext</label>
+                            <input type="number" id="nom-val-hr-ext" class="form-control form-control-sm bg-dark text-warning border-secondary text-center" value="4000" step="100" min="0" oninput="recalcularNominaEnVivo()">
+                        </div>
+
+                        <div class="col-md-2">
+                            <label class="form-label-neon small text-success">Bonos ($)</label>
+                            <input type="number" id="nom-bonos" class="form-control form-control-sm bg-dark text-success border-secondary fw-bold" value="0" step="500" min="0" oninput="recalcularNominaEnVivo()">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon small text-success">Incentivos ($)</label>
+                            <input type="number" id="nom-incentivos" class="form-control form-control-sm bg-dark text-success border-secondary fw-bold" value="0" step="500" min="0" oninput="recalcularNominaEnVivo()">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon small text-danger" title="AFP, Salud, Seguro Cesantía retenido al trabajador">Leyes Soc. Trab. ($)</label>
+                            <input type="number" id="nom-desc-legales" class="form-control form-control-sm bg-dark text-danger border-secondary fw-bold" value="0" step="500" min="0" oninput="recalcularNominaEnVivo()">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label-neon small text-warning" title="Mutual, SIS, Seguro Cesantía patronal pagado al gobierno">Aporte Gobierno ($)</label>
+                            <input type="number" id="nom-aporte-gob" class="form-control form-control-sm bg-dark text-warning border-secondary fw-bold" value="0" step="500" min="0" oninput="recalcularNominaEnVivo()">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label-neon small text-white-50">Observación</label>
+                            <input type="text" id="nom-obs" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Ej: Bono puntualidad + meta ventas">
+                        </div>
+
+                        <div class="col-md-8 d-flex gap-3 flex-wrap align-items-center mt-2">
+                            <div class="px-3 py-1 rounded bg-black border border-secondary">
+                                <small class="text-white-50 d-block" style="font-size:0.65rem;">GANANCIAS BRUTAS (HABERES)</small>
+                                <b class="text-white font-orbitron" id="nom-prev-haberes">$0</b>
+                            </div>
+                            <div class="px-3 py-1 rounded bg-black border border-success">
+                                <small class="text-success d-block" style="font-size:0.65rem;">LÍQUIDO A PAGAR TRABAJADOR</small>
+                                <b class="text-success font-orbitron" id="nom-prev-liquido">$0</b>
+                            </div>
+                            <div class="px-3 py-1 rounded bg-black border border-warning">
+                                <small class="text-warning d-block" style="font-size:0.65rem;">COSTO TOTAL EMPRESA (INCL. GOBIERNO)</small>
+                                <b class="text-warning font-orbitron" id="nom-prev-costo">$0</b>
+                            </div>
+                            <div class="form-check ms-2">
+                                <input class="form-check-input" type="checkbox" id="nom-enviar-tesoreria" checked>
+                                <label class="form-check-label small text-info" for="nom-enviar-tesoreria">Descontar como OPEX en Tesorería</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <button class="btn btn-sm btn-info w-100 fw-bold font-orbitron text-dark py-2" onclick="guardarPagoTrabajador()">
+                                <i class="bi bi-person-check-fill me-1"></i> REGISTRAR PAGO DE TRABAJADOR
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" style="max-height: 340px; overflow-y: auto;">
+                        <table class="table table-sm text-center align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>FECHA</th>
+                                    <th>TRABAJADOR / CARGO</th>
+                                    <th>PERÍODO</th>
+                                    <th>DÍAS / HRS EXT</th>
+                                    <th>BONOS + INC.</th>
+                                    <th>LEYES / GOBIERNO</th>
+                                    <th>LÍQUIDO</th>
+                                    <th>COSTO EMPRESA</th>
+                                    <th>ACCIÓN 🔒</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-nomina-trabajadores"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -3735,9 +3918,13 @@
                 const badgeTipo = tipoG === 'CAPEX'
                     ? `<span class="badge bg-info text-dark font-orbitron">CAPEX</span>`
                     : `<span class="badge bg-warning text-dark font-orbitron">OPEX</span>`;
+                const deprecHtml = (tipoG === 'CAPEX' && g.depreciacionPeriodo)
+                    ? `<div class="small text-info mt-1">${formatMoney(g.depreciacionPeriodo, paisVenta)}/${(g.frecuenciaDepreciacion || 'MES').toLowerCase()} (${g.vidaUtilPeriodos || 12}p)</div>`
+                    : '';
+                const motivoHtml = g.motivo ? `<div class="small text-white-50">${g.motivo}</div>` : '';
                 tbGastos.innerHTML += `<tr>
-                    <td class="text-white">${g.concepto}</td>
-                    <td>${badgeTipo}</td>
+                    <td class="text-white text-start"><b>${g.concepto}</b>${motivoHtml}</td>
+                    <td>${badgeTipo}${deprecHtml}</td>
                     <td style="color:#ff0055" class="fw-bold">-${formatMoney(g.monto, paisVenta)}</td>
                     <td>
                         <button class="btn btn-sm btn-outline-info border-0" onclick="editarGastoConClave(${g.id})" title="Editar Gasto (Requiere Clave)"><i class="bi bi-pencil-square"></i></button>
@@ -3747,6 +3934,7 @@
             });
 
             await cargarEbitda();
+            await cargarTrabajadoresTesoreria();
 
         } catch(e) { console.error("Error cargando Tesorería", e); }
     }
@@ -3788,21 +3976,63 @@
         }
     }
 
+    function aplicarGastoComunSeleccionado() {
+        const val = document.getElementById('gasto-categoria-comun')?.value || '';
+        if (!val) return;
+        const [tipo, nombreCat] = val.split('|');
+        if (tipo && document.getElementById('gasto-tipo')) {
+            document.getElementById('gasto-tipo').value = tipo;
+        }
+        if (nombreCat && document.getElementById('gasto-concepto') && !document.getElementById('gasto-concepto').value.trim()) {
+            document.getElementById('gasto-concepto').value = nombreCat;
+        }
+        toggleCamposCapex();
+    }
+
+    function toggleCamposCapex() {
+        const tipo = document.getElementById('gasto-tipo')?.value || 'OPEX';
+        const box = document.getElementById('box-capex-depreciacion');
+        if (box) box.style.display = (tipo === 'CAPEX') ? 'flex' : 'none';
+        recalcularDepreciacionGastoEnVivo();
+    }
+
+    function recalcularDepreciacionGastoEnVivo() {
+        const monto = parseFloat(document.getElementById('gasto-monto')?.value) || 0;
+        const vida = Math.max(1, parseInt(document.getElementById('gasto-vida-util')?.value) || 12);
+        const freq = document.getElementById('gasto-freq-depreciacion')?.value || 'MENSUAL';
+        const suc = document.getElementById('tesoreria-sucursal')?.value || 'Antofagasta';
+        const cuota = Math.round(monto / vida);
+        const unit = freq === 'DIARIA' ? 'día' : (freq === 'SEMANAL' ? 'sem' : 'mes');
+        const prev = document.getElementById('preview-depreciacion-capex');
+        if (prev) prev.innerText = `${formatMoney(cuota, suc)} / ${unit}`;
+    }
+
     async function guardarGasto() {
         playSound('click');
-        const concepto = document.getElementById('gasto-concepto').value;
+        const concepto = document.getElementById('gasto-concepto').value.trim();
+        const motivo = document.getElementById('gasto-motivo')?.value.trim() || '';
+        const catRaw = document.getElementById('gasto-categoria-comun')?.value || '';
+        const categoriaGasto = catRaw.includes('|') ? catRaw.split('|')[1] : (concepto || 'General');
         const tipoGasto = document.getElementById('gasto-tipo')?.value || 'OPEX';
         const monto = parseFloat(document.getElementById('gasto-monto').value);
         const sucursal = document.getElementById('tesoreria-sucursal').value;
-        if (!concepto || !monto) { alert("Complete parámetros del egreso."); return; }
+        if (!concepto || !monto) { alert("Complete concepto y monto del egreso."); return; }
+
+        const payload = { concepto, categoriaGasto, motivo, tipoGasto, monto, sucursal, archivada: false };
+        if (tipoGasto === 'CAPEX') {
+            payload.vidaUtilPeriodos = Math.max(1, parseInt(document.getElementById('gasto-vida-util')?.value) || 12);
+            payload.frecuenciaDepreciacion = document.getElementById('gasto-freq-depreciacion')?.value || 'MENSUAL';
+        }
 
         await fetch('/api/finanzas/gastos', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({concepto, tipoGasto, monto, sucursal, archivada: false})
+            body: JSON.stringify(payload)
         });
 
         document.getElementById('gasto-concepto').value = '';
+        if (document.getElementById('gasto-motivo')) document.getElementById('gasto-motivo').value = '';
+        if (document.getElementById('gasto-categoria-comun')) document.getElementById('gasto-categoria-comun').value = '';
         document.getElementById('gasto-monto').value = '';
         cargarTesoreria();
     }
@@ -3909,11 +4139,15 @@
             });
         });
         (ebitdaDataMem.gastos || []).forEach(g => {
+            const motivoTxt = g.motivo ? ` • Motivo: ${g.motivo}` : '';
+            const deprecTxt = (g.tipoGasto === 'CAPEX' && g.depreciacionPeriodo)
+                ? ` • Deprec: ${formatMoney(g.depreciacionPeriodo, suc)}/${(g.frecuenciaDepreciacion || 'MENSUAL').toLowerCase()} (${g.vidaUtilPeriodos || 12}p)`
+                : '';
             movs.push({
                 clase: (g.tipoGasto || 'OPEX').toUpperCase(),
                 id: g.id,
                 fecha: g.fecha,
-                detalle: g.concepto || 'Gasto',
+                detalle: (g.concepto || 'Gasto') + motivoTxt + deprecTxt,
                 monto: g.monto || 0,
                 archivada: g.archivada
             });
@@ -3973,10 +4207,21 @@
         if (tipoStr === null) return;
         const tipoGasto = tipoStr.toUpperCase().includes("CAPEX") ? "CAPEX" : "OPEX";
 
+        const motivo = prompt("Motivo / detalle del gasto:", actual.motivo || "");
+        if (motivo === null) return;
+
+        const bodyReq = { pin: pin.trim(), concepto: concepto.trim(), motivo: motivo.trim(), monto, tipoGasto };
+        if (tipoGasto === 'CAPEX') {
+            const vidaStr = prompt("Vida útil en períodos (ej: 12):", actual.vidaUtilPeriodos ?? 12);
+            if (vidaStr !== null && !isNaN(parseInt(vidaStr))) bodyReq.vidaUtilPeriodos = Math.max(1, parseInt(vidaStr));
+            const freqStr = prompt("Frecuencia depreciación (DIARIA, SEMANAL o MENSUAL):", actual.frecuenciaDepreciacion || "MENSUAL");
+            if (freqStr !== null) bodyReq.frecuenciaDepreciacion = freqStr.toUpperCase().trim();
+        }
+
         const res = await fetch(`/api/finanzas/gastos/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pin: pin.trim(), concepto: concepto.trim(), monto, tipoGasto })
+            body: JSON.stringify(bodyReq)
         });
         if (!res.ok) {
             alert("❌ " + (await res.text() || "Error o clave incorrecta."));
@@ -4083,6 +4328,232 @@
                     <p>____________________________________</p>
                     <p style="font-size:13px; font-weight:bold;">FIRMA RESPONSABLE / ADMINISTRACIÓN</p>
                 </div>
+            </div>
+        `;
+        window.print();
+        setTimeout(() => { zona.innerHTML = ''; }, 1000);
+    }
+
+    let nominaTrabajadoresMem = [];
+
+    function recalcularNominaEnVivo() {
+        const suc = document.getElementById('tesoreria-sucursal')?.value || 'Antofagasta';
+        const dias = parseFloat(document.getElementById('nom-dias')?.value) || 0;
+        const valDia = parseFloat(document.getElementById('nom-val-dia')?.value) || 0;
+        const hrsExt = parseFloat(document.getElementById('nom-hrs-ext')?.value) || 0;
+        const valHrExt = parseFloat(document.getElementById('nom-val-hr-ext')?.value) || 0;
+        const bonos = parseFloat(document.getElementById('nom-bonos')?.value) || 0;
+        const inc = parseFloat(document.getElementById('nom-incentivos')?.value) || 0;
+        const descLeg = parseFloat(document.getElementById('nom-desc-legales')?.value) || 0;
+        const aporteGob = parseFloat(document.getElementById('nom-aporte-gob')?.value) || 0;
+
+        const haberes = Math.round((dias * valDia) + (hrsExt * valHrExt) + bonos + inc);
+        const liquido = Math.round(Math.max(0, haberes - descLeg));
+        const costoEmpresa = Math.round(haberes + aporteGob);
+
+        const elH = document.getElementById('nom-prev-haberes');
+        if (elH) elH.innerText = formatMoney(haberes, suc);
+        const elL = document.getElementById('nom-prev-liquido');
+        if (elL) elL.innerText = formatMoney(liquido, suc);
+        const elC = document.getElementById('nom-prev-costo');
+        if (elC) elC.innerText = formatMoney(costoEmpresa, suc);
+    }
+
+    async function cargarTrabajadoresTesoreria() {
+        const suc = document.getElementById('tesoreria-sucursal')?.value || 'Antofagasta';
+        const tb = document.getElementById('tabla-nomina-trabajadores');
+        if (!tb) return;
+        try {
+            const res = await fetch(`/api/finanzas/trabajadores/${encodeURIComponent(suc)}?_t=${Date.now()}`, { cache: 'no-store' });
+            if (!res.ok) return;
+            const data = await res.json();
+            nominaTrabajadoresMem = Array.isArray(data) ? data : [];
+
+            if (nominaTrabajadoresMem.length === 0) {
+                tb.innerHTML = `<tr><td colspan="9" class="text-white-50 py-3">No hay pagos de trabajadores registrados todavía.</td></tr>`;
+                recalcularNominaEnVivo();
+                return;
+            }
+
+            tb.innerHTML = nominaTrabajadoresMem.map(p => {
+                const fechaStr = p.fechaPago ? new Date(p.fechaPago).toLocaleDateString('es-CL') : '---';
+                const bonosInc = (p.bonos || 0) + (p.incentivos || 0);
+                const leyesTotal = (p.descuentosLegales || 0) + (p.aporteGobierno || 0);
+                const hrsExtTotal = (p.horasExtras || 0) * (p.valorHoraExtra || 0);
+                return `<tr>
+                    <td class="text-white-50 small">${fechaStr}</td>
+                    <td class="text-start">
+                        <b class="text-white">${p.nombreTrabajador}</b>
+                        <span class="badge bg-info text-dark font-orbitron ms-1">${p.cargo || 'Personal'}</span>
+                        ${p.observacion ? `<div class="small text-white-50">${p.observacion}</div>` : ''}
+                    </td>
+                    <td class="text-info fw-bold">${p.periodo || '---'}</td>
+                    <td class="small text-white">${p.diasTrabajados || 0}d / ${p.horasExtras || 0}h ext (${formatMoney(hrsExtTotal, suc)})</td>
+                    <td class="text-success fw-bold">${formatMoney(bonosInc, suc)}</td>
+                    <td class="text-warning small" title="Trabajador: ${formatMoney(p.descuentosLegales || 0, suc)} | Gobierno: ${formatMoney(p.aporteGobierno || 0, suc)}">${formatMoney(leyesTotal, suc)}</td>
+                    <td class="text-money-green fw-bold">${formatMoney(p.liquidoAPagar || 0, suc)}</td>
+                    <td class="text-warning fw-bold">${formatMoney(p.costoTotalEmpresa || 0, suc)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-info border-0" onclick="editarTrabajadorConClave(${p.id})" title="Editar Pago bajo Clave"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-sm btn-outline-danger border-0" onclick="eliminarTrabajadorConClave(${p.id})" title="Eliminar Pago bajo Clave"><i class="bi bi-trash3"></i></button>
+                    </td>
+                </tr>`;
+            }).join('');
+            recalcularNominaEnVivo();
+        } catch (e) {
+            console.error('Error cargando nómina:', e);
+        }
+    }
+
+    async function guardarPagoTrabajador() {
+        const nombreTrabajador = document.getElementById('nom-nombre')?.value.trim();
+        if (!nombreTrabajador) return alert("Ingresa el nombre del trabajador.");
+
+        const payload = {
+            sucursal: document.getElementById('tesoreria-sucursal')?.value || 'Antofagasta',
+            nombreTrabajador,
+            cargo: document.getElementById('nom-cargo')?.value || 'Mesero',
+            periodo: document.getElementById('nom-periodo')?.value.trim() || new Date().toISOString().slice(0, 7),
+            diasTrabajados: parseFloat(document.getElementById('nom-dias')?.value) || 0,
+            valorDia: parseFloat(document.getElementById('nom-val-dia')?.value) || 0,
+            horasExtras: parseFloat(document.getElementById('nom-hrs-ext')?.value) || 0,
+            valorHoraExtra: parseFloat(document.getElementById('nom-val-hr-ext')?.value) || 0,
+            bonos: parseFloat(document.getElementById('nom-bonos')?.value) || 0,
+            incentivos: parseFloat(document.getElementById('nom-incentivos')?.value) || 0,
+            descuentosLegales: parseFloat(document.getElementById('nom-desc-legales')?.value) || 0,
+            aporteGobierno: parseFloat(document.getElementById('nom-aporte-gob')?.value) || 0,
+            observacion: document.getElementById('nom-obs')?.value.trim() || '',
+            registrarEnTesoreria: document.getElementById('nom-enviar-tesoreria')?.checked ?? true
+        };
+
+        const res = await fetch('/api/finanzas/trabajadores', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+            alert("❌ Error al registrar pago: " + (await res.text()));
+            return;
+        }
+        playSound('cash');
+        document.getElementById('nom-nombre').value = '';
+        document.getElementById('nom-obs').value = '';
+        document.getElementById('nom-hrs-ext').value = '0';
+        document.getElementById('nom-bonos').value = '0';
+        document.getElementById('nom-incentivos').value = '0';
+        document.getElementById('nom-desc-legales').value = '0';
+        document.getElementById('nom-aporte-gob').value = '0';
+        cargarTesoreria();
+    }
+
+    async function editarTrabajadorConClave(id) {
+        const p = nominaTrabajadoresMem.find(x => x.id === id);
+        if (!p) return;
+        const pin = prompt("🔑 Ingresa la CLAVE DE AUTORIZACIÓN (PIN Admin) para editar este pago:");
+        if (pin === null || !pin.trim()) return;
+
+        const diasStr = prompt("Días trabajados:", p.diasTrabajados ?? 30);
+        if (diasStr === null) return;
+        const hrsStr = prompt("Horas extras:", p.horasExtras ?? 0);
+        if (hrsStr === null) return;
+        const bonosStr = prompt("Bonos ($):", p.bonos ?? 0);
+        if (bonosStr === null) return;
+        const incStr = prompt("Incentivos ($):", p.incentivos ?? 0);
+        if (incStr === null) return;
+        const legStr = prompt("Descuentos legales trabajador ($):", p.descuentosLegales ?? 0);
+        if (legStr === null) return;
+        const gobStr = prompt("Aporte legal al gobierno ($):", p.aporteGobierno ?? 0);
+        if (gobStr === null) return;
+
+        const res = await fetch(`/api/finanzas/trabajadores/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                pin: pin.trim(),
+                diasTrabajados: parseFloat(diasStr) || 0,
+                horasExtras: parseFloat(hrsStr) || 0,
+                bonos: parseFloat(bonosStr) || 0,
+                incentivos: parseFloat(incStr) || 0,
+                descuentosLegales: parseFloat(legStr) || 0,
+                aporteGobierno: parseFloat(gobStr) || 0
+            })
+        });
+        if (!res.ok) {
+            alert("❌ " + (await res.text() || "Clave incorrecta."));
+            return;
+        }
+        playSound('click');
+        alert("✅ Pago de trabajador actualizado.");
+        cargarTesoreria();
+    }
+
+    async function eliminarTrabajadorConClave(id) {
+        const pin = prompt("🔑 Ingresa la CLAVE DE AUTORIZACIÓN (PIN Admin) para ELIMINAR este registro de pago:");
+        if (pin === null || !pin.trim()) return;
+        if (!confirm("⚠️ ¿Confirmas eliminar este pago de trabajador (y su gasto asociado en Tesorería si existe)?")) return;
+        playSound('error');
+        const res = await fetch(`/api/finanzas/trabajadores/${id}?pin=${encodeURIComponent(pin.trim())}`, { method: 'DELETE' });
+        if (!res.ok) {
+            alert("❌ " + (await res.text() || "Clave incorrecta."));
+            return;
+        }
+        alert("✅ Registro eliminado.");
+        cargarTesoreria();
+    }
+
+    function imprimirPlanillaTrabajadores() {
+        const suc = document.getElementById('tesoreria-sucursal')?.value || 'Antofagasta';
+        if (!nominaTrabajadoresMem || nominaTrabajadoresMem.length === 0) {
+            alert("No hay registros de nómina para imprimir.");
+            return;
+        }
+        playSound('magic');
+        let totalLiq = 0, totalGob = 0, totalEmp = 0;
+        const filas = nominaTrabajadoresMem.map(p => {
+            totalLiq += (p.liquidoAPagar || 0);
+            totalGob += (p.descuentosLegales || 0) + (p.aporteGobierno || 0);
+            totalEmp += (p.costoTotalEmpresa || 0);
+            return `<tr>
+                <td style="padding:5px; border:1px solid #000;">${p.nombreTrabajador} (${p.cargo})</td>
+                <td style="padding:5px; border:1px solid #000; text-align:center;">${p.periodo || ''}</td>
+                <td style="padding:5px; border:1px solid #000; text-align:center;">${p.diasTrabajados || 0}d / ${p.horasExtras || 0}h</td>
+                <td style="padding:5px; border:1px solid #000; text-align:right;">${formatMoney((p.bonos || 0) + (p.incentivos || 0), suc)}</td>
+                <td style="padding:5px; border:1px solid #000; text-align:right;">${formatMoney((p.descuentosLegales || 0) + (p.aporteGobierno || 0), suc)}</td>
+                <td style="padding:5px; border:1px solid #000; text-align:right; font-weight:bold;">${formatMoney(p.liquidoAPagar || 0, suc)}</td>
+                <td style="padding:5px; border:1px solid #000; text-align:right; font-weight:bold;">${formatMoney(p.costoTotalEmpresa || 0, suc)}</td>
+            </tr>`;
+        }).join('');
+
+        const zona = document.getElementById('impresion-zona');
+        zona.innerHTML = `
+            <div class="libro-print w-100 p-4">
+                <div class="header-print">
+                    <h2 style="margin:0;">PLANILLA DE REMUNERACIONES, LEYES SOCIALES Y NÓMINA</h2>
+                    <h4 style="margin:5px 0;">BATIDOS RAÍCES ERP • NODO ${suc.toUpperCase()}</h4>
+                    <p>Emitido: ${new Date().toLocaleString('es-CL')}</p>
+                </div>
+                <table style="width:100%; border-collapse:collapse; margin-top:15px; font-size:12px;">
+                    <thead>
+                        <tr style="background:#eee;">
+                            <th style="padding:6px; border:1px solid #000;">TRABAJADOR / CARGO</th>
+                            <th style="padding:6px; border:1px solid #000;">PERÍODO</th>
+                            <th style="padding:6px; border:1px solid #000;">DÍAS / HRS EXT</th>
+                            <th style="padding:6px; border:1px solid #000;">BONOS + INC.</th>
+                            <th style="padding:6px; border:1px solid #000;">LEYES / GOB.</th>
+                            <th style="padding:6px; border:1px solid #000;">LÍQUIDO</th>
+                            <th style="padding:6px; border:1px solid #000;">COSTO EMPRESA</th>
+                        </tr>
+                    </thead>
+                    <tbody>${filas}</tbody>
+                    <tfoot>
+                        <tr style="background:#eee; font-weight:bold;">
+                            <td colspan="4" style="padding:6px; border:1px solid #000; text-align:right;">TOTALES:</td>
+                            <td style="padding:6px; border:1px solid #000; text-align:right;">${formatMoney(totalGob, suc)}</td>
+                            <td style="padding:6px; border:1px solid #000; text-align:right;">${formatMoney(totalLiq, suc)}</td>
+                            <td style="padding:6px; border:1px solid #000; text-align:right;">${formatMoney(totalEmp, suc)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
         `;
         window.print();

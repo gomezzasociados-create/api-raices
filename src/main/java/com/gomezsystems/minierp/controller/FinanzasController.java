@@ -1,12 +1,15 @@
 package com.gomezsystems.minierp.controller;
 
 import com.gomezsystems.minierp.model.Gasto;
+import com.gomezsystems.minierp.model.PagoTrabajador;
 import com.gomezsystems.minierp.model.Venta;
 import com.gomezsystems.minierp.repository.GastoRepository;
+import com.gomezsystems.minierp.repository.PagoTrabajadorRepository;
 import com.gomezsystems.minierp.repository.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -22,6 +25,7 @@ public class FinanzasController {
 
     @Autowired private VentaRepository ventaRepository;
     @Autowired private GastoRepository gastoRepository;
+    @Autowired private PagoTrabajadorRepository pagoTrabajadorRepository;
 
     @GetMapping("/indicadores/{sucursal}")
     public Map<String, Object> obetenerIndicadores(@PathVariable String sucursal) {
@@ -57,6 +61,7 @@ public class FinanzasController {
         gasto.setFecha(LocalDateTime.now(ZoneId.of("America/Santiago")));
         gasto.setArchivada(false);
         gasto.setTipoGasto(normalizarTipoGasto(gasto.getTipoGasto()));
+        aplicarDepreciacionCapex(gasto);
         return gastoRepository.save(gasto);
     }
 
@@ -73,6 +78,12 @@ public class FinanzasController {
         if (body.get("concepto") != null && !body.get("concepto").toString().trim().isEmpty()) {
             g.setConcepto(body.get("concepto").toString().trim());
         }
+        if (body.get("categoriaGasto") != null) {
+            g.setCategoriaGasto(body.get("categoriaGasto").toString().trim());
+        }
+        if (body.get("motivo") != null) {
+            g.setMotivo(body.get("motivo").toString().trim());
+        }
         if (body.get("monto") != null) {
             double monto = Double.parseDouble(body.get("monto").toString());
             if (monto < 0) return ResponseEntity.badRequest().body("El monto no puede ser negativo.");
@@ -81,6 +92,13 @@ public class FinanzasController {
         if (body.get("tipoGasto") != null) {
             g.setTipoGasto(normalizarTipoGasto(body.get("tipoGasto").toString()));
         }
+        if (body.get("vidaUtilPeriodos") != null && !body.get("vidaUtilPeriodos").toString().isBlank()) {
+            g.setVidaUtilPeriodos(Integer.parseInt(body.get("vidaUtilPeriodos").toString()));
+        }
+        if (body.get("frecuenciaDepreciacion") != null) {
+            g.setFrecuenciaDepreciacion(body.get("frecuenciaDepreciacion").toString().toUpperCase().trim());
+        }
+        aplicarDepreciacionCapex(g);
         return ResponseEntity.ok(gastoRepository.save(g));
     }
 
@@ -197,8 +215,13 @@ public class FinanzasController {
             Map<String, Object> gd = new LinkedHashMap<>();
             gd.put("id", g.getId());
             gd.put("concepto", g.getConcepto());
+            gd.put("categoriaGasto", g.getCategoriaGasto());
+            gd.put("motivo", g.getMotivo());
             gd.put("monto", monto);
             gd.put("tipoGasto", tipo);
+            gd.put("vidaUtilPeriodos", g.getVidaUtilPeriodos());
+            gd.put("frecuenciaDepreciacion", g.getFrecuenciaDepreciacion());
+            gd.put("depreciacionPeriodo", g.getDepreciacionPeriodo());
             gd.put("fecha", g.getFecha());
             gd.put("archivada", g.isArchivada());
             gastosDto.add(gd);
@@ -282,5 +305,147 @@ public class FinanzasController {
         ventaRepository.archivarVentasPorSucursal(sucursal);
         gastoRepository.archivarGastosPorSucursal(sucursal);
         return ResponseEntity.ok("Cierre de caja exitoso. Contadores a $0.00.");
+    }
+
+    private void aplicarDepreciacionCapex(Gasto g) {
+        if (g == null) return;
+        if (!"CAPEX".equals(normalizarTipoGasto(g.getTipoGasto()))) {
+            g.setVidaUtilPeriodos(null);
+            g.setFrecuenciaDepreciacion(null);
+            g.setDepreciacionPeriodo(null);
+            return;
+        }
+        String freq = g.getFrecuenciaDepreciacion() != null ? g.getFrecuenciaDepreciacion().trim().toUpperCase() : "MENSUAL";
+        if (!"DIARIA".equals(freq) && !"SEMANAL".equals(freq) && !"MENSUAL".equals(freq)) {
+            freq = "MENSUAL";
+        }
+        g.setFrecuenciaDepreciacion(freq);
+        int vida = (g.getVidaUtilPeriodos() != null && g.getVidaUtilPeriodos() > 0) ? g.getVidaUtilPeriodos() : 12;
+        g.setVidaUtilPeriodos(vida);
+        double monto = g.getMonto() != null ? g.getMonto() : 0.0;
+        g.setDepreciacionPeriodo((double) Math.round(monto / vida));
+    }
+
+    // =========================================================================
+    // NÓMINA Y PAGO DE TRABAJADORES (ADMINISTRADOR HASTA MESEROS)
+    // =========================================================================
+
+    @GetMapping("/trabajadores/{sucursal}")
+    public List<PagoTrabajador> listarPagosTrabajadores(@PathVariable String sucursal) {
+        return pagoTrabajadorRepository.findBySucursalOrderByFechaPagoDesc(sucursal);
+    }
+
+    @PostMapping("/trabajadores")
+    @Transactional
+    public ResponseEntity<?> registrarPagoTrabajador(@RequestBody Map<String, Object> body) {
+        String nombre = body.get("nombreTrabajador") != null ? body.get("nombreTrabajador").toString().trim() : "";
+        if (nombre.isEmpty()) return ResponseEntity.badRequest().body("Nombre del trabajador requerido.");
+
+        PagoTrabajador p = new PagoTrabajador();
+        p.setSucursal(body.get("sucursal") != null ? body.get("sucursal").toString().trim() : "Antofagasta");
+        p.setFechaPago(LocalDateTime.now(ZoneId.of("America/Santiago")));
+        p.setPeriodo(body.get("periodo") != null ? body.get("periodo").toString().trim() : YearMonth.now().toString());
+        p.setNombreTrabajador(nombre);
+        p.setCargo(body.get("cargo") != null ? body.get("cargo").toString().trim() : "Mesero");
+        p.setObservacion(body.get("observacion") != null ? body.get("observacion").toString().trim() : "");
+
+        aplicarCalculosNomina(p, body);
+        PagoTrabajador guardado = pagoTrabajadorRepository.save(p);
+
+        boolean registrarEnTesoreria = body.get("registrarEnTesoreria") == null || Boolean.parseBoolean(body.get("registrarEnTesoreria").toString());
+        if (registrarEnTesoreria && guardado.getCostoTotalEmpresa() > 0) {
+            Gasto g = new Gasto();
+            g.setSucursal(guardado.getSucursal());
+            g.setFecha(guardado.getFechaPago());
+            g.setTipoGasto("OPEX");
+            g.setCategoriaGasto("Sueldos y Leyes Sociales");
+            g.setMotivo(String.format("Pago %s (%s) • %.1f días, %.1f hrs extras, leyes $%,.0f",
+                    guardado.getNombreTrabajador(), guardado.getCargo(), guardado.getDiasTrabajados(),
+                    guardado.getHorasExtras(), guardado.getDescuentosLegales() + guardado.getAporteGobierno()));
+            g.setConcepto(String.format("👤 NÓMINA [%s]: %s (%s)", guardado.getCargo(), guardado.getNombreTrabajador(), guardado.getPeriodo()));
+            g.setMonto(guardado.getCostoTotalEmpresa());
+            g.setArchivada(false);
+            Gasto gSaved = gastoRepository.save(g);
+            guardado.setIdGastoAsociado(gSaved.getId());
+            pagoTrabajadorRepository.save(guardado);
+        }
+
+        return ResponseEntity.ok(guardado);
+    }
+
+    @PutMapping("/trabajadores/{id}")
+    @Transactional
+    public ResponseEntity<?> editarPagoTrabajador(@PathVariable Long id, @RequestBody Map<String, Object> body) {
+        String pin = body.get("pin") != null ? body.get("pin").toString().trim() : "";
+        if (!esPinAutorizado(pin)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Clave de autorización incorrecta.");
+        }
+        Optional<PagoTrabajador> opt = pagoTrabajadorRepository.findById(id);
+        if (opt.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Registro de trabajador no encontrado.");
+
+        PagoTrabajador p = opt.get();
+        if (body.get("nombreTrabajador") != null) p.setNombreTrabajador(body.get("nombreTrabajador").toString().trim());
+        if (body.get("cargo") != null) p.setCargo(body.get("cargo").toString().trim());
+        if (body.get("periodo") != null) p.setPeriodo(body.get("periodo").toString().trim());
+        if (body.get("observacion") != null) p.setObservacion(body.get("observacion").toString().trim());
+        aplicarCalculosNomina(p, body);
+        PagoTrabajador guardado = pagoTrabajadorRepository.save(p);
+
+        if (guardado.getIdGastoAsociado() != null) {
+            gastoRepository.findById(guardado.getIdGastoAsociado()).ifPresent(g -> {
+                g.setConcepto(String.format("👤 NÓMINA [%s]: %s (%s)", guardado.getCargo(), guardado.getNombreTrabajador(), guardado.getPeriodo()));
+                g.setMonto(guardado.getCostoTotalEmpresa());
+                gastoRepository.save(g);
+            });
+        }
+        return ResponseEntity.ok(guardado);
+    }
+
+    @DeleteMapping("/trabajadores/{id}")
+    @Transactional
+    public ResponseEntity<String> eliminarPagoTrabajador(@PathVariable Long id, @RequestParam(required = false) String pin) {
+        if (!esPinAutorizado(pin)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Clave de autorización incorrecta.");
+        }
+        Optional<PagoTrabajador> opt = pagoTrabajadorRepository.findById(id);
+        if (opt.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Registro no encontrado.");
+        PagoTrabajador p = opt.get();
+        if (p.getIdGastoAsociado() != null) {
+            try { gastoRepository.deleteById(p.getIdGastoAsociado()); } catch (Exception ignored) {}
+        }
+        pagoTrabajadorRepository.deleteById(id);
+        return ResponseEntity.ok("Pago de trabajador eliminado correctamente.");
+    }
+
+    private void aplicarCalculosNomina(PagoTrabajador p, Map<String, Object> body) {
+        double dias = parseDoubleSafe(body.get("diasTrabajados"), p.getDiasTrabajados() != null ? p.getDiasTrabajados() : 0.0);
+        double valorDia = parseDoubleSafe(body.get("valorDia"), p.getValorDia() != null ? p.getValorDia() : 0.0);
+        double hrsExt = parseDoubleSafe(body.get("horasExtras"), p.getHorasExtras() != null ? p.getHorasExtras() : 0.0);
+        double valHrExt = parseDoubleSafe(body.get("valorHoraExtra"), p.getValorHoraExtra() != null ? p.getValorHoraExtra() : 0.0);
+        double bonos = parseDoubleSafe(body.get("bonos"), p.getBonos() != null ? p.getBonos() : 0.0);
+        double incentivos = parseDoubleSafe(body.get("incentivos"), p.getIncentivos() != null ? p.getIncentivos() : 0.0);
+        double descLeg = parseDoubleSafe(body.get("descuentosLegales"), p.getDescuentosLegales() != null ? p.getDescuentosLegales() : 0.0);
+        double aporteGob = parseDoubleSafe(body.get("aporteGobierno"), p.getAporteGobierno() != null ? p.getAporteGobierno() : 0.0);
+
+        double totalHaberes = Math.round((dias * valorDia) + (hrsExt * valHrExt) + bonos + incentivos);
+        double liquido = Math.round(Math.max(0.0, totalHaberes - descLeg));
+        double costoEmpresa = Math.round(totalHaberes + aporteGob);
+
+        p.setDiasTrabajados(dias);
+        p.setValorDia(valorDia);
+        p.setHorasExtras(hrsExt);
+        p.setValorHoraExtra(valHrExt);
+        p.setBonos(bonos);
+        p.setIncentivos(incentivos);
+        p.setDescuentosLegales(descLeg);
+        p.setAporteGobierno(aporteGob);
+        p.setTotalHaberes(totalHaberes);
+        p.setLiquidoAPagar(liquido);
+        p.setCostoTotalEmpresa(costoEmpresa);
+    }
+
+    private double parseDoubleSafe(Object v, double def) {
+        if (v == null || v.toString().isBlank()) return def;
+        try { return Double.parseDouble(v.toString()); } catch (Exception e) { return def; }
     }
 }

@@ -12,10 +12,17 @@ public class Gasto {
     private Long id;
 
     private String concepto;
+    private String categoriaGasto; // Categoría común del gasto
+    private String motivo;         // Motivo / detalle del gasto
     private Double monto;
     private String sucursal;
     private LocalDateTime fecha;
     private String tipoGasto = "OPEX"; // OPEX (operativo / COPEX) o CAPEX (inversión / capital)
+
+    // Campos de depreciación para gastos CAPEX (inversión)
+    private Integer vidaUtilPeriodos;      // Ej: 12 meses, 52 semanas, 365 días
+    private String frecuenciaDepreciacion; // DIARIA, SEMANAL, MENSUAL
+    private Double depreciacionPeriodo;    // Cuota de depreciación calculada por período
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean archivada = false;
@@ -41,4 +48,19 @@ public class Gasto {
 
     public String getTipoGasto() { return tipoGasto; }
     public void setTipoGasto(String tipoGasto) { this.tipoGasto = tipoGasto; }
+
+    public String getCategoriaGasto() { return categoriaGasto; }
+    public void setCategoriaGasto(String categoriaGasto) { this.categoriaGasto = categoriaGasto; }
+
+    public String getMotivo() { return motivo; }
+    public void setMotivo(String motivo) { this.motivo = motivo; }
+
+    public Integer getVidaUtilPeriodos() { return vidaUtilPeriodos; }
+    public void setVidaUtilPeriodos(Integer vidaUtilPeriodos) { this.vidaUtilPeriodos = vidaUtilPeriodos; }
+
+    public String getFrecuenciaDepreciacion() { return frecuenciaDepreciacion; }
+    public void setFrecuenciaDepreciacion(String frecuenciaDepreciacion) { this.frecuenciaDepreciacion = frecuenciaDepreciacion; }
+
+    public Double getDepreciacionPeriodo() { return depreciacionPeriodo; }
+    public void setDepreciacionPeriodo(Double depreciacionPeriodo) { this.depreciacionPeriodo = depreciacionPeriodo; }
 }
