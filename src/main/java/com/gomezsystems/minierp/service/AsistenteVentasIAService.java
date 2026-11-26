@@ -78,7 +78,7 @@ public class AsistenteVentasIAService {
     private final AiCredentialsResolver credentialsResolver;
     private final ObjectMapper mapper = new ObjectMapper();
     private final HttpClient httpClient = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(6))
+            .connectTimeout(Duration.ofSeconds(8))
             .build();
 
     private final Map<String, SesionConversacion> sesiones = new ConcurrentHashMap<>();
@@ -114,7 +114,7 @@ public class AsistenteVentasIAService {
 
     public Map<String, Object> procesarTurno(String sessionId, JsonNode req) {
         Map<String, Object> respuesta = calcularRespuestaConversacional(sessionId, req);
-        respuesta.put("aiEngine", credentialsResolver.hasOpenAiKey() ? "openai" : "local");
+        respuesta.putIfAbsent("aiEngine", "local");
         adjuntarVozHumana(respuesta);
         return respuesta;
     }
@@ -173,12 +173,15 @@ public class AsistenteVentasIAService {
                     sesion, textoRaw, catalogo, insumosArmado, carritoCliente
             );
             if (respuestaOpenAi != null) {
+                respuestaOpenAi.put("aiEngine", "openai");
                 return respuestaOpenAi;
             }
         }
 
         // 3. MOTOR AUTÓNOMO LOCAL DE RESPALDO (si aún no se cargó OPENAI_API_KEY o si cae internet)
-        return procesarConMotorLocalRespaldo(sesion, textoRaw, cmd, catalogo, insumosArmado, carritoCliente);
+        Map<String, Object> respuestaLocal = procesarConMotorLocalRespaldo(sesion, textoRaw, cmd, catalogo, insumosArmado, carritoCliente);
+        respuestaLocal.put("aiEngine", "local");
+        return respuestaLocal;
     }
 
     // =========================================================================
@@ -235,8 +238,9 @@ public class AsistenteVentasIAService {
 
                     TU IDENTIDAD Y TONO DE VOZ (TTS):
                     - Hablás como un asesor cercano, carismático, rápido y apasionado por la salud real, con modismos chilenos/latinos naturales y cálidos (sin exagerar ni sonar robótico).
-                    - Tu campo "reply" se pronuncia EN VOZ ALTA: usá frases fluidas, conversacionales, persuasivas y sin listas ni viñetas ni emojis ni markdown. Apuntá a 1 o 2 frases cortas de alto impacto (ideal entre 14 y 38 palabras).
+                    - Tu campo "reply" se pronuncia EN VOZ ALTA: usá frases fluidas, conversacionales, persuasivas y sin listas ni viñetas ni emojis ni markdown. Apuntá a 1 o 2 frases cortas de alto impacto (ideal entre 16 y 45 palabras).
                     - Entendés humor, dudas, cansancio, objetivos fitness, problemas digestivos o indecisión, y guiás siempre con naturalidad hacia la mejor elección y el cierre de compra.
+                    - Cuando el cliente pregunte por SABORES, TIPOS DE BATIDOS, CATEGORÍAS o INGREDIENTES, respondé específicamente con las opciones reales del catálogo de abajo (nunca repitas la misma recomendación genérica ni ignores la pregunta). Si pregunta qué batidos o sabores hay, mencioná las líneas disponibles y 3 o 4 sabores reales concretos con su enfoque.
 
                     MAESTRÍA EN NEUROVENTAS Y PERSUASIÓN:
                     1. DIAGNÓSTICO EMOCIONAL Y SENSORIAL: Si el cliente duda o pide recomendación, conectá rápido con su estado o meta (ej: ¿energía limpia sin bajón, desinflamar la guata, blindar defensas, ganar músculo o detox profundo?).
@@ -309,13 +313,13 @@ public class AsistenteVentasIAService {
                     .uri(URI.create("https://api.openai.com/v1/chat/completions"))
                     .header("Authorization", "Bearer " + apiKey)
                     .header("Content-Type", "application/json")
-                    .timeout(Duration.ofSeconds(10))
+                    .timeout(Duration.ofSeconds(20))
                     .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(reqBody)))
                     .build();
 
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
-                System.err.println("⚠️ Aviso OpenAI Chat (" + response.statusCode() + "): usando respaldo local.");
+                System.err.println("⚠️ Aviso OpenAI Chat (" + response.statusCode() + "): " + response.body());
                 return null;
             }
 
@@ -650,12 +654,139 @@ public class AsistenteVentasIAService {
             return resp;
         }
 
-        Producto top = buscarPorNombreParcial(catalogo, "green detox");
-        if (top == null && !catalogo.isEmpty()) top = catalogo.get(0);
-        sesion.ultimoProductoSugerido = top;
-        resp.put("text", top != null
-                ? "Te recomiendo el " + top.getNombre() + " recién prensado a " + formatearPesos(calcularPrecioFinal(top)) + ". ¿Te sumo uno?"
-                : "Decime qué batido o shot te tienta hoy.");
+        Map<String, Object> consultaLocal = responderConsultaCatalogoLocal(sesion, cmd, catalogo, insumosArmado);
+        if (consultaLocal != null) {
+            return consultaLocal;
+        }
+
+        List<Producto> disponibles = catalogo.isEmpty() ? List.of() : catalogo;
+        Producto sugerido = null;
+        if (!disponibles.isEmpty()) {
+            int idx = sesion.ultimoProductoSugerido == null
+                    ? 0
+                    : (disponibles.indexOf(sesion.ultimoProductoSugerido) + 1) % disponibles.size();
+            sugerido = disponibles.get(Math.max(0, idx));
+        }
+        sesion.ultimoProductoSugerido = sugerido;
+        resp.put("text", sugerido != null
+                ? "Tengo varias opciones frescas, por ejemplo el " + sugerido.getNombre() + " a " + formatearPesos(calcularPrecioFinal(sugerido)) + ". ¿Te cuento los sabores o te sumo uno?"
+                : "Decime qué batido, shot o sabor te tienta hoy.");
+        return resp;
+    }
+
+    private Map<String, Object> responderConsultaCatalogoLocal(
+            SesionConversacion sesion,
+            String cmd,
+            List<Producto> catalogo,
+            List<Insumo> insumosArmado) {
+        Map<String, Object> resp = baseResponse(sesion);
+
+        // 1. Preguntas sobre sabores, tipos de batidos, carta o qué ofrecen
+        if (contieneAlguno(cmd, "sabor", "sabores", "tipo", "tipos", "batido", "batidos", "menu", "carta", "que tienen", "cuales tienen", "que hay", "opciones", "variedad", "categorias")) {
+            if (contieneAlguno(cmd, "shot", "shots")) {
+                List<Producto> shots = filtrarPorCategoria(catalogo, "shot");
+                if (!shots.isEmpty()) {
+                    sesion.ultimoProductoSugerido = shots.get(0);
+                    return respuestaListaProductos(resp, "En Shots funcionales tenemos " + resumirProductos(shots, 5) + ". ¿Cuál te sumamos?");
+                }
+            }
+            if (contieneAlguno(cmd, "pack", "packs", "pulpa", "pulpas")) {
+                List<Producto> packs = filtrarPorCategoria(catalogo, "pack");
+                if (!packs.isEmpty()) {
+                    sesion.ultimoProductoSugerido = packs.get(0);
+                    return respuestaListaProductos(resp, "En Packs de pulpas para la casa tenemos " + resumirProductos(packs, 4) + ". ¿Cuál preferís?");
+                }
+            }
+            if (contieneAlguno(cmd, "exotic", "exotico", "exoticos")) {
+                List<Producto> exot = filtrarPorCategoria(catalogo, "exot");
+                if (!exot.isEmpty()) {
+                    sesion.ultimoProductoSugerido = exot.get(0);
+                    return respuestaListaProductos(resp, "En la línea Exóticos tenemos " + resumirProductos(exot, 4) + ". ¿Te tienta alguno?");
+                }
+            }
+            if (contieneAlguno(cmd, "arma", "armar", "personaliz", "ingrediente", "ingredientes")) {
+                String ings = insumosArmado.stream()
+                        .map(Insumo::getNombre)
+                        .filter(Objects::nonNull)
+                        .limit(6)
+                        .collect(Collectors.joining(", "));
+                String texto = ings.isEmpty()
+                        ? "En Arma tu Batido podés combinar frutas, vegetales, proteínas y superalimentos a tu gusto."
+                        : "En Arma tu Batido podés combinar ingredientes como " + ings + ", entre otros. ¿Qué base te gustaría?";
+                return respuestaListaProductos(resp, texto);
+            }
+
+            List<Producto> batidos500 = filtrarPorCategoria(catalogo, "500");
+            if (batidos500.isEmpty()) batidos500 = catalogo;
+            if (!batidos500.isEmpty()) {
+                sesion.ultimoProductoSugerido = batidos500.get(0);
+                String resumen = resumirProductos(batidos500, 5);
+                return respuestaListaProductos(resp,
+                        "Manejamos batidos de 500 mls prensados en frío, Shots concentrados, Packs para la casa, línea Exóticos y Arma tu Batido. Entre los sabores destacados tenés " + resumen + ". ¿Qué objetivo buscás hoy?");
+            }
+        }
+
+        // 2. Recomendación por objetivo / necesidad
+        if (contieneAlguno(cmd, "energia", "cansad", "despertar", "pre entreno", "rendimiento", "deporte")) {
+            return recomendarPorTerminos(resp, sesion, catalogo, "Para darte energía limpia te recomiendo ", "energy", "remolacha", "betarraga", "cacao", "matcha", "ginger", "acai");
+        }
+        if (contieneAlguno(cmd, "detox", "desinflamar", "guata", "digestion", "limpiar", "verde", "liviano")) {
+            return recomendarPorTerminos(resp, sesion, catalogo, "Para detox y digestión liviana va perfecto ", "detox", "green", "espinaca", "pina", "apio", "ginger");
+        }
+        if (contieneAlguno(cmd, "defensa", "inmun", "resfrio", "vitamina", "antioxidante")) {
+            return recomendarPorTerminos(resp, sesion, catalogo, "Para blindar tus defensas te conviene ", "inmun", "curcuma", "ginger", "citric", "naranja", "camu", "maqui");
+        }
+        if (contieneAlguno(cmd, "proteina", "musculo", "gym", "masa", "recuperacion")) {
+            return recomendarPorTerminos(resp, sesion, catalogo, "Para recuperación y proteína te recomiendo ", "prot", "gainer", "platano", "mani", "cacao", "avena");
+        }
+
+        return null;
+    }
+
+    private List<Producto> filtrarPorCategoria(List<Producto> catalogo, String catFragment) {
+        String frag = normalizar(catFragment);
+        return catalogo.stream()
+                .filter(p -> p.getCategoria() != null && normalizar(p.getCategoria()).contains(frag))
+                .toList();
+    }
+
+    private String resumirProductos(List<Producto> lista, int max) {
+        List<String> partes = new ArrayList<>();
+        for (int i = 0; i < Math.min(max, lista.size()); i++) {
+            Producto p = lista.get(i);
+            partes.add(p.getNombre() + " a " + formatearPesos(calcularPrecioFinal(p)));
+        }
+        return unirConY(partes);
+    }
+
+    private Map<String, Object> respuestaListaProductos(Map<String, Object> resp, String texto) {
+        resp.put("text", texto);
+        resp.put("expectingReply", true);
+        return resp;
+    }
+
+    private Map<String, Object> recomendarPorTerminos(
+            Map<String, Object> resp,
+            SesionConversacion sesion,
+            List<Producto> catalogo,
+            String prefijo,
+            String... terminos) {
+        List<Producto> matches = new ArrayList<>();
+        for (Producto p : catalogo) {
+            String blob = normalizar((p.getNombre() != null ? p.getNombre() : "") + " " + (p.getDescripcion() != null ? p.getDescripcion() : ""));
+            for (String t : terminos) {
+                if (blob.contains(t)) {
+                    matches.add(p);
+                    break;
+                }
+            }
+        }
+        if (matches.isEmpty() && !catalogo.isEmpty()) {
+            matches.add(catalogo.get(0));
+        }
+        if (matches.isEmpty()) return null;
+        sesion.ultimoProductoSugerido = matches.get(0);
+        resp.put("text", prefijo + resumirProductos(matches, 3) + ". ¿Cuál te gustaría probar?");
         return resp;
     }
 
